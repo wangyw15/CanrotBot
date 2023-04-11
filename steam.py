@@ -76,7 +76,7 @@ async def _(bot: Bot, args: Message = CommandArg()):
                             resp_msg += f'\n原价: {price}\n现价: {discounted}\n折扣: {discount_percentage}%'
                         else:
                             resp_msg += f'\n价格: {price}'
-                        resp_msg += '\n链接: https://store.steampowered.com/app/{msg}'
+                        resp_msg += f'\n链接: https://store.steampowered.com/app/{msg}'
                         await steam.finish(resp_msg)
                 else:
                     await steam.finish('未找到该游戏')
