@@ -55,8 +55,13 @@ def fetch_app_info(appid: int) -> dict | None:
         return resp.json()
     return None
 
-steam = on_command('steam', aliases={'蒸汽', '蒸汽平台'}, rule=is_enabled, block=True)
+def fetch_data(url: str) -> bytes | None:
+    resp = requests.get(url)
+    if resp.ok and resp.status_code == 200:
+        return resp.content
+    return None
 
+steam = on_command('steam', aliases={'蒸汽', '蒸汽平台'}, rule=is_enabled, block=True)
 @steam.handle()
 async def _(bot: Bot, args: Message = CommandArg()):
     if msg := args.extract_plain_text():
@@ -70,9 +75,45 @@ async def _(bot: Bot, args: Message = CommandArg()):
                     price = appinfo['price_overview']['initial_formatted']
                     discounted = appinfo['price_overview']['final_formatted']
                     discount_percentage = appinfo['price_overview']['discount_percent']
-                    if ob11:
+                    if ob11 and isinstance(bot, ob11.Bot):
                         resp_msg = ob11.MessageSegment.image(img) + f'\n名称: {name}\n简介: {desc}'
-                        if price != discounted:
+                        if discount_percentage != 0:
+                            resp_msg += f'\n原价: {price}\n现价: {discounted}\n折扣: {discount_percentage}%'
+                        else:
+                            resp_msg += f'\n价格: {price}'
+                        resp_msg += f'\n链接: https://store.steampowered.com/app/{msg}'
+                        await steam.finish(resp_msg)
+                    elif ob12 and isinstance(bot, ob12.Bot):
+                        resp_msg = ob12.MessageSegment.image(img) + f'\n名称: {name}\n简介: {desc}'
+                        if discount_percentage != 0:
+                            resp_msg += f'\n原价: {price}\n现价: {discounted}\n折扣: {discount_percentage}%'
+                        else:
+                            resp_msg += f'\n价格: {price}'
+                        resp_msg += f'\n链接: https://store.steampowered.com/app/{msg}'
+                        await steam.finish(resp_msg)
+                    elif mirai2 and isinstance(bot, mirai2.Bot):
+                        resp_msg = ob12.MessageSegment.image(img) + f'\n名称: {name}\n简介: {desc}'
+                        if discount_percentage != 0:
+                            resp_msg += f'\n原价: {price}\n现价: {discounted}\n折扣: {discount_percentage}%'
+                        else:
+                            resp_msg += f'\n价格: {price}'
+                        resp_msg += f'\n链接: https://store.steampowered.com/app/{msg}'
+                        await steam.finish(resp_msg)
+                    elif kook and isinstance(bot, kook.Bot):
+                        if img_data := fetch_data(img):
+                            upload_url = await bot.upload_file(img_data)
+                            resp_msg = kook.MessageSegment.image(upload_url) + f'\n名称: {name}\n简介: {desc}'
+                            if discount_percentage != 0:
+                                resp_msg += f'\n原价: {price}\n现价: {discounted}\n折扣: {discount_percentage}%'
+                            else:
+                                resp_msg += f'\n价格: {price}'
+                            resp_msg += f'\n链接: https://store.steampowered.com/app/{msg}'
+                            await steam.finish(resp_msg)
+                        else:
+                            await steam.finish('Steam信息获取失败')
+                    else:
+                        resp_msg = f'缩略图: {img}\n名称: {name}\n简介: {desc}'
+                        if discount_percentage != 0:
                             resp_msg += f'\n原价: {price}\n现价: {discounted}\n折扣: {discount_percentage}%'
                         else:
                             resp_msg += f'\n价格: {price}'
