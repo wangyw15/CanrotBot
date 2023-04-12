@@ -24,6 +24,8 @@ except:
 class SteamConfig(BaseModel):
     steam_enabled: bool = True
     steam_proxy: str = ''
+    steam_region: str = 'cn'
+    steam_language: str = 'zh-cn'
 
     @validator('steam_enabled')
     def steam_enabled_validator(cls, v):
@@ -35,6 +37,18 @@ class SteamConfig(BaseModel):
     def steam_proxy_validator(cls, v):
         if not isinstance(v, str):
             raise ValueError('steam_proxy must be a str')
+        return v
+    
+    @validator('steam_region')
+    def steam_region_validator(cls, v):
+        if (not isinstance(v, str)) or (not v):
+            raise ValueError('steam_region must be a str')
+        return v
+    
+    @validator('steam_language')
+    def steam_language_validator(cls, v):
+        if (not isinstance(v, str)) or (not v):
+            raise ValueError('steam_language must be a str')
         return v
 
 # metadata
@@ -53,9 +67,13 @@ async def is_enabled() -> bool:
 
 # fetch app info from appid
 def fetch_app_info(appid: int) -> dict | None:
-    resp = requests.get(f'https://store.steampowered.com/api/appdetails/?appids={appid}&l=zh-cn&cc=cn', 
-                        proxies={'https': config.steam_proxy, 'http': config.steam_proxy},
-                        headers={'Accept-Language': 'zh-cn'})
+    if config.steam_proxy:
+        proxy = {'https': config.steam_proxy, 'http': config.steam_proxy}
+    else:
+        proxy = {}
+    resp = requests.get(f'https://store.steampowered.com/api/appdetails/?appids={appid}&l={config.steam_language}&cc={config.steam_region}', 
+                        proxies=proxy,
+                        headers={'Accept-Language': config.steam_language})
     if resp.ok and resp.status_code == 200:
         return resp.json()
     return None
