@@ -159,16 +159,26 @@ async def get_image_message(bot: Bot, img_url: str) -> MessageSegment:
 
 # detect bot type
 def is_onebot_v11(bot: Bot) -> bool:
-    return isinstance(bot, ob11.Bot)
+    if ob11:
+        return isinstance(bot, ob11.Bot)
+    return False
 
 def is_onebot_v12(bot: Bot) -> bool:
-    return isinstance(bot, ob12.Bot)
+    if ob12:
+        return isinstance(bot, ob12.Bot)
+    return False
 
 def is_mirai2(bot: Bot) -> bool:
-    return isinstance(bot, mirai2.Bot)
+    if mirai2:
+        return isinstance(bot, mirai2.Bot)
+    return False
 
 def is_kook(bot: Bot) -> bool:
-    return isinstance(bot, kook.Bot)
+    if kook:
+        return isinstance(bot, kook.Bot)
+    return False
 
 def is_console(bot: Bot) -> bool:
-    return isinstance(bot, console.Bot)
+    if console:
+        return isinstance(bot, console.Bot)
+    return False
