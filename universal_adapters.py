@@ -1,4 +1,5 @@
 from nonebot.adapters import Bot, Event, Message, MessageSegment
+from nonebot.permission import Permission
 import requests
 
 # different bots
@@ -24,12 +25,27 @@ except:
     console = None
 
 # permission
-GROUP = ob11.GROUP | ob12.GROUP | mirai2.GROUP_MEMBER | mirai2.GROUP_ADMINS
+GROUP = Permission()
 '''Group permission for different adapters'''
-GROUP_ADMIN = ob11.GROUP_ADMIN | mirai2.GROUP_ADMINS
+if ob11:
+    GROUP |= ob11.GROUP
+if ob12:
+    GROUP |= ob12.GROUP
+if mirai2:
+    GROUP |= mirai2.GROUP_MEMBER | mirai2.GROUP_ADMINS
+
+GROUP_ADMIN = Permission()
 '''Group admin permission for only mirai2 and onebot v11'''
-GROUP_OWNER = ob11.GROUP_OWNER | mirai2.GROUP_OWNER
+if ob11:
+    GROUP_ADMIN |= ob11.GROUP_ADMIN
+if mirai2:
+    GROUP_ADMIN |= mirai2.GROUP_ADMINS
+
+GROUP_OWNER = Permission()
 '''Group owner permission for only mirai2 and onebot v11'''
+if ob11:
+    GROUP_OWNER |= ob11.GROUP_OWNER
+    GROUP_OWNER |= mirai2.GROUP_OWNER
 
 def get_group_id(event: Event) -> str | None:
     '''Get group id from different adapters'''
