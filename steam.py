@@ -53,7 +53,7 @@ async def is_enabled() -> bool:
 
 # fetch app info from appid
 def fetch_app_info(appid: int) -> dict | None:
-    resp = requests.get(f'https://store.steampowered.com/api/appdetails/?appids={appid}&l=zh-cn', 
+    resp = requests.get(f'https://store.steampowered.com/api/appdetails/?appids={appid}&l=zh-cn&cc=cn', 
                         proxies={'https': config.steam_proxy, 'http': config.steam_proxy},
                         headers={'Accept-Language': 'zh-cn'})
     if resp.ok and resp.status_code == 200:
