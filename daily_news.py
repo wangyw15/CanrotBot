@@ -47,7 +47,7 @@ async def is_enabled() -> bool:
 
 img_url = 'https://api.03c3.cn/zb/'
 
-def fetch_dailt_image() -> bytes | None:
+def fetch_daily_image() -> bytes | None:
     resp = requests.get(img_url)
     if resp.ok and resp.status_code == 200:
         return resp.content
@@ -61,7 +61,7 @@ async def _(bot: Bot):
     elif ob12 and isinstance(bot, ob12.Bot):
         await daily.finish(ob12.MessageSegment.image(file = img_url))
     elif kook and isinstance(bot, kook.Bot):
-        img_data = fetch_dailt_image()
+        img_data = fetch_daily_image()
         if img_data:
             url = await bot.upload_file(img_data)
             await daily.finish(kook.MessageSegment.image(url))
