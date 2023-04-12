@@ -16,10 +16,6 @@ try:
 except:
     ob12 = None
 try:
-    import nonebot.adapters.kaiheila as kook
-except:
-    kook = None
-try:
     import nonebot.adapters.mirai2 as mirai2
 except:
     mirai2 = None
@@ -99,20 +95,8 @@ async def _(bot: Bot, args: Message = CommandArg()):
                             resp_msg += f'\n价格: {price}'
                         resp_msg += f'\n链接: https://store.steampowered.com/app/{msg}'
                         await steam.finish(resp_msg)
-                    elif kook and isinstance(bot, kook.Bot):
-                        if img_data := fetch_data(img):
-                            upload_url = await bot.upload_file(img_data)
-                            resp_msg = kook.MessageSegment.image(upload_url) + f'\n名称: {name}\n简介: {desc}'
-                            if discount_percentage != 0:
-                                resp_msg += f'\n原价: {price}\n现价: {discounted}\n折扣: {discount_percentage}%'
-                            else:
-                                resp_msg += f'\n价格: {price}'
-                            resp_msg += f'\n链接: https://store.steampowered.com/app/{msg}'
-                            await steam.finish(resp_msg)
-                        else:
-                            await steam.finish('Steam信息获取失败')
                     else:
-                        resp_msg = f'缩略图: {img}\n名称: {name}\n简介: {desc}'
+                        resp_msg = f'名称: {name}\n简介: {desc}'
                         if discount_percentage != 0:
                             resp_msg += f'\n原价: {price}\n现价: {discounted}\n折扣: {discount_percentage}%'
                         else:
