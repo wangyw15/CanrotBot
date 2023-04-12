@@ -121,7 +121,7 @@ async def _(bot: Bot, args: Message = CommandArg()):
                     if is_onebot_v11(bot) or is_onebot_v12(bot) or is_mirai2(bot):
                         await steam.finish(header_img_msg + '\n' + text_msg + '\n' + bg_img_msg)
                     elif is_kook(bot):
-                        await steam.send(header_img)
+                        await steam.send(header_img_msg)
                         await steam.send(text_msg)
                         await steam.finish(bg_img_msg)
                     else:
