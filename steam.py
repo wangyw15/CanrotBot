@@ -116,7 +116,7 @@ async def _(bot: Bot, args: Message = CommandArg()):
                     bg_img = appinfo['background_raw']
 
                     header_img_msg = await get_image_message(bot, header_img)
-                    text_msg = await generate_message(appinfo)
+                    text_msg = generate_message(appinfo)
                     bg_img_msg = await get_image_message(bot, bg_img)
                     if is_onebot_v11(bot) or is_onebot_v12(bot) or is_mirai2(bot):
                         await steam.finish(header_img_msg + '\n' + text_msg + '\n' + bg_img_msg)
