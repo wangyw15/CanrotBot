@@ -59,7 +59,7 @@ def chs2yin(s, 淫乱度=0.5):
     return ''.join([_词转换(x, y, 淫乱度) for x, y in pseg.cut(s)])
 
 # yinglish handler
-yinglish = on_command('yinglish', aliases={'淫语'}, rule=is_enabled)
+yinglish = on_command('yinglish', aliases={'淫语'}, rule=is_enabled, block=True)
 @yinglish.handle()
 async def _(args: Message = CommandArg()):
     if msg := args.extract_plain_text():
