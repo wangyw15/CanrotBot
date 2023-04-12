@@ -127,22 +127,22 @@ async def get_user_name(event: Event, bot: Bot):
     # onebot v11
     if ob11 and isinstance(bot, ob11.Bot):
         if isinstance(event, ob11.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(event.group_id, event.user_id)
+            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
         elif isinstance(event, ob11.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(event.user_id)
+            user_info = await bot.get_stranger_info(user_id=event.user_id)
             return user_info['nickname']
     # onebot v12
     elif ob12 and isinstance(bot, ob12.Bot):
         if isinstance(event, ob12.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(event.group_id, event.user_id)
+            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
         elif isinstance(event, ob12.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(event.user_id)
+            user_info = await bot.get_stranger_info(user_id=event.user_id)
             return user_info['nickname']
     # mirai2
     elif mirai2 and isinstance(bot, mirai2.Bot):
@@ -160,22 +160,22 @@ async def get_self_name(event: Event, bot: Bot):
     # onebot v11
     if ob11 and isinstance(bot, ob11.Bot):
         if isinstance(event, ob11.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(event.group_id, event.self_id)
+            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
         elif isinstance(event, ob11.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(event.self_id)
+            user_info = await bot.get_stranger_info(user_id=event.self_id)
             return user_info['nickname']
     # onebot v12
     elif ob12 and isinstance(bot, ob12.Bot):
         if isinstance(event, ob12.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(event.group_id, event.self.user_id)
+            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self.user_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
         elif isinstance(event, ob12.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(event.self.user_id)
+            user_info = await bot.get_stranger_info(user_id=event.self.user_id)
             return user_info['nickname']
     # mirai2
     elif mirai2 and isinstance(bot, mirai2.Bot):
@@ -189,7 +189,7 @@ async def get_self_name(event: Event, bot: Bot):
 
 # random rule
 def random_trigger() -> bool:
-    return random.random() < config.kimo_auto_rate
+    return random.random() < config.reply_auto_rate
 
 # handler
 reply = on_command('reply', aliases={'回复', '说话', '回答我'}, rule=is_enabled, block=True)
