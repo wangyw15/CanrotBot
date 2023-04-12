@@ -45,6 +45,7 @@ GROUP_OWNER = Permission()
 '''Group owner permission for only mirai2 and onebot v11'''
 if ob11:
     GROUP_OWNER |= ob11.GROUP_OWNER
+if mirai2:
     GROUP_OWNER |= mirai2.GROUP_OWNER
 
 def get_group_id(event: Event) -> str | None:
