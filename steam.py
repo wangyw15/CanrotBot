@@ -88,16 +88,23 @@ def generate_message(app_info: dict) -> str:
     name: str = app_info['name']
     appid: int = app_info['steam_appid']
     desc: str = app_info['short_description']
+    coming_soon: bool = app_info['release_date']['coming_soon']
+    release_date: str = app_info['release_date']['date']
     developers: list[str] = app_info['developers']
     publishers: list[str] = app_info['publishers']
+    genres: list[str] = [x['description'] for x in app_info['genres']]
+    categories: list[str] = [x['description'] for x in app_info['categories']]
     initial_price: str = app_info['price_overview']['initial_formatted']
     final_price:str = app_info['price_overview']['final_formatted']
     discount_percentage: int = app_info['price_overview']['discount_percent']
 
     ret = f"""
 名称: {name}
+发布时间: {'待发售' if coming_soon else release_date}
 开发商: {', '.join(developers)}
 发行商: {', '.join(publishers)}
+类型: {', '.join(genres)}
+分类: {', '.join(categories)}
 简介: {desc}
     """.strip()
 
@@ -118,13 +125,14 @@ async def _(bot: Bot, args: Message = CommandArg()):
                 if appinfo.get(msg, {}).get('success', False):
                     appinfo = appinfo[msg]['data']
                     text_msg = generate_message(appinfo)
-                    img = appinfo['header_image']
+                    header_img = appinfo['header_image']
+                    bg_img = appinfo['background_raw']
                     if ob11 and isinstance(bot, ob11.Bot):
-                        await steam.finish(ob11.MessageSegment.image(img) + '\n' + text_msg)
+                        await steam.finish(ob11.MessageSegment.image(header_img) + '\n' + text_msg + '\n' + ob11.MessageSegment.image(bg_img))
                     elif ob12 and isinstance(bot, ob12.Bot):
-                        await steam.finish(ob12.MessageSegment.image(img) + '\n' + text_msg)
+                        await steam.finish(ob12.MessageSegment.image(header_img) + '\n' + text_msg + ob12.MessageSegment.image(bg_img))
                     elif mirai2 and isinstance(bot, mirai2.Bot):
-                        await steam.finish(mirai2.MessageSegment.image(img) + '\n' + text_msg)
+                        await steam.finish(mirai2.MessageSegment.image(header_img) + '\n' + text_msg + mirai2.MessageSegment.image(bg_img))
                     else:
                         await steam.finish(text_msg)
                 else:
