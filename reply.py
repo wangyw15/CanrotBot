@@ -8,25 +8,7 @@ import json
 import random
 import jieba
 
-from nonebot import logger
-
-# different bots
-try:
-    import nonebot.adapters.onebot.v11 as ob11
-except:
-    ob11 = None
-try:
-    import nonebot.adapters.onebot.v12 as ob12
-except:
-    ob12 = None
-try:
-    import nonebot.adapters.kaiheila as kook
-except:
-    kook = None
-try:
-    import nonebot.adapters.mirai2 as mirai2
-except:
-    mirai2 = None
+from .universal_adapters import *
 
 # config
 class ReplyConfig(BaseModel):
@@ -103,7 +85,6 @@ def generate_response(msg: str) -> str:
             if ask in msg and is_negative(ask) == is_negative(msg):
                 responses += reply
     if responses:
-        logger.warning(responses)
         return random.choice(responses)
 
     # anime_thesaurus reply
@@ -123,70 +104,6 @@ def generate_response(msg: str) -> str:
     # fallback
     return config.reply_unknown_response
 
-async def get_user_name(event: Event, bot: Bot):
-    # onebot v11
-    if ob11 and isinstance(bot, ob11.Bot):
-        if isinstance(event, ob11.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
-        elif isinstance(event, ob11.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(user_id=event.user_id)
-            return user_info['nickname']
-    # onebot v12
-    elif ob12 and isinstance(bot, ob12.Bot):
-        if isinstance(event, ob12.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
-        elif isinstance(event, ob12.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(user_id=event.user_id)
-            return user_info['nickname']
-    # mirai2
-    elif mirai2 and isinstance(bot, mirai2.Bot):
-        if isinstance(event, mirai2.GroupMessage):
-            return event.sender.name
-        elif isinstance(event, mirai2.FriendMessage):
-            return event.sender.nickname
-    # kook
-    elif kook and isinstance(bot, kook.Bot):
-        if isinstance(event, kook.Event):
-            return event.extra.author.nikname
-    return config.reply_sender_name
-
-async def get_self_name(event: Event, bot: Bot):
-    # onebot v11
-    if ob11 and isinstance(bot, ob11.Bot):
-        if isinstance(event, ob11.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
-        elif isinstance(event, ob11.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(user_id=event.self_id)
-            return user_info['nickname']
-    # onebot v12
-    elif ob12 and isinstance(bot, ob12.Bot):
-        if isinstance(event, ob12.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self.user_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
-        elif isinstance(event, ob12.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(user_id=event.self.user_id)
-            return user_info['nickname']
-    # mirai2
-    elif mirai2 and isinstance(bot, mirai2.Bot):
-        # not implemented
-        pass
-    # kook
-    elif kook and isinstance(bot, kook.Bot):
-        if isinstance(event, kook.Event):
-            return bot.self_name
-    return config.reply_my_name
-
 # random rule
 def random_trigger() -> bool:
     return random.random() < config.reply_auto_rate
@@ -199,8 +116,8 @@ auto_reply = on_regex(r'.*', rule=Rule(is_enabled, random_trigger), block=True, 
 async def _(event: Event, bot: Bot, args: Message = CommandArg()):
     """Kimo handler"""
     if msg := args.extract_plain_text():
-        my_name = await get_self_name(event, bot)
-        user_name = await get_user_name(event, bot)
+        my_name = await get_bot_name(event, bot, config.reply_my_name)
+        user_name = await get_user_name(event, bot, config.reply_sender_name)
         resp = generate_response(msg).format(me=my_name, name=user_name, segment='\n')
         for i in resp.split('\n'):
             await reply.send(i)
@@ -210,8 +127,8 @@ async def _(event: Event, bot: Bot, args: Message = CommandArg()):
 @auto_reply.handle()
 async def _(event: Event, bot: Bot):
     """Kimo auto handler"""
-    my_name = await get_self_name(event, bot)
-    user_name = await get_user_name(event, bot)
+    my_name = await get_bot_name(event, bot, config.reply_my_name)
+    user_name = await get_user_name(event, bot, config.reply_sender_name)
     if msg := event.get_plaintext():
         resp = generate_response(msg).format(me=my_name, name=user_name)
         if resp != config.reply_unknown_response:

@@ -6,19 +6,7 @@ from nonebot.rule import Rule
 from pydantic import BaseModel, validator
 import requests
 
-# different bots
-try:
-    import nonebot.adapters.onebot.v11 as ob11
-except:
-    ob11 = None
-try:
-    import nonebot.adapters.onebot.v12 as ob12
-except:
-    ob12 = None
-try:
-    import nonebot.adapters.mirai2 as mirai2
-except:
-    mirai2 = None
+from .universal_adapters import *
 
 # config
 class SteamConfig(BaseModel):
@@ -124,15 +112,18 @@ async def _(bot: Bot, args: Message = CommandArg()):
             if appinfo := fetch_app_info(msg):
                 if appinfo.get(msg, {}).get('success', False):
                     appinfo = appinfo[msg]['data']
-                    text_msg = generate_message(appinfo)
                     header_img = appinfo['header_image']
                     bg_img = appinfo['background_raw']
-                    if ob11 and isinstance(bot, ob11.Bot):
-                        await steam.finish(ob11.MessageSegment.image(header_img) + '\n' + text_msg + '\n' + ob11.MessageSegment.image(bg_img))
-                    elif ob12 and isinstance(bot, ob12.Bot):
-                        await steam.finish(ob12.MessageSegment.image(header_img) + '\n' + text_msg + ob12.MessageSegment.image(bg_img))
-                    elif mirai2 and isinstance(bot, mirai2.Bot):
-                        await steam.finish(mirai2.MessageSegment.image(header_img) + '\n' + text_msg + mirai2.MessageSegment.image(bg_img))
+
+                    header_img_msg = get_image_message(bot, header_img)
+                    text_msg = generate_message(appinfo)
+                    bg_img_msg = get_image_message(bot, bg_img)
+                    if is_onebot_v11(bot) or is_onebot_v12(bot) or is_mirai2(bot):
+                        await steam.finish(header_img_msg + '\n' + text_msg + '\n' + bg_img_msg)
+                    elif is_kook(bot):
+                        await steam.send(header_img)
+                        await steam.send(text_msg)
+                        await steam.finish(bg_img_msg)
                     else:
                         await steam.finish(text_msg)
                 else:

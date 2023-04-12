@@ -3,11 +3,9 @@ from nonebot.adapters import Message
 from nonebot.params import Arg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
-from nonebot import logger
 from pydantic import BaseModel, validator
 import random
 import json
-import re
 
 # config
 class WordleConfig(BaseModel):
