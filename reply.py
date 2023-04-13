@@ -76,28 +76,37 @@ with open(config.simai_data, 'r', encoding='utf-8') as f:
 def is_negative(msg: str) -> bool:
     return '不' in msg
 
+def is_single_word(msg: str) -> bool:
+    return len(jieba.lcut(msg)) == 1
+
 # generate response
 def generate_response(msg: str) -> str:
     # simai reply
     responses = []
+    cut_msg = jieba.lcut(msg)
     for _, replies in simai_data.items():
         for ask, reply in replies.items():
-            if ask in msg and is_negative(ask) == is_negative(msg):
+            if ask == msg:
+                responses += reply
+            elif is_negative(ask) == is_negative(msg) and ask in cut_msg:
+                responses += reply
+            elif not is_single_word(ask) and len(cut_msg) != 0 and ask in msg:
                 responses += reply
     if responses:
         return random.choice(responses)
 
     # anime_thesaurus reply
     # cut words match
-    words = jieba.lcut(msg)
     for k, v in kimo_data.items():
-        if k in words:
+        if k in cut_msg:
             responses += v
+    if responses:
+        return random.choice(responses)
+    
     # keyword match
-    if not responses:
-        for k, v in kimo_data.items():
-            if k in msg:
-                responses += v
+    for k, v in kimo_data.items():
+        if k in msg:
+            responses += v
     if responses:
         return random.choice(responses)
     
