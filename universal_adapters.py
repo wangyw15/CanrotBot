@@ -98,9 +98,10 @@ async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | No
             return event.sender.nickname
     # kook
     elif kook and isinstance(bot, kook.Bot):
+        return default # unsupported
         if isinstance(event, kook.Event):
-            user_info = await bot.user_view(user_id=event.author_id, guild_id=event.extra.guild_id)
-            return user_info.nikname
+            user_info = await bot.user_view(user_id=bot.self_id, guild_id=event.extra.guild_id)
+            return user_info.nickname
     return default
 
 async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | None:
@@ -127,13 +128,17 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
             return user_info['nickname']
     # mirai2
     elif mirai2 and isinstance(bot, mirai2.Bot):
-        # not implemented
-        pass
+        if isinstance(event, mirai2.GroupMessage):
+            user_info = await bot.member_profile(target=event.sender.group.id, member_id=bot.self_id)
+        elif isinstance(event, mirai2.FriendMessage):
+            user_info = bot.bot_pro_file()
+        return user_info['nickname']
     # kook
     elif kook and isinstance(bot, kook.Bot):
+        return default # unsupported
         if isinstance(event, kook.Event):
-            bot_info = await bot.user_view(user_id=bot.self_id, guild_id=event.extra.guild_id)
-            return bot_info.nikname
+            user_info = await bot.user_view(user_id=bot.self_id, guild_id=event.extra.guild_id)
+            return user_info.nickname
     return default
 
 def fetch_data(url: str) -> bytes | None:
