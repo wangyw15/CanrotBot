@@ -98,7 +98,7 @@ async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | No
             return event.sender.nickname
     # kook
     elif kook and isinstance(bot, kook.Bot):
-        # return default # unsupported
+        return default # unsupported
         if isinstance(event, kook.Event):
             user_info: dict[str, str] = await bot.call_api('/user/view', user_id=event.get_user_id(), guild_id=event.extra.guild_id)
             return user_info['nickname']
@@ -135,7 +135,7 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
         return user_info['nickname']
     # kook
     elif kook and isinstance(bot, kook.Bot):
-        # return default # unsupported
+        return default # unsupported
         if isinstance(event, kook.Event):
             user_info: dict[str, str] = await bot.call_api('/user/view', user_id=bot.self_id, guild_id=event.extra.guild_id)
             return user_info['nickname']
