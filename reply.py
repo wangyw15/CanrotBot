@@ -4,11 +4,12 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.rule import Rule
 from pydantic import BaseModel, validator
-import json
 import random
 import jieba
+import re
 
 from .universal_adapters import *
+from .data import get_data
 
 # config
 class ReplyConfig(BaseModel):
@@ -17,9 +18,6 @@ class ReplyConfig(BaseModel):
     reply_auto_rate: float = 1.0
     reply_my_name: str = '我'
     reply_sender_name: str = '主人'
-
-    kimo_data: str = './anime_thesaurus.json'
-    simai_data: str = './simai.json'
 
     @validator('reply_enabled')
     def reply_enabled_validator(cls, v):
@@ -38,18 +36,6 @@ class ReplyConfig(BaseModel):
         if not isinstance(v, float) or v < 0 or v > 1.0:
             raise ValueError('reply_auto_rate must be a float between 0.0 and 1.0')
         return v
-    
-    @validator('kimo_data')
-    def kimo_data_validator(cls, v):
-        if not isinstance(v, str):
-            raise ValueError('kimo_data must be a str')
-        return v
-    
-    @validator('simai_data')
-    def simai_data_validator(cls, v):
-        if not isinstance(v, str):
-            raise ValueError('simai_data must be a str')
-        return v
 
 # metadata
 __plugin_meta__ = PluginMetadata(
@@ -66,12 +52,7 @@ async def is_enabled() -> bool:
     return config.reply_enabled
 
 # load data
-kimo_data: dict[str, list[str]] = {}
-with open(config.kimo_data, 'r', encoding='utf-8') as f:
-    kimo_data = json.load(f)
-simai_data: dict[str, dict[str, list[str]]] = {}
-with open(config.simai_data, 'r', encoding='utf-8') as f:
-    simai_data = json.load(f)
+reply_data: list[dict[str, str | None]] = [{ 'pattern': x[1], 'response': x[2], 'character': x[3] } for x in get_data('reply')]
 
 def is_negative(msg: str) -> bool:
     return '不' in msg
@@ -81,32 +62,29 @@ def is_single_word(msg: str) -> bool:
 
 # generate response
 def generate_response(msg: str) -> str:
-    # simai reply
     responses = []
     cut_msg = jieba.lcut(msg)
-    for _, replies in simai_data.items():
-        for ask, reply in replies.items():
-            if ask == msg:
-                responses += reply
-            elif is_negative(ask) == is_negative(msg) and ask in cut_msg:
-                responses += reply
-            elif not is_single_word(ask) and len(cut_msg) != 0 and ask in msg:
-                responses += reply
+
+    for reply_item in reply_data:
+        pattern = reply_item['pattern']
+        response = reply_item['response']
+        character = reply_item['character']
+        if pattern == msg:
+            responses.append(response)
+        elif is_negative(pattern) == is_negative(msg) and pattern in cut_msg:
+            responses.append(response)
+        elif not is_single_word(pattern) and len(cut_msg) != 0 and pattern in msg:
+            responses.append(response)
     if responses:
         return random.choice(responses)
 
-    # anime_thesaurus reply
-    # cut words match
-    for k, v in kimo_data.items():
-        if k in cut_msg:
-            responses += v
-    if responses:
-        return random.choice(responses)
-    
     # keyword match
-    for k, v in kimo_data.items():
-        if k in msg:
-            responses += v
+    for reply_item in reply_data:
+        pattern = reply_item['pattern']
+        response = reply_item['response']
+        character = reply_item['character']
+        if pattern in msg:
+            responses.append(response)
     if responses:
         return random.choice(responses)
     

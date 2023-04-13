@@ -5,12 +5,12 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from pydantic import BaseModel, validator
 import random
-import json
+
+from .data import get_data
 
 # config
 class WordleConfig(BaseModel):
     wordle_enabled: bool = True
-    wordle_data: str = './wordle.json'
     wordle_correct: str = '⭕'
     wordle_medium: str = '❔'
     wordle_wrong: str = '❌'
@@ -19,12 +19,6 @@ class WordleConfig(BaseModel):
     def wordle_enabled_validator(cls, v):
         if not isinstance(v, bool):
             raise ValueError('wordle_enabled must be a bool')
-        return v
-    
-    @validator('wordle_data')
-    def wordle_data_validator(cls, v):
-        if not isinstance(v, str):
-            raise ValueError('wordle_data must be a str')
         return v
     
 # metadata
@@ -42,9 +36,7 @@ async def is_enabled() -> bool:
     return config.wordle_enabled
 
 # load wordle data
-words = []
-with open(config.wordle_data, 'r', encoding='utf-8') as f:
-    words = json.load(f)
+words = [x[1] for x in get_data('wordle')]
 
 def get_wordle_result(answer: str, guess: str) -> str:
     result = ''

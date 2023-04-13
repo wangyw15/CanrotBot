@@ -1,5 +1,6 @@
 from nonebot import on_command
 
+from . import data
 from . import daily_news
 from . import hitokoto
 from . import reply
