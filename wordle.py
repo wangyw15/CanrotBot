@@ -72,7 +72,7 @@ async def _(state: T_State, guess: Message = Arg()):
     guess = guess.extract_plain_text()
     answer: str = state[WORDLE_ANSWER]
     if guess == answer:
-        await wordle.finish(f'恭喜你猜对了！\n共用了{state[WORDLE_COUNT]}次机会')
+        await wordle.finish(f'恭喜你猜对了！\n共用了{len(state[WORDLE_ANSWER])}次机会')
     elif not guess in words:
         await wordle.reject('你输入的单词不在词库中')
     else:
