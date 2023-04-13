@@ -1,4 +1,7 @@
 from nonebot import on_command, logger
+from nonebot.adapters import Message
+from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
 from . import data
@@ -51,7 +54,19 @@ if 'yinglish' not in data.aio_config.aio_disable_plugins:
     logger.info('yinglish loaded')
 
 plugin_help = on_command('help', aliases={'帮助'}, block=True)
-
 @plugin_help.handle()
 async def _():
     await plugin_help.finish(data.aio_help_message)
+
+execute_sql = on_command('sql', aliases={'SQL'}, permission=SUPERUSER, block=True)
+@execute_sql.handle()
+async def _(args: Message = CommandArg()):
+    if msg := args.extract_plain_text():
+        ret = ''
+        result = data.execute_sql(msg)
+        for row in result:
+            for col in row:
+                ret += str(col) + ' '
+            ret += '\n'
+        await execute_sql.finish(ret)
+    await execute_sql.finish('执行SQL失败')
