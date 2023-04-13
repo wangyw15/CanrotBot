@@ -1,39 +1,21 @@
 from nonebot import get_driver, on_command
 from nonebot.adapters import Message
 from nonebot.params import Arg
-from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from pydantic import BaseModel, validator
 import random
 
-from .data import get_data
+from ..data import get_data, add_help_message
+
+add_help_message('wordle', 'Wordle游戏，输入/wordle开始游戏')
 
 # config
 class WordleConfig(BaseModel):
-    wordle_enabled: bool = True
     wordle_correct: str = '⭕'
     wordle_medium: str = '❔'
     wordle_wrong: str = '❌'
 
-    @validator('wordle_enabled')
-    def wordle_enabled_validator(cls, v):
-        if not isinstance(v, bool):
-            raise ValueError('wordle_enabled must be a bool')
-        return v
-    
-# metadata
-__plugin_meta__ = PluginMetadata(
-    name='Wordle',
-    description='Wordle game',
-    usage='/wordle',
-    config=WordleConfig,
-)
-
 config = WordleConfig.parse_obj(get_driver().config)
-
-# plugin enabled
-async def is_enabled() -> bool:
-    return config.wordle_enabled
 
 # load wordle data
 words = [x[1] for x in get_data('wordle')]
@@ -49,7 +31,7 @@ def get_wordle_result(answer: str, guess: str) -> str:
             result += config.wordle_wrong
     return result
 
-wordle = on_command('wordle', rule=is_enabled, block=True)
+wordle = on_command('wordle', block=True)
 WORDLE_ANSWER = 'wordle_answer'
 WORDLE_GUESSES = 'wordle_guesses'
 

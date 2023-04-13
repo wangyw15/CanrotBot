@@ -8,22 +8,15 @@ import random
 import jieba
 import re
 
-from .universal_adapters import *
-from .data import get_data
+from ..universal_adapters import *
+from ..data import get_data, add_help_message
 
 # config
 class ReplyConfig(BaseModel):
-    reply_enabled: bool = True
     reply_unknown_response: str = '我不知道怎么回答你喵~'
     reply_auto_rate: float = 1.0
     reply_my_name: str = '我'
     reply_sender_name: str = '主人'
-
-    @validator('reply_enabled')
-    def reply_enabled_validator(cls, v):
-        if not isinstance(v, bool):
-            raise ValueError('kimo_enabled must be a bool')
-        return v
 
     @validator('reply_unknown_response')
     def reply_unknown_response_validator(cls, v):
@@ -37,19 +30,8 @@ class ReplyConfig(BaseModel):
             raise ValueError('reply_auto_rate must be a float between 0.0 and 1.0')
         return v
 
-# metadata
-__plugin_meta__ = PluginMetadata(
-    name='Reply',
-    description='用Kyomotoi/AnimeThesaurus词库和FloatTech/zbpdata的自动回复',
-    usage='/回复 对话内容',
-    config=ReplyConfig,
-)
-
 config = ReplyConfig.parse_obj(get_driver().config)
-
-# plugin enabled
-async def is_enabled() -> bool:
-    return config.reply_enabled
+add_help_message('reply', f'根据后面输入的内容回复\n也有{config.reply_auto_rate * 100}%的几率触发机器人自动回复')
 
 # load data
 reply_data: list[dict[str, str | None]] = [{ 'pattern': x[1], 'response': x[2], 'character': x[3] } for x in get_data('reply')]
@@ -96,8 +78,8 @@ def random_trigger() -> bool:
     return random.random() < config.reply_auto_rate
 
 # handler
-reply = on_command('reply', aliases={'回复', '说话', '回答我'}, rule=is_enabled, block=True)
-auto_reply = on_regex(r'.*', rule=Rule(is_enabled, random_trigger), block=True, priority=100)
+reply = on_command('reply', aliases={'回复', '说话', '回答我'}, block=True)
+auto_reply = on_regex(r'.*', rule=random_trigger, block=True, priority=100)
 
 @reply.handle()
 async def _(event: Event, bot: Bot, args: Message = CommandArg()):

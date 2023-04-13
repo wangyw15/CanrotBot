@@ -6,20 +6,16 @@ from nonebot.rule import Rule
 from pydantic import BaseModel, validator
 import requests
 
-from .universal_adapters import *
+from ..universal_adapters import *
+from ..data import add_help_message
+
+add_help_message('steam', '/steam <appid>即可获取游戏信息')
 
 # config
 class SteamConfig(BaseModel):
-    steam_enabled: bool = True
     steam_proxy: str = ''
     steam_region: str = 'cn'
     steam_language: str = 'zh-cn'
-
-    @validator('steam_enabled')
-    def steam_enabled_validator(cls, v):
-        if not isinstance(v, bool):
-            raise ValueError('steam_enabled must be a bool')
-        return v
     
     @validator('steam_proxy')
     def steam_proxy_validator(cls, v):
@@ -39,19 +35,7 @@ class SteamConfig(BaseModel):
             raise ValueError('steam_language must be a str')
         return v
 
-# metadata
-__plugin_meta__ = PluginMetadata(
-    name='Steam',
-    description='Steam相关功能',
-    usage='/steam',
-    config=SteamConfig,
-)
-
 config = SteamConfig.parse_obj(get_driver().config)
-
-# plugin enabled
-async def is_enabled() -> bool:
-    return config.steam_enabled
 
 # fetch app info from appid
 def fetch_app_info(appid: int) -> dict | None:
@@ -104,7 +88,7 @@ def generate_message(app_info: dict) -> str:
     ret += f'\n链接: https://store.steampowered.com/app/{appid}'
     return ret
 
-steam = on_command('steam', aliases={'蒸汽', '蒸汽平台'}, rule=is_enabled, block=True)
+steam = on_command('steam', aliases={'蒸汽', '蒸汽平台'}, block=True)
 @steam.handle()
 async def _(bot: Bot, args: Message = CommandArg()):
     if msg := args.extract_plain_text():

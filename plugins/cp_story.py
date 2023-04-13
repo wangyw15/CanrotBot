@@ -3,8 +3,9 @@ from nonebot.adapters import Message
 from nonebot.params import CommandArg
 import random
 
-from .universal_adapters import *
-from .data import get_data
+from ..data import get_data, add_help_message
+
+add_help_message('cp', '输入/cp 攻 受，生成cp文')
 
 cp_stories: list[str] = [x[3] for x in get_data('cp_story')]
 
