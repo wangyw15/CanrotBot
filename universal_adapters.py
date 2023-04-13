@@ -99,7 +99,8 @@ async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | No
     # kook
     elif kook and isinstance(bot, kook.Bot):
         if isinstance(event, kook.Event):
-            return event.extra.author.nikname
+            user_info = await bot.user_view(user_id=event.author_id, guild_id=event.guild_id)
+            return user_info.nikname
     return default
 
 async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | None:
