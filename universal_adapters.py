@@ -148,12 +148,13 @@ def fetch_data(url: str) -> bytes | None:
         return resp.content
     return None
 
-async def get_image_message(bot: Bot, img_url: str) -> MessageSegment:
-    '''Get image MessageSegement for different adapters'''
+async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment:
+    '''Get image MessageSegement by url for different adapters'''
     if ob11 and isinstance(bot, ob11.Bot):
-        return ob11.MessageSegment.image(file = img_url)
+        return ob11.MessageSegment.image(file = img_url, type='url')
     elif ob12 and isinstance(bot, ob12.Bot):
-        return ob12.MessageSegment.image(file = img_url)
+        resp = await bot.upload_file(type='url', url=img_url)
+        return ob12.MessageSegment.image(file_id=resp.file_id)
     elif kook and isinstance(bot, kook.Bot):
         img_data = fetch_data(img_url)
         if img_data:
