@@ -7,6 +7,7 @@ from . import reply
 from . import steam
 from . import wordle
 from . import yinglish
+from . import cp_story
 
 plugin_help = on_command('help', aliases={'帮助'}, block=True)
 
