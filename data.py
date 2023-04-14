@@ -68,7 +68,7 @@ def execute_sql(sql: str) -> list[list]:
     temp_c = __c.execute(sql)
     ret: list[list] = []
     col_name: list[str] = [t[0] for t in temp_c.description]
-    ret += col_name
+    ret.append(col_name)
     ret += temp_c.fetchall()
     return ret
 
