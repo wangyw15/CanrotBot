@@ -3,6 +3,7 @@ from nonebot.adapters import Message, Bot, Event
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
+from sqlite3 import OperationalError
 
 from . import data
 from .universal_adapters import is_console
@@ -73,6 +74,6 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                     ret += str(col) + ' '
                 ret += '\n'
             await execute_sql.finish(ret)
-        except Exception as e:
+        except OperationalError as e:
             await execute_sql.finish('SQL查询失败\n' + str(e))
     await execute_sql.finish('执行SQL失败')
