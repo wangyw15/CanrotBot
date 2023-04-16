@@ -33,6 +33,9 @@ if 'hitokoto' not in data.aio_config.aio_disable_plugins:
 if 'kuji' not in data.aio_config.aio_disable_plugins:
     from .plugins import kuji
     logger.info('kuji loaded')
+if 'nbnhhsh' not in data.aio_config.aio_disable_plugins:
+    from .plugins import nbnhhsh
+    logger.info('nbnhhsh loaded')
 if 'reply' not in data.aio_config.aio_disable_plugins:
     from .plugins import reply
     logger.info('reply loaded')
