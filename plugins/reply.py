@@ -1,4 +1,4 @@
-from nonebot import get_driver, on_command, on_regex
+from nonebot import get_driver, on_command, on_regex, logger
 from nonebot.adapters import Message, Event, Bot
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
@@ -104,6 +104,7 @@ async def _(event: Event, bot: Bot, args: Message = CommandArg()):
 async def _(event: Event, bot: Bot):
     """Kimo auto handler"""
     if group_id := get_group_id(event):
+        group_id = int(group_id)
         if group_id in config.reply_whitelist_groups:
             my_name = await get_bot_name(event, bot, config.reply_my_name)
             user_name = await get_user_name(event, bot, config.reply_sender_name)
