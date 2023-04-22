@@ -17,6 +17,7 @@ class ReplyConfig(BaseModel):
     reply_auto_rate: float = 1.0
     reply_my_name: str = '我'
     reply_sender_name: str = '主人'
+    reply_whitelist_groups: list[int] = []
 
     @validator('reply_unknown_response')
     def reply_unknown_response_validator(cls, v):
@@ -28,6 +29,12 @@ class ReplyConfig(BaseModel):
     def reply_auto_rate_validator(cls, v):
         if not isinstance(v, float) or v < 0 or v > 1.0:
             raise ValueError('reply_auto_rate must be a float between 0.0 and 1.0')
+        return v
+    
+    @validator('reply_whitelist_groups')
+    def reply_whitelist_groups_validator(cls, v):
+        if not isinstance(v, list):
+            raise ValueError('reply_whitelist_groups must be a list')
         return v
 
 config = ReplyConfig.parse_obj(get_driver().config)
@@ -96,11 +103,13 @@ async def _(event: Event, bot: Bot, args: Message = CommandArg()):
 @auto_reply.handle()
 async def _(event: Event, bot: Bot):
     """Kimo auto handler"""
-    my_name = await get_bot_name(event, bot, config.reply_my_name)
-    user_name = await get_user_name(event, bot, config.reply_sender_name)
-    if msg := event.get_plaintext():
-        resp = generate_response(msg).format(me=my_name, name=user_name)
-        if resp != config.reply_unknown_response:
-            for i in resp.split('\n'):
-                await reply.send(i)
-            await reply.finish()
+    if group_id := get_group_id(event):
+        if group_id in config.reply_whitelist_groups:
+            my_name = await get_bot_name(event, bot, config.reply_my_name)
+            user_name = await get_user_name(event, bot, config.reply_sender_name)
+            if msg := event.get_plaintext():
+                resp = generate_response(msg).format(me=my_name, name=user_name)
+                if resp != config.reply_unknown_response:
+                    for i in resp.split('\n'):
+                        await reply.send(i)
+    await reply.finish()
