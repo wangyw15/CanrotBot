@@ -49,6 +49,9 @@ def is_negative(msg: str) -> bool:
 def is_single_word(msg: str) -> bool:
     return len(jieba.lcut(msg)) == 1
 
+def is_regex_pattern(content: str) -> bool:
+    return content.startswith('/') and content.endswith('/') and len(content) > 2
+
 # generate response
 def generate_response(msg: str) -> str:
     responses = []
@@ -58,7 +61,11 @@ def generate_response(msg: str) -> str:
         pattern = reply_item['pattern']
         response = reply_item['response']
         character = reply_item['character']
-        if pattern == msg:
+        if is_regex_pattern(pattern):
+            pattern = pattern[1:-1]
+            if re.search(pattern, msg):
+                responses.append(response)
+        elif pattern == msg:
             responses.append(response)
         elif is_negative(pattern) == is_negative(msg) and pattern in cut_msg:
             responses.append(response)
@@ -72,7 +79,7 @@ def generate_response(msg: str) -> str:
         pattern = reply_item['pattern']
         response = reply_item['response']
         character = reply_item['character']
-        if pattern in msg:
+        if (not is_regex_pattern(pattern)) and pattern in msg:
             responses.append(response)
     if responses:
         return random.choice(responses)
