@@ -2,14 +2,17 @@ from nonebot import on_command, on_regex
 from nonebot.params import CommandArg
 from nonebot.adapters import Message
 from nonebot.typing import T_State
-import requests
+import re
+import httpx
 
 from ..data import add_help_message
 
 add_help_message('currency', '汇率')
 
-def fetch_currency() -> list[dict[str, str]]:
-    resp = requests.get('https://papi.icbc.com.cn/exchanges/ns/getLatest')
+_client = httpx.AsyncClient()
+
+async def fetch_currency() -> list[dict[str, str]]:
+    resp = await _client.get('https://papi.icbc.com.cn/exchanges/ns/getLatest')
     if resp.status_code == 200:
         data = resp.json()
         if data['message'] == 'success' and data['code'] == 0:
@@ -21,7 +24,7 @@ currency_query = on_command('currency', aliases={'汇率'}, block=True)
 @currency_query.handle()
 async def _(args: Message = CommandArg()):
     if msg := args.extract_plain_text():
-        currency_data = fetch_currency()
+        currency_data = await fetch_currency()
         if not currency_data:
             await currency_query.finish('获取汇率失败')
         for item in currency_data:
@@ -40,20 +43,38 @@ async def _(args: Message = CommandArg()):
     else:
         await currency_query.finish('请输入货币名称')
 
-# currency convert
-currency_convert = on_regex(r'^(\d+(?:.\d+)?)([^=]+)=$', block=True)
-@currency_convert.handle()
+# currency convert from rmb to foreign
+currency_convert_to_foreign = on_regex(r'^(\d+(?:.\d+)?)([^=]+)=$', block=True)
+@currency_convert_to_foreign.handle()
 async def _(state: T_State):
     amount = float(state['_matched_groups'][0].strip())
     currency: str = state['_matched_groups'][1].strip()
     if amount and currency:
-        currency_data = fetch_currency()
+        currency_data = await fetch_currency()
         if not currency_data:
-            await currency_convert.finish('获取汇率失败')
+            await currency_convert_to_foreign.finish('获取汇率失败')
         for item in currency_data:
             if currency.lower() == item['currencyENName'].lower() or currency == item['currencyCHName']:
                 price = float(item['foreignSell'])
-                await currency_convert.finish(f"{amount}{item['currencyCHName']} = {amount/100*price}人民币")
+                await currency_convert_to_foreign.finish(f"{amount}{item['currencyCHName']} = {round(amount/100*price, 4)}人民币")
+        await currency_query.finish('未找到该货币')
+    else:
+        await currency_query.finish('查询格式有误')
+
+# currency convert from foreign to rmb
+currency_convert_to_rmb = on_regex(r'^(\d+(?:.\d+)?)(?:rmb|人民币|￥)=(?:[?？]|多少)?([a-zA-Z]+)$', flags=re.IGNORECASE, block=True)
+@currency_convert_to_rmb.handle()
+async def _(state: T_State):
+    amount = float(state['_matched_groups'][0].strip())
+    currency: str = state['_matched_groups'][1].strip()
+    if amount and currency:
+        currency_data = await fetch_currency()
+        if not currency_data:
+            await currency_convert_to_rmb.finish('获取汇率失败')
+        for item in currency_data:
+            if currency.lower() == item['currencyENName'].lower() or currency == item['currencyCHName']:
+                price = float(item['foreignSell'])
+                await currency_convert_to_rmb.finish(f"{amount}人民币 = {round(amount*100/price, 4)}{item['currencyCHName']}")
         await currency_query.finish('未找到该货币')
     else:
         await currency_query.finish('查询格式有误')
