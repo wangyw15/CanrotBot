@@ -21,6 +21,9 @@ if 'cp_story' not in data.aio_config.aio_disable_plugins:
 if 'crazy_love' not in data.aio_config.aio_disable_plugins:
     from .plugins import crazy_love
     logger.info('crazy_love loaded')
+if 'currency' not in data.aio_config.aio_disable_plugins:
+    from .plugins import currency
+    logger.info('currency loaded')
 if 'curse' not in data.aio_config.aio_disable_plugins:
     from .plugins import curse
     logger.info('curse loaded')
