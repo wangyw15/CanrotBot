@@ -41,7 +41,7 @@ async def _(args: Message = CommandArg()):
         await currency_query.finish('请输入货币名称')
 
 # currency convert
-currency_convert = on_regex(r'^(\d+(?:.\d+)?)([^=]+)=?$', block=True)
+currency_convert = on_regex(r'^(\d+(?:.\d+)?)([^=]+)=$', block=True)
 @currency_convert.handle()
 async def _(state: T_State):
     amount = float(state['_matched_groups'][0].strip())
