@@ -44,10 +44,10 @@ async def _(args: Message = CommandArg()):
         await currency_query.finish('请输入货币名称')
 
 # currency convert from rmb to foreign
-currency_convert_to_foreign = on_regex(r'^(\d+(?:.\d+)?)([a-zA-Z\u4e00-\u9fa5]+)=$', block=True)
+currency_convert_to_foreign = on_regex(r'^([\d()\-+*/.]+)([a-zA-Z\u4e00-\u9fa5]+)=$', block=True)
 @currency_convert_to_foreign.handle()
 async def _(state: T_State):
-    amount = float(state['_matched_groups'][0].strip())
+    amount: float | int = eval(state['_matched_groups'][0].strip())
     currency: str = state['_matched_groups'][1].strip()
     if amount and currency:
         currency_data = await fetch_currency()
@@ -62,10 +62,10 @@ async def _(state: T_State):
         await currency_query.finish('查询格式有误')
 
 # currency convert from foreign to rmb
-currency_convert_to_rmb = on_regex(r'^(\d+(?:.\d+)?)(?:rmb|人民币|￥)=(?:[?？]|多少)?([a-zA-Z\u4e00-\u9fa5]+)$', flags=re.IGNORECASE, block=True)
+currency_convert_to_rmb = on_regex(r'^([\d()\-+*/.]+)(?:rmb|人民币|￥)=(?:[?？]|多少)?([a-zA-Z\u4e00-\u9fa5]+)$', flags=re.IGNORECASE, block=True)
 @currency_convert_to_rmb.handle()
 async def _(state: T_State):
-    amount = float(state['_matched_groups'][0].strip())
+    amount: float | int = eval(state['_matched_groups'][0].strip())
     currency: str = state['_matched_groups'][1].strip()
     if amount and currency:
         currency_data = await fetch_currency()
