@@ -15,6 +15,9 @@ __plugin_meta__ = PluginMetadata(
     config=data.AIOConfig
 )
 
+if 'calculator' not in data.aio_config.aio_disable_plugins:
+    from .plugins import calculator
+    logger.info('calculator loaded')
 if 'cp_story' not in data.aio_config.aio_disable_plugins:
     from .plugins import cp_story
     logger.info('cp_story loaded')
