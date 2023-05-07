@@ -53,7 +53,7 @@ def is_regex_pattern(content: str) -> bool:
     return content.startswith('/') and content.endswith('/') and len(content) > 2
 
 # generate response
-def generate_response(msg: str) -> str:
+def generate_response(msg: str, fallback_keyword: bool = True) -> str:
     responses = []
     cut_msg = jieba.lcut(msg)
 
@@ -73,6 +73,9 @@ def generate_response(msg: str) -> str:
             responses.append(response)
     if responses:
         return random.choice(responses)
+
+    if not fallback_keyword:
+        return config.reply_unknown_response
 
     # keyword match
     for reply_item in reply_data:
@@ -97,7 +100,7 @@ auto_reply = on_regex(r'.*', rule=random_trigger, block=True, priority=100)
 
 @reply.handle()
 async def _(event: Event, bot: Bot, args: Message = CommandArg()):
-    """Kimo handler"""
+    """reply handler"""
     if msg := args.extract_plain_text():
         my_name = await get_bot_name(event, bot, config.reply_my_name)
         user_name = await get_user_name(event, bot, config.reply_sender_name)
@@ -109,14 +112,14 @@ async def _(event: Event, bot: Bot, args: Message = CommandArg()):
 
 @auto_reply.handle()
 async def _(event: Event, bot: Bot):
-    """Kimo auto handler"""
+    """auto reply handler"""
     if group_id := get_group_id(event):
         group_id = int(group_id)
         if group_id in config.reply_whitelist_groups:
             my_name = await get_bot_name(event, bot, config.reply_my_name)
             user_name = await get_user_name(event, bot, config.reply_sender_name)
             if msg := event.get_plaintext():
-                resp = generate_response(msg).format(me=my_name, name=user_name)
+                resp = generate_response(msg, False).format(me=my_name, name=user_name)
                 if resp != config.reply_unknown_response:
                     for i in resp.split('\n'):
                         await reply.send(i)
