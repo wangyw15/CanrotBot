@@ -33,6 +33,9 @@ if 'curse' not in data.aio_config.aio_disable_plugins:
 if 'daily_news' not in data.aio_config.aio_disable_plugins:
     from .plugins import daily_news
     logger.info('daily_news loaded')
+if 'experimental_features' not in data.aio_config.aio_disable_plugins:
+    from .plugins import experimental_features
+    logger.info('experimental_features loaded')
 if 'hitokoto' not in data.aio_config.aio_disable_plugins:
     from .plugins import hitokoto
     logger.info('hitokoto loaded')
