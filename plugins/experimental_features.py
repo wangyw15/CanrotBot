@@ -50,5 +50,5 @@ async def _(bot, event, msg: Message = CommandArg()):
     length = 50
     if msg := msg.extract_plain_text().strip():
         length = int(msg)
-    await generative_reponse.finish(generate_reponse(transitions, length).format(name=user_name, me=my_name))
+    await generative_reponse.finish(generate_reponse(transitions, length).format(name=user_name, me=my_name) + '\n--------------------\n实验性功能，不保证语句合理性')
     
