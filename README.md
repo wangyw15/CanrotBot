@@ -1,6 +1,6 @@
 # nonebot_plugins
 
-> 一些nonebot的插件
+> 一些nonebot的插件，这堆信息还没更新
 
 - [每日新闻](daily_news.py)
   - 从[这里](https://api.03c3.cn/zb/)来的每日新闻图片

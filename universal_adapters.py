@@ -145,7 +145,7 @@ def fetch_data(url: str) -> bytes | None:
         return resp.content
     return None
 
-async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment:
+async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment | None:
     '''Get image MessageSegement by url for different adapters'''
     if ob11 and isinstance(bot, ob11.Bot):
         return ob11.MessageSegment.image(file=img_url)
@@ -159,8 +159,9 @@ async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment:
             return kook.MessageSegment.image(url)
     elif mirai2 and isinstance(bot, mirai2.Bot):
         return mirai2.MessageSegment.image(url = img_url)
-    else:
-        return MessageSegment.text(img_url)
+    elif console and isinstance(bot, console.Bot):
+        return console.MessageSegment.text(img_url)
+    return None
 
 # detect bot type
 def is_onebot_v11(bot: Bot) -> bool:

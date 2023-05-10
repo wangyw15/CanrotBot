@@ -18,14 +18,14 @@ __plugin_meta__ = PluginMetadata(
 
 # config
 class SteamConfig(BaseModel):
-    steam_proxy: str = ''
+    aio_proxy: str = ''
     steam_region: str = 'cn'
     steam_language: str = 'zh-cn'
     
-    @validator('steam_proxy')
-    def steam_proxy_validator(cls, v):
+    @validator('aio_proxy')
+    def aio_proxy_validator(cls, v):
         if not isinstance(v, str):
-            raise ValueError('steam_proxy must be a str')
+            raise ValueError('aio_proxy must be a str')
         return v
     
     @validator('steam_region')
@@ -44,8 +44,8 @@ config = SteamConfig.parse_obj(get_driver().config)
 
 # fetch app info from appid
 def fetch_app_info(appid: int) -> dict | None:
-    if config.steam_proxy:
-        proxy = {'https': config.steam_proxy, 'http': config.steam_proxy}
+    if config.aio_proxy:
+        proxy = {'https': config.aio_proxy, 'http': config.aio_proxy}
     else:
         proxy = {}
     resp = requests.get(f'https://store.steampowered.com/api/appdetails/?appids={appid}&l={config.steam_language}&cc={config.steam_region}', 

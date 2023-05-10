@@ -8,6 +8,7 @@ import os
 
 class AIOConfig(BaseModel):
     aio_enable: bool = True # always enable aio
+    aio_proxy: str = ''
     aio_disable_plugins: list[str] = []
 
     @validator('aio_enable')
@@ -16,6 +17,15 @@ class AIOConfig(BaseModel):
             raise ValueError('aio_enable must be a bool')
         return v
     
+    @validator('aio_proxy')
+    def aio_proxy_validator(cls, v):
+        logger.error(v)
+        if not isinstance(v, str):
+            raise ValueError('aio_proxy must be a str')
+        if not v.startswith('https://') and not v.startswith('http://'):
+            raise ValueError('aio_proxy must start with https:// or http://')
+        return v
+
     @validator('aio_disable_plugins')
     def aio_disable_plugins_validator(cls, v):
         if not isinstance(v, list):
