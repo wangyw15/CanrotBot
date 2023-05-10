@@ -19,7 +19,6 @@ class AIOConfig(BaseModel):
     
     @validator('aio_proxy')
     def aio_proxy_validator(cls, v):
-        logger.error(v)
         if not isinstance(v, str):
             raise ValueError('aio_proxy must be a str')
         if not v.startswith('https://') and not v.startswith('http://'):
