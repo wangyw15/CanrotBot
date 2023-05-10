@@ -1,12 +1,19 @@
 from nonebot import on_command
 from nonebot.adapters import Message, Event, Bot
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import add_help_message, get_data
+from ..data import get_data
 from ..universal_adapters import get_user_name
 
-add_help_message('science-joke', '理科笑话')
+__plugin_meta__ = PluginMetadata(
+    name='理科笑话',
+    description='随便来点理科笑话',
+    usage='/<science-joke|science_joke|理科笑话>',
+    config=None
+)
+
 science_joke_data: list[str] = [x[1] for x in get_data('science_joke')]
 
 # message

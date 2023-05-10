@@ -1,9 +1,13 @@
 from nonebot import on_regex
 from nonebot.typing import T_State
+from nonebot.plugin import PluginMetadata
 
-from ..data import add_help_message
-
-add_help_message('任意四则运算', '简单的计算器')
+__plugin_meta__ = PluginMetadata(
+    name='计算器',
+    description='简单的计算器',
+    usage='输入表达式，以等号结尾，比如：1+1=',
+    config=None
+)
 
 calculator = on_regex(r'^([\d()\-+*/.]+)=$', block=True)
 @calculator.handle()

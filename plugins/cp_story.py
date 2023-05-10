@@ -1,11 +1,17 @@
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import get_data, add_help_message
+from ..data import get_data
 
-add_help_message('cp', '输入/cp 攻 受，生成cp文')
+__plugin_meta__ = PluginMetadata(
+    name='CP',
+    description='生成cp文',
+    usage='/<cp|cp文> <攻> <受>',
+    config=None
+)
 
 cp_stories: list[str] = [x[3] for x in get_data('cp_story')]
 

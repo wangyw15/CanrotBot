@@ -1,12 +1,17 @@
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
-import requests
+from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import add_help_message, get_data
+from ..data import get_data
 
-add_help_message('hitokoto', '/hitokoto [abcdefghijkl]')
+__plugin_meta__ = PluginMetadata(
+    name='一言',
+    description='随机一条一言',
+    usage='/<hitokoto|一言> [一言分类，默认abc]\n分类详情查看 https://developer.hitokoto.cn/sentence/#%E5%8F%A5%E5%AD%90%E7%B1%BB%E5%9E%8B-%E5%8F%82%E6%95%B0',
+    config=None
+)
 
 hitokoto_data: list[dict[str, str]] = [{'content': x[1], 'from': x[2], 'from_who': x[3], 'type': x[4], 'uuid': x[5]} for x in get_data('hitokoto')]
 

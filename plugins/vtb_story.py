@@ -1,9 +1,16 @@
 from nonebot import on_command
+from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import add_help_message, get_data
+from ..data import get_data
 
-add_help_message('vtb_story', 'vTuber小作文')
+__plugin_meta__ = PluginMetadata(
+    name='vtb小作文',
+    description='管人痴（',
+    usage='/<vtb-story|vtb_story|vtb小作文>',
+    config=None
+)
+
 vtb_story_data: list[str] = [x[1] for x in get_data('vtb_story')]
 
 # message

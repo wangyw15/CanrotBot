@@ -2,12 +2,16 @@ from nonebot import on_command, on_regex
 from nonebot.params import CommandArg
 from nonebot.adapters import Message
 from nonebot.typing import T_State
+from nonebot.plugin import PluginMetadata
 import re
 import httpx
 
-from ..data import add_help_message
-
-add_help_message('currency', '汇率')
+__plugin_meta__ = PluginMetadata(
+    name='查汇率',
+    description='可以查到工行的汇率，也可以转换汇率',
+    usage='查汇率：/<currency|汇率> <币种，中英文皆可>\n汇率转换：100jpy=或者100rmb=jpy',
+    config=None
+)
 
 _client = httpx.AsyncClient()
 

@@ -1,9 +1,16 @@
 from nonebot import on_command
+from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import add_help_message, get_data
+from ..data import get_data
 
-add_help_message('curse', '嘴臭语录')
+__plugin_meta__ = PluginMetadata(
+    name='嘴臭',
+    description='最简单的嘴臭，最极致的享受',
+    usage='/<curse|嘴臭|诅咒>',
+    config=None
+)
+
 curse_data: list[str] = [x[1] for x in get_data('curse')]
 
 # message

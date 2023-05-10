@@ -1,11 +1,15 @@
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 import requests
 
-from ..data import add_help_message
-
-add_help_message('nbnhhsh', '能不能好好说话，用法: /nbnhhsh <缩写>')
+__plugin_meta__ = PluginMetadata(
+    name='能不能好好说话',
+    description='根据简写找原话',
+    usage='/<nbnhhsh|能不能好好说话> <缩写>',
+    config=None
+)
 
 def fetch_nbnhhsh(text: str) -> list[str]:
     url = 'https://lab.magiconch.com/api/nbnhhsh/guess'

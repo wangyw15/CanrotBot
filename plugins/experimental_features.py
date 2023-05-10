@@ -1,11 +1,19 @@
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 import jieba
 import random
 
 from ..universal_adapters import get_user_name, get_bot_name
 from ..data import get_data
+
+__plugin_meta__ = PluginMetadata(
+    name='实验性功能',
+    description='还在测试中的奇妙功能',
+    usage='快速开发懒得写',
+    config=None
+)
 
 jieba.add_word('{name}')
 jieba.add_word('{me}')

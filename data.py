@@ -1,23 +1,19 @@
-from nonebot import get_driver, logger
+from nonebot import get_driver, logger, load_plugin
+from nonebot.plugin import Plugin
 from pydantic import BaseModel, validator
-from typing import TypeVar, Any
+from typing import Any
+from pathlib import Path
 import sqlite3
+import os
 
 class AIOConfig(BaseModel):
     aio_enable: bool = True # always enable aio
-    aio_data_path: str = './aio.db'
     aio_disable_plugins: list[str] = []
 
     @validator('aio_enable')
     def aio_enable_validator(cls, v):
         if not isinstance(v, bool):
             raise ValueError('aio_enable must be a bool')
-        return v
-
-    @validator('aio_data_path')
-    def aio_data_path_validator(cls, v):
-        if not isinstance(v, str):
-            raise ValueError('aio_data_path must be a str')
         return v
     
     @validator('aio_disable_plugins')
@@ -33,9 +29,15 @@ __driver = get_driver()
 __global_config = __driver.config
 aio_config = AIOConfig.parse_obj(__global_config)
 __aio_all_data: dict[str, list[list]] = {}
-aio_help_message: str = 'AIO插件帮助\n'
-__db = sqlite3.connect(aio_config.aio_data_path)
+__db = sqlite3.connect(os.path.join(os.path.dirname(__file__), 'assets.db'))
 __c = __db.cursor()
+loaded_plugins: list[Plugin] = []
+
+def load_plugins() -> None:
+    plugins_path = Path(__file__).parent.joinpath('plugins').resolve()
+    for p in plugins_path.glob('*.py'):
+        if p.name[:-3] not in aio_config.aio_disable_plugins:
+            loaded_plugins.append(load_plugin(p.resolve()))
 
 def load_all_data():
     # get all table names
@@ -59,10 +61,6 @@ def get_data(table_name: str) -> list[list]:
 
 def get_config(name: str) -> Any:
     return __global_config.dict()[name]
-
-def add_help_message(command: str, description: str):
-    global aio_help_message
-    aio_help_message += f'/{command}: {description}\n'
 
 def execute_sql(sql: str) -> list[list]:
     temp_c = __c.execute(sql)

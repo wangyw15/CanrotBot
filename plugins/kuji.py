@@ -1,9 +1,16 @@
 from nonebot import on_command
+from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import add_help_message, get_data
+from ..data import get_data
 
-add_help_message('kuji', '赛博浅草寺')
+__plugin_meta__ = PluginMetadata(
+    name='浅草寺',
+    description='赛博浅草寺',
+    usage='/<kuji|浅草寺>',
+    config=None
+)
+
 kuji_data: list[str] = [x[1] for x in get_data('kuji')]
 
 # message

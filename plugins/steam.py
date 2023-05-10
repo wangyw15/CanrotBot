@@ -7,9 +7,14 @@ from pydantic import BaseModel, validator
 import requests
 
 from ..universal_adapters import *
-from ..data import add_help_message
+from nonebot.plugin import PluginMetadata
 
-add_help_message('steam', '/steam <appid>即可获取游戏信息')
+__plugin_meta__ = PluginMetadata(
+    name='Steam助手',
+    description='现在只能根据 appid 查询信息',
+    usage='/<steam|sbeam|蒸汽|蒸汽平台> <appid>',
+    config=None
+)
 
 # config
 class SteamConfig(BaseModel):
@@ -88,7 +93,7 @@ def generate_message(app_info: dict) -> str:
     ret += f'\n链接: https://store.steampowered.com/app/{appid}'
     return ret
 
-steam = on_command('steam', aliases={'蒸汽', '蒸汽平台'}, block=True)
+steam = on_command('steam', aliases={'sbeam', '蒸汽', '蒸汽平台'}, block=True)
 @steam.handle()
 async def _(bot: Bot, args: Message = CommandArg()):
     if msg := args.extract_plain_text():

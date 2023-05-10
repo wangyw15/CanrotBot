@@ -2,12 +2,18 @@ from nonebot import get_driver, on_command
 from nonebot.adapters import Message
 from nonebot.params import Arg
 from nonebot.typing import T_State
+from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel, validator
 import random
 
-from ..data import get_data, add_help_message
+from ..data import get_data
 
-add_help_message('wordle', 'Wordle游戏，输入/wordle开始游戏')
+__plugin_meta__ = PluginMetadata(
+    name='Wordle',
+    description='Wordle小游戏',
+    usage='/wordle 开始游戏',
+    config=None
+)
 
 # config
 class WordleConfig(BaseModel):

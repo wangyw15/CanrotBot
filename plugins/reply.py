@@ -9,7 +9,7 @@ import jieba
 import re
 
 from ..universal_adapters import *
-from ..data import get_data, add_help_message
+from ..data import get_data
 
 # config
 class ReplyConfig(BaseModel):
@@ -38,7 +38,13 @@ class ReplyConfig(BaseModel):
         return v
 
 config = ReplyConfig.parse_obj(get_driver().config)
-add_help_message('reply', f'根据后面输入的内容回复\n也有{config.reply_auto_rate * 100}%的几率触发机器人自动回复')
+
+__plugin_meta__ = PluginMetadata(
+    name='自动回复',
+    description='自动回复，附赠自动水群功能',
+    usage=f'/<reply|回复|说话|回答我> <要说的话>，或者也有{config.reply_auto_rate * 100}%的几率触发机器人自动回复',
+    config=ReplyConfig
+)
 
 # load data
 reply_data: list[dict[str, str | None]] = [{ 'pattern': x[1], 'response': x[2], 'character': x[3] } for x in get_data('reply')]

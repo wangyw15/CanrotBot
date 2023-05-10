@@ -1,9 +1,16 @@
 from nonebot import on_command
+from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import add_help_message, get_data
+from ..data import get_data
 
-add_help_message('crazy-love', '发癫文')
+__plugin_meta__ = PluginMetadata(
+    name='发癫',
+    description='随机输出一偏发癫文',
+    usage='/<crazy_love|crazy-love|发癫|发电>',
+    config=None
+)
+
 crazy_love_data: list[str] = [x[1] for x in get_data('crazy_love')]
 
 # message

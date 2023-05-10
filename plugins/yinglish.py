@@ -3,13 +3,17 @@ from nonebot import get_driver, on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from pydantic import BaseModel, validator
+from nonebot.plugin import PluginMetadata
 import random
 import jieba
 import jieba.posseg as pseg
 
-from ..data import add_help_message
-
-add_help_message('yinglish', '/[淫语|yinglish] <内容> [淫乱度]')
+__plugin_meta__ = PluginMetadata(
+    name='yinglish',
+    description='能把中文翻译成淫语的翻译机！',
+    usage='/<淫语|yinglish> <内容> [淫乱度]',
+    config=None
+)
 
 # config
 class YinglishConfig(BaseModel):
