@@ -35,11 +35,11 @@ async def _(state: T_State, args: Message = CommandArg()):
 
 @guess_number.got('guess')
 async def _(state: T_State, guess: Message = Arg()):
+    answer: str = state[GUESS_NUMBER]
     guess = guess.extract_plain_text()
     if guess == 'stop':
         await guess_number.finish(f'游戏结束，答案是{state[GUESS_NUMBER]}')
-    answer: str = state[GUESS_NUMBER]
-    if guess == answer:
+    elif guess == answer:
         await guess_number.finish(f'恭喜你猜对了！')
     elif not guess.isdigit():
         await guess_number.reject('你输入的不是数字')
@@ -51,6 +51,6 @@ async def _(state: T_State, guess: Message = Arg()):
         for i in range(len(guess)):
             if guess[i] in answer:
                 a += 1
-            elif guess[i] == answer[i]:
+            if guess[i] == answer[i]:
                 b += 1
         await guess_number.reject(f'{a}A{b}B')
