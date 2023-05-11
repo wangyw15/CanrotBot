@@ -12,6 +12,7 @@
 | 汇率转换 | 就是汇率转换 |
 | 嘴臭 | 发个嘴臭文 |
 | 每日新闻 | 从[这里](https://api.03c3.cn/zb/)来的每日新闻图片 |
+| 猜数字 | 详见[下面](#猜数字规则) |
 | 一言 | 来自于[一言](https://hitokoto.cn/)的[句子包](https://github.com/hitokoto-osc/sentences-bundle) |
 | 浅草寺 | 浅草寺抽签 |
 | 能不能好好说话 | 调用[能不能好好说话？](https://lab.magiconch.com/nbnhhsh/)查找全名 |
