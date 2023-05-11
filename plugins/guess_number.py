@@ -31,7 +31,7 @@ async def _(state: T_State, args: Message = CommandArg()):
         if msg.isdigit():
             num_len = int(msg)
     state[GUESS_NUMBER] = generate_number(num_len)
-    await guess_number.send(f'开始一轮猜数游戏（{num_len} 位）')
+    await guess_number.send(f'开始一轮猜数游戏（{len(state[GUESS_NUMBER])} 位）')
 
 @guess_number.got('guess')
 async def _(state: T_State, guess: Message = Arg()):
