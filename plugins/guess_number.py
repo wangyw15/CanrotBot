@@ -45,6 +45,8 @@ async def _(state: T_State, guess: Message = Arg()):
         await guess_number.reject('你输入的不是数字')
     elif len(guess) != len(answer):
         await guess_number.reject(f'你输入的数字长度不是{len(answer)}')
+    elif len(set(guess)) != len(answer):
+        await guess_number.reject(f'你输入的数字有重复位')
     else:
         a = 0
         b = 0
