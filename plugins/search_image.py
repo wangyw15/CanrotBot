@@ -1,25 +1,18 @@
 from nonebot import on_command, get_driver
 from nonebot.params import CommandArg, Arg
-from nonebot.adapters import Bot, Event, Message
+from nonebot.adapters import Bot, Message
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel, validator
 import urllib.parse
 import httpx
 
-from ..universal_adapters import is_onebot_v11, is_onebot_v12, is_console, ob11, ob12
-
-__plugin_meta__ = PluginMetadata(
-    name='识图',
-    description='通过 SauceNAO.com 或者 trace.moe 识图，目前仅支持QQ直接发送图片搜索',
-    usage='先发送/<识图|搜图>，再发图片或者图片链接',
-    config=None
-)
+from ..universal_adapters import is_onebot_v11, is_onebot_v12, ob11, ob12
 
 class SearchImageConfig(BaseModel):
     canrot_proxy: str = ''
     saucenao_api_key: str = ''
-    sauce_nao_numres: int = 5
+    search_result_count: int = 5
 
     @validator('saucenao_api_key')
     def saucenao_api_key_validator(cls, v):
@@ -27,11 +20,18 @@ class SearchImageConfig(BaseModel):
             raise ValueError('saucenao_api_key must be a str')
         return v
     
-    @validator('sauce_nao_numres')
-    def sauce_nao_numres_validator(cls, v):
+    @validator('search_result_count')
+    def search_result_count_validator(cls, v):
         if (not v) or (not isinstance(v, int)):
-            raise ValueError('sauce_nao_numres must be a int')
+            raise ValueError('search_result_count must be a int')
         return v
+
+__plugin_meta__ = PluginMetadata(
+    name='识图',
+    description='通过 SauceNAO.com 或者 trace.moe 识图，目前仅支持QQ直接发送图片搜索',
+    usage='先发送/<识图|搜图>，再发图片或者图片链接',
+    config=SearchImageConfig
+)
 
 _config = SearchImageConfig.parse_obj(get_driver().config)
 if _config.canrot_proxy:
@@ -42,7 +42,7 @@ _client.timeout = 10
 
 async def search_image_from_saucenao(img_url: str) -> dict | None:
     api_url = 'https://saucenao.com/search.php?db=999&output_type=2&testmode=1&numres={numres}&api_key={api_key}&url={url}'
-    resp = await _client.get(api_url.format(api_key=_config.saucenao_api_key, url=urllib.parse.quote_plus(img_url), numres=_config.sauce_nao_numres))
+    resp = await _client.get(api_url.format(api_key=_config.saucenao_api_key, url=urllib.parse.quote_plus(img_url), numres=_config.search_result_count))
     if resp.is_success and resp.status_code == 200:
         return resp.json()
     return None
@@ -262,7 +262,7 @@ def generate_cq_message_from_tracemoe_result(api_result: dict) -> str:
     if api_result['error']:
         return '搜索失败: ' + api_result['error']
     msg += f'已搜索 {api_result["frameCount"]} 帧\n'
-    for result in api_result['result']:
+    for result in api_result['result'][0:_config.search_result_count]:
         msg += '--------------------\n'
         msg += f'[CQ:image,file={result["image"]}]\n'
         msg += f'相似度: {round(result["similarity"]*100, 2)}%\n'
