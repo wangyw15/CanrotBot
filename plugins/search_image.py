@@ -348,9 +348,11 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
             msg_nodes = generate_onebot_group_forward_message(splitted_msg, await get_bot_name(event, bot, 'Canrot'), bot.self_id)
             if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
                 await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
-            elif isinstance(event, ob11.PrivateMessageEvent) or isinstance(event, ob12.PrivateMessageEvent):
-                await bot.send_group_forward_msg(user_id=event.user_id, messages=msg_nodes)
-            await _search_image.finish()
+                await _search_image.finish()
+            if is_onebot_v11(bot):
+                await _search_image.finish(ob11.Message(msg))
+            elif is_onebot_v12(bot):
+                await _search_image.finish(ob12.Message(msg))
         else:
             await _search_image.finish(msg)
     else:

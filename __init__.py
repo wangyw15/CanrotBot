@@ -31,9 +31,7 @@ async def _(bot: Bot, event: Event):
         msg_nodes = generate_onebot_group_forward_message(splitted_msg, await get_bot_name(event, bot, 'Canrot'), bot.self_id)
         if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
             await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
-        elif isinstance(event, ob11.PrivateMessageEvent) or isinstance(event, ob12.PrivateMessageEvent):
-            await bot.send_group_forward_msg(user_id=event.user_id, messages=msg_nodes)
-        await plugin_help.finish()
+            await plugin_help.finish()
     await plugin_help.finish('机器人帮助：\n\n' + msg)
 
 execute_sql = on_command('sql', aliases={'SQL'}, block=True)
