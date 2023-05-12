@@ -6,13 +6,11 @@ from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel, validator
 import httpx
 
-from ..universal_adapters import is_onebot_v11, is_onebot_v12, is_mirai2, is_kook, is_console, get_image_message_from_url, ob11, ob12
-
-from nonebot import logger
+from ..universal_adapters import is_onebot_v11, is_onebot_v12, is_console, ob11, ob12
 
 __plugin_meta__ = PluginMetadata(
     name='识图',
-    description='通过 SauceNAO 识图，目前仅支持QQ',
+    description='通过 SauceNAO.com 或者 trace.moe 识图，目前仅支持QQ直接发送图片搜索',
     usage='先发送/<识图>，再发图片或者图片链接',
     config=None
 )
@@ -265,17 +263,17 @@ async def _(state: T_State, bot: Bot, args: Message = CommandArg()):
 async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
     # get img url
     img_url: str = ''
-    if is_console(bot):
-        img_url = image.extract_plain_text()
-    elif is_onebot_v11(bot) or is_onebot_v12(bot):
+    if is_onebot_v11(bot) or is_onebot_v12(bot):
         if image[0].type == 'image':
             img_url = image[0].data['url']
         elif image[0].type == 'text':
             img_url = image[0].data['text']
         else:
-            await _search_image.reject('请重新发送图片或图片链接')
+            await _search_image.finish('不是图片或者链接，停止搜图')
     else:
-        _search_image.finish('此平台暂未适配')
+        img_url = image.extract_plain_text()
+        if (not img_url) or (not (img_url.startswith('https://') or img_url.startswith('http://'))):
+            await _search_image.finish('不是链接，停止搜图')
     img_url = img_url.strip()
     
     # search
