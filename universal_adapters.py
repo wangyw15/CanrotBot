@@ -1,6 +1,6 @@
 from nonebot.adapters import Bot, Event, Message, MessageSegment
 from nonebot.permission import Permission
-import requests
+import httpx
 
 # different bots
 try:
@@ -138,9 +138,11 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
             return user_info.nickname
     return default
 
-def fetch_data(url: str) -> bytes | None:
+_client = httpx.AsyncClient()
+
+async def fetch_data(url: str) -> bytes | None:
     '''Fetch bytes from url'''
-    resp = requests.get(url)
+    resp = await _client.get(url)
     if resp.ok and resp.status_code == 200:
         return resp.content
     return None
@@ -153,7 +155,7 @@ async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment |
         resp = await bot.upload_file(type='url', url=img_url)
         return ob12.MessageSegment.image(file_id=resp.file_id)
     elif kook and isinstance(bot, kook.Bot):
-        img_data = fetch_data(img_url)
+        img_data = await fetch_data(img_url)
         if img_data:
             url = await bot.upload_file(img_data)
             return kook.MessageSegment.image(url)

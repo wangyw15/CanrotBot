@@ -4,7 +4,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.rule import Rule
 from pydantic import BaseModel, validator
-import requests
+import httpx
 
 from ..universal_adapters import *
 from nonebot.plugin import PluginMetadata
@@ -41,24 +41,19 @@ class SteamConfig(BaseModel):
         return v
 
 config = SteamConfig.parse_obj(get_driver().config)
+_client = httpx.AsyncClient()
 
 # fetch app info from appid
-def fetch_app_info(appid: int) -> dict | None:
+async def fetch_app_info(appid: int) -> dict | None:
     if config.aio_proxy:
         proxy = {'https': config.aio_proxy, 'http': config.aio_proxy}
     else:
         proxy = {}
-    resp = requests.get(f'https://store.steampowered.com/api/appdetails/?appids={appid}&l={config.steam_language}&cc={config.steam_region}', 
+    resp = await _client.get(f'https://store.steampowered.com/api/appdetails/?appids={appid}&l={config.steam_language}&cc={config.steam_region}', 
                         proxies=proxy,
                         headers={'Accept-Language': config.steam_language})
     if resp.ok and resp.status_code == 200:
         return resp.json()
-    return None
-
-def fetch_data(url: str) -> bytes | None:
-    resp = requests.get(url)
-    if resp.ok and resp.status_code == 200:
-        return resp.content
     return None
 
 def generate_message(app_info: dict) -> str:
