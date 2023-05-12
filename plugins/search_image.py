@@ -344,23 +344,30 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
                 msg = generate_cq_message_from_tracemoe_result(search_resp)
             else:
                 await _search_image.finish("搜索失败")
-
         if is_onebot_v11(bot) or is_onebot_v12(bot):
-            splitted_msg: list[str] = msg.split(_SPLIT_LINE)
-            msg_nodes = []
-            for msg in splitted_msg:
-                msg_nodes.append({
-                    'type': 'node',
-                    'data': {
-                        'name': bot.self_name,
-                        'uin': event.self_id,
-                        'content': msg
-                    }
-                })
-            if is_onebot_v11(bot):
-                await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
-            elif is_onebot_v12(bot):
-                await bot.send_group_forward_msg(group=event.group_id, messages=msg_nodes)
+            if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
+                splitted_msg: list[str] = msg.split(_SPLIT_LINE)
+                msg_nodes = []
+                for msg in splitted_msg:
+                    msg_nodes.append({
+                        'type': 'node',
+                        'data': {
+                            'name': str(bot.self_name),
+                            'uin': bot.self_id,
+                            'content': str(msg)
+                        }
+                    })
+                if is_onebot_v11(bot):
+                    await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
+                    await _search_image.finish()
+                elif is_onebot_v12(bot):
+                    await bot.send_group_forward_msg(group=event.group_id, messages=msg_nodes)
+                    await _search_image.finish()
+            else:
+                if is_onebot_v11(bot):
+                    await _search_image.finish(ob11.Message(msg))
+                elif is_onebot_v12(bot):
+                    await _search_image.finish(ob12.Message(msg))
         else:
             await _search_image.finish(msg)
     else:
