@@ -19,6 +19,7 @@
 | 自动回复 | 词库来源于[Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)，机器人根据词库来概率自动水群 |
 | roll 个老婆 | 从 [waifu.pics](https://waifu.pics/) 随机抽取纸片人 |
 | 理科笑话 | 随机的理科笑话 |
+| 搜图 | 从 [SauceNAO](https://saucenao.com) 或者 [trace.moe](https://trace.moe) 搜图 |
 | Steam 助手 | 根据 appid 查询游戏信息 |
 | 舔狗语录 | 随机的舔狗语录 |
 | vtb小作文 | 随机的管人小作文 |
@@ -43,8 +44,8 @@
 - [ ] 电子宠物
   - 还没想好
 - [ ] 象棋
-- [ ] SaucsNAO 查图
-  - 还在看
+- [x] SaucsNAO 查图
+  - ~~还在看~~
 - [ ] 抽签
   - 替换第三方插件
 - [ ] 考虑删除 meme 图

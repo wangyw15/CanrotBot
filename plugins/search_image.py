@@ -7,7 +7,7 @@ from pydantic import BaseModel, validator
 import urllib.parse
 import httpx
 
-from ..universal_adapters import is_onebot_v11, is_onebot_v12, ob11, ob12
+from ..universal_adapters import is_onebot_v11, is_onebot_v12, ob11, ob12, get_bot_name
 
 
 class SearchImageConfig(BaseModel):
@@ -352,9 +352,9 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
                     msg_nodes.append({
                         'type': 'node',
                         'data': {
-                            'name': str(bot.self_name),
+                            'name': await get_bot_name(event, bot, 'Canrot'),
                             'uin': bot.self_id,
-                            'content': str(msg)
+                            'content': msg.strip()
                         }
                     })
                 if is_onebot_v11(bot):
