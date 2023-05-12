@@ -166,16 +166,6 @@ async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment |
         return console.MessageSegment.text(img_url)
     return None
 
-async def get_url_from_image_message(bot: Bot, msg: Message) -> str | None:
-    cq_image_url_pattern = r'\[CQ:image(?:,\S+)*,url=([^,]+)(?:,\S+)*\]'
-    if ob11 and isinstance(bot, ob11.Bot) and isinstance(msg, ob11.Message):
-        cqcode = str(msg[0])
-        return re.match(cq_image_url_pattern, cqcode).group(1)
-    elif ob12 and isinstance(bot, ob12.Bot) and isinstance(msg, ob12.Message):
-        cqcode = str(msg[0])
-        return re.match(cq_image_url_pattern, cqcode).group(1)
-    return None
-
 # detect bot type
 def is_onebot_v11(bot: Bot) -> bool:
     if ob11:
