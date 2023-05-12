@@ -282,8 +282,8 @@ async def _(state: T_State, bot: Bot, args: Message = CommandArg()):
             api = 'saucenao'
         elif msg == 'tracemoe':
             api = 'tracemoe'
-        elif msg == 'help':
-            await _search_image.finish('可选择搜图 API:\ntracemoe(trace.moe) 只能搜番剧\naucenao(SauceNAO.com) 默认')
+        elif msg == 'help' or msg == '帮助':
+            await _search_image.finish('可选择搜图 API:\ntracemoe (trace.moe) 只能搜番剧\nsaucenao (saucenao.com) 默认')
         else:
             await _search_image.finish('无效的搜图网站选项')
     state['SEARCH_IMAGE_API'] = api
