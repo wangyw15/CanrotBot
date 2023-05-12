@@ -21,7 +21,8 @@ def generate_number(num_len: int) -> str:
     random.shuffle(nums)
     return ''.join(nums[:num_len])
 
-GUESS_NUMBER = 'GUESS_NUMBER'
+_GUESS_NUMBER = 'GUESS_NUMBER'
+_GUESS_NUMER_TURNS = 'GUESS_NUMER_TURNS'
 
 guess_number = on_command('guess_number', aliases={'guess-number', '猜数字', '猜数'}, block=True)
 @guess_number.handle()
@@ -30,15 +31,16 @@ async def _(state: T_State, args: Message = CommandArg()):
     if msg := args.extract_plain_text():
         if msg.isdigit():
             num_len = int(msg)
-    state[GUESS_NUMBER] = generate_number(num_len)
-    await guess_number.send(f'开始一轮猜数游戏（{len(state[GUESS_NUMBER])} 位）')
+    state[_GUESS_NUMBER] = generate_number(num_len)
+    state[_GUESS_NUMER_TURNS] = 0
+    await guess_number.send(f'开始一轮猜数游戏（{len(state[_GUESS_NUMBER])} 位）')
 
 @guess_number.got('guess')
 async def _(state: T_State, guess: Message = Arg()):
-    answer: str = state[GUESS_NUMBER]
+    answer: str = state[_GUESS_NUMBER]
     guess = guess.extract_plain_text()
     if guess == 'stop':
-        await guess_number.finish(f'游戏结束，答案是{state[GUESS_NUMBER]}')
+        await guess_number.finish(f'游戏结束\n答案是{state[_GUESS_NUMBER]}\n共用了{state[_GUESS_NUMER_TURNS]}轮')
     elif guess == answer:
         await guess_number.finish(f'恭喜你猜对了！')
     elif not guess.isdigit():
@@ -48,6 +50,7 @@ async def _(state: T_State, guess: Message = Arg()):
     elif len(set(guess)) != len(answer):
         await guess_number.reject(f'你输入的数字有重复位')
     else:
+        state[_GUESS_NUMER_TURNS] += 1
         a = 0
         b = 0
         for i in range(len(guess)):
