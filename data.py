@@ -6,7 +6,7 @@ from pathlib import Path
 import sqlite3
 import os
 
-class AIOConfig(BaseModel):
+class CanrotConfig(BaseModel):
     canrot_enable: bool = True # always enable aio
     canrot_proxy: str = ''
     canrot_disable_plugins: list[str] = []
@@ -36,7 +36,7 @@ class AIOConfig(BaseModel):
 
 __driver = get_driver()
 __global_config = __driver.config
-canrot_config = AIOConfig.parse_obj(__global_config)
+canrot_config = CanrotConfig.parse_obj(__global_config)
 __aio_all_data: dict[str, list[list]] = {}
 __db = sqlite3.connect(os.path.join(os.path.dirname(__file__), 'assets.db'))
 __c = __db.cursor()

@@ -7,7 +7,7 @@ from pydantic import BaseModel, validator
 import urllib.parse
 import httpx
 
-from ..universal_adapters import is_onebot_v11, is_onebot_v12, ob11, ob12, get_bot_name
+from ..universal_adapters import *
 
 
 class SearchImageConfig(BaseModel):
@@ -41,8 +41,6 @@ if _config.canrot_proxy:
 else:
     _client = httpx.AsyncClient()
 _client.timeout = 10
-_SPLIT_LINE = "--------------------"
-
 
 async def search_image_from_saucenao(img_url: str) -> dict | None:
     api_url = "https://saucenao.com/search.php?db=999&output_type=2&testmode=1&numres={numres}&api_key={api_key}&url={url}"
@@ -87,7 +85,7 @@ def generate_cq_message_from_saucenao_result(api_result: dict) -> Message:
     results: list[dict] = api_result["results"]
     for api_result in results:
         # split line
-        msg += _SPLIT_LINE + "\n"
+        msg += MESSAGE_SPLIT_LINE + "\n"
 
         header: dict = api_result["header"]
         data: dict = api_result["data"]
@@ -277,7 +275,7 @@ def generate_cq_message_from_tracemoe_result(api_result: dict) -> str:
         return "搜索失败: " + api_result["error"]
     msg += f'已搜索 {api_result["frameCount"]} 帧\n'
     for result in api_result["result"][0 : _config.search_result_count]:
-        msg += _SPLIT_LINE + "\n"
+        msg += MESSAGE_SPLIT_LINE + "\n"
         msg += f'[CQ:image,file={result["image"]}]\n'
         msg += f'相似度: {round(result["similarity"]*100, 2)}%\n'
         msg += f'番剧文件名: {result["filename"]}\n'
@@ -346,17 +344,9 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
                 await _search_image.finish("搜索失败")
         if is_onebot_v11(bot) or is_onebot_v12(bot):
             if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
-                splitted_msg: list[str] = msg.split(_SPLIT_LINE)
-                msg_nodes = []
-                for msg in splitted_msg:
-                    msg_nodes.append({
-                        'type': 'node',
-                        'data': {
-                            'name': await get_bot_name(event, bot, 'Canrot'),
-                            'uin': bot.self_id,
-                            'content': msg.strip()
-                        }
-                    })
+                splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
+                splitted_msg.insert(0, f'原图\n[CQ:image,file={img_url}]')
+                msg_nodes = generate_onebot_group_forward_message(splitted_msg, await get_bot_name(event, bot, 'Canrot'), bot.self_id)
                 if is_onebot_v11(bot):
                     await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
                     await _search_image.finish()

@@ -49,6 +49,9 @@ if ob11:
 if mirai2:
     GROUP_OWNER |= mirai2.GROUP_OWNER
 
+# split line
+MESSAGE_SPLIT_LINE = "--------------------"
+
 def get_group_id(event: Event) -> str | None:
     '''Get group id from different adapters'''
     if ob11 and isinstance(event, ob11.GroupMessageEvent) or ob12 and isinstance(event, ob12.GroupMessageEvent):
@@ -138,6 +141,20 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
             user_info = await bot.user_view(user_id=bot.self_id, group_id=event.group_id)
             return user_info.nickname
     return default
+
+def generate_onebot_group_forward_message(content: list[str], name: str, id: str) -> list[dict]:
+    '''Generate group forward message for OneBot'''
+    msg_nodes: list[dict] = []
+    for msg in content:
+        msg_nodes.append({
+            'type': 'node',
+            'data': {
+                'name': name,
+                'uin': id,
+                'content': msg.strip()
+            }
+        })
+    return msg_nodes
 
 _client = httpx.AsyncClient()
 
