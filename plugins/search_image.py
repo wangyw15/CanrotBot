@@ -268,7 +268,7 @@ def generate_cq_message_from_tracemoe_result(api_result: dict) -> str:
         msg += f'相似度: {round(result["similarity"]*100, 2)}%\n'
         msg += f'番剧文件名: {result["filename"]}\n'
         msg += f'第 {result["episode"]} 集\n'
-        msg += f'时间: {seconds_to_time(result["from"])}-{seconds_to_time(result["to"])}\n'
+        msg += f'时间: {seconds_to_time(result["from"])} / {seconds_to_time(result["to"])}\n'
         msg += f'AniList 链接: https://anilist.co/anime/{result["anilist"]}\n'
     return msg
 
