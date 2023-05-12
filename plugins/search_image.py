@@ -343,21 +343,14 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
             else:
                 await _search_image.finish("搜索失败")
         if is_onebot_v11(bot) or is_onebot_v12(bot):
+            splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
+            splitted_msg.insert(0, f'原图\n[CQ:image,file={img_url}]')
+            msg_nodes = generate_onebot_group_forward_message(splitted_msg, await get_bot_name(event, bot, 'Canrot'), bot.self_id)
             if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
-                splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
-                splitted_msg.insert(0, f'原图\n[CQ:image,file={img_url}]')
-                msg_nodes = generate_onebot_group_forward_message(splitted_msg, await get_bot_name(event, bot, 'Canrot'), bot.self_id)
-                if is_onebot_v11(bot):
-                    await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
-                    await _search_image.finish()
-                elif is_onebot_v12(bot):
-                    await bot.send_group_forward_msg(group=event.group_id, messages=msg_nodes)
-                    await _search_image.finish()
-            else:
-                if is_onebot_v11(bot):
-                    await _search_image.finish(ob11.Message(msg))
-                elif is_onebot_v12(bot):
-                    await _search_image.finish(ob12.Message(msg))
+                await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
+            elif isinstance(event, ob11.PrivateMessageEvent) or isinstance(event, ob12.PrivateMessageEvent):
+                await bot.send_group_forward_msg(user_id=event.user_id, messages=msg_nodes)
+            await _search_image.finish()
         else:
             await _search_image.finish(msg)
     else:

@@ -27,22 +27,13 @@ async def _(bot: Bot, event: Event):
         if plugin.metadata:
             msg += f'{plugin.metadata.name}\n描述：{plugin.metadata.description}\n用法：{plugin.metadata.usage}\n{MESSAGE_SPLIT_LINE}\n'
     if is_onebot_v11(bot) or is_onebot_v12(bot):
+        splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
+        msg_nodes = generate_onebot_group_forward_message(splitted_msg, await get_bot_name(event, bot, 'Canrot'), bot.self_id)
         if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
-            splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
-            bot_name = await get_bot_name(event, bot, 'Canrot')
-            bot_id = bot.self_id
-            msg_nodes = generate_onebot_group_forward_message(splitted_msg, bot_name, bot_id)
-            if is_onebot_v11(bot):
-                await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
-                await plugin_help.finish()
-            elif is_onebot_v12(bot):
-                await bot.send_group_forward_msg(group=event.group_id, messages=msg_nodes)
-                await plugin_help.finish()
-        else:
-            if is_onebot_v11(bot):
-                await plugin_help.finish(ob11.Message(msg))
-            elif is_onebot_v12(bot):
-                await plugin_help.finish(ob12.Message(msg))
+            await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
+        elif isinstance(event, ob11.PrivateMessageEvent) or isinstance(event, ob12.PrivateMessageEvent):
+            await bot.send_group_forward_msg(user_id=event.user_id, messages=msg_nodes)
+        await plugin_help.finish()
     await plugin_help.finish('机器人帮助：\n\n' + msg)
 
 execute_sql = on_command('sql', aliases={'SQL'}, block=True)
