@@ -4,6 +4,7 @@ from nonebot.adapters import Bot, Event, Message
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel, validator
+import urllib.parse
 import httpx
 
 from ..universal_adapters import is_onebot_v11, is_onebot_v12, is_console, ob11, ob12
@@ -11,7 +12,7 @@ from ..universal_adapters import is_onebot_v11, is_onebot_v12, is_console, ob11,
 __plugin_meta__ = PluginMetadata(
     name='识图',
     description='通过 SauceNAO.com 或者 trace.moe 识图，目前仅支持QQ直接发送图片搜索',
-    usage='先发送/<识图>，再发图片或者图片链接',
+    usage='先发送/<识图|搜图>，再发图片或者图片链接',
     config=None
 )
 
@@ -37,21 +38,29 @@ if _config.canrot_proxy:
     _client = httpx.AsyncClient(proxies=_config.canrot_proxy)
 else:
     _client = httpx.AsyncClient()
+_client.timeout = 10
 
 async def search_image_from_saucenao(img_url: str) -> dict | None:
     api_url = 'https://saucenao.com/search.php?db=999&output_type=2&testmode=1&numres={numres}&api_key={api_key}&url={url}'
-    resp = await _client.get(api_url.format(api_key=_config.saucenao_api_key, url=img_url, numres=_config.sauce_nao_numres))
+    resp = await _client.get(api_url.format(api_key=_config.saucenao_api_key, url=urllib.parse.quote_plus(img_url), numres=_config.sauce_nao_numres))
     if resp.is_success and resp.status_code == 200:
         return resp.json()
     return None
 
-def generate_cq_message_from_saucenao_result(result: dict) -> Message:
+async def search_image_from_tracemoe(img_url: str) -> dict | None:
+    api_url = 'https://api.trace.moe/search?url={url}'
+    resp = await _client.get(api_url.format(url=urllib.parse.quote_plus(img_url)))
+    if resp.is_success and resp.status_code == 200:
+        return resp.json()
+    return None
+
+def generate_cq_message_from_saucenao_result(api_result: dict) -> Message:
     msg = ''
 
     # limit
-    if 'header' in result:
+    if 'header' in api_result:
         msg += '搜图次数限制: \n'
-        header: dict = result['header']
+        header: dict = api_result['header']
         if 'long_remaining' in header:
             if header['long_remaining'] < 1:
                 return '今日搜索次数已用完'
@@ -63,21 +72,21 @@ def generate_cq_message_from_saucenao_result(result: dict) -> Message:
 
     # results
     msg += '搜图结果: \n'
-    results: list[dict] = result['results']
-    for result in results:
+    results: list[dict] = api_result['results']
+    for api_result in results:
         # split line
         msg += '--------------------\n'
 
-        header: dict = result['header']
-        data: dict = result['data']
-
-        # similarity
-        msg += '相似度: ' + header['similarity'] + '\n'
+        header: dict = api_result['header']
+        data: dict = api_result['data']
 
         # thumbnail
         if 'thumbnail' in header:
             msg += '缩略图: \n'
             msg += f'[CQ:image,file={header["thumbnail"]}]\n'
+
+        # similarity
+        msg += '相似度: ' + header['similarity'] + '%\n'
         
         # video
         if 'est_time' in data:
@@ -241,15 +250,40 @@ def generate_cq_message_from_saucenao_result(result: dict) -> Message:
                 msg += url + '\n'
     return msg
 
+def seconds_to_time(seconds: float) -> str:
+    ms = int(seconds % 1 * 1000)
+    seconds = int(seconds)
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    return f'{str(h).zfill(2)}:{str(m).zfill(2)}:{str(s).zfill(2)}.{str(ms).zfill(3)}'
+
+def generate_cq_message_from_tracemoe_result(api_result: dict) -> str:
+    msg = ''
+    if api_result['error']:
+        return '搜索失败: ' + api_result['error']
+    msg += f'已搜索 {api_result["frameCount"]} 帧\n'
+    for result in api_result['result']:
+        msg += '--------------------\n'
+        msg += f'[CQ:image,file={result["image"]}]\n'
+        msg += f'相似度: {round(result["similarity"]*100, 2)}%\n'
+        msg += f'番剧文件名: {result["filename"]}\n'
+        msg += f'第 {result["episode"]} 集\n'
+        msg += f'时间: {seconds_to_time(result["from"])}-{seconds_to_time(result["to"])}\n'
+        msg += f'AniList 链接: https://anilist.co/anime/{result["anilist"]}\n'
+    return msg
+
 _search_image = on_command('识图', aliases={'搜图'}, block=True)
 @_search_image.handle()
 async def _(state: T_State, bot: Bot, args: Message = CommandArg()):
     api = 'saucenao'
     if msg := args.extract_plain_text():
+        msg = msg.lower()
         if msg == 'saucenao':
             api = 'saucenao'
         elif msg == 'tracemoe':
             api = 'tracemoe'
+        elif msg == 'help':
+            await _search_image.finish('可选择搜图 API:\ntracemoe(trace.moe) 只能搜番剧\naucenao(SauceNAO.com) 默认')
         else:
             await _search_image.finish('无效的搜图网站选项')
     state['SEARCH_IMAGE_API'] = api
@@ -260,36 +294,40 @@ async def _(state: T_State, bot: Bot, args: Message = CommandArg()):
         await _search_image.send('请发送图片链接')
 
 @_search_image.got('image')
-async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
+async def _(state: T_State, bot: Bot, image: Message = Arg()):
     # get img url
     img_url: str = ''
     if is_onebot_v11(bot) or is_onebot_v12(bot):
         if image[0].type == 'image':
-            img_url = image[0].data['url']
+            img_url = image[0].data['url'].strip()
         elif image[0].type == 'text':
-            img_url = image[0].data['text']
+            img_url = image[0].data['text'].strip()
         else:
             await _search_image.finish('不是图片或者链接，停止搜图')
     else:
-        img_url = image.extract_plain_text()
-        if (not img_url) or (not (img_url.startswith('https://') or img_url.startswith('http://'))):
-            await _search_image.finish('不是链接，停止搜图')
-    img_url = img_url.strip()
+        img_url = image.extract_plain_text().strip()
     
     # search
-    if img_url:
+    if img_url and (img_url.startswith('https://') or img_url.startswith('http://')):
         api: str = state['SEARCH_IMAGE_API']
         if api == 'saucenao':
             search_resp = await search_image_from_saucenao(img_url)
             if search_resp:
                 msg = generate_cq_message_from_saucenao_result(search_resp)
-                if is_onebot_v11(bot):
-                    await _search_image.finish(ob11.Message(msg))
-                elif is_onebot_v12(bot):
-                    await _search_image.finish(ob12.Message(msg))
-                else:
-                    await _search_image.finish(msg)
             else:
                 await _search_image.finish('搜索失败')
+        elif api == 'tracemoe':
+            search_resp = await search_image_from_tracemoe(img_url)
+            if search_resp:
+                msg = generate_cq_message_from_tracemoe_result(search_resp)
+            else:
+                await _search_image.finish('搜索失败')
+        
+        if is_onebot_v11(bot):
+            await _search_image.finish(ob11.Message(msg))
+        elif is_onebot_v12(bot):
+            await _search_image.finish(ob12.Message(msg))
+        else:
+            await _search_image.finish(msg)
     else:
-        await _search_image.finish('图片链接错误')
+        await _search_image.finish('图片链接错误，停止搜图')
