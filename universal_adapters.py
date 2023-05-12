@@ -143,7 +143,7 @@ _client = httpx.AsyncClient()
 async def fetch_data(url: str) -> bytes | None:
     '''Fetch bytes from url'''
     resp = await _client.get(url)
-    if resp.ok and resp.status_code == 200:
+    if resp.is_success and resp.status_code == 200:
         return resp.content
     return None
 
@@ -163,6 +163,13 @@ async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment |
         return mirai2.MessageSegment.image(url = img_url)
     elif console and isinstance(bot, console.Bot):
         return console.MessageSegment.text(img_url)
+    return None
+
+async def get_url_from_image_message(bot: Bot, msg: Message) -> str | None:
+    if ob11 and isinstance(bot, ob11.Bot) and isinstance(msg, ob11.Message):
+        segment = msg[0]
+        # segment.
+        pass
     return None
 
 # detect bot type

@@ -7,36 +7,36 @@ import sqlite3
 import os
 
 class AIOConfig(BaseModel):
-    aio_enable: bool = True # always enable aio
-    aio_proxy: str = ''
-    aio_disable_plugins: list[str] = []
+    canrot_enable: bool = True # always enable aio
+    canrot_proxy: str = ''
+    canrot_disable_plugins: list[str] = []
 
-    @validator('aio_enable')
-    def aio_enable_validator(cls, v):
+    @validator('canrot_enable')
+    def canrot_enable_validator(cls, v):
         if not isinstance(v, bool):
-            raise ValueError('aio_enable must be a bool')
+            raise ValueError('canrot_enable must be a bool')
         return v
     
-    @validator('aio_proxy')
-    def aio_proxy_validator(cls, v):
+    @validator('canrot_proxy')
+    def canrot_proxy_validator(cls, v):
         if not isinstance(v, str):
-            raise ValueError('aio_proxy must be a str')
+            raise ValueError('canrot_proxy must be a str')
         if not v.startswith('https://') and not v.startswith('http://'):
-            raise ValueError('aio_proxy must start with https:// or http://')
+            raise ValueError('canrot_proxy must start with https:// or http://')
         return v
 
-    @validator('aio_disable_plugins')
-    def aio_disable_plugins_validator(cls, v):
+    @validator('canrot_disable_plugins')
+    def canrot_disable_plugins_validator(cls, v):
         if not isinstance(v, list):
-            raise ValueError('aio_disable_plugins must be a list')
+            raise ValueError('canrot_disable_plugins must be a list')
         for i in v:
             if not isinstance(i, str):
-                raise ValueError('aio_disable_plugins must be a list of str')
+                raise ValueError('canrot_disable_plugins must be a list of str')
         return v
 
 __driver = get_driver()
 __global_config = __driver.config
-aio_config = AIOConfig.parse_obj(__global_config)
+canrot_config = AIOConfig.parse_obj(__global_config)
 __aio_all_data: dict[str, list[list]] = {}
 __db = sqlite3.connect(os.path.join(os.path.dirname(__file__), 'assets.db'))
 __c = __db.cursor()
@@ -45,7 +45,7 @@ loaded_plugins: list[Plugin] = []
 def load_plugins() -> None:
     plugins_path = Path(__file__).parent.joinpath('plugins').resolve()
     for p in plugins_path.glob('*.py'):
-        if p.name[:-3] not in aio_config.aio_disable_plugins:
+        if p.name[:-3] not in canrot_config.canrot_disable_plugins:
             loaded_plugins.append(load_plugin(p.resolve()))
 
 def load_all_data():

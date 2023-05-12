@@ -18,15 +18,9 @@ __plugin_meta__ = PluginMetadata(
 
 # config
 class SteamConfig(BaseModel):
-    aio_proxy: str = ''
+    canrot_proxy: str = ''
     steam_region: str = 'cn'
     steam_language: str = 'zh-cn'
-    
-    @validator('aio_proxy')
-    def aio_proxy_validator(cls, v):
-        if not isinstance(v, str):
-            raise ValueError('aio_proxy must be a str')
-        return v
     
     @validator('steam_region')
     def steam_region_validator(cls, v):
@@ -41,18 +35,20 @@ class SteamConfig(BaseModel):
         return v
 
 config = SteamConfig.parse_obj(get_driver().config)
-_client = httpx.AsyncClient()
+if config.canrot_proxy:
+    _client = httpx.AsyncClient(proxies=config.canrot_proxy)
+else:
+    _client = httpx.AsyncClient()
 
 # fetch app info from appid
 async def fetch_app_info(appid: int) -> dict | None:
-    if config.aio_proxy:
-        proxy = {'https': config.aio_proxy, 'http': config.aio_proxy}
+    if config.canrot_proxy:
+        proxy = {'https': config.canrot_proxy, 'http': config.canrot_proxy}
     else:
         proxy = {}
     resp = await _client.get(f'https://store.steampowered.com/api/appdetails/?appids={appid}&l={config.steam_language}&cc={config.steam_region}', 
-                        proxies=proxy,
                         headers={'Accept-Language': config.steam_language})
-    if resp.ok and resp.status_code == 200:
+    if resp.is_success and resp.status_code == 200:
         return resp.json()
     return None
 
@@ -93,7 +89,7 @@ steam = on_command('steam', aliases={'sbeam', '蒸汽', '蒸汽平台'}, block=T
 async def _(bot: Bot, args: Message = CommandArg()):
     if msg := args.extract_plain_text():
         if msg.isdigit():
-            if appinfo := fetch_app_info(msg):
+            if appinfo := await fetch_app_info(msg):
                 if appinfo.get(msg, {}).get('success', False):
                     appinfo = appinfo[msg]['data']
                     header_img = appinfo['header_image']
