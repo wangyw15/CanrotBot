@@ -73,8 +73,13 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
     img_url: str = ''
     if is_console(bot):
         img_url = image.extract_plain_text()
-    elif is_onebot_v11(bot):
-        pass
+    elif is_onebot_v11(bot) or is_onebot_v12(bot):
+        if image[0].type == 'image':
+            img_url = image[0].data['url']
+        elif image[0].type == 'text':
+            img_url = image[0].data['text']
+        else:
+            await _search_image.reject('请重新发送图片或图片链接')
     else:
         _search_image.finish('此平台暂未适配')
     img_url = img_url.strip()
