@@ -14,30 +14,37 @@ def init():
 
 init()
 
-def user_exists(puid: str) -> bool:
-    '''check if a user exists'''
+def puid_user_exists(puid: str) -> bool:
+    '''check if a user with the puid exists'''
     temp_c = _cursor.execute(f'SELECT * FROM users WHERE puid == "{puid}"')
+    ret = len(temp_c.fetchall()) != 0
+    return ret
+
+def uid_user_exists(uid: str) -> bool:
+    '''check if a user with the uid exists'''
+    temp_c = _cursor.execute(f'SELECT * FROM users WHERE uid == "{uid}"')
     ret = len(temp_c.fetchall()) != 0
     return ret
 
 def bind(puid: str, uid: str) -> bool:
     '''bind a puid to a uid'''
-    if user_exists(puid):
+    if puid_user_exists(puid):
         return False
     _cursor.execute(f'INSERT INTO users (puid, uid) VALUES ("{puid}", "{uid}")')
     _db.commit()
     return True
 
-def unbind(puid: str):
+def unbind(puid: str) -> bool:
     '''unbind a puid from a uid'''
-    if not user_exists(puid):
-        return
+    if not puid_user_exists(puid):
+        return False
     _cursor.execute(f'DELETE FROM users WHERE puid == "{puid}"')
     _db.commit()
+    return True
 
 def register(puid: str) -> str:
     '''register a new user and set the puid as the account owner'''
-    if user_exists(puid):
+    if puid_user_exists(puid):
         return ''
     uid = uuid.uuid4()
     _cursor.execute(f'INSERT INTO users (puid, uid) VALUES ("{puid}", "{uid}")')
@@ -46,7 +53,7 @@ def register(puid: str) -> str:
 
 def get_uid(puid: str) -> str:
     '''get the uid of a puid'''
-    if not user_exists(puid):
+    if not puid_user_exists(puid):
         return ''
     temp_c = _cursor.execute(f'SELECT uid FROM users WHERE puid == "{puid}"')
     data: list[list[str]] = temp_c.fetchall()
@@ -66,7 +73,7 @@ def set_data(uid: str, key: str, value: str):
 
 def get_data(uid: str, key: str) -> str:
     '''get data from a user'''
-    if not user_exists(uid):
+    if not puid_user_exists(uid):
         return ''
     try:
         data: list[list[str]] = _cursor.execute(f'SELECT value FROM {uid} WHERE key == "{key}"').fetchall()
@@ -76,7 +83,7 @@ def get_data(uid: str, key: str) -> str:
 
 def remove_data(uid: str, key: str):
     '''remove data from a user'''
-    if not user_exists(uid):
+    if not puid_user_exists(uid):
         return
     _cursor.execute(f'DELETE FROM {uid} WHERE key == "{key}"')
     _db.commit()

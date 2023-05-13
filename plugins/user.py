@@ -20,13 +20,13 @@ async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()
     if msg := args.extract_plain_text():
         splitted_args = [x.strip() for x in msg.split()]
         if msg == 'register' or msg == 'reg' or msg == '注册':
-            if user.user_exists(puid):
+            if user.puid_user_exists(puid):
                 await _user.finish('你已经注册过了')
             else:
                 uid = user.register(puid)
                 await _user.finish(f'注册成功，你的 UID 是 {uid}')
         elif msg == 'info' or msg == '信息':
-            if not user.user_exists(puid):
+            if not user.puid_user_exists(puid):
                 await _user.finish(f'puid: {puid}\n你还没有注册')
             else:
                 uid = user.get_uid(puid)
@@ -37,14 +37,14 @@ async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()
                 await _user.finish(msg.strip())
         elif splitted_args[0] == 'bind' or splitted_args[0] == '绑定':
             another_puid = splitted_args[1]
-            if user.user_exists(another_puid):
+            if user.puid_user_exists(another_puid):
                 await _user.finish('该用户已经绑定或注册过了')
             uid = user.get_uid(puid)
             user.bind(another_puid, uid)
             await _user.finish('绑定成功')
         elif splitted_args[0] == 'unbind' or splitted_args[0] == '解绑' or splitted_args[0] == '解除绑定':
             another_puid = splitted_args[1]
-            if not user.user_exists(another_puid):
+            if not user.puid_user_exists(another_puid):
                 await _user.finish('该用户还没有绑定或注册')
             user.unbind(another_puid)
             await _user.finish('解绑成功')
