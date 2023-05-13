@@ -87,3 +87,10 @@ saucenao_api_key="你的 api key"
 - [ ] 考虑删除 meme 图
 - [ ] 换个 ChatGPT 插件，或者自己写
 
+# 功能或数据来源
+
+| 来源 | 说明 |
+| :-: | :-: |
+| [hitokoto-osc/sentences-bundle](https://github.com/hitokoto-osc/sentences-bundle) | 一言数据 |
+| [Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus) | 自动回复的部分数据 |
+| [FloatTech/zbpdata](https://github.com/FloatTech/zbpdata) | 自动回复等数据来源 |
