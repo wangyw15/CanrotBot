@@ -22,7 +22,7 @@ data.load_plugins()
 plugin_help = on_command('help', aliases={'帮助'}, block=True)
 @plugin_help.handle()
 async def _(bot: Bot, event: Event):
-    splitted_msg: list[str]
+    splitted_msg: list[str] = []
     for plugin in nonebot.get_loaded_plugins():
         if plugin.metadata:
             splitted_msg.append(f'{plugin.metadata.name}\n描述：{plugin.metadata.description}\n用法：{plugin.metadata.usage}')
