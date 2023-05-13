@@ -1,4 +1,8 @@
-# <center>CanrotBot</center>
+<div align="center">
+
+# CanrotBot
+
+</div>
 
 > 以方舟里面的神秘商人坎诺特Cannot和胡萝卜carrot命名
 >
@@ -35,6 +39,28 @@
 | wordle 游戏 | 就是 wordle 游戏，用[NYTimes Wordle](https://www.nytimes.com/games/wordle/index.html)的词库做的 |
 | 淫语翻译机 | 把[RimoChan/yinglish](https://github.com/RimoChan/yinglish)包装成了机器人 |
 
+# 功能说明
+
+## 猜数字规则
+
+是0-9roll出不重复的四个数作为目标
+
+玩家给出猜测
+
+若玩家猜的四位数中，存在n（0到4）个目标中的数，则给出 nA 的提示
+
+若玩家猜的四位数中，存在m（0到4）个数位置与目标中的相同，则给出 mB 的提示
+
+当猜测数与目标数完全相同时游戏结束
+
+## 搜图
+
+需要在配置中设置 SauceNAO 的 api key
+
+```
+saucenao_api_key="你的 api key"
+```
+
 # 打算做的
 
 - [x] **重构插件结构**
@@ -61,14 +87,3 @@
 - [ ] 考虑删除 meme 图
 - [ ] 换个 ChatGPT 插件，或者自己写
 
-# 猜数字规则
-
-是0-9roll出不重复的四个数作为目标
-
-玩家给出猜测
-
-若玩家猜的四位数中，存在n（0到4）个目标中的数，则给出 nA 的提示
-
-若玩家猜的四位数中，存在m（0到4）个数位置与目标中的相同，则给出 mB 的提示
-
-当猜测数与目标数完全相同时游戏结束
