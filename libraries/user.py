@@ -60,7 +60,7 @@ def get_uid(puid: str) -> str:
     return data[0][0]
 
 def get_bind_by_uid(uid: str) -> list[str]:
-    return [x[0] for x in _cursor.execute(f'SELECT uid FROM users WHERE uid == "{uid}"').fetchall()]
+    return [x[0] for x in _cursor.execute(f'SELECT puid FROM users WHERE uid == "{uid}"').fetchall()]
 
 def get_bind_by_puid(puid: str) -> list[str]:
     return get_bind_by_uid(get_uid(puid))
