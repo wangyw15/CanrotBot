@@ -190,7 +190,7 @@ async def send_group_forward_message(content: list[str], bot: Bot, event: Event,
             await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
             return
     header = header + '\n\n' if header else ''
-    msg = header + (split + '\n').join(content)
+    msg = header + ('\n' + split + '\n').join(content)
     if is_onebot_v11(bot):
         await bot.send(event, ob11.Message(msg))
     elif is_onebot_v12(bot):
