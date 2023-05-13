@@ -15,6 +15,7 @@
 | 猜数字 | 详见[下面](#猜数字规则) |
 | 一言 | 来自于[一言](https://hitokoto.cn/)的[句子包](https://github.com/hitokoto-osc/sentences-bundle) |
 | 浅草寺 | 浅草寺抽签 |
+| MuseDash 玩家信息 | 数据来源于 [MuseDash.moe](https://musedash.moe/) |
 | 能不能好好说话 | 调用[能不能好好说话？](https://lab.magiconch.com/nbnhhsh/)查找全名 |
 | 自动回复 | 词库来源于[Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)，机器人根据词库来概率自动水群 |
 | roll 个老婆 | 从 [waifu.pics](https://waifu.pics/) 随机抽取纸片人 |
