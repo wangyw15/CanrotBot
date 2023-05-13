@@ -5,7 +5,7 @@ from typing import Any
 class CanrotConfig(BaseModel):
     canrot_enable: bool = True # always enable aio
     canrot_proxy: str = ''
-    canrot_data: str = './data.db'
+    canrot_data: str = './canrot_data.db'
 
     @validator('canrot_enable')
     def canrot_enable_validator(cls, v):
