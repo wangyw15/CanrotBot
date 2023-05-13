@@ -27,10 +27,10 @@ async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()
                 await _user.finish(f'注册成功，你的 UID 是 {uid}')
         elif msg == 'info' or msg == '信息':
             if not user.user_exists(puid):
-                await _user.finish('你还没有注册')
+                await _user.finish(f'puid: {puid}\n你还没有注册')
             else:
                 uid = user.get_uid(puid)
-                await _user.finish(f'你的 UID 是 {uid}')
+                await _user.finish(f'puid: {puid}\nuid: {uid}')
         elif splitted_args[0] == 'bind' or splitted_args[0] == '绑定':
             another_puid = splitted_args[1]
             if user.user_exists(another_puid):
@@ -45,4 +45,4 @@ async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()
             user.unbind(another_puid)
             await _user.finish('解绑成功')
     else:
-        await _user.finish('用户服务帮助：\n还没写')
+        await _user.finish('用户服务帮助:\n用法: /<user|u|用户|我> [操作]\n操作:\nregister|reg|注册: 注册一个新用户\ninfo|信息: 查看用户信息\nbind|绑定 <puid>: 绑定一个用户\nunbind|解绑|解除绑定 <puid>: 解除绑定一个用户')
