@@ -344,7 +344,7 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
                 await _search_image.finish("搜索失败")
         splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
         splitted_msg.insert(0, f'原图\n[CQ:image,file={img_url}]')
-        send_group_forward_message(splitted_msg, bot, event)
+        await send_group_forward_message(splitted_msg, bot, event)
         await _search_image.finish()
     else:
         await _search_image.finish("图片链接错误，停止搜图")

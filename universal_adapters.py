@@ -1,6 +1,5 @@
 from nonebot.adapters import Bot, Event, Message, MessageSegment
 from nonebot.permission import Permission
-from typing import NoReturn
 import httpx
 import re
 
@@ -184,7 +183,7 @@ async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment |
         return console.MessageSegment.text(img_url)
     return None
 
-async def send_group_forward_message(content: list[str], bot: Bot, event: Event, default_bot_name: str = 'Canrot', split: str = MESSAGE_SPLIT_LINE, header: str = '') -> NoReturn:
+async def send_group_forward_message(content: list[str], bot: Bot, event: Event, default_bot_name: str = 'Canrot', split: str = MESSAGE_SPLIT_LINE, header: str = '') -> None:
     if is_onebot_v11(bot) or is_onebot_v12(bot):
         msg_nodes = generate_onebot_group_forward_message(content, await get_bot_name(event, bot, default_bot_name), bot.self_id)
         if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):

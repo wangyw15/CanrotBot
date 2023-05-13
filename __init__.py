@@ -26,7 +26,7 @@ async def _(bot: Bot, event: Event):
     for plugin in nonebot.get_loaded_plugins():
         if plugin.metadata:
             splitted_msg.append(f'{plugin.metadata.name}\n描述：{plugin.metadata.description}\n用法：{plugin.metadata.usage}')
-    send_group_forward_message(splitted_msg, bot, event, header='机器人帮助：')
+    await send_group_forward_message(splitted_msg, bot, event, header='机器人帮助：')
     await plugin_help.finish()
 
 execute_sql = on_command('sql', aliases={'SQL'}, block=True)
