@@ -10,8 +10,8 @@ from . import data
 from .universal_adapters import *
 
 __plugin_meta__ = PluginMetadata(
-    name='nonebot_plugin_aio',
-    description='啥都有的插件',
+    name='CanrotBot',
+    description='插件本体',
     usage='输入/help查看帮助',
     config=data.CanrotConfig
 )
