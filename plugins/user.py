@@ -30,7 +30,11 @@ async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()
                 await _user.finish(f'puid: {puid}\n你还没有注册')
             else:
                 uid = user.get_uid(puid)
-                await _user.finish(f'puid: {puid}\nuid: {uid}')
+                msg = f'puid: {puid}\nuid: {uid}\n已绑定的 puid:\n'
+                linked_accounts = user.get_bind_by_uid(uid)
+                for i in linked_accounts:
+                    msg += i + '\n'
+                await _user.finish(msg.strip())
         elif splitted_args[0] == 'bind' or splitted_args[0] == '绑定':
             another_puid = splitted_args[1]
             if user.user_exists(another_puid):

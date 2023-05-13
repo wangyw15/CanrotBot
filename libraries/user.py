@@ -52,16 +52,27 @@ def get_uid(puid: str) -> str:
     data: list[list[str]] = temp_c.fetchall()
     return data[0][0]
 
-def add_data(uid: str, key: str, value: str):
-    '''add data to a user'''
+def get_bind_by_uid(uid: str) -> list[str]:
+    return [x[0] for x in _cursor.execute(f'SELECT uid FROM users WHERE uid == "{uid}"').fetchall()]
+
+def get_bind_by_puid(puid: str) -> list[str]:
+    return get_bind_by_uid(get_uid(puid))
+
+def set_data(uid: str, key: str, value: str):
+    '''set data to a user'''
     _cursor.execute(f'CREATE TABLE IF NOT EXISTS {uid} (key TEXT NOT NULL UNIQUE, value TEXT NOT NULL)')
-    _cursor.execute(f'INSERT INTO {uid} (key, value) VALUES ("{key}", "{value}")')
+    _cursor.execute(f'REPLACE INTO {uid} (key, value) VALUES ("{key}", "{value}")')
     _db.commit()
 
 def get_data(uid: str, key: str) -> str:
     '''get data from a user'''
-    data: list[list[str]] = _cursor.execute(f'SELECT value FROM {uid} WHERE key == "{key}"').fetchall()
-    return data[0][0]
+    if not user_exists(uid):
+        return ''
+    try:
+        data: list[list[str]] = _cursor.execute(f'SELECT value FROM {uid} WHERE key == "{key}"').fetchall()
+        return data[0][0]
+    except IndexError:
+        return ''
 
 def remove_data(uid: str, key: str):
     '''remove data from a user'''

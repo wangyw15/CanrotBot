@@ -46,7 +46,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                 for col in row:
                     ret += str(col) + ' '
                 ret += '\n'
-            await execute_asset_sql.finish(ret)
+            await execute_asset_sql.finish(ret.strip())
         except OperationalError as e:
             await execute_asset_sql.finish('SQL查询失败\n' + str(e))
     await execute_asset_sql.finish('执行SQL失败')
@@ -64,7 +64,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                 for col in row:
                     ret += str(col) + ' '
                 ret += '\n'
-            await execute_data_sql.finish(ret)
+            await execute_data_sql.finish(ret.strip())
         except OperationalError as e:
             await execute_data_sql.finish('SQL查询失败\n' + str(e))
     await execute_data_sql.finish('执行SQL失败')
