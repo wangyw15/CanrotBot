@@ -4,8 +4,8 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from ..libraries import muse_dash
-from ..universal_adapters import send_group_forward_message
-from ..data import get_config
+from ..libraries.universal_adapters import send_group_forward_message
+from ..libraries.config import get_config
 
 __plugin_meta__ = PluginMetadata(
     name='MuseDash查分',

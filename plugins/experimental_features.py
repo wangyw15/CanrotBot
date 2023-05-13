@@ -5,8 +5,8 @@ from nonebot.plugin import PluginMetadata
 import jieba
 import random
 
-from ..universal_adapters import get_user_name, get_bot_name
-from ..data import get_data
+from ..libraries.universal_adapters import get_user_name, get_bot_name
+from ..libraries.assets import get_assets
 
 __plugin_meta__ = PluginMetadata(
     name='实验性功能',
@@ -17,7 +17,7 @@ __plugin_meta__ = PluginMetadata(
 
 jieba.add_word('{name}')
 jieba.add_word('{me}')
-reply_data: list[list[str]] = [list(jieba.lcut(x[2])) for x in get_data('reply')]
+reply_data: list[list[str]] = [list(jieba.lcut(x[2])) for x in get_assets('reply')]
 
 # generate markov chain
 def markov_chain(data: list[list[str]], n=1) -> dict[str, dict[str, float]]:

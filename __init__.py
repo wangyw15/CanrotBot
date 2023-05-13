@@ -1,23 +1,27 @@
-from nonebot import on_command, logger
+from nonebot import on_command, load_plugins
 from nonebot.adapters import Message, Bot, Event
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from sqlite3 import OperationalError
+from pathlib import Path
 import nonebot
 
-from . import data
-from .universal_adapters import *
+from .libraries import config, assets
+from .libraries.universal_adapters import *
 
 __plugin_meta__ = PluginMetadata(
     name='CanrotBot',
     description='插件本体',
     usage='输入/help查看帮助',
-    config=data.CanrotConfig
+    config=config.CanrotConfig
 )
 
-# import modules
-data.load_plugins()
+def canrot_load_plugins() -> None:
+    plugins_path = Path(__file__).parent.joinpath('plugins').resolve()
+    load_plugins(plugins_path)
+
+canrot_load_plugins()
 
 plugin_help = on_command('help', aliases={'帮助'}, block=True)
 @plugin_help.handle()
@@ -37,7 +41,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     if msg := args.extract_plain_text():
         try:
             ret = ''
-            result = data.execute_sql(msg)
+            result = assets.execute_sql_on_assets(msg)
             for row in result:
                 for col in row:
                     ret += str(col) + ' '

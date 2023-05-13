@@ -1,8 +1,8 @@
-from nonebot import get_driver, on_command
+from nonebot import on_command
 from nonebot.adapters import Bot
 from nonebot.plugin import PluginMetadata
 
-from ..universal_adapters import get_image_message_from_url
+from ..libraries.universal_adapters import get_image_message_from_url
 
 __plugin_meta__ = PluginMetadata(
     name='看新闻',

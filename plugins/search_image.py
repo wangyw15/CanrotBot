@@ -7,7 +7,7 @@ from pydantic import BaseModel, validator
 import urllib.parse
 import httpx
 
-from ..universal_adapters import *
+from ..libraries.universal_adapters import *
 
 
 class SearchImageConfig(BaseModel):

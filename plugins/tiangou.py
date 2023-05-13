@@ -2,7 +2,7 @@ from nonebot import on_command
 from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import get_data
+from ..libraries.assets import get_assets
 
 __plugin_meta__ = PluginMetadata(
     name='舔狗语录',
@@ -11,7 +11,7 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-tiangou_data: list[str] = [x[1] for x in get_data('tiangou')]
+tiangou_data: list[str] = [x[1] for x in get_assets('tiangou')]
 
 # message
 tiangou = on_command('tiangou', aliases={'舔狗'}, block=True)

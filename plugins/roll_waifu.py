@@ -6,7 +6,7 @@ from nonebot.plugin import PluginMetadata
 import httpx
 import random
 
-from ..universal_adapters import get_image_message_from_url
+from ..libraries.universal_adapters import get_image_message_from_url
 
 __plugin_meta__ = PluginMetadata(
     name='waifu',

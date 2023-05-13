@@ -4,7 +4,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import get_data
+from ..libraries.assets import get_assets
 
 __plugin_meta__ = PluginMetadata(
     name='CP',
@@ -13,7 +13,7 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-cp_stories: list[str] = [x[3] for x in get_data('cp_story')]
+cp_stories: list[str] = [x[3] for x in get_assets('cp_story')]
 
 cp = on_command('cp', aliases={'cp文'}, block=True)
 @cp.handle()

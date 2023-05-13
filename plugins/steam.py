@@ -6,7 +6,7 @@ from nonebot.rule import Rule
 from pydantic import BaseModel, validator
 import httpx
 
-from ..universal_adapters import *
+from ..libraries.universal_adapters import *
 from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(

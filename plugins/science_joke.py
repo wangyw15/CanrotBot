@@ -4,8 +4,8 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import get_data
-from ..universal_adapters import get_user_name
+from ..libraries.assets import get_assets
+from ..libraries.universal_adapters import get_user_name
 
 __plugin_meta__ = PluginMetadata(
     name='理科笑话',
@@ -14,7 +14,7 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-science_joke_data: list[str] = [x[1] for x in get_data('science_joke')]
+science_joke_data: list[str] = [x[1] for x in get_assets('science_joke')]
 
 # message
 science_joke = on_command('science-joke', aliases={'理科笑话', 'science_joke'}, block=True)

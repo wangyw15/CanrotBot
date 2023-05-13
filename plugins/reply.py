@@ -1,15 +1,14 @@
-from nonebot import get_driver, on_command, on_regex, logger
+from nonebot import get_driver, on_command, on_regex
 from nonebot.adapters import Message, Event, Bot
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-from nonebot.rule import Rule
 from pydantic import BaseModel, validator
 import random
 import jieba
 import re
 
-from ..universal_adapters import *
-from ..data import get_data
+from ..libraries.universal_adapters import *
+from ..libraries.assets import get_assets
 
 # config
 class ReplyConfig(BaseModel):
@@ -47,7 +46,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 # load data
-reply_data: list[dict[str, str | None]] = [{ 'pattern': x[1], 'response': x[2], 'character': x[3] } for x in get_data('reply')]
+reply_data: list[dict[str, str | None]] = [{ 'pattern': x[1], 'response': x[2], 'character': x[3] } for x in get_assets('reply')]
 
 def is_negative(msg: str) -> bool:
     return '不' in msg

@@ -4,7 +4,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 import random
 
-from ..data import get_data
+from ..libraries.assets import get_assets
 
 __plugin_meta__ = PluginMetadata(
     name='一言',
@@ -13,7 +13,7 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-hitokoto_data: list[dict[str, str]] = [{'content': x[1], 'from': x[2], 'from_who': x[3], 'type': x[4], 'uuid': x[5]} for x in get_data('hitokoto')]
+hitokoto_data: list[dict[str, str]] = [{'content': x[1], 'from': x[2], 'from_who': x[3], 'type': x[4], 'uuid': x[5]} for x in get_assets('hitokoto')]
 
 # message
 hitokoto = on_command('hitokoto', aliases={'一言'}, block=True)
