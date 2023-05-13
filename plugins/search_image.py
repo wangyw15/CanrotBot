@@ -342,18 +342,9 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
                 msg = generate_cq_message_from_tracemoe_result(search_resp)
             else:
                 await _search_image.finish("搜索失败")
-        if is_onebot_v11(bot) or is_onebot_v12(bot):
-            splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
-            splitted_msg.insert(0, f'原图\n[CQ:image,file={img_url}]')
-            msg_nodes = generate_onebot_group_forward_message(splitted_msg, await get_bot_name(event, bot, 'Canrot'), bot.self_id)
-            if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
-                await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
-                await _search_image.finish()
-            if is_onebot_v11(bot):
-                await _search_image.finish(ob11.Message(msg))
-            elif is_onebot_v12(bot):
-                await _search_image.finish(ob12.Message(msg))
-        else:
-            await _search_image.finish(msg)
+        splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
+        splitted_msg.insert(0, f'原图\n[CQ:image,file={img_url}]')
+        send_group_forward_message(splitted_msg, bot, event)
+        await _search_image.finish()
     else:
         await _search_image.finish("图片链接错误，停止搜图")

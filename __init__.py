@@ -22,17 +22,12 @@ data.load_plugins()
 plugin_help = on_command('help', aliases={'帮助'}, block=True)
 @plugin_help.handle()
 async def _(bot: Bot, event: Event):
-    msg = ''
+    splitted_msg: list[str]
     for plugin in nonebot.get_loaded_plugins():
         if plugin.metadata:
-            msg += f'{plugin.metadata.name}\n描述：{plugin.metadata.description}\n用法：{plugin.metadata.usage}\n{MESSAGE_SPLIT_LINE}\n'
-    if is_onebot_v11(bot) or is_onebot_v12(bot):
-        splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
-        msg_nodes = generate_onebot_group_forward_message(splitted_msg, await get_bot_name(event, bot, 'Canrot'), bot.self_id)
-        if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
-            await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_nodes)
-            await plugin_help.finish()
-    await plugin_help.finish('机器人帮助：\n\n' + msg)
+            splitted_msg.append(f'{plugin.metadata.name}\n描述：{plugin.metadata.description}\n用法：{plugin.metadata.usage}')
+    send_group_forward_message(splitted_msg, bot, event, header='机器人帮助：')
+    await plugin_help.finish()
 
 execute_sql = on_command('sql', aliases={'SQL'}, block=True)
 @execute_sql.handle()
