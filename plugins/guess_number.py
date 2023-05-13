@@ -22,7 +22,7 @@ def generate_number(num_len: int) -> str:
     return ''.join(nums[:num_len])
 
 _GUESS_NUMBER = 'GUESS_NUMBER'
-_GUESS_NUMER_TURNS = 'GUESS_NUMER_TURNS'
+_GUESS_NUMBER_TURNS = 'GUESS_NUMBER_TURNS'
 
 guess_number = on_command('guess_number', aliases={'guess-number', '猜数字', '猜数'}, block=True)
 @guess_number.handle()
@@ -32,25 +32,25 @@ async def _(state: T_State, args: Message = CommandArg()):
         if msg.isdigit():
             num_len = int(msg)
     state[_GUESS_NUMBER] = generate_number(num_len)
-    state[_GUESS_NUMER_TURNS] = 0
-    await guess_number.send(f'开始一轮猜数游戏（{len(state[_GUESS_NUMBER])} 位）')
+    state[_GUESS_NUMBER_TURNS] = 0
+    await guess_number.send(f'又来挑战{len(state[_GUESS_NUMBER])}位的猜数游戏了吗♥️~')
 
 @guess_number.got('guess')
 async def _(state: T_State, guess: Message = Arg()):
     answer: str = state[_GUESS_NUMBER]
     guess = guess.extract_plain_text()
-    if guess == 'stop':
-        await guess_number.finish(f'游戏结束\n答案是{state[_GUESS_NUMBER]}\n共用了{state[_GUESS_NUMER_TURNS]}轮')
+    if guess == 'stop' or guess == '停止' or guess == '停止游戏' or guess == '结束' or guess == '结束游戏':
+        await guess_number.finish(f'答案是{state[_GUESS_NUMBER]}\n杂♥️鱼~杂♥️鱼~，才{state[_GUESS_NUMBER_TURNS]}轮就放弃了啊♥️~')
     elif guess == answer:
-        await guess_number.finish(f'恭喜你猜对了！')
+        await guess_number.finish(f'呜呜呜，才{state[_GUESS_NUMBER_TURNS]}轮就让你猜出来了，哥哥原谅我吧')
     elif not guess.isdigit():
-        await guess_number.reject('你输入的不是数字')
+        await guess_number.reject('哥哥是不知道数字是什么吗♥️~杂♥️鱼~杂♥️鱼~')
     elif len(guess) != len(answer):
-        await guess_number.reject(f'你输入的数字长度不是{len(answer)}')
+        await guess_number.reject(f'杂鱼哥哥是忘了题目吗♥️~\n是{len(answer)}位哦♥️~')
     elif len(set(guess)) != len(answer):
-        await guess_number.reject(f'你输入的数字有重复位')
+        await guess_number.reject(f'杂鱼哥哥是忘了题目吗♥️~\n是{len(answer)}位各位都不相同的数字哦♥️~')
     else:
-        state[_GUESS_NUMER_TURNS] += 1
+        state[_GUESS_NUMBER_TURNS] += 1
         a = 0
         b = 0
         for i in range(len(guess)):
