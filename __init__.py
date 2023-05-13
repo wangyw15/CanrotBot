@@ -7,7 +7,7 @@ from sqlite3 import OperationalError
 from pathlib import Path
 import nonebot
 
-from .libraries import config, assets
+from .libraries import config, assets, data
 from .libraries.universal_adapters import *
 
 __plugin_meta__ = PluginMetadata(
@@ -33,11 +33,11 @@ async def _(bot: Bot, event: Event):
     await send_group_forward_message(splitted_msg, bot, event, header='机器人帮助：')
     await plugin_help.finish()
 
-execute_sql = on_command('sql', aliases={'SQL'}, block=True)
-@execute_sql.handle()
+execute_asset_sql = on_command('sql_asset', aliases={'sql-asset', 'sqla', 'asql', 'asset-sql', 'asset_sql'}, block=True)
+@execute_asset_sql.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     if not (await SUPERUSER(bot, event) or is_console(bot)):
-        await execute_sql.finish('权限不足')
+        await execute_asset_sql.finish('权限不足')
     if msg := args.extract_plain_text():
         try:
             ret = ''
@@ -46,7 +46,25 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                 for col in row:
                     ret += str(col) + ' '
                 ret += '\n'
-            await execute_sql.finish(ret)
+            await execute_asset_sql.finish(ret)
         except OperationalError as e:
-            await execute_sql.finish('SQL查询失败\n' + str(e))
-    await execute_sql.finish('执行SQL失败')
+            await execute_asset_sql.finish('SQL查询失败\n' + str(e))
+    await execute_asset_sql.finish('执行SQL失败')
+
+execute_data_sql = on_command('sql_data', aliases={'sql-data', 'sqld', 'dsql', 'data-sql', 'data_sql'}, block=True)
+@execute_data_sql.handle()
+async def _(bot: Bot, event: Event, args: Message = CommandArg()):
+    if not (await SUPERUSER(bot, event) or is_console(bot)):
+        await execute_data_sql.finish('权限不足')
+    if msg := args.extract_plain_text():
+        try:
+            ret = ''
+            result = data.execute_sql_on_data(msg)
+            for row in result:
+                for col in row:
+                    ret += str(col) + ' '
+                ret += '\n'
+            await execute_data_sql.finish(ret)
+        except OperationalError as e:
+            await execute_data_sql.finish('SQL查询失败\n' + str(e))
+    await execute_data_sql.finish('执行SQL失败')

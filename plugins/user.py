@@ -1,0 +1,48 @@
+from nonebot import on_command
+from nonebot.adapters import Bot, Event, Message
+from nonebot.params import CommandArg
+from nonebot.typing import T_State
+from nonebot.plugin import PluginMetadata
+
+from ..libraries import user, universal_adapters
+
+__plugin_meta__ = PluginMetadata(
+    name='用户服务',
+    description='用户服务，包括绑定、注册等',
+    usage='输入 /<user|u|用户|我> 查看帮助',
+    config=None
+)
+
+_user = on_command('user', aliases={'u', '用户', '我'}, block=True)
+@_user.handle()
+async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()):
+    puid = universal_adapters.get_puid(bot, event)
+    if msg := args.extract_plain_text():
+        splitted_args = [x.strip() for x in msg.split()]
+        if msg == 'register' or msg == 'reg' or msg == '注册':
+            if user.user_exists(puid):
+                await _user.finish('你已经注册过了')
+            else:
+                uid = user.register(puid)
+                await _user.finish(f'注册成功，你的 UID 是 {uid}')
+        elif msg == 'info' or msg == '信息':
+            if not user.user_exists(puid):
+                await _user.finish('你还没有注册')
+            else:
+                uid = user.get_uid(puid)
+                await _user.finish(f'你的 UID 是 {uid}')
+        elif splitted_args[0] == 'bind' or splitted_args[0] == '绑定':
+            another_puid = splitted_args[1]
+            if user.user_exists(another_puid):
+                await _user.finish('该用户已经绑定或注册过了')
+            uid = user.get_uid(puid)
+            user.bind(another_puid, uid)
+            await _user.finish('绑定成功')
+        elif splitted_args[0] == 'unbind' or splitted_args[0] == '解绑' or splitted_args[0] == '解除绑定':
+            another_puid = splitted_args[1]
+            if not user.user_exists(another_puid):
+                await _user.finish('该用户还没有绑定或注册')
+            user.unbind(another_puid)
+            await _user.finish('解绑成功')
+    else:
+        await _user.finish('用户服务帮助：\n还没写')

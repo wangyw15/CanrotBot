@@ -197,6 +197,16 @@ async def send_group_forward_message(content: list[str], bot: Bot, event: Event,
         await bot.send(event, ob12.Message(msg))
     await bot.send(event, msg)
 
+def get_puid(bot: Bot, event: Event) -> str:
+    puid = get_user_id(event)
+    if is_onebot_v11(bot) or is_onebot_v12(bot) or is_mirai2(bot):
+        puid = 'qq_' + str(puid)
+    elif is_kook(bot):
+        puid = 'kook_' + str(puid)
+    elif is_console(bot):
+        puid = 'console_console'
+    return puid
+
 # detect bot type
 def is_onebot_v11(bot: Bot) -> bool:
     if ob11:

@@ -39,4 +39,4 @@ def execute_sql_on_assets(sql: str) -> list[list]:
 async def _():
     _c.close()
     _db.close()
-    logger.info('Closed database')
+    logger.info('Closed assets database')
