@@ -3,11 +3,11 @@ from pathlib import Path
 import sqlite3
 
 _driver = get_driver()
-_canrot_assets: dict[str, list[list]] = {}
-_db = sqlite3.connect(Path(__file__).parent.parent.joinpath('assets.db').resolve())
+_canrot_text_assets: dict[str, list[list]] = {}
+_db = sqlite3.connect(Path(__file__).parent.parent.joinpath('assets/text.db').resolve())
 _c = _db.cursor()
 
-def load_all_assets():
+def load_text_assets():
     # get all table names
     table_names: set[str] = set()
     temp_c = _c.execute('select distinct tbl_name from sqlite_master')
@@ -18,14 +18,14 @@ def load_all_assets():
     # get all data from tables
     for table_name in table_names:
         temp_c = _c.execute(f'select * from {table_name}')
-        _canrot_assets[table_name] = temp_c.fetchall()
-        logger.info(f'Load {len(_canrot_assets[table_name])} items from {table_name}')
+        _canrot_text_assets[table_name] = temp_c.fetchall()
+        logger.info(f'Load {len(_canrot_text_assets[table_name])} items from {table_name}')
 
-if not _canrot_assets:
-    load_all_assets()
+if not _canrot_text_assets:
+    load_text_assets()
 
 def get_assets(table_name: str) -> list[list]:
-    return _canrot_assets[table_name]
+    return _canrot_text_assets[table_name]
 
 def execute_sql_on_assets(sql: str) -> list[list]:
     temp_c = _c.execute(sql)
