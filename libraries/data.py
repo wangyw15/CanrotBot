@@ -1,3 +1,4 @@
+from nonebot import get_driver, logger
 import sqlite3
 
 from .config import canrot_config
@@ -13,3 +14,10 @@ def execute_sql_on_data(sql: str) -> list[list]:
     ret += temp_c.fetchall()
     _db.commit()
     return ret
+
+_driver = get_driver()
+@_driver.on_shutdown
+async def _():
+    _db.commit()
+    _db.close()
+    logger.info('Closed data database')

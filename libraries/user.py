@@ -1,5 +1,4 @@
 # puid (platform user id): qq_1234567890, kook_1234567890, ...
-from nonebot import get_driver, logger
 import uuid
 
 from .data import _cursor, _db
@@ -79,10 +78,3 @@ def get_all_data(uid: str) -> dict[str, str]:
     for i in data:
         ret[i[0]] = i[1]
     return ret
-
-_driver = get_driver()
-@_driver.on_shutdown()
-async def _():
-    _db.commit()
-    _db.close()
-    logger.info('Closed data database')
