@@ -1,8 +1,16 @@
-# CanrotBot
+# <center>CanrotBot</center>
 
 > 以方舟里面的神秘商人坎诺特Cannot和胡萝卜carrot命名
 >
 > 具体使用方法使用 `/help` 查看
+
+# 使用方法
+
+这不是一个独立的机器人，只是一个 [NoneBot v2](https://v2.nonebot.dev/) 的插件，使用方法请参考[快速上手](https://v2.nonebot.dev/docs/quick-start)教程。
+
+此外，需要连接 [go-cqhttp](https://go-cqhttp.org/) 等使用。
+
+# 功能列表
 
 | 功能 | 作用 |
 | :-: | :-: |
