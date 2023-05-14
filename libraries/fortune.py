@@ -43,7 +43,6 @@ def _get_random_base_image(theme: str = 'random') -> Path:
     theme_path = _fortune_assets_path / 'image' / theme
     return random.choice(list(theme_path.iterdir()))
 
-
 def _decrement(text: str) -> Tuple[int, list[str]]:
     '''
             Split the text, return the number of columns and text list
@@ -81,6 +80,12 @@ def _decrement(text: str) -> Tuple[int, list[str]]:
             result.append(text[i * cardinality: (i + 1) * cardinality])
 
     return col_num, result
+
+def get_theme_key_from_name(name: str) -> str:
+    for k, v in _themes:
+        if name == k or name in v:
+            return k
+    return 'random'
 
 def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
     '''

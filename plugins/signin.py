@@ -4,7 +4,6 @@ from nonebot.params import CommandArg
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 from datetime import datetime
-import random
 
 from ..libraries import universal_adapters, fortune, user, economy
 
@@ -17,7 +16,7 @@ __plugin_meta__ = PluginMetadata(
 
 _signin_handler = on_command('signin', aliases={'签到', '每日签到', '抽签'}, block=True)
 @_signin_handler.handle()
-async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()):
+async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     puid = universal_adapters.get_puid(bot, event)
     if not user.puid_user_exists(puid):
         await _signin_handler.finish('你还没有注册')
@@ -42,6 +41,7 @@ async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()
     # signin
     if can_signin:
         # fortune
+        theme = fortune.get_theme_key_from_name(theme)
         img, title, content, rank = fortune.generate_fortune(theme)
         user.set_data_by_uid(uid, 'signin_date', today)
         user.set_data_by_uid(uid, 'signin_fortune_image', img)
