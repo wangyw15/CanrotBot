@@ -67,8 +67,8 @@ def get_bind_by_puid(puid: str) -> list[str]:
 
 def set_data(uid: str, key: str, value: str):
     '''set data to a user'''
-    _cursor.execute(f'CREATE TABLE IF NOT EXISTS {uid} (key TEXT NOT NULL UNIQUE, value TEXT NOT NULL)')
-    _cursor.execute(f'REPLACE INTO {uid} (key, value) VALUES ("{key}", "{value}")')
+    _cursor.execute(f'CREATE TABLE IF NOT EXISTS "{uid}" (key TEXT NOT NULL UNIQUE, value TEXT NOT NULL)')
+    _cursor.execute(f'REPLACE INTO "{uid}" (key, value) VALUES ("{key}", "{value}")')
     _db.commit()
 
 def get_data(uid: str, key: str) -> str:
@@ -76,7 +76,7 @@ def get_data(uid: str, key: str) -> str:
     if not puid_user_exists(uid):
         return ''
     try:
-        data: list[list[str]] = _cursor.execute(f'SELECT value FROM {uid} WHERE key == "{key}"').fetchall()
+        data: list[list[str]] = _cursor.execute(f'SELECT value FROM "{uid}" WHERE key == "{key}"').fetchall()
         return data[0][0]
     except IndexError:
         return ''
@@ -85,12 +85,12 @@ def remove_data(uid: str, key: str):
     '''remove data from a user'''
     if not puid_user_exists(uid):
         return
-    _cursor.execute(f'DELETE FROM {uid} WHERE key == "{key}"')
+    _cursor.execute(f'DELETE FROM "{uid}" WHERE key == "{key}"')
     _db.commit()
 
 def get_all_data(uid: str) -> dict[str, str]:
     '''get all data from a user'''
-    temp_c = _cursor.execute(f'SELECT * FROM {uid}')
+    temp_c = _cursor.execute(f'SELECT * FROM "{uid}"')
     data: list[list[str]] = temp_c.fetchall()
     ret: dict[str, str] = {}
     for i in data:

@@ -11,11 +11,11 @@ from ..libraries import universal_adapters, fortune, user, economy
 __plugin_meta__ = PluginMetadata(
     name='签到',
     description='每日签到，能够抽签和获得积分',
-    usage='/<signin|签到|每日签到>',
+    usage='/<signin|签到|每日签到|抽签>',
     config=None
 )
 
-_signin_handler = on_command('signin', aliases={'签到', '每日签到'}, block=True)
+_signin_handler = on_command('signin', aliases={'签到', '每日签到', '抽签'}, block=True)
 @_signin_handler.handle()
 async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()):
     puid = universal_adapters.get_puid(bot, event)
