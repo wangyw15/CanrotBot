@@ -33,7 +33,7 @@ async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()
                 another_uid = user.get_uid(puid)
             else:
                 another_uid = another
-            if not user.puid_user_exists(another_uid):
+            if not user.uid_user_exists(another_uid):
                 await _user.finish('不存在此用户')
             uid = user.get_uid(puid)
             economy.transfer(uid, another_uid, amount)
