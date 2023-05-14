@@ -54,10 +54,14 @@ async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()
         msg = '签到成功！\n'
         msg += f'获得 {point_amount} 胡萝卜片\n'
         msg += '✨今日运势✨\n'
-        if universal_adapters.is_onebot_v11(bot) or universal_adapters.is_onebot_v12(bot):
+        if universal_adapters.is_onebot_v11(bot):
             msg += f'[CQ:image,file=base64://{img}]\n'
+            await _signin_handler.finish(universal_adapters.ob11.Message(msg))
+        elif universal_adapters.is_onebot_v12(bot):
+            msg += f'[CQ:image,file=base64://{img}]\n'
+            await _signin_handler.finish(universal_adapters.ob12.Message(msg))
         else:
             msg += f'运势: {title}\n详情: {content}\n'
-        await _signin_handler.finish(msg)
+            await _signin_handler.finish(msg)
     else:
         await _signin_handler.finish('你今天签过到了，再给你看一次哦🤗')
