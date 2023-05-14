@@ -83,7 +83,7 @@ saucenao_api_key="你的 api key"
 - [ ] 象棋
 - [x] SaucsNAO 查图
   - ~~还在看~~
-- [ ] 抽签
+- [x] 抽签
   - 替换第三方插件
 - [ ] 考虑删除 meme 图
 - [ ] 换个 ChatGPT 插件，或者自己写
