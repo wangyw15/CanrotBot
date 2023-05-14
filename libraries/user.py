@@ -71,9 +71,9 @@ def set_data(uid: str, key: str, value: str):
     _cursor.execute(f'REPLACE INTO "{uid}" (key, value) VALUES ("{key}", "{value}")')
     _db.commit()
 
-def get_data(uid: str, key: str) -> str:
+def get_data_by_uid(uid: str, key: str) -> str:
     '''get data from a user'''
-    if not puid_user_exists(uid):
+    if not uid_user_exists(uid):
         return ''
     try:
         data: list[list[str]] = _cursor.execute(f'SELECT value FROM "{uid}" WHERE key == "{key}"').fetchall()

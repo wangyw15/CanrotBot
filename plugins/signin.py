@@ -31,7 +31,7 @@ async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()
     uid = user.get_uid(puid)
 
     # determine if the user can signin
-    last_signin = user.get_data(uid, 'signin_date')
+    last_signin = user.get_data_by_uid(uid, 'signin_date')
     can_signin = False
     if not last_signin:
         can_signin = True

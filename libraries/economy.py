@@ -2,7 +2,7 @@ from . import user
 
 def get_balance(uid: str) -> float:
     '''get the balance of a user'''
-    result = user.get_data(uid, 'balance')
+    result = user.get_data_by_uid(uid, 'balance')
     if result == '':
         return 0.0
     return float(result)
