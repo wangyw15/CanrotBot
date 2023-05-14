@@ -1,5 +1,6 @@
 # puid (platform user id): qq_1234567890, kook_1234567890, ...
 import uuid
+from sqlite3 import OperationalError
 
 from .data import _cursor, _db
 
@@ -65,7 +66,7 @@ def get_bind_by_uid(uid: str) -> list[str]:
 def get_bind_by_puid(puid: str) -> list[str]:
     return get_bind_by_uid(get_uid(puid))
 
-def set_data(uid: str, key: str, value: str):
+def set_data_by_uid(uid: str, key: str, value: str):
     '''set data to a user'''
     _cursor.execute(f'CREATE TABLE IF NOT EXISTS "{uid}" (key TEXT NOT NULL UNIQUE, value TEXT NOT NULL)')
     _cursor.execute(f'REPLACE INTO "{uid}" (key, value) VALUES ("{key}", "{value}")')
@@ -79,6 +80,8 @@ def get_data_by_uid(uid: str, key: str) -> str:
         data: list[list[str]] = _cursor.execute(f'SELECT value FROM "{uid}" WHERE key == "{key}"').fetchall()
         return data[0][0]
     except IndexError:
+        return ''
+    except OperationalError:
         return ''
 
 def remove_data(uid: str, key: str):

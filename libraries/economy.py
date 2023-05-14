@@ -9,7 +9,7 @@ def get_balance(uid: str) -> float:
 
 def set_balance(uid: str, balance: float):
     '''set the balance of a user'''
-    user.set_data(uid, 'balance', str(balance))
+    user.set_data_by_uid(uid, 'balance', str(balance))
 
 def pay(uid: str, amount: float) -> bool:
     '''pay from a user'''
