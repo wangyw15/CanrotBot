@@ -1,12 +1,11 @@
 from nonebot import on_command
-from nonebot.adapters import Bot
-from nonebot.adapters import Message
+from nonebot.adapters import Message, Bot, Event
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 import httpx
 import random
 
-from ..libraries.universal_adapters import get_image_message_from_url
+from ..libraries import user, economy, universal_adapters
 
 __plugin_meta__ = PluginMetadata(
     name='waifu',
@@ -27,7 +26,10 @@ async def get_waifu_url(type: str, category: str) -> str | None:
 
 waifu = on_command('waifu', aliases={'老婆', '纸片人'}, block=True)
 @waifu.handle()
-async def _(bot: Bot, msg: Message = CommandArg()):
+async def _(bot: Bot, event: Event, msg: Message = CommandArg()):
+    if economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 2):
+        await waifu.finish('你的余额不足哦')
+    await waifu.send('谢谢你的两个胡萝卜片喵~\n正在找图哦~')
     category = random.choice(categories)
     if args := msg.extract_plain_text():
         if args == 'help' or args == '帮助':
@@ -40,6 +42,6 @@ async def _(bot: Bot, msg: Message = CommandArg()):
             await waifu.finish('没有这个类型哦')
     img_url = await get_waifu_url('sfw', category)
     if img_url:
-        await waifu.finish(await get_image_message_from_url(bot, img_url))
+        await waifu.finish(await universal_adapters.get_image_message_from_url(bot, img_url))
     else:
         await waifu.finish('获取图片失败')

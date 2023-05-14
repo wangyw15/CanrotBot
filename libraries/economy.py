@@ -13,6 +13,8 @@ def set_balance(uid: str, balance: float):
 
 def pay(uid: str, amount: float) -> bool:
     '''pay from a user'''
+    if amount < 0:
+        return False
     if get_balance(uid) < amount:
         return False
     set_balance(uid, get_balance(uid) - amount)
@@ -20,10 +22,14 @@ def pay(uid: str, amount: float) -> bool:
 
 def earn(uid: str, amount: float):
     '''earn from a user'''
+    if amount < 0:
+        return
     set_balance(uid, get_balance(uid) + amount)
 
 def transfer(from_uid: str, to_uid: str, amount: float) -> bool:
     '''transfer from a user to another'''
+    if amount < 0:
+        return False
     if not pay(from_uid, amount):
         return False
     earn(to_uid, amount)

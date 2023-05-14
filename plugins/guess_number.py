@@ -1,9 +1,11 @@
 from nonebot import on_command
-from nonebot.adapters import Message
+from nonebot.adapters import Message, Bot, Event
 from nonebot.params import CommandArg, Arg
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 import random
+
+from ..libraries import universal_adapters, user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='猜数字',
@@ -36,13 +38,15 @@ async def _(state: T_State, args: Message = CommandArg()):
     await guess_number.send(f'又来挑战{len(state[_GUESS_NUMBER])}位的猜数游戏了吗♥️~')
 
 @guess_number.got('guess')
-async def _(state: T_State, guess: Message = Arg()):
+async def _(state: T_State, bot: Bot, event: Event, guess: Message = Arg()):
     answer: str = state[_GUESS_NUMBER]
     guess = guess.extract_plain_text()
     if guess == 'stop' or guess == '停止' or guess == '停止游戏' or guess == '结束' or guess == '结束游戏':
         await guess_number.finish(f'答案是{state[_GUESS_NUMBER]}\n杂♥️鱼~杂♥️鱼~，才{state[_GUESS_NUMBER_TURNS]}轮就放弃了啊♥️~')
     elif guess == answer:
-        await guess_number.finish(f'呜呜呜，才{state[_GUESS_NUMBER_TURNS]}轮就让你猜出来了，哥哥原谅我吧')
+        point_amounts = len(answer) * 10 - 2 * (int(state[_GUESS_NUMBER_TURNS]) - 8)
+        economy.earn(user.get_uid(universal_adapters.get_puid(bot, event)), point_amounts)
+        await guess_number.finish(f'居然{state[_GUESS_NUMBER_TURNS]}轮就让你猜出来了。喏，{point_amounts}个胡萝卜片')
     elif not guess.isdigit():
         await guess_number.reject('哥哥是不知道数字是什么吗♥️~杂♥️鱼~杂♥️鱼~')
     elif len(guess) != len(answer):
