@@ -201,6 +201,19 @@ async def send_group_forward_message(content: list[str], bot: Bot, event: Event,
         await bot.send(event, ob12.Message(msg))
     await bot.send(event, msg)
 
+async def send_image_from_url(img_url: str, bot: Bot, event: Event) -> None:
+    if is_onebot_v11(bot):
+        await bot.send(event, ob11.MessageSegment.image(file=img_url))
+    elif is_onebot_v12(bot):
+        await bot.send(event, ob12.MessageSegment.image(file=img_url))
+    elif is_kook(bot):
+        img_data = await fetch_data(img_url)
+        if img_data:
+            url = await bot.upload_file(img_data)
+            await bot.send(kook.MessageSegment.image(url))
+    else:
+        await bot.send(f'图片链接: {img_url}')
+
 def get_puid(bot: Bot, event: Event) -> str:
     puid = get_user_id(event)
     if is_onebot_v11(bot) or is_onebot_v12(bot) or is_mirai2(bot):

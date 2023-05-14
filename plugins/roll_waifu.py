@@ -42,6 +42,7 @@ async def _(bot: Bot, event: Event, msg: Message = CommandArg()):
             await waifu.finish('没有这个类型哦')
     img_url = await get_waifu_url('sfw', category)
     if img_url:
-        await waifu.finish(await universal_adapters.get_image_message_from_url(bot, img_url))
+        await universal_adapters.send_image_from_url(img_url, bot, event)
+        await waifu.finish()
     else:
         await waifu.finish('获取图片失败')
