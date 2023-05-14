@@ -27,7 +27,7 @@ async def get_waifu_url(type: str, category: str) -> str | None:
 waifu = on_command('waifu', aliases={'老婆', '纸片人'}, block=True)
 @waifu.handle()
 async def _(bot: Bot, event: Event, msg: Message = CommandArg()):
-    if economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 2):
+    if not economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 2):
         await waifu.finish('你的余额不足哦')
     await waifu.send('谢谢你的两个胡萝卜片喵~\n正在找图哦~')
     category = random.choice(categories)

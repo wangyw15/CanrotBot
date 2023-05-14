@@ -19,6 +19,6 @@ kuji_data: list[str] = [x[1] for x in get_assets('kuji')]
 kuji = on_command('kuji', aliases={'浅草寺'}, block=True)
 @kuji.handle()
 async def _(bot: Bot, event: Event):
-    if economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 1):
+    if not economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 1):
         await kuji.finish('你的余额不足哦')
     await kuji.finish('谢谢你的一个胡萝卜片喵~\n' + random.choice(kuji_data))
