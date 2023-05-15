@@ -17,7 +17,7 @@ async def search_muse_dash_player_id(player_name: str) -> str | None:
     resp = await _client.get(f'https://api.musedash.moe/search/{player_name}')
     if resp.status_code == 200:
         data: list[list[str]] = resp.json()
-        if data and len(data) != 0:
+        if data and len(data) != 0 and data[0][0] == player_name:
             return data[0][1]
     return None
 
