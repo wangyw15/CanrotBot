@@ -44,6 +44,7 @@ async def _(state: T_State, bot: Bot, event: Event, guess: Message = Arg()):
     if guess == 'stop' or guess == '停止' or guess == '停止游戏' or guess == '结束' or guess == '结束游戏':
         await guess_number.finish(f'答案是{state[_GUESS_NUMBER]}\n杂♥️鱼~杂♥️鱼~，才{state[_GUESS_NUMBER_TURNS]}轮就放弃了啊♥️~')
     elif guess == answer:
+        state[_GUESS_NUMBER_TURNS] += 1
         point_amounts = len(answer) * 10 - 2 * (int(state[_GUESS_NUMBER_TURNS]) - 8)
         economy.earn(user.get_uid(universal_adapters.get_puid(bot, event)), point_amounts)
         await guess_number.finish(f'居然{state[_GUESS_NUMBER_TURNS]}轮就让你猜出来了。喏，{point_amounts}个胡萝卜片')
