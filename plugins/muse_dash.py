@@ -65,7 +65,10 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             if player_id and player_name:
                 user.set_data_by_uid(uid, 'muse_dash_name', player_name)
                 user.set_data_by_uid(uid, 'muse_dash_moe_id', player_id)
-                await _muse_dash.finish(f'绑定成功\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}')
+                await _muse_dash.send(f'绑定成功\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}')
+                ret_msg = await generate_muse_dash_message(player_id)
+                await universal_adapters.send_group_forward_message(ret_msg, bot, event)
+                await _muse_dash.finish()
             else:
                 await _muse_dash.finish('绑定失败')
         elif splited_msg[0] == 'unbind' or splited_msg[0] == '解绑':
@@ -101,7 +104,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                 await _muse_dash.finish()
     else:
         if uid:
-            if player_name := user.get_data_by_uid(uid, 'muse_dash_moe_id'):
+            if player_id := user.get_data_by_uid(uid, 'muse_dash_moe_id'):
                 ret_msg = await generate_muse_dash_message(player_id)
                 await universal_adapters.send_group_forward_message(ret_msg, bot, event)
                 await _muse_dash.finish()
