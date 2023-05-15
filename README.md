@@ -58,6 +58,10 @@
 
 需要在配置中设置 SauceNAO 的 api key
 
+```
+saucenao_api_key="你的 api key"
+```
+
 ## 俄罗斯转盘
 
 一个人发起，对bot说装填子弹量（1-6）
@@ -67,10 +71,6 @@
 建议加入枪走火或者卡壳类
 
 低概率事件
-
-```
-saucenao_api_key="你的 api key"
-```
 
 # 打算做的
 
