@@ -210,7 +210,7 @@ async def send_image_from_url(img_url: str, bot: Bot, event: Event) -> None:
         img_data = await fetch_data(img_url)
         if img_data:
             url = await bot.upload_file(img_data)
-            await bot.send(kook.MessageSegment.image(url))
+            await bot.send(event, kook.MessageSegment.image(url))
     else:
         await bot.send(f'图片链接: {img_url}')
 
