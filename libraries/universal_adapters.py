@@ -197,8 +197,10 @@ async def send_group_forward_message(content: list[str], bot: Bot, event: Event,
     msg = header + ('\n' + split + '\n').join(content)
     if is_onebot_v11(bot):
         await bot.send(event, ob11.Message(msg))
+        return
     elif is_onebot_v12(bot):
         await bot.send(event, ob12.Message(msg))
+        return
     await bot.send(event, msg)
 
 async def send_image_from_url(img_url: str, bot: Bot, event: Event) -> None:
