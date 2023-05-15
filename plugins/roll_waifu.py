@@ -27,19 +27,20 @@ async def get_waifu_url(type: str, category: str) -> str | None:
 waifu = on_command('waifu', aliases={'老婆', '纸片人'}, block=True)
 @waifu.handle()
 async def _(bot: Bot, event: Event, msg: Message = CommandArg()):
-    if not economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 2):
-        await waifu.finish('你的余额不足哦')
-    await waifu.send('谢谢你的两个胡萝卜片喵~\n正在找图哦~')
-    category = random.choice(categories)
+    category = 'waifu'
     if args := msg.extract_plain_text():
+        args = args.lower()
         if args == 'help' or args == '帮助':
-            await waifu.finish(f'可选类型：\n{", ".join(categories)}\n或者直接 /waifu')
+            await waifu.finish(f'直接 /waifu\n类型默认waifu，选择random就是随机一个分类\n可选类型：\n{", ".join(categories)}')
         elif args == 'random':
             category = random.choice(categories)
         elif args in categories:
-            category = msg
+            category = args
         else:
             await waifu.finish('没有这个类型哦')
+    if not economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 2):
+        await waifu.finish('你的余额不足哦')
+    await waifu.send('谢谢你的两个胡萝卜片喵~\n正在找图哦~')
     img_url = await get_waifu_url('sfw', category)
     if img_url:
         await universal_adapters.send_image_from_url(img_url, bot, event)
