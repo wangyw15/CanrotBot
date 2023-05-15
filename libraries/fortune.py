@@ -82,7 +82,7 @@ def _decrement(text: str) -> Tuple[int, list[str]]:
     return col_num, result
 
 def get_theme_key_from_name(name: str) -> str:
-    for k, v in _themes:
+    for k, v in _themes.items():
         if name == k or name in v:
             return k
     return 'random'
