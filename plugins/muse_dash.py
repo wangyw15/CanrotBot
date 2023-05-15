@@ -24,7 +24,8 @@ async def generate_muse_dash_message(player_id: str) -> list[str]:
                 f'偏差值: {data["diff"]}\n' +
                 f'记录条数: {data["records"]}\n' +
                 f'完美数: {data["perfects"]}\n' +
-                f'平均准确率: {data["avg"]}%\n'
+                f'平均准确率: {data["avg"]}%\n' + 
+                f'上次更新: {data["last_update"]} 前\n'
             )
             for song in data['songs']:
                 ret_msg.append(f'[CQ:image,file={song["icon"]}]\n' +

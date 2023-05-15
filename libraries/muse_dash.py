@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import httpx
+import re
 
 _client: httpx.AsyncClient = None
 
@@ -36,6 +37,8 @@ def parse_muse_dash_page(content: str) -> dict:
     name_diff = soup.select('h1.title')
     result['name'] = name_diff[0].get_text().strip()
     result['diff'] = float(name_diff[1].get_text().strip()[1:-1])
+    update_str = soup.select_one('div.level>div.level-item:nth-child(3)').get_text()
+    result['last_update'] = re.search(r'Last update (\d+\S+) ago', update_str).groups(0)[0]
 
     # player stat
     stat = soup.select('nav.level>div.has-text-centered>div')
