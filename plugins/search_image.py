@@ -307,7 +307,7 @@ async def _(state: T_State, bot: Bot, args: Message = CommandArg()):
             await _search_image.finish("无效的搜图网站选项")
     state["SEARCH_IMAGE_API"] = api
 
-    if is_onebot_v11(bot) or is_onebot_v12(bot):
+    if is_onebot_v11(bot) or is_onebot_v12(bot) or is_kook(bot):
         await _search_image.send("请发送图片或图片链接")
     else:
         await _search_image.send("请发送图片链接")
@@ -317,13 +317,10 @@ async def _(state: T_State, bot: Bot, args: Message = CommandArg()):
 async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
     # get img url
     img_url: str = ""
-    if is_onebot_v11(bot) or is_onebot_v12(bot):
-        if image[0].type == "image":
-            img_url = image[0].data["url"].strip()
-        elif image[0].type == "text":
-            img_url = image[0].data["text"].strip()
-        else:
-            await _search_image.finish("不是图片或者链接，停止搜图")
+    if (is_onebot_v11(bot) or is_onebot_v12(bot)) and image[0].type == 'image':
+            img_url = image[0].data['url'].strip()
+    elif is_kook(bot) and image[0].type == 'image':
+            img_url = image[0].data['file_key'].strip()
     else:
         img_url = image.extract_plain_text().strip()
 
