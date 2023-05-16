@@ -14,9 +14,8 @@ __plugin_meta__ = PluginMetadata(
 
 def _generate_bilibili_message(data: dict) -> str:
     # either use the first line of description or the first 50 characters of description
-    desc = data['desc']
-    splitted_desc = '\n'.join([x.strip() for x in desc.split('\n') if x.strip() != ''])
-    if len(splitted_desc) > 50:
+    desc = '\n'.join([x.strip() for x in data['desc'].split('\n') if x.strip() != ''])
+    if len(desc) > 50:
         desc = desc[:50] + '...'
     # generate message
     msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕: {data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介:\n{data["desc"]}\n视频链接: \nhttps://www.bilibili.com/video/{data["bvid"]}'
