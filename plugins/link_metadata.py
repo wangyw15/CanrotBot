@@ -40,7 +40,7 @@ async def _(state: T_State, bot: Bot, event: Event):
 _bilibili_video_short_link = on_regex(r'https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}', block=True)
 @_bilibili_video_short_link.handle()
 async def _(state: T_State, bot: Bot, event: Event):
-    vid = await link_metadata.get_bvid_from_bilibili_short_link(state['_matched_groups'][0])
+    vid = await link_metadata.get_bvid_from_bilibili_short_link(state['_matched_str'])
     data = await link_metadata.fetch_bilibili_data(vid)
     if data:
         msg = _generate_bilibili_message(data)
