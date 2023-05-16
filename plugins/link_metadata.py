@@ -19,17 +19,13 @@ def _generate_bilibili_message(data: dict) -> str:
     if len(desc) > 50:
         desc = desc[:50] + '...'
     # generate message
-    msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕:{data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介:\n{data["desc"]}\n视频链接: \nhttps://www.bilibili.com/video/{vid}'
+    msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕:{data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介:\n{data["desc"]}\n视频链接: \nhttps://www.bilibili.com/video/{data["bvid"]}'
     return msg
 
 _bilibili_video = on_regex(link_metadata.bilibili_vid_pattern, block=True)
 @_bilibili_video.handle()
 async def _(state: T_State, bot: Bot, event: Event):
-    vid = state['_matched_groups'][0]
-    if vid.startswith('BV'):
-        data = await link_metadata.fetch_bilibili_data(vid, 'bv')
-    elif vid.startswith('av'):
-        data = await link_metadata.fetch_bilibili_data(vid, 'av')
+    data = await link_metadata.fetch_bilibili_data(state['_matched_groups'][0])
     if data:
         msg = _generate_bilibili_message(data)
         # image message
@@ -44,11 +40,8 @@ async def _(state: T_State, bot: Bot, event: Event):
 _bilibili_video_short_link = on_regex(r'https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}', block=True)
 @_bilibili_video_short_link.handle()
 async def _(state: T_State, bot: Bot, event: Event):
-    vid = state['_matched_groups'][0]
-    if vid.startswith('BV'):
-        data = await link_metadata.fetch_bilibili_data(vid, 'bv')
-    elif vid.startswith('av'):
-        data = await link_metadata.fetch_bilibili_data(vid, 'av')
+    vid = await link_metadata.get_bvid_from_bilibili_short_link(state['_matched_groups'][0])
+    data = await link_metadata.fetch_bilibili_data(vid)
     if data:
         msg = _generate_bilibili_message(data)
         # image message

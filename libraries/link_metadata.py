@@ -9,18 +9,18 @@ if proxy := get_config('canrot_proxy'):
 else:
     _client = AsyncClient()
 
-async def fetch_bilibili_data(bvid: str, type: str = 'bv') -> dict | None:
-    if type == 'bv':
-        resp = await _client.get(f'https://api.bilibili.com/x/web-interface/view?bvid={bvid}')
-    elif type == 'av':
-        resp = await _client.get(f'https://api.bilibili.com/x/web-interface/view?aid={bvid}')
+async def fetch_bilibili_data(vid: str) -> dict | None:
+    if vid.startswith('BV'):
+        resp = await _client.get(f'https://api.bilibili.com/x/web-interface/view?bvid={vid}')
+    elif vid.startswith('av'):
+        resp = await _client.get(f'https://api.bilibili.com/x/web-interface/view?aid={vid}')
     if resp and resp.is_success and resp.status_code == 200:
         data = resp.json()
         if data['code'] == 0:
             return data['data']
     return None
 
-async def get_bv_from_bilibili_short_link(url: str) -> str | None:
+async def get_bvid_from_bilibili_short_link(url: str) -> str | None:
     resp = await _client.get(url, allow_redirects=False)
     if resp and resp.is_success and resp.status_code == 302:
         return re.match(bilibili_vid_pattern, resp.headers['Location']).group()[0]
