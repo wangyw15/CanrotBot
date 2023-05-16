@@ -12,7 +12,7 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-_bilibili_video = on_regex(r'(?:https?:\/\/)?(?:www\.)?bilibili.com\/video\/((?:BV|av)[0-9A-Za-z]+)', block=True)
+_bilibili_video = on_regex(link_metadata.bilibili_vid_pattern, block=True)
 @_bilibili_video.handle()
 async def _(state: T_State, bot: Bot, event: Event):
     vid = state['_matched_groups'][0]
@@ -27,7 +27,7 @@ async def _(state: T_State, bot: Bot, event: Event):
         if len(desc) > 50:
             desc = desc[:50] + '...'
         # generate message
-        msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕: {data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介: \n{data["desc"]}'
+        msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕: {data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介: \n{data["desc"]}\n视频链接: \nhttps://www.bilibili.com/video/{vid}'
         # image message
         if universal_adapters.is_onebot_v11(bot):
             await _bilibili_video.finish(universal_adapters.ob11.Message(f'[CQ:image,file={data["pic"]}]' + msg))
