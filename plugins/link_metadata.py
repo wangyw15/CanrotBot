@@ -12,6 +12,16 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
+def _generate_bilibili_message(data: dict) -> str:
+    # either use the first line of description or the first 50 characters of description
+    desc = data['desc']
+    splitted_desc = '\n'.join([x.strip() for x in desc.split('\n') if x.strip() != ''])
+    if len(desc) > 50:
+        desc = desc[:50] + '...'
+    # generate message
+    msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕:{data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介:\n{data["desc"]}\n视频链接: \nhttps://www.bilibili.com/video/{vid}'
+    return msg
+
 _bilibili_video = on_regex(link_metadata.bilibili_vid_pattern, block=True)
 @_bilibili_video.handle()
 async def _(state: T_State, bot: Bot, event: Event):
@@ -21,13 +31,7 @@ async def _(state: T_State, bot: Bot, event: Event):
     elif vid.startswith('av'):
         data = await link_metadata.fetch_bilibili_data(vid, 'av')
     if data:
-        # either use the first line of description or the first 50 characters of description
-        desc = data['desc']
-        splitted_desc = '\n'.join([x.strip() for x in desc.split('\n') if x.strip() != ''])
-        if len(desc) > 50:
-            desc = desc[:50] + '...'
-        # generate message
-        msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕: {data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介: \n{data["desc"]}\n视频链接: \nhttps://www.bilibili.com/video/{vid}'
+        msg = _generate_bilibili_message(data)
         # image message
         if universal_adapters.is_onebot_v11(bot):
             await _bilibili_video.finish(universal_adapters.ob11.Message(f'[CQ:image,file={data["pic"]}]' + msg))
@@ -36,3 +40,22 @@ async def _(state: T_State, bot: Bot, event: Event):
         if universal_adapters.is_kook(bot):
             await universal_adapters.send_image_from_url(data["pic"], bot, event)
         await _bilibili_video.finish(msg)
+
+_bilibili_video_short_link = on_regex(r'https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}', block=True)
+@_bilibili_video_short_link.handle()
+async def _(state: T_State, bot: Bot, event: Event):
+    vid = state['_matched_groups'][0]
+    if vid.startswith('BV'):
+        data = await link_metadata.fetch_bilibili_data(vid, 'bv')
+    elif vid.startswith('av'):
+        data = await link_metadata.fetch_bilibili_data(vid, 'av')
+    if data:
+        msg = _generate_bilibili_message(data)
+        # image message
+        if universal_adapters.is_onebot_v11(bot):
+            await _bilibili_video_short_link.finish(universal_adapters.ob11.Message(f'[CQ:image,file={data["pic"]}]' + msg))
+        if universal_adapters.is_onebot_v12(bot):
+            await _bilibili_video_short_link.finish(universal_adapters.ob12.Message(f'[CQ:image,file={data["pic"]}]' + msg))
+        if universal_adapters.is_kook(bot):
+            await universal_adapters.send_image_from_url(data["pic"], bot, event)
+        await _bilibili_video_short_link.finish(msg)
