@@ -35,25 +35,25 @@ async def _(state: T_State, args: Message = CommandArg()):
             num_len = int(msg)
     state[_GUESS_NUMBER] = generate_number(num_len)
     state[_GUESS_NUMBER_TURNS] = 0
-    await guess_number.send(f'又来挑战{len(state[_GUESS_NUMBER])}位的猜数游戏了吗♥️~')
+    await guess_number.send(f'又来挑战{len(state[_GUESS_NUMBER])}位的猜数游戏了吗~')
 
 @guess_number.got('guess')
 async def _(state: T_State, bot: Bot, event: Event, guess: Message = Arg()):
     answer: str = state[_GUESS_NUMBER]
     guess = guess.extract_plain_text()
     if guess == 'stop' or guess == '停止' or guess == '停止游戏' or guess == '结束' or guess == '结束游戏':
-        await guess_number.finish(f'答案是{state[_GUESS_NUMBER]}\n杂♥️鱼~杂♥️鱼~，才{state[_GUESS_NUMBER_TURNS]}轮就放弃了啊♥️~')
+        await guess_number.finish(f'答案是{state[_GUESS_NUMBER]}\n嗯...才{state[_GUESS_NUMBER_TURNS]}轮就放弃了啊...')
     elif guess == answer:
         state[_GUESS_NUMBER_TURNS] += 1
         point_amounts = len(answer) * 10 - 2 * (int(state[_GUESS_NUMBER_TURNS]) - 8)
         economy.earn(user.get_uid(universal_adapters.get_puid(bot, event)), point_amounts)
-        await guess_number.finish(f'居然{state[_GUESS_NUMBER_TURNS]}轮就让你猜出来了。喏，{point_amounts}个胡萝卜片')
+        await guess_number.finish(f'居然{state[_GUESS_NUMBER_TURNS]}轮就让你猜出来了。哼，{point_amounts}个胡萝卜片拿去')
     elif not guess.isdigit():
-        await guess_number.reject('哥哥是不知道数字是什么吗♥️~杂♥️鱼~杂♥️鱼~')
+        await guess_number.reject('你输入的不是数字喵~')
     elif len(guess) != len(answer):
-        await guess_number.reject(f'杂鱼哥哥是忘了题目吗♥️~\n是{len(answer)}位哦♥️~')
+        await guess_number.reject(f'是{len(answer)}位喵~')
     elif len(set(guess)) != len(answer):
-        await guess_number.reject(f'杂鱼哥哥是忘了题目吗♥️~\n是{len(answer)}位各位都不相同的数字哦♥️~')
+        await guess_number.reject(f'是{len(answer)}位各位都不相同的数字喵~')
     else:
         state[_GUESS_NUMBER_TURNS] += 1
         a = 0
