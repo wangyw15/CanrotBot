@@ -21,7 +21,7 @@ async def fetch_bilibili_data(vid: str) -> dict | None:
     return None
 
 async def get_bvid_from_bilibili_short_link(url: str) -> str | None:
-    resp = await _client.get(url, allow_redirects=False)
+    resp = await _client.get(url, follow_redirects=False)
     if resp and resp.is_success and resp.status_code == 302:
         return re.match(bilibili_vid_pattern, resp.headers['Location']).group()[0]
     return None
