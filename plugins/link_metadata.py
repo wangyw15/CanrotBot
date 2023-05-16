@@ -19,7 +19,7 @@ def _generate_bilibili_message(data: dict) -> str:
     if len(splitted_desc) > 50:
         desc = desc[:50] + '...'
     # generate message
-    msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕:{data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介:\n{data["desc"]}\n视频链接: \nhttps://www.bilibili.com/video/{data["bvid"]}'
+    msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕: {data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介:\n{data["desc"]}\n视频链接: \nhttps://www.bilibili.com/video/{data["bvid"]}'
     return msg
 
 _bilibili_video = on_regex(link_metadata.bilibili_vid_pattern, block=True)
