@@ -21,9 +21,11 @@ async def _(state: T_State, bot: Bot, event: Event):
     elif vid.startswith('av'):
         data = await link_metadata.fetch_bilibili_data(vid, 'av')
     if data:
-        msg = f'[CQ:image,file={data["pic"]}]标题: {data["title"]}\nUP主: {data["owner"]["name"]}\n简介: {data["desc"]}\n播放: {data["stat"]["view"]}\n弹幕: {data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}'
+        msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n播放: {data["stat"]["view"]}\n弹幕: {data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介: \n{data["desc"]}'
         if universal_adapters.is_onebot_v11(bot):
-            await _bilibili_video.finish(universal_adapters.ob11.Message(msg))
+            await _bilibili_video.finish(universal_adapters.ob11.Message(f'[CQ:image,file={data["pic"]}]' + msg))
         if universal_adapters.is_onebot_v12(bot):
-            await _bilibili_video.finish(universal_adapters.ob12.Message(msg))
+            await _bilibili_video.finish(universal_adapters.ob12.Message(f'[CQ:image,file={data["pic"]}]' + msg))
+        if universal_adapters.is_kook(bot):
+            await universal_adapters.send_image_from_url(data["pic"], bot, event)
         await _bilibili_video.finish(msg)
