@@ -1,5 +1,6 @@
 from .config import get_config
 from httpx import AsyncClient, Response
+import base64
 import re
 
 bilibili_vid_pattern = r'(?:https?:\/\/)?(?:(?:www\.)?bilibili.com\/video|b23\.tv)\/((?:BV|av)[0-9A-Za-z]+)'
@@ -36,3 +37,10 @@ async def fetch_youtube_data(id: str) -> dict:
             if data['pageInfo']['totalResults'] > 0:
                 return data['items'][0]
     return {}
+
+async def fetch_youtube_thumbnail(data: dict) -> bytes | None:
+    '''Fetch bytes from url'''
+    resp = await _client.get(data["snippet"]["thumbnails"]["maxres"]["url"])
+    if resp.is_success and resp.status_code == 200:
+        return resp.content
+    return None

@@ -76,10 +76,10 @@ async def _(state: T_State, bot: Bot, event: Event):
         msg = _generate_youtube_message(data)
         # image message
         if universal_adapters.is_onebot_v11(bot):
-            img_data = await universal_adapters.fetch_data(data["snippet"]["thumbnails"]["maxres"]["url"])
+            img_data = await link_metadata.fetch_youtube_thumbnail(data)
             await _youtube_video.finish(universal_adapters.ob11.Message(universal_adapters.ob11.MessageSegment.image(img_data) + msg))
         if universal_adapters.is_onebot_v12(bot):
-            img_data = await universal_adapters.fetch_data(data["snippet"]["thumbnails"]["maxres"]["url"])
+            img_data = await link_metadata.fetch_youtube_thumbnail(data)
             img_base64 = base64.b64encode(img_data).decode('utf-8')
             await _youtube_video.finish(universal_adapters.ob12.Message(f'[CQ:image,file=base64://{img_base64}]' + msg))
         if universal_adapters.is_kook(bot):
