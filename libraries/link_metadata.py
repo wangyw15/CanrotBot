@@ -3,6 +3,7 @@ from httpx import AsyncClient, Response
 import re
 
 bilibili_vid_pattern = r'(?:https?:\/\/)?(?:(?:www\.)?bilibili.com\/video|b23\.tv)\/((?:BV|av)[0-9A-Za-z]+)'
+youtube_id_pattern = r'(?:https?:\/\/)?(?:youtu\.be\/|(?:\w{3}\.)?youtube\.com\/watch\?.*v=)([a-zA-Z0-9-_]+)'
 
 if proxy := get_config('canrot_proxy'):
     _client = AsyncClient(proxies=proxy)
@@ -28,4 +29,10 @@ async def get_bvid_from_bilibili_short_link(url: str) -> str | None:
     return None
 
 async def fetch_youtube_data(id: str) -> dict:
-    pass
+    if api_key := get_config('youtube_api_key'):
+        resp = await _client.get(f'https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics&id={id}&key={get_config("youtube_api_key")}')
+        if resp and resp.is_success and resp.status_code == 200:
+            data = resp.json()
+            if data['pageInfo']['totalResults'] > 0:
+                return data['items'][0]
+    return {}
