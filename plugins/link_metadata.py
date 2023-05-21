@@ -3,6 +3,7 @@ from nonebot.adapters import Bot, Event
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 import datetime
+import base64
 
 from ..libraries import link_metadata, universal_adapters
 
@@ -75,9 +76,12 @@ async def _(state: T_State, bot: Bot, event: Event):
         msg = _generate_youtube_message(data)
         # image message
         if universal_adapters.is_onebot_v11(bot):
-            await _youtube_video.finish(universal_adapters.ob11.Message(f'[CQ:image,file={data["snippet"]["thumbnails"]["maxres"]["url"]}]' + msg))
+            img_data = await universal_adapters.fetch_data(data["snippet"]["thumbnails"]["maxres"]["url"])
+            await _youtube_video.finish(universal_adapters.ob11.Message(universal_adapters.ob11.MessageSegment.image(img_data) + msg))
         if universal_adapters.is_onebot_v12(bot):
-            await _youtube_video.finish(universal_adapters.ob12.Message(f'[CQ:image,file={data["snippet"]["thumbnails"]["maxres"]["url"]}]' + msg))
+            img_data = await universal_adapters.fetch_data(data["snippet"]["thumbnails"]["maxres"]["url"])
+            img_base64 = base64.b64encode(img_data).decode('utf-8')
+            await _youtube_video.finish(universal_adapters.ob12.Message(f'[CQ:image,file=base64://{img_base64}]' + msg))
         if universal_adapters.is_kook(bot):
             await universal_adapters.send_image_from_url(data["snippet"]["thumbnails"]["default"]["url"], bot, event)
         await _youtube_video.finish(msg)
