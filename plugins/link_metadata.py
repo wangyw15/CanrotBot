@@ -22,7 +22,7 @@ def _generate_bilibili_message(data: dict) -> str:
     # publish time
     date = datetime.datetime.fromtimestamp(data['pubdate'])
     # generate message
-    msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%SZ")}\n播放: {data["stat"]["view"]}\n弹幕: {data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介:\n{desc}\n视频链接: \nhttps://www.bilibili.com/video/{data["bvid"]}'
+    msg = f'标题: \n{data["title"]}\nUP主: \n{data["owner"]["name"]}\n发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%S")}\n播放: {data["stat"]["view"]}\n弹幕: {data["stat"]["danmaku"]}\n点赞: {data["stat"]["like"]}\n投币: {data["stat"]["coin"]}\n简介:\n{desc}\n视频链接: \nhttps://www.bilibili.com/video/{data["bvid"]}'
     return msg
 
 def _generate_youtube_message(data: dict) -> str:
@@ -31,7 +31,7 @@ def _generate_youtube_message(data: dict) -> str:
     if len(desc) > 200:
         desc = desc[:200] + '...'
     # publish time
-    date = datetime.datetime.strptime(data['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ') + datetime.timedelta(hours=8)
+    date = datetime.datetime.strptime(data['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%S') + datetime.timedelta(hours=8)
     # generate message
     msg = f'标题: \n{data["snippet"]["title"]}\n频道: \n{data["snippet"]["channelTitle"]}\n发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%SZ")}\n播放: {data["statistics"]["viewCount"]}\n点赞: {data["statistics"]["likeCount"]}\n评论: {data["statistics"]["commentCount"]}\n简介:\n{desc}\n视频链接: \nhttps://youtu.be/{data["id"]}'
     return msg
