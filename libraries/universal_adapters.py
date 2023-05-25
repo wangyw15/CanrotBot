@@ -167,8 +167,8 @@ async def fetch_data(url: str) -> bytes | None:
     return None
 
 async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment | None:
-    '''Get image MessageSegement by url for different adapters (to be deprecated)'''
-    warnings.warn('This function is being deprecated', PendingDeprecationWarning)
+    '''Get image MessageSegement by url for different adapters'''
+    warnings.warn('This function is being deprecated', DeprecationWarning)
     if ob11 and isinstance(bot, ob11.Bot):
         return ob11.MessageSegment.image(file=img_url)
     elif ob12 and isinstance(bot, ob12.Bot):

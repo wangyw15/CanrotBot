@@ -2,11 +2,12 @@ from nonebot import get_driver, on_command, on_regex
 from nonebot.adapters import Message, Event, Bot
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-from nonebot.rule import Rule
+from nonebot.typing import T_State
 from pydantic import BaseModel, validator
 import httpx
 
 from ..libraries.universal_adapters import *
+from ..libraries.link_metadata import fetch_steam_app_info
 from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(
@@ -40,19 +41,7 @@ if config.canrot_proxy:
 else:
     _client = httpx.AsyncClient()
 
-# fetch app info from appid
-async def fetch_app_info(appid: int) -> dict | None:
-    if config.canrot_proxy:
-        proxy = {'https': config.canrot_proxy, 'http': config.canrot_proxy}
-    else:
-        proxy = {}
-    resp = await _client.get(f'https://store.steampowered.com/api/appdetails/?appids={appid}&l={config.steam_language}&cc={config.steam_region}', 
-                        headers={'Accept-Language': config.steam_language})
-    if resp.is_success and resp.status_code == 200:
-        return resp.json()
-    return None
-
-def generate_message(app_info: dict) -> str:
+def _generate_message(app_info: dict) -> str:
     name: str = app_info['name']
     appid: int = app_info['steam_appid']
     desc: str = app_info['short_description']
@@ -63,7 +52,7 @@ def generate_message(app_info: dict) -> str:
     genres: list[str] = [x['description'] for x in app_info['genres']]
     categories: list[str] = [x['description'] for x in app_info['categories']]
     initial_price: str = app_info['price_overview']['initial_formatted']
-    final_price:str = app_info['price_overview']['final_formatted']
+    final_price: str = app_info['price_overview']['final_formatted']
     discount_percentage: int = app_info['price_overview']['discount_percent']
 
     ret = f"""
@@ -84,31 +73,57 @@ def generate_message(app_info: dict) -> str:
     ret += f'\n链接: https://store.steampowered.com/app/{appid}'
     return ret
 
-steam = on_command('steam', aliases={'sbeam', '蒸汽', '蒸汽平台'}, block=True)
-@steam.handle()
+_steam_command_handler = on_command('steam', aliases={'sbeam', '蒸汽', '蒸汽平台'}, block=True)
+@_steam_command_handler.handle()
 async def _(bot: Bot, args: Message = CommandArg()):
     if msg := args.extract_plain_text():
         if msg.isdigit():
-            if appinfo := await fetch_app_info(msg):
+            if appinfo := await fetch_steam_app_info(msg, config.steam_language, config.steam_region):
                 if appinfo.get(msg, {}).get('success', False):
                     appinfo = appinfo[msg]['data']
                     header_img = appinfo['header_image']
                     bg_img = appinfo['background_raw']
-
-                    header_img_msg = await get_image_message_from_url(bot, header_img)
-                    text_msg = generate_message(appinfo)
-                    bg_img_msg = await get_image_message_from_url(bot, bg_img)
-                    if is_onebot_v11(bot) or is_onebot_v12(bot) or is_mirai2(bot):
-                        await steam.finish(header_img_msg + '\n' + text_msg + '\n' + bg_img_msg)
+                    text_msg = _generate_message(appinfo)
+                    
+                    if is_onebot_v11(bot):
+                        await _steam_command_handler.finish(ob11.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
+                    elif is_onebot_v12(bot):
+                        await _steam_command_handler.finish(ob12.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
                     elif is_kook(bot):
-                        await steam.send(header_img_msg)
-                        await steam.send(text_msg)
-                        await steam.finish(bg_img_msg)
+                        header_img_msg = await get_image_message_from_url(bot, header_img)
+                        bg_img_msg = await get_image_message_from_url(bot, bg_img)
+                        await _steam_command_handler.send(header_img_msg)
+                        await _steam_command_handler.send(text_msg)
+                        await _steam_command_handler.finish(bg_img_msg)
                     else:
-                        await steam.finish(text_msg)
+                        await _steam_command_handler.finish(text_msg)
                 else:
-                    await steam.finish('未找到该游戏')
+                    await _steam_command_handler.finish('未找到该游戏')
             else:
-                await steam.finish('请求失败')
+                await _steam_command_handler.finish('请求失败')
         else:
-            await steam.finish('请输入正确的游戏ID')
+            await _steam_command_handler.finish('请输入正确的游戏ID')
+
+_steam_link_handler = on_regex(r'(?:https?:\/\/)?store\.steampowered\.com\/app\/(\d+)', block=True)
+@_steam_link_handler.handle()
+async def _(bot: Bot, event: Event, state: T_State):
+    appid = state['_matched_groups'][0]
+    if appinfo := await fetch_steam_app_info(appid, config.steam_language, config.steam_region):
+        if appinfo.get(appid, {}).get('success', False):
+            appinfo = appinfo[appid]['data']
+            header_img = appinfo['header_image']
+            bg_img = appinfo['background_raw']
+            text_msg = _generate_message(appinfo)
+            
+            if is_onebot_v11(bot):
+                await _steam_link_handler.finish(ob11.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
+            elif is_onebot_v12(bot):
+                await _steam_link_handler.finish(ob12.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
+            elif is_kook(bot):
+                header_img_msg = await get_image_message_from_url(bot, header_img)
+                bg_img_msg = await get_image_message_from_url(bot, bg_img)
+                await _steam_command_handler.send(header_img_msg)
+                await _steam_command_handler.send(text_msg)
+                await _steam_command_handler.finish(bg_img_msg)
+            else:
+                await _steam_command_handler.finish(text_msg)
