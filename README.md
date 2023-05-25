@@ -109,7 +109,7 @@ saucenao_api_key="你的 api key"
 
 # 特别
 
-![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png)
-![PyCharm logo](https://resources.jetbrains.com/storage/products/company/brand/logos/PyCharm_icon.png)
+![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
+![PyCharm logo](https://resources.jetbrains.com/storage/products/company/brand/logos/PyCharm_icon.svg)
 
-感谢 [JetBrains](https://www.jetbrains.com/) 为本项目免费提供的开源项目订阅~
+感谢 [JetBrains](https://www.jetbrains.com/) 为本项目免费提供的[开源项目许可](https://jb.gg/OpenSourceSupport)~

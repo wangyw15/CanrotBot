@@ -1,3 +1,6 @@
+nb-cli
+nonebot2
+pydantic
 beautifulsoup4
 httpx
 jieba
