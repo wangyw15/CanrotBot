@@ -16,29 +16,29 @@
 
 # 功能列表
 
-| 功能 | 作用 |
-| :-: | :-: |
-| 不能好好说话 | 把一串字母变成涩涩的话！ |
-| 计算器 | 算数 |
-| cp文 | 随机生成cp文 |
-| 发癫文 | 随机发送发癫文 |
-| 汇率转换 | 就是汇率转换 |
-| 嘴臭 | 发个嘴臭文 |
-| 每日新闻 | 从[这里](https://api.03c3.cn/zb/)来的每日新闻图片 |
-| 猜数字 | 详见[下面](#猜数字规则) |
-| 一言 | 来自于[一言](https://hitokoto.cn/)的[句子包](https://github.com/hitokoto-osc/sentences-bundle) |
-| 浅草寺 | 浅草寺抽签 |
-| MuseDash 玩家信息 | 数据来源于 [MuseDash.moe](https://musedash.moe/) |
-| 能不能好好说话 | 调用[能不能好好说话？](https://lab.magiconch.com/nbnhhsh/)查找全名 |
-| 自动回复 | 词库来源于[Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)，机器人根据词库来概率自动水群 |
-| roll 个老婆 | 从 [waifu.pics](https://waifu.pics/) 随机抽取纸片人 |
-| 理科笑话 | 随机的理科笑话 |
-| 搜图 | 从 [SauceNAO](https://saucenao.com) 或者 [trace.moe](https://trace.moe) 搜图 |
-| Steam 助手 | 根据 appid 查询游戏信息 |
-| 舔狗语录 | 随机的舔狗语录 |
-| vtb小作文 | 随机的管人小作文 |
-| wordle 游戏 | 就是 wordle 游戏，用[NYTimes Wordle](https://www.nytimes.com/games/wordle/index.html)的词库做的 |
-| 淫语翻译机 | 把[RimoChan/yinglish](https://github.com/RimoChan/yinglish)包装成了机器人 |
+|      功能       |                                            作用                                             |
+|:-------------:|:-----------------------------------------------------------------------------------------:|
+|    不能好好说话     |                                       把一串字母变成涩涩的话！                                        |
+|      计算器      |                                            算数                                             |
+|      cp文      |                                          随机生成cp文                                          |
+|      发癫文      |                                          随机发送发癫文                                          |
+|     汇率转换      |                                          就是汇率转换                                           |
+|      嘴臭       |                                           发个嘴臭文                                           |
+|     每日新闻      |                          从[这里](https://api.03c3.cn/zb/)来的每日新闻图片                           |
+|      猜数字      |                                      详见[下面](#猜数字规则)                                       |
+|      一言       |   来自于[一言](https://hitokoto.cn/)的[句子包](https://github.com/hitokoto-osc/sentences-bundle)   |
+|      浅草寺      |                                           浅草寺抽签                                           |
+| MuseDash 玩家信息 |                        数据来源于 [MuseDash.moe](https://musedash.moe/)                        |
+|    能不能好好说话    |                   调用[能不能好好说话？](https://lab.magiconch.com/nbnhhsh/)查找全名                    |
+|     自动回复      | 词库来源于[Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)，机器人根据词库来概率自动水群 |
+|   roll 个老婆    |                        从 [waifu.pics](https://waifu.pics/) 随机抽取纸片人                        |
+|     理科笑话      |                                          随机的理科笑话                                          |
+|      搜图       |          从 [SauceNAO](https://saucenao.com) 或者 [trace.moe](https://trace.moe) 搜图          |
+|   Steam 助手    |                                      根据 appid 查询游戏信息                                      |
+|     舔狗语录      |                                          随机的舔狗语录                                          |
+|    vtb小作文     |                                         随机的管人小作文                                          |
+|   wordle 游戏   |   就是 wordle 游戏，用[NYTimes Wordle](https://www.nytimes.com/games/wordle/index.html)的词库做的    |
+|     淫语翻译机     |             把[RimoChan/yinglish](https://github.com/RimoChan/yinglish)包装成了机器人             |
 
 # 功能说明
 
