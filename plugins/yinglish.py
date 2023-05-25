@@ -25,7 +25,7 @@ class YinglishConfig(BaseModel):
             raise ValueError('yinglish_rate must be a float between 0.0 and 1.0')
         return v
 
-config = YinglishConfig.parse_obj(get_driver().config)
+_config = YinglishConfig.parse_obj(get_driver().config)
 
 # original program
 jieba.setLogLevel(20)
@@ -54,10 +54,10 @@ async def _(args: Message = CommandArg()):
     if msg := args.extract_plain_text():
         splitted: list[str] = msg.split()
         if len(splitted) == 0:
-            await yinglish.finish('能把中文翻译成淫语的翻译机！\n使用方法：', __plugin_meta__.usage)
+            await yinglish.finish('能把中文翻译成淫语的翻译机！\n使用方法：' + __plugin_meta__.usage)
         elif len(splitted) == 1:
-            await yinglish.finish(chs2yin(msg, config.yinglish_rate))
+            await yinglish.finish(chs2yin(msg, _config.yinglish_rate))
         elif len(splitted) == 2 and splitted[1].replace('.', '').isnumeric() and 0 <= float(splitted[1]) <= 1:
             await yinglish.finish(chs2yin(splitted[0], float(splitted[1])))
         else:
-            await yinglish.finish('参数错误！\n使用方法：', __plugin_meta__.usage)
+            await yinglish.finish('参数错误！\n使用方法：' + __plugin_meta__.usage)

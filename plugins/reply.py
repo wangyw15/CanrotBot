@@ -1,14 +1,16 @@
+import random
+import re
+
+import jieba
 from nonebot import get_driver, on_command, on_regex
-from nonebot.adapters import Message, Event, Bot
+from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel, validator
-import random
-import jieba
-import re
 
-from ..libraries.universal_adapters import *
 from ..libraries.assets import get_assets
+from ..libraries.universal_adapters import *
+
 
 # config
 class ReplyConfig(BaseModel):

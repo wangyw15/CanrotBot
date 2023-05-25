@@ -9,9 +9,10 @@ import json
 
 _fortune_assets_path = Path(__file__).parent.parent / "assets/fortune"
 _fortune_assets_version: str = ''
-_copywriting: list[dict] = {}
+_copywriting: list[dict] = []
 _specific_rules: dict[str, list[str]] = {}
 _themes: dict[str, list[str]] = {}
+
 
 def _load_fortune_assets() -> None:
     global _fortune_assets_version
@@ -26,7 +27,7 @@ def _load_fortune_assets() -> None:
             logger.info(f"fortune version: {_fortune_assets_version}")
             _copywriting = data['copywriting']
             logger.info(f"fortune copywriting: {len(_copywriting)}")
-    
+
     if not _specific_rules:
         with open(_fortune_assets_path / "specific_rules.json", "r", encoding="utf-8") as f:
             _specific_rules = json.load(f)
@@ -37,17 +38,19 @@ def _load_fortune_assets() -> None:
             _themes = json.load(f)
             logger.info(f"fortune themes: {len(_themes)}")
 
+
 def _get_random_base_image(theme: str = 'random') -> Path:
     if theme == 'random' or theme not in _themes:
         theme = random.choice(list(_themes.keys()))
     theme_path = _fortune_assets_path / 'image' / theme
     return random.choice(list(theme_path.iterdir()))
 
+
 def _decrement(text: str) -> Tuple[int, list[str]]:
-    '''
+    """
             Split the text, return the number of columns and text list
             TODO: Now, it ONLY fit with 2 columns of text
-    '''
+    """
     length: int = len(text)
     result: list[str] = []
     cardinality = 9
@@ -66,12 +69,12 @@ def _decrement(text: str) -> Tuple[int, list[str]]:
     if col_num == 2:
         if length % 2 == 0:
             # even
-            fillIn = space * int(9 - length / 2)
-            return col_num, [text[: int(length / 2)] + fillIn, fillIn + text[int(length / 2):]]
+            fill_in = space * int(9 - length / 2)
+            return col_num, [text[: int(length / 2)] + fill_in, fill_in + text[int(length / 2):]]
         else:
             # odd number
-            fillIn = space * int(9 - (length + 1) / 2)
-            return col_num, [text[: int((length + 1) / 2)] + fillIn, fillIn + space + text[int((length + 1) / 2):]]
+            fill_in = space * int(9 - (length + 1) / 2)
+            return col_num, [text[: int((length + 1) / 2)] + fill_in, fill_in + space + text[int((length + 1) / 2):]]
 
     for i in range(col_num):
         if i == col_num - 1 or col_num == 1:
@@ -81,18 +84,20 @@ def _decrement(text: str) -> Tuple[int, list[str]]:
 
     return col_num, result
 
+
 def get_theme_key_from_name(name: str) -> str:
     for k, v in _themes.items():
         if name == k or name in v:
             return k
     return 'random'
 
+
 def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
-    '''
+    """
     generate fortune image with theme
 
     returns (base64 encoded image, title, content, rank)
-    '''
+    """
     if theme == 'random' or theme not in _themes:
         theme = random.choice(list(_themes.keys()))
     # choose copywriting
@@ -130,7 +135,7 @@ def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
 
     for i in range(slices):
         font_height: int = len(result[i]) * (font_size + 4)
-        textVertical: str = "\n".join(result[i])
+        text_vertical: str = "\n".join(result[i])
         x: int = int(
             image_font_center[0]
             + (slices - 2) * font_size / 2
@@ -138,7 +143,7 @@ def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
             - i * (font_size + 4)
         )
         y: int = int(image_font_center[1] - font_height / 2)
-        draw.text((x, y), textVertical, fill=color, font=ttfront)
+        draw.text((x, y), text_vertical, fill=color, font=ttfront)
 
     # save image
     buffer = BytesIO()
@@ -146,7 +151,8 @@ def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
     bytes_data = buffer.getvalue()
     buffer.close()
     base64_str = base64.b64encode(bytes_data).decode('utf-8')
-    return (base64_str, title, text, rank)
+    return base64_str, title, text, rank
+
 
 _load_fortune_assets()
 

@@ -13,7 +13,8 @@ __plugin_meta__ = PluginMetadata(
 
 _client = httpx.AsyncClient()
 
-async def fetch_nbnhhsh(text: str) -> list[str]:
+
+async def fetch_nbnhhsh(text: str) -> list[str] | None:
     url = 'https://lab.magiconch.com/api/nbnhhsh/guess'
     resp: list[dict] = (await _client.post(url, json={'text': text})).json()
     if resp:

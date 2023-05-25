@@ -1,10 +1,11 @@
+import random
+
 from nonebot import get_driver, on_command
 from nonebot.adapters import Message
 from nonebot.params import Arg
-from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
-from pydantic import BaseModel, validator
-import random
+from nonebot.typing import T_State
+from pydantic import BaseModel
 
 from ..libraries.assets import get_assets
 
@@ -15,16 +16,19 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
+
 # config
 class WordleConfig(BaseModel):
     wordle_correct: str = '⭕'
     wordle_medium: str = '❔'
     wordle_wrong: str = '❌'
 
+
 config = WordleConfig.parse_obj(get_driver().config)
 
 # load wordle data
 words = [x[1] for x in get_assets('wordle')]
+
 
 def get_wordle_result(answer: str, guess: str) -> str:
     result = ''
@@ -37,9 +41,11 @@ def get_wordle_result(answer: str, guess: str) -> str:
             result += config.wordle_wrong
     return result
 
+
 wordle = on_command('wordle', block=True)
 WORDLE_ANSWER = 'wordle_answer'
 WORDLE_GUESSES = 'wordle_guesses'
+
 
 @wordle.handle()
 async def _(state: T_State):
@@ -47,13 +53,14 @@ async def _(state: T_State):
     state[WORDLE_GUESSES] = []
     await wordle.send('新一轮wordle游戏开始，请输入单词')
 
+
 @wordle.got('guess')
 async def _(state: T_State, guess: Message = Arg()):
     guess = guess.extract_plain_text()
     answer: str = state[WORDLE_ANSWER]
     if guess == answer:
         await wordle.finish(f'恭喜你猜对了！\n共用了{len(state[WORDLE_ANSWER])}次机会')
-    elif not guess in words:
+    elif guess not in words:
         await wordle.reject('你输入的单词不在词库中')
     else:
         state[WORDLE_GUESSES].append(guess)

@@ -19,6 +19,7 @@ jieba.add_word('{name}')
 jieba.add_word('{me}')
 reply_data: list[list[str]] = [list(jieba.lcut(x[2])) for x in get_assets('reply')]
 
+
 # generate markov chain
 def markov_chain(data: list[list[str]], n=1) -> dict[str, dict[str, float]]:
     transitions: dict[str, dict[str, float]] = {}
@@ -36,6 +37,7 @@ def markov_chain(data: list[list[str]], n=1) -> dict[str, dict[str, float]]:
             transitions[current][words[i + 1]] += 1
     return transitions
 
+
 def generate_reponse(transitions: dict[str, dict[str, float]], max_len = 50) -> str:
     # generate response
     current = random.choice(list(transitions.keys()))
@@ -50,13 +52,13 @@ def generate_reponse(transitions: dict[str, dict[str, float]], max_len = 50) -> 
 
 transitions = markov_chain(reply_data, 3)
 
-generative_reponse = on_command('generative_reponse', aliases={'gr', '生成回复'}, block=True)
-@generative_reponse.handle()
+generative_response = on_command('generative_reponse', aliases={'gr', '生成回复'}, block=True)
+@generative_response.handle()
 async def _(bot, event, msg: Message = CommandArg()):
     my_name = await get_bot_name(event, bot, '我')
     user_name = await get_user_name(event, bot, '主人')
     length = 50
     if msg := msg.extract_plain_text().strip():
         length = int(msg)
-    await generative_reponse.finish(generate_reponse(transitions, length).format(name=user_name, me=my_name) + '\n--------------------\n实验性功能，不保证语句合理性')
+    await generative_response.finish(generate_reponse(transitions, length).format(name=user_name, me=my_name) + '\n--------------------\n实验性功能，不保证语句合理性')
     

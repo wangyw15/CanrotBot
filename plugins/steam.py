@@ -1,14 +1,12 @@
 from nonebot import get_driver, on_command, on_regex
-from nonebot.adapters import Message, Event, Bot
+from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from pydantic import BaseModel, validator
-import httpx
 
-from ..libraries.universal_adapters import *
 from ..libraries.link_metadata import fetch_steam_app_info
-from nonebot.plugin import PluginMetadata
+from ..libraries.universal_adapters import *
 
 __plugin_meta__ = PluginMetadata(
     name='Steam助手',

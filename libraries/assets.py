@@ -7,6 +7,7 @@ _canrot_text_assets: dict[str, list[list]] = {}
 _db = sqlite3.connect(Path(__file__).parent.parent.joinpath('assets/text.db').resolve())
 _c = _db.cursor()
 
+
 def load_text_assets():
     # get all table names
     table_names: set[str] = set()
@@ -21,11 +22,14 @@ def load_text_assets():
         _canrot_text_assets[table_name] = temp_c.fetchall()
         logger.info(f'Load {len(_canrot_text_assets[table_name])} items from {table_name}')
 
+
 if not _canrot_text_assets:
     load_text_assets()
 
+
 def get_assets(table_name: str) -> list[list]:
     return _canrot_text_assets[table_name]
+
 
 def execute_sql_on_assets(sql: str) -> list[list]:
     temp_c = _c.execute(sql)
@@ -34,6 +38,7 @@ def execute_sql_on_assets(sql: str) -> list[list]:
     ret.append(col_name)
     ret += temp_c.fetchall()
     return ret
+
 
 @_driver.on_shutdown
 async def _():

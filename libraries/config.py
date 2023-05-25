@@ -1,9 +1,11 @@
-from nonebot import get_driver, logger
-from pydantic import BaseModel, validator
 from typing import Any
 
+from nonebot import get_driver
+from pydantic import BaseModel, validator
+
+
 class CanrotConfig(BaseModel):
-    canrot_enable: bool = True # always enable aio
+    canrot_enable: bool = True  # always enable aio
     canrot_proxy: str = ''
     canrot_data: str = './canrot_data.db'
 
@@ -12,7 +14,7 @@ class CanrotConfig(BaseModel):
         if not isinstance(v, bool):
             raise ValueError('canrot_enable must be a bool')
         return v
-    
+
     @validator('canrot_proxy')
     def canrot_proxy_validator(cls, v):
         if not isinstance(v, str):
@@ -27,9 +29,11 @@ class CanrotConfig(BaseModel):
             raise ValueError('canrot_data must be a str')
         return v
 
+
 _driver = get_driver()
 _global_config = _driver.config
 canrot_config = CanrotConfig.parse_obj(_global_config)
+
 
 def get_config(name: str) -> Any:
     return _global_config.dict()[name]

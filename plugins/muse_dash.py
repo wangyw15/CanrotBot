@@ -15,32 +15,34 @@ __plugin_meta__ = PluginMetadata(
 
 muse_dash.init_web_client(get_config('canrot_proxy'))
 
+
 async def generate_muse_dash_message(player_id: str) -> list[str]:
-    '''fetch muse dash data'''
+    """fetch muse dash data"""
     if player_id:
         if data := await muse_dash.fetch_muse_dash_player_data(player_id):
-            ret_msg = []
-            ret_msg.append(f'玩家名：{data["name"]}\n' +
-                f'偏差值: {data["diff"]}\n' +
-                f'记录条数: {data["records"]}\n' +
-                f'完美数: {data["perfects"]}\n' +
-                f'平均准确率: {data["avg"]}%\n' + 
-                f'上次更新: {data["last_update"]} 前\n'
-            )
+            ret_msg = [f'玩家名：{data["name"]}\n' +
+                       f'偏差值: {data["diff"]}\n' +
+                       f'记录条数: {data["records"]}\n' +
+                       f'完美数: {data["perfects"]}\n' +
+                       f'平均准确率: {data["avg"]}%\n' +
+                       f'上次更新: {data["last_update"]} 前\n']
             for song in data['songs']:
                 ret_msg.append(f'[CQ:image,file={song["icon"]}]\n' +
-                    f'曲目: {song["name"]} (Lv.{song["level"]})\n' +
-                    f'作曲家: {song["musician"]}\n' +
-                    f'准确度: {song["accuracy"]}%\n' +
-                    f'得分: {song["score"]}\n' +
-                    f'角色: {song["character"]}\n' +
-                    f'精灵: {song["sprite"]}\n' +
-                    f'总排名: {song["total_rank"]}\n'
-                )
+                               f'曲目: {song["name"]} (Lv.{song["level"]})\n' +
+                               f'作曲家: {song["musician"]}\n' +
+                               f'准确度: {song["accuracy"]}%\n' +
+                               f'得分: {song["score"]}\n' +
+                               f'角色: {song["character"]}\n' +
+                               f'精灵: {song["sprite"]}\n' +
+                               f'总排名: {song["total_rank"]}\n'
+                               )
             return ret_msg
     return []
 
+
 _muse_dash = on_command('muse-dash', aliases={'md', 'muse_dash', '喵斯', '喵斯快跑'}, block=True)
+
+
 @_muse_dash.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     puid = universal_adapters.get_puid(bot, event)
@@ -79,7 +81,8 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             user.set_data_by_uid(uid, 'muse_dash_name', '')
             user.set_data_by_uid(uid, 'muse_dash_moe_id', '')
             await _muse_dash.finish('解绑成功')
-        elif splited_msg[0] == 'me' or splited_msg[0] == '我' or splited_msg[0] == '我的' or splited_msg[0] == 'info' or splited_msg[0] == '信息':
+        elif splited_msg[0] == 'me' or splited_msg[0] == '我' or splited_msg[0] == '我的' or splited_msg[0] == 'info' or \
+                splited_msg[0] == '信息':
             # check bind info
             if not uid:
                 await _muse_dash.finish('你还未注册账号')

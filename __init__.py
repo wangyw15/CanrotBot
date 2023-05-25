@@ -1,11 +1,12 @@
+from pathlib import Path
+from sqlite3 import OperationalError
+
+import nonebot
 from nonebot import on_command, load_plugins
-from nonebot.adapters import Message, Bot, Event
+from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
-from sqlite3 import OperationalError
-from pathlib import Path
-import nonebot
 
 from .libraries import config, assets, data
 from .libraries.universal_adapters import *
@@ -19,7 +20,7 @@ __plugin_meta__ = PluginMetadata(
 
 def canrot_load_plugins() -> None:
     plugins_path = Path(__file__).parent.joinpath('plugins').resolve()
-    load_plugins(plugins_path)
+    load_plugins(str(plugins_path))
 
 canrot_load_plugins()
 

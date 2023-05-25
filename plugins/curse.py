@@ -14,7 +14,7 @@ __plugin_meta__ = PluginMetadata(
 curse_data: list[str] = [x[1] for x in get_assets('curse')]
 
 # message
-curse = on_command('curse', aliases={'嘴臭', '诅咒'},block=True)
+curse = on_command('curse', aliases={'嘴臭', '诅咒'}, block=True)
 @curse.handle()
 async def _():
     await curse.finish(random.choice(curse_data))

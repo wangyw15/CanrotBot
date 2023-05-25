@@ -6,6 +6,7 @@ from .config import canrot_config
 _db = sqlite3.connect(canrot_config.canrot_data)
 _cursor = _db.cursor()
 
+
 def execute_sql_on_data(sql: str) -> list[list]:
     temp_c = _cursor.execute(sql)
     ret: list[list] = []
@@ -15,8 +16,8 @@ def execute_sql_on_data(sql: str) -> list[list]:
     _db.commit()
     return ret
 
-_driver = get_driver()
-@_driver.on_shutdown
+
+@get_driver().on_shutdown
 async def _():
     _db.commit()
     _db.close()

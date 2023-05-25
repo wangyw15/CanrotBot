@@ -1,9 +1,9 @@
+from datetime import datetime
+
 from nonebot import on_command
 from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg
-from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
-from datetime import datetime
 
 from ..libraries import universal_adapters, fortune, user, economy
 

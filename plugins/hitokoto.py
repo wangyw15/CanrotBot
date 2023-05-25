@@ -25,7 +25,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                 ret_msg.append(f'名称: {category["name"]}\n描述: {category["desc"]}\n分类: {category["key"]}')
             await universal_adapters.send_group_forward_message(ret_msg, bot, event, header='一言分类:')
             await _hitokoto.finish()
-        elif re.match('\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', msg):
+        elif re.match(r'\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', msg):
             data = hitokoto.get_hitokoto_by_uuid(msg.strip())
         elif ' ' in msg:
             categories = ''.join([x.strip() for x in msg.split()])

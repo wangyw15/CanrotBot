@@ -2,7 +2,8 @@ from bs4 import BeautifulSoup
 import httpx
 import re
 
-_client: httpx.AsyncClient = None
+_client: httpx.AsyncClient | None = None
+
 
 def init_web_client(proxy: str = None) -> None:
     global _client
@@ -11,6 +12,7 @@ def init_web_client(proxy: str = None) -> None:
     else:
         _client = httpx.AsyncClient()
     _client.timeout = 10
+
 
 async def search_muse_dash_player_id(player_name: str) -> str | None:
     if not _client:
@@ -22,6 +24,7 @@ async def search_muse_dash_player_id(player_name: str) -> str | None:
             return data[0][1]
     return None
 
+
 async def fetch_muse_dash_player_data(player_id: str) -> dict | None:
     if not _client:
         return None
@@ -29,6 +32,7 @@ async def fetch_muse_dash_player_data(player_id: str) -> dict | None:
     if resp.status_code == 200:
         return parse_muse_dash_page(resp.text)
     return None
+
 
 def parse_muse_dash_page(content: str) -> dict:
     soup = BeautifulSoup(content, 'html.parser')
@@ -49,8 +53,7 @@ def parse_muse_dash_page(content: str) -> dict:
     result['songs'] = []
     # songs stat
     for i in soup.select('nav.level:nth-child(n+3)'):
-        song = {}
-        song['icon'] = 'https://musedash.moe' + i.select_one('div img')['src']
+        song = {'icon': 'https://musedash.moe' + i.select_one('div img')['src']}
         stats = i.select('div>div')
         song['name'] = stats[0].select_one('p:nth-child(1)>span:nth-child(1)').get_text().strip()
         song['level'] = int(stats[0].select_one('p:nth-child(1)>span:nth-child(2)').get_text().strip()[3:])
@@ -63,5 +66,5 @@ def parse_muse_dash_page(content: str) -> dict:
         song['platform_rank'] = int(stats[2].select_one('a:nth-child(1)').get_text().strip()[1:])
         song['total_rank'] = int(stats[2].select_one('a:nth-child(2)').get_text().strip()[5:])
         result['songs'].append(song)
-    
+
     return result

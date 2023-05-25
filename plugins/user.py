@@ -1,7 +1,6 @@
 from nonebot import on_command
 from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg
-from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 
 from ..libraries import user, universal_adapters
@@ -15,7 +14,7 @@ __plugin_meta__ = PluginMetadata(
 
 _user = on_command('user', aliases={'u', '用户', '我'}, block=True)
 @_user.handle()
-async def _(state: T_State, bot: Bot, event: Event, args: Message = CommandArg()):
+async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     puid = universal_adapters.get_puid(bot, event)
     if msg := args.extract_plain_text():
         splitted_args = [x.strip() for x in msg.split()]

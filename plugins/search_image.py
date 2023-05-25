@@ -1,11 +1,11 @@
-from nonebot import on_command, get_driver
-from nonebot.params import CommandArg, Arg
-from nonebot.adapters import Bot, Event, Message
-from nonebot.typing import T_State
-from nonebot.plugin import PluginMetadata
-from pydantic import BaseModel, validator
 import urllib.parse
-import httpx
+
+from nonebot import on_command, get_driver
+from nonebot.adapters import Message
+from nonebot.params import CommandArg, Arg
+from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
+from pydantic import BaseModel, validator
 
 from ..libraries.universal_adapters import *
 
@@ -243,7 +243,7 @@ def generate_cq_message_from_saucenao_result(api_result: dict) -> Message:
                 if isinstance(data["creator"], str):
                     msg += f' ({data["creator"]})'
             msg += "\n"
-        elif "creator_name" in data and isinstance(data["creator"], list[str]):
+        elif "creator_name" in data and isinstance(data["creator"], list):
             msg += " ("
             for creator in data["creator"]:
                 msg += creator + ", "
@@ -274,7 +274,7 @@ def generate_cq_message_from_tracemoe_result(api_result: dict) -> str:
     if api_result["error"]:
         return "搜索失败: " + api_result["error"]
     msg += f'已搜索 {api_result["frameCount"]} 帧\n'
-    for result in api_result["result"][0 : _config.search_result_count]:
+    for result in api_result["result"][0: _config.search_result_count]:
         msg += MESSAGE_SPLIT_LINE + "\n"
         msg += f'[CQ:image,file={result["image"]}]\n'
         msg += f'相似度: {round(result["similarity"]*100, 2)}%\n'
@@ -318,9 +318,9 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
     # get img url
     img_url: str = ""
     if (is_onebot_v11(bot) or is_onebot_v12(bot)) and image[0].type == 'image':
-            img_url = image[0].data['url'].strip()
+        img_url = image[0].data['url'].strip()
     elif is_kook(bot) and image[0].type == 'image':
-            img_url = image[0].data['file_key'].strip()
+        img_url = image[0].data['file_key'].strip()
     else:
         img_url = image.extract_plain_text().strip()
 
