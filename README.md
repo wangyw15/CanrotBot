@@ -106,3 +106,10 @@ saucenao_api_key="你的 api key"
 | [Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus) | 自动回复的部分数据 |
 | [FloatTech/zbpdata](https://github.com/FloatTech/zbpdata) | 自动回复等数据来源 |
 | [RimoChan/bnhhsh](https://github.com/RimoChan/bnhhsh) | 不能好好说话 |
+
+# 特别
+
+![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png)
+![PyCharm logo](https://resources.jetbrains.com/storage/products/company/brand/logos/PyCharm_icon.png)
+
+感谢 [JetBrains](https://www.jetbrains.com/) 为本项目免费提供的开源项目订阅~
