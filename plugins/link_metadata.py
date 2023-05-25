@@ -8,9 +8,9 @@ import base64
 from ..libraries import link_metadata, universal_adapters
 
 __plugin_meta__ = PluginMetadata(
-    name='计算器',
-    description='简单的计算器',
-    usage='输入表达式，以等号结尾，比如：1+1=',
+    name='链接元数据',
+    description='获取链接指向的内容',
+    usage='发送支持解析的链接会自动触发',
     config=None
 )
 
@@ -31,9 +31,9 @@ def _generate_youtube_message(data: dict) -> str:
     if len(desc) > 200:
         desc = desc[:200] + '...'
     # publish time
-    date = datetime.datetime.strptime(data['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%S') + datetime.timedelta(hours=8)
+    date = datetime.datetime.strptime(data['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ') + datetime.timedelta(hours=8)
     # generate message
-    msg = f'标题: \n{data["snippet"]["title"]}\n频道: \n{data["snippet"]["channelTitle"]}\n发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%SZ")}\n播放: {data["statistics"]["viewCount"]}\n点赞: {data["statistics"]["likeCount"]}\n评论: {data["statistics"]["commentCount"]}\n简介:\n{desc}\n视频链接: \nhttps://youtu.be/{data["id"]}'
+    msg = f'标题: \n{data["snippet"]["title"]}\n频道: \n{data["snippet"]["channelTitle"]}\n发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%S")}\n播放: {data["statistics"]["viewCount"]}\n点赞: {data["statistics"]["likeCount"]}\n评论: {data["statistics"]["commentCount"]}\n简介:\n{desc}\n视频链接: \nhttps://youtu.be/{data["id"]}'
     return msg
 
 _bilibili_video = on_regex(link_metadata.bilibili_vid_pattern, block=True)
