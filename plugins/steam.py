@@ -116,9 +116,9 @@ async def _(bot: Bot, event: Event, state: T_State):
             text_msg = _generate_message(appinfo)
             
             if is_onebot_v11(bot):
-                await _steam_link_handler.finish(ob11.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
+                await _steam_link_handler.finish(ob11.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}]'))
             elif is_onebot_v12(bot):
-                await _steam_link_handler.finish(ob12.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
+                await _steam_link_handler.finish(ob12.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}]'))
             elif is_kook(bot):
                 header_img_msg = await get_image_message_from_url(bot, header_img)
                 bg_img_msg = await get_image_message_from_url(bot, bg_img)
