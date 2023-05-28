@@ -4,7 +4,7 @@ import os
 import random
 import tempfile
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Literal
 
 from nonebot import logger, get_driver
 from playwright.async_api import Browser, Playwright, async_playwright
@@ -65,7 +65,8 @@ def get_theme_key_from_name(name: str) -> str:
     return 'random'
 
 
-async def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
+async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jpeg'] = 'png') \
+        -> Tuple[str, str, str, int]:
     """
     generate fortune image with theme
 
@@ -98,7 +99,7 @@ async def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
         f.close()
         _page = await _browser.new_page(viewport={'width': 480, 'height': 480})
         await _page.goto('file://' + f.name, wait_until='networkidle')
-        bytes_data = await _page.screenshot(full_page=True, type='jpeg')
+        bytes_data = await _page.screenshot(full_page=True, type=image_type)
         await _page.close()
 
     # delete temp file
