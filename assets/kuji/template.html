@@ -1,0 +1,83 @@
+<html>
+<head>
+    <style>
+        @font-face {
+            font-family: 'LXGWWenkai';
+            font-weight: normal;
+            src: url('LXGWWenKai-Regular.ttf');
+        }
+        body {
+            margin: 10px;
+            background-image: url("bg.png");
+        }
+        .container {
+            font-family: 'LXGWWenkai', serif;
+            display: grid;
+            width: 500px;
+            height: 800px;
+            grid-template-rows: repeat(5, 1fr);
+            grid-template-columns: repeat(5, 1fr);
+            border: solid #96514d;
+        }
+        .container>div {
+            border: solid #96514d;
+            padding: 5px;
+        }
+        .container .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container .title {
+            grid-row: 1 / 2;
+            grid-column: 1 / 6;
+            font-size: 30px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .container .content {
+            writing-mode: vertical-rl;
+            grid-row: 2 / 4;
+            font-size: 40px;
+        }
+        .container .straight {
+            writing-mode: vertical-rl;
+            grid-column: 2 / 6;
+            grid-row: 4 / 6;
+            font-size: 20px;
+            text-decoration: underline #96514d;
+            line-height: 35px;
+        }
+        .container .mean {
+            grid-row: 2 / 6;
+            grid-column: 1 / 1;
+            font-size: 20px;
+            line-height: 20px;
+        }
+        .mean span {
+            text-decoration: underline #96514d;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="title center">
+        日本东京浅草寺观音灵签{{count}}<br />
+        {{type}}
+    </div>
+    {{content}}
+<!--    <div class="content center" style="grid-column: 5;">-->
+<!--        有名须得遇-->
+<!--    </div>-->
+
+    <div class="straight">
+        {{straight}}
+    </div>
+
+    <div class="mean">
+        {{mean}}
+<!--        <p>愿望：<br /><span>会实现吧。</span></p>-->
+    </div>
+</div>
+</body>
+</html>
