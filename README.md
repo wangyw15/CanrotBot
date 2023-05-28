@@ -96,7 +96,9 @@ saucenao_api_key="你的 api key"
 - [x] 抽签
   - 替换第三方插件
 - [ ] 考虑删除 meme 图
-- [ ] 换个 ChatGPT 插件，或者自己写
+- [ ] ~~换个 ChatGPT 插件，或者自己写~~
+- [ ] ShindanMaker
+- [ ] WolframAlpha
 
 # 功能或数据来源
 
