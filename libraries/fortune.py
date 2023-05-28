@@ -1,17 +1,29 @@
-from nonebot import logger
-from pathlib import Path
-from typing import Tuple
-from PIL import Image, ImageDraw, ImageFont
-from io import BytesIO
-import random
 import base64
 import json
+import os
+import random
+import tempfile
+from pathlib import Path
+from typing import Tuple
+
+from nonebot import logger
+from playwright.async_api import Browser, Playwright, async_playwright
 
 _fortune_assets_path = Path(__file__).parent.parent / "assets/fortune"
 _fortune_assets_version: str = ''
 _copywriting: list[dict] = []
 _specific_rules: dict[str, list[str]] = {}
 _themes: dict[str, list[str]] = {}
+_playwright: Playwright | None = None
+_browser: Browser | None = None
+
+
+async def initialize() -> None:
+    global _playwright
+    global _browser
+    if not _playwright:
+        _playwright = await async_playwright().start()
+        _browser = await _playwright.chromium.launch()
 
 
 def _load_fortune_assets() -> None:
@@ -46,45 +58,6 @@ def _get_random_base_image(theme: str = 'random') -> Path:
     return random.choice(list(theme_path.iterdir()))
 
 
-def _decrement(text: str) -> Tuple[int, list[str]]:
-    """
-            Split the text, return the number of columns and text list
-            TODO: Now, it ONLY fit with 2 columns of text
-    """
-    length: int = len(text)
-    result: list[str] = []
-    cardinality = 9
-    if length > 4 * cardinality:
-        raise Exception
-
-    col_num: int = 1
-    while length > cardinality:
-        col_num += 1
-        length -= cardinality
-
-    # Optimize for two columns
-    space = " "
-    length = len(text)  # Value of length is changed!
-
-    if col_num == 2:
-        if length % 2 == 0:
-            # even
-            fill_in = space * int(9 - length / 2)
-            return col_num, [text[: int(length / 2)] + fill_in, fill_in + text[int(length / 2):]]
-        else:
-            # odd number
-            fill_in = space * int(9 - (length + 1) / 2)
-            return col_num, [text[: int((length + 1) / 2)] + fill_in, fill_in + space + text[int((length + 1) / 2):]]
-
-    for i in range(col_num):
-        if i == col_num - 1 or col_num == 1:
-            result.append(text[i * cardinality:])
-        else:
-            result.append(text[i * cardinality: (i + 1) * cardinality])
-
-    return col_num, result
-
-
 def get_theme_key_from_name(name: str) -> str:
     for k, v in _themes.items():
         if name == k or name in v:
@@ -92,7 +65,7 @@ def get_theme_key_from_name(name: str) -> str:
     return 'random'
 
 
-def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
+async def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
     """
     generate fortune image with theme
 
@@ -107,55 +80,43 @@ def generate_fortune(theme: str = 'random') -> Tuple[str, str, str, int]:
     text = random.choice(copywriting['content'])
 
     # choose base image
-    base_image_path = _get_random_base_image(theme)
-    generated_image: Image.Image = Image.open(base_image_path)
+    base_image_path = _get_random_base_image(theme).relative_to(_fortune_assets_path)
 
-    # draw title
-    image_font_center = [140, 99]
-    font = ImageFont.truetype(str(_fortune_assets_path / 'font/Mamelon.otf'), 45)
-    font_bbox = font.getbbox(title)
-    font_length = (font_bbox[2] - font_bbox[0], font_bbox[3] - font_bbox[1])
-    draw = ImageDraw.Draw(generated_image)
-    draw.text(
-        (
-            image_font_center[0] - font_length[0] / 2,
-            image_font_center[1] - font_length[1] / 2,
-        ),
-        title,
-        fill='#F5F5F5',
-        font=font,
-    )
+    # draw image
+    await initialize()  # initialize playwright
+    # generate temp html file
+    with open(_fortune_assets_path / 'template.html', 'r') as f:
+        raw_content = f.read()
+    raw_content = raw_content \
+        .replace('{image_path}', str(base_image_path).replace('\\', '/')) \
+        .replace('{title}', title) \
+        .replace('{content}', text)
 
-    # draw content
-    font_size = 25
-    color = "#323232"
-    image_font_center = [140, 297]
-    ttfront = ImageFont.truetype(str(_fortune_assets_path / 'font/sakura.ttf'), font_size)
-    slices, result = _decrement(text)
+    # render image
+    with tempfile.NamedTemporaryFile('w', suffix='.html', dir=_fortune_assets_path, delete=False) as f:
+        f.write(raw_content)
+        f.close()
+        _page = await _browser.new_page(viewport={'width': 480, 'height': 480})
+        await _page.goto('file://' + f.name, wait_until='networkidle')
+        bytes_data = await _page.screenshot(full_page=True, type='jpeg')
+        await _page.close()
 
-    for i in range(slices):
-        font_height: int = len(result[i]) * (font_size + 4)
-        text_vertical: str = "\n".join(result[i])
-        x: int = int(
-            image_font_center[0]
-            + (slices - 2) * font_size / 2
-            + (slices - 1) * 4
-            - i * (font_size + 4)
-        )
-        y: int = int(image_font_center[1] - font_height / 2)
-        draw.text((x, y), text_vertical, fill=color, font=ttfront)
+    # delete temp file
+    if os.path.exists(f.name):
+        os.remove(f.name)
 
     # save image
-    buffer = BytesIO()
-    generated_image.save(buffer, format='png')
-    bytes_data = buffer.getvalue()
-    buffer.close()
     base64_str = base64.b64encode(bytes_data).decode('utf-8')
     return base64_str, title, text, rank
 
 
 _load_fortune_assets()
 
+async def main():
+    with open('test.png', 'wb') as f:
+        f.write(base64.b64decode((await generate_fortune())[0]))
+
+
 if __name__ == '__main__':
-    with open('test.txt', 'w') as f:
-        f.write(generate_fortune()[0])
+    import asyncio
+    asyncio.run(main())

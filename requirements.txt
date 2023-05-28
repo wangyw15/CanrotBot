@@ -6,3 +6,4 @@ httpx
 jieba
 pypinyin
 pillow
+playwright

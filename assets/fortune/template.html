@@ -1,0 +1,51 @@
+<html>
+<head>
+    <style>
+        @font-face {
+            font-family: 'Mamelon';
+            src: url('font/Mamelon.otf');
+        }
+        @font-face {
+            font-family: 'sakura';
+            src: url('font/sakura.ttf');
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .main {
+            display: block;
+            background: url("{image_path}");
+            background-size: cover;
+            width: 480px;
+            height: 480px;
+        }
+        .title {
+            position: relative;
+            left: -21%;
+            top: 13.5%;
+            color: #F5F5F5;
+            font-family: 'Mamelon', serif;
+            font-size: 45px;
+            text-align: center;
+        }
+        .content {
+            position: relative;
+            left: 23%;
+            top: 21%;
+            max-height: 55%;
+            color: #323232;
+            font-family: 'sakura', serif;
+            font-size: 25px;
+            writing-mode: vertical-rl;
+        }
+    </style>
+</head>
+<body>
+<div class="main">
+    <div class="title">{title}</div>
+    <div class="content">{content}</div>
+</div>
+</body>
+</html>
