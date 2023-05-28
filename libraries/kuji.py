@@ -57,7 +57,7 @@ def generate_kuji_str(content: dict[str, str]) -> str:
              f"〖四句解说〗\n" \
              f"    {content['straight']}\n" \
              f"〖解曰〗\n"
-    result += '    ❃ \n'.join(content['mean'])
+    result += '\n'.join(f'    ❃ {x}' for x in content['mean'])
     return result
 
 
