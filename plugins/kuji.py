@@ -20,14 +20,17 @@ _kuji_handler = on_command('kuji', aliases={'浅草寺'}, block=True)
 async def _(bot: Bot, event: Event):
     if not economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 10):
         await _kuji_handler.finish('你的余额不足哦')
+
+    msg = '谢谢你的十个胡萝卜片喵~\n'
     if universal_adapters.is_onebot_v11(bot):
         result = await kuji.generate_kuji()
-        await _kuji_handler.finish(universal_adapters.ob11.Message(
-            f'谢谢你的十个胡萝卜片喵~\n[CQ:image,file=base64://{result[0]}'))
+        msg += f'[CQ:image,file=base64://{result[0]}]'
+        await _kuji_handler.finish(universal_adapters.ob11.Message(msg))
     elif universal_adapters.is_onebot_v12(bot):
         result = await kuji.generate_kuji()
-        await _kuji_handler.finish(universal_adapters.ob12.Message(
-            f'谢谢你的十个胡萝卜片喵~\n[CQ:image,file=base64://{result[0]}'))
+        msg += f'[CQ:image,file=base64://{result[0]}]'
+        await _kuji_handler.finish(universal_adapters.ob12.Message(msg))
     else:
         result = await kuji.generate_kuji(None)
-        await _kuji_handler.finish('谢谢你的十个胡萝卜片喵~\n' + kuji.generate_kuji_str(result[1]))
+        msg += kuji.generate_kuji_str(result[1])
+        await _kuji_handler.finish(msg)

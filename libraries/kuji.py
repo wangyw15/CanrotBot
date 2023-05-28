@@ -51,13 +51,14 @@ async def generate_kuji(image_type: Literal['png', 'jpeg'] | None = 'png') -> Tu
 
 
 def generate_kuji_str(content: dict[str, str]) -> str:
-    return f"日本东京浅草寺观音灵签{content['count']} {content['type']}\n" \
-           f"    {content['content'][0]}，{content['content'][1]}；\n" \
-           f"    {content['content'][2]}，{content['content'][3]}。\n" \
-           f"〖四句解说〗\n" \
-           f"    {content['straight']}\n" \
-           f"〖解曰〗\n" \
-           '    ❃ \n'.join(content['mean'])
+    result = f"日本东京浅草寺观音灵签{content['count']} {content['type']}\n" \
+             f"    {content['content'][0]}，{content['content'][1]}；\n" \
+             f"    {content['content'][2]}，{content['content'][3]}。\n" \
+             f"〖四句解说〗\n" \
+             f"    {content['straight']}\n" \
+             f"〖解曰〗\n"
+    result += '    ❃ \n'.join(content['mean'])
+    return result
 
 
 _load_kuji_assets()
