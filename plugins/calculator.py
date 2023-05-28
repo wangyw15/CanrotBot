@@ -14,6 +14,6 @@ calculator = on_regex(r'^([\d()\-+*/.]+)=$', block=True)
 async def _(state: T_State):
     try:
         result = eval(state['_matched_groups'][0].strip())
+        await calculator.finish(f"{state['_matched_groups'][0]}={str(result)}")
     except:
         await calculator.finish('计算错误')
-    await calculator.finish(f"{state['_matched_groups'][0]}={str(result)}")

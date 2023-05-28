@@ -40,6 +40,8 @@ async def fetch_youtube_data(ytb_id: str) -> dict:
         if resp and resp.is_success and resp.status_code == 200:
             data = resp.json()
             if data['pageInfo']['totalResults'] > 0:
+                if 'likeCount' not in data['items'][0]['statistics']:
+                    data['items'][0]['statistics']['likeCount'] = '暂无'
                 return data['items'][0]
     return {}
 
