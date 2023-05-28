@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 from typing import Tuple
 
-from nonebot import logger
+from nonebot import logger, get_driver
 from playwright.async_api import Browser, Playwright, async_playwright
 
 _fortune_assets_path = Path(__file__).parent.parent / "assets/fortune"
@@ -115,6 +115,17 @@ _load_fortune_assets()
 async def main():
     with open('test.png', 'wb') as f:
         f.write(base64.b64decode((await generate_fortune())[0]))
+
+
+@get_driver().on_shutdown
+async def close_browser():
+    global _browser
+    if _browser:
+        await _browser.close()
+        await _playwright.stop()
+        _browser = None
+        _playwright = None
+        logger.info('Closed fortune browser')
 
 
 if __name__ == '__main__':
