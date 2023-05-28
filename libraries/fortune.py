@@ -120,12 +120,14 @@ async def main():
 @get_driver().on_shutdown
 async def close_browser():
     global _browser
+    global _playwright
     if _browser:
         await _browser.close()
-        await _playwright.stop()
         _browser = None
+    if _playwright:
+        await _playwright.stop()
         _playwright = None
-        logger.info('Closed fortune browser')
+    logger.info('Closed fortune browser')
 
 
 if __name__ == '__main__':
