@@ -1,29 +1,18 @@
 import base64
 import json
-import os
 import random
-import tempfile
 from pathlib import Path
 from typing import Tuple, Literal
 
-from nonebot import logger, get_driver
-from playwright.async_api import Browser, Playwright, async_playwright
+from nonebot import logger
+
+from render_by_browser import render_html
 
 _fortune_assets_path = Path(__file__).parent.parent / "assets/fortune"
 _fortune_assets_version: str = ''
 _copywriting: list[dict] = []
 _specific_rules: dict[str, list[str]] = {}
 _themes: dict[str, list[str]] = {}
-_playwright: Playwright | None = None
-_browser: Browser | None = None
-
-
-async def initialize() -> None:
-    global _playwright
-    global _browser
-    if not _playwright:
-        _playwright = await async_playwright().start()
-        _browser = await _playwright.chromium.launch()
 
 
 def _load_fortune_assets() -> None:
@@ -84,28 +73,16 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
     base_image_path = _get_random_base_image(theme).relative_to(_fortune_assets_path)
 
     # draw image
-    await initialize()  # initialize playwright
-    # generate temp html file
+    # generate html content
     with open(_fortune_assets_path / 'template.html', 'r') as f:
         raw_content = f.read()
     raw_content = raw_content \
         .replace('{image_path}', str(base_image_path).replace('\\', '/')) \
         .replace('{title}', title) \
         .replace('{content}', text)
-
-    # render image
-    with tempfile.NamedTemporaryFile('w', suffix='.html', dir=_fortune_assets_path, delete=False) as f:
-        f.write(raw_content)
-        f.close()
-        _page = await _browser.new_page(viewport={'width': 480, 'height': 480})
-        await _page.goto('file://' + f.name, wait_until='networkidle')
-        bytes_data = await _page.screenshot(full_page=True, type=image_type)
-        await _page.close()
-
-    # delete temp file
-    if os.path.exists(f.name):
-        os.remove(f.name)
-
+    # generate image
+    bytes_data = await render_html(raw_content, str(_fortune_assets_path), image_type,
+                                   viewport={'width': 480, 'height': 480})
     # save image
     base64_str = base64.b64encode(bytes_data).decode('utf-8')
     return base64_str, title, text, rank
@@ -113,22 +90,10 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
 
 _load_fortune_assets()
 
+
 async def main():
     with open('test.png', 'wb') as f:
         f.write(base64.b64decode((await generate_fortune())[0]))
-
-
-@get_driver().on_shutdown
-async def close_browser():
-    global _browser
-    global _playwright
-    if _browser:
-        await _browser.close()
-        _browser = None
-    if _playwright:
-        await _playwright.stop()
-        _playwright = None
-    logger.info('Closed fortune browser')
 
 
 if __name__ == '__main__':
