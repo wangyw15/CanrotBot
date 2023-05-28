@@ -42,7 +42,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     if can_signin:
         # fortune
         theme = fortune.get_theme_key_from_name(theme)
-        img, title, content, rank = fortune.generate_fortune(theme)
+        img, title, content, rank = await fortune.generate_fortune(theme)
         user.set_data_by_uid(uid, 'signin_date', today)
         user.set_data_by_uid(uid, 'signin_fortune_image', img)
         user.set_data_by_uid(uid, 'signin_fortune_title', title)
