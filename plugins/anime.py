@@ -1,3 +1,4 @@
+import re
 from typing import Annotated
 
 from nonebot import on_shell_command
@@ -47,15 +48,16 @@ def generate_message_from_anime_data(name: str, data: dict, possibility: float) 
 
 async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Event) -> None:
     img_url = ''
-    if universal_adapters.is_url(msg):
-        img_url = msg.strip()
-    elif isinstance(msg, MessageSegment) and msg.type == 'image':
+    if isinstance(msg, MessageSegment) and msg.type == 'image':
         if universal_adapters.is_onebot_v11(bot) or universal_adapters.is_onebot_v12(bot):
             img_url = msg.data['url'].strip()
         elif universal_adapters.is_kook(bot):
             img_url = msg.data['file_key'].strip()
+    elif isinstance(msg, universal_adapters.kook.MessageSegment) and msg.type == 'kmarkdown':
+        img_url = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
+    elif universal_adapters.is_url(msg):
+        img_url = msg.strip()
     if img_url:
-        img_url = img_url.strip()
         search_resp = await anime.search_anime_by_image(img_url)
         if search_resp and not search_resp.get('error'):
             tracemoe_data = search_resp['result'][0]
@@ -91,7 +93,12 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
                    f'时间: {universal_adapters.seconds_to_time(tracemoe_data["from"])}~' \
                    f'{universal_adapters.seconds_to_time(tracemoe_data["to"])}\n' \
                    f'AniList 链接: https://anilist.co/anime/{tracemoe_data["anilist"]}\n'
-            await bot.send(event, ret)
+            if universal_adapters.is_onebot_v11(bot):
+                await bot.send(event, universal_adapters.ob11.Message(ret))
+            elif universal_adapters.is_onebot_v12(bot):
+                await bot.send(event, universal_adapters.ob12.Message(ret))
+            else:
+                await bot.send(event, ret)
             return
     await bot.send(event, '搜索失败')
 
