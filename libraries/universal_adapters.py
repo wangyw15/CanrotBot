@@ -290,3 +290,7 @@ def is_console(bot: Bot) -> bool:
     if console:
         return isinstance(bot, console.Bot)
     return False
+
+
+def is_onebot(bot: Bot) -> bool:
+    return is_onebot_v11(bot) or is_onebot_v12(bot)
