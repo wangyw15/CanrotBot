@@ -88,7 +88,8 @@ async def _test():
         f.write(await generate_muse_dash_player_image('test your player id', 'png'))
 
 
-asyncio.run(_test())
+if __name__ == '__main__':
+    asyncio.run(_test())
 
 __all__ = ['init_web_client',
            'search_muse_dash_player_id',

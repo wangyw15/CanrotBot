@@ -14,7 +14,6 @@ __plugin_meta__ = PluginMetadata(
 )
 
 muse_dash.init_web_client(get_config('canrot_proxy'))
-_enable_muse_dash_image = False
 
 
 async def generate_muse_dash_message(player_id: str) -> list[str]:
@@ -104,7 +103,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             # 生成消息
             if player_id:
                 await _muse_dash.send('正在查分喵~')
-                if _enable_muse_dash_image and universal_adapters.can_send_image(bot):
+                if universal_adapters.can_send_image(bot):
                     img = await muse_dash.generate_muse_dash_player_image(player_id)
                     await universal_adapters.send_image(img, bot, event)
                     await _muse_dash.finish()
@@ -115,7 +114,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         if uid:
             if player_id := user.get_data_by_uid(uid, 'muse_dash_moe_id'):
                 await _muse_dash.send('正在查分喵~')
-                if _enable_muse_dash_image and universal_adapters.can_send_image(bot):
+                if universal_adapters.can_send_image(bot):
                     img = await muse_dash.generate_muse_dash_player_image(player_id)
                     await universal_adapters.send_image(img, bot, event)
                     await _muse_dash.finish()
