@@ -6,7 +6,7 @@ import httpx
 from pathlib import Path
 from .config import get_config
 
-# different bots
+# 不同适配器
 try:
     import nonebot.adapters.onebot.v11 as ob11
 except ModuleNotFoundError:
@@ -57,7 +57,7 @@ MESSAGE_SPLIT_LINE = "--------------------"
 
 
 def get_group_id(event: Event) -> str | None:
-    """Get group id from different adapters"""
+    """从不同的事件中获取群ID"""
     if ob11 and isinstance(event, ob11.GroupMessageEvent) or ob12 and isinstance(event, ob12.GroupMessageEvent):
         return str(event.group_id)
     elif mirai2 and isinstance(event, mirai2.GroupMessage):
@@ -68,7 +68,7 @@ def get_group_id(event: Event) -> str | None:
 
 
 def get_user_id(event: Event) -> str | None:
-    """Get user id from different adapters"""
+    """从不同的事件中获取用户ID"""
     if ob11 and isinstance(event, ob11.MessageEvent) or ob12 and isinstance(event, ob12.MessageEvent):
         return str(event.user_id)
     elif mirai2 and (isinstance(event, mirai2.event.GroupMessage) or isinstance(event, mirai2.event.FriendMessage)):
@@ -79,7 +79,7 @@ def get_user_id(event: Event) -> str | None:
 
 
 async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | None:
-    """Get username from different adapters"""
+    """从不同的事件中获取用户昵称"""
     # onebot v11
     if ob11 and isinstance(bot, ob11.Bot):
         if isinstance(event, ob11.GroupMessageEvent):
@@ -114,7 +114,7 @@ async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | No
 
 
 async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | None:
-    """Get bot name from different adapters"""
+    """从不同的事件中获取机器人昵称"""
     # onebot v11
     if ob11 and isinstance(bot, ob11.Bot):
         if isinstance(event, ob11.GroupMessageEvent):
@@ -152,7 +152,7 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
 
 
 def generate_onebot_group_forward_message(content: list[str], name: str, sender_id: str) -> list[dict]:
-    """Generate group forward message for OneBot"""
+    """生成OneBot群组转发消息"""
     msg_nodes: list[dict] = []
     for msg in content:
         msg_nodes.append({
@@ -173,7 +173,7 @@ else:
 
 
 async def fetch_bytes_data(url: str) -> bytes | None:
-    """Fetch bytes from url"""
+    """从URL获取bytes数据"""
     resp = await _client.get(url)
     if resp.is_success and resp.status_code == 200:
         return resp.content
@@ -181,29 +181,10 @@ async def fetch_bytes_data(url: str) -> bytes | None:
 
 
 async def fetch_json_data(url: str) -> dict | None:
-    """Fetch json from url"""
+    """从URL获取json数据"""
     resp = await _client.get(url)
     if resp.is_success and resp.status_code == 200:
         return resp.json()
-    return None
-
-
-async def get_image_message_from_url(bot: Bot, img_url: str) -> MessageSegment | None:
-    """Get image MessageSegment by url for different adapters"""
-    if ob11 and isinstance(bot, ob11.Bot):
-        return ob11.MessageSegment.image(file=img_url)
-    elif ob12 and isinstance(bot, ob12.Bot):
-        resp = await bot.upload_file(type='url', url=img_url)
-        return ob12.MessageSegment.image(file_id=resp.file_id)
-    elif kook and isinstance(bot, kook.Bot):
-        img_data = await fetch_bytes_data(img_url)
-        if img_data:
-            url = await bot.upload_file(img_data)
-            return kook.MessageSegment.image(url)
-    elif mirai2 and isinstance(bot, mirai2.Bot):
-        return mirai2.MessageSegment.image(url=img_url)
-    elif console and isinstance(bot, console.Bot):
-        return console.MessageSegment.text(img_url)
     return None
 
 
@@ -226,20 +207,6 @@ async def send_group_forward_message(content: list[str], bot: Bot, event: Event,
         await bot.send(event, ob12.Message(msg))
         return
     await bot.send(event, msg)
-
-
-async def send_image_from_url(img_url: str, bot: Bot, event: Event) -> None:
-    if is_onebot_v11(bot):
-        await bot.send(event, ob11.MessageSegment.image(file=img_url))
-    elif is_onebot_v12(bot):
-        await bot.send(event, ob12.MessageSegment.image(file_id=img_url))
-    elif is_kook(bot):
-        img_data = await fetch_bytes_data(img_url)
-        if img_data:
-            url = await bot.upload_file(img_data)
-            await bot.send(event, kook.MessageSegment.image(url))
-    else:
-        await bot.send(event, f'图片链接: {img_url}')
 
 
 async def send_image(img: bytes | str | Path, bot: Bot, event: Event) -> bool:
@@ -287,7 +254,7 @@ def get_puid(bot: Bot, event: Event) -> str:
     return puid
 
 
-# detect bot type
+# 检测适配器类型
 def is_onebot_v11(bot: Bot) -> bool:
     if ob11:
         return isinstance(bot, ob11.Bot)
