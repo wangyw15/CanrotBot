@@ -15,9 +15,11 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-# config
+
 class SteamConfig(BaseModel):
-    canrot_proxy: str = ''
+    """
+    Steam插件配置
+    """
     steam_region: str = 'cn'
     steam_language: str = 'zh-cn'
     
@@ -33,11 +35,9 @@ class SteamConfig(BaseModel):
             raise ValueError('steam_language must be a str')
         return v
 
-config = SteamConfig.parse_obj(get_driver().config)
-if config.canrot_proxy:
-    _client = httpx.AsyncClient(proxies=config.canrot_proxy)
-else:
-    _client = httpx.AsyncClient()
+
+_steam_config = SteamConfig.parse_obj(get_driver().config)
+
 
 def _generate_message(app_info: dict) -> str:
     name: str = app_info['name']
@@ -71,12 +71,13 @@ def _generate_message(app_info: dict) -> str:
     ret += f'\n链接: https://store.steampowered.com/app/{appid}'
     return ret
 
+
 _steam_command_handler = on_command('steam', aliases={'sbeam', '蒸汽', '蒸汽平台'}, block=True)
 @_steam_command_handler.handle()
-async def _(bot: Bot, args: Message = CommandArg()):
+async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     if msg := args.extract_plain_text():
         if msg.isdigit():
-            if appinfo := await fetch_steam_app_info(msg, config.steam_language, config.steam_region):
+            if appinfo := await fetch_steam_app_info(msg, _steam_config.steam_language, _steam_config.steam_region):
                 if appinfo.get(msg, {}).get('success', False):
                     appinfo = appinfo[msg]['data']
                     header_img = appinfo['header_image']
@@ -84,15 +85,16 @@ async def _(bot: Bot, args: Message = CommandArg()):
                     text_msg = _generate_message(appinfo)
                     
                     if is_onebot_v11(bot):
-                        await _steam_command_handler.finish(ob11.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
+                        await _steam_command_handler.finish(
+                            ob11.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
                     elif is_onebot_v12(bot):
-                        await _steam_command_handler.finish(ob12.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
+                        await _steam_command_handler.finish(
+                            ob12.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
                     elif is_kook(bot):
-                        header_img_msg = await get_image_message_from_url(bot, header_img)
-                        bg_img_msg = await get_image_message_from_url(bot, bg_img)
-                        await _steam_command_handler.send(header_img_msg)
+                        await send_image(header_img, bot, event)
                         await _steam_command_handler.send(text_msg)
-                        await _steam_command_handler.finish(bg_img_msg)
+                        await send_image(bg_img, bot, event)
+                        await _steam_command_handler.finish()
                     else:
                         await _steam_command_handler.finish(text_msg)
                 else:
@@ -102,11 +104,12 @@ async def _(bot: Bot, args: Message = CommandArg()):
         else:
             await _steam_command_handler.finish('请输入正确的游戏ID')
 
+
 _steam_link_handler = on_regex(r'(?:https?:\/\/)?store\.steampowered\.com\/app\/(\d+)', block=True)
 @_steam_link_handler.handle()
 async def _(bot: Bot, event: Event, state: T_State):
     appid = state['_matched_groups'][0]
-    if appinfo := await fetch_steam_app_info(appid, config.steam_language, config.steam_region):
+    if appinfo := await fetch_steam_app_info(appid, _steam_config.steam_language, _steam_config.steam_region):
         if appinfo.get(appid, {}).get('success', False):
             appinfo = appinfo[appid]['data']
             header_img = appinfo['header_image']
@@ -114,14 +117,15 @@ async def _(bot: Bot, event: Event, state: T_State):
             text_msg = _generate_message(appinfo)
             
             if is_onebot_v11(bot):
-                await _steam_link_handler.finish(ob11.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}]'))
+                await _steam_link_handler.finish(
+                    ob11.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}]'))
             elif is_onebot_v12(bot):
-                await _steam_link_handler.finish(ob12.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}]'))
+                await _steam_link_handler.finish(
+                    ob12.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}]'))
             elif is_kook(bot):
-                header_img_msg = await get_image_message_from_url(bot, header_img)
-                bg_img_msg = await get_image_message_from_url(bot, bg_img)
-                await _steam_command_handler.send(header_img_msg)
-                await _steam_command_handler.send(text_msg)
-                await _steam_command_handler.finish(bg_img_msg)
+                await send_image(header_img, bot, event)
+                await _steam_link_handler.send(text_msg)
+                await send_image(bg_img, bot, event)
+                await _steam_link_handler.finish()
             else:
-                await _steam_command_handler.finish(text_msg)
+                await _steam_link_handler.finish(text_msg)
