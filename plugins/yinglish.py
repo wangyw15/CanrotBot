@@ -1,12 +1,12 @@
-# from https://github.com/RimoChan/yinglish
-from nonebot import get_driver, on_command
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from pydantic import BaseModel, validator
+from typing import Annotated
+
+from nonebot import get_driver, on_shell_command
+from nonebot.adapters import MessageSegment
+from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
-import random
-import jieba
-import jieba.posseg as pseg
+from pydantic import BaseModel, validator
+
+from ..libraries import yinglish
 
 __plugin_meta__ = PluginMetadata(
     name='yinglish',
@@ -25,39 +25,19 @@ class YinglishConfig(BaseModel):
             raise ValueError('yinglish_rate must be a float between 0.0 and 1.0')
         return v
 
+
 _config = YinglishConfig.parse_obj(get_driver().config)
 
-# original program
-jieba.setLogLevel(20)
-
-def _词转换(x, y, 淫乱度):
-    if random.random() > 淫乱度:
-        return x
-    if x in {'，', '。'}:
-        return '……'
-    if x in {'!', '！'}:
-        return '❤'
-    if len(x) > 1 and random.random() < 0.5:
-        return f'{x[0]}……{x}'
-    else:
-        if y == 'n' and random.random() < 0.5:
-            x = '〇' * len(x)
-        return f'……{x}'
-
-def chs2yin(s, 淫乱度=0.5):
-    return ''.join([_词转换(x, y, 淫乱度) for x, y in pseg.cut(s)])
 
 # yinglish handler
-yinglish = on_command('yinglish', aliases={'淫语'}, block=True)
-@yinglish.handle()
-async def _(args: Message = CommandArg()):
-    if msg := args.extract_plain_text():
-        splitted: list[str] = msg.split()
-        if len(splitted) == 0:
-            await yinglish.finish('能把中文翻译成淫语的翻译机！\n使用方法：' + __plugin_meta__.usage)
-        elif len(splitted) == 1:
-            await yinglish.finish(chs2yin(msg, _config.yinglish_rate))
-        elif len(splitted) == 2 and splitted[1].replace('.', '').isnumeric() and 0 <= float(splitted[1]) <= 1:
-            await yinglish.finish(chs2yin(splitted[0], float(splitted[1])))
-        else:
-            await yinglish.finish('参数错误！\n使用方法：' + __plugin_meta__.usage)
+_yinglish_handler = on_shell_command('yinglish', aliases={'淫语'}, block=True)
+@_yinglish_handler.handle()
+async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
+    if len(args) == 0:
+        await _yinglish_handler.finish('能把中文翻译成淫语的翻译机！\n使用方法：' + __plugin_meta__.usage)
+    elif len(args) == 1:
+        await _yinglish_handler.finish(yinglish.chs2yin(args[0], _config.yinglish_rate))
+    elif len(args) == 2 and args[1].replace('.', '').isnumeric() and 0 <= float(args[1]) <= 1:
+        await _yinglish_handler.finish(yinglish.chs2yin(args[0], float(args[1])))
+    else:
+        await _yinglish_handler.finish('参数错误！\n使用方法：' + __plugin_meta__.usage)
