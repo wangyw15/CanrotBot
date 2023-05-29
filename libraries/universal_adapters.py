@@ -1,4 +1,5 @@
 import base64
+import re
 
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.permission import Permission
@@ -248,6 +249,19 @@ def can_send_image(bot: Bot) -> bool:
     if is_onebot_v11(bot) or is_onebot_v12(bot) or is_kook(bot):
         return True
     return False
+
+
+def is_url(content: str) -> bool:
+    """检测是否为URL"""
+    return re.match(r'^https?://', content) is not None
+
+
+def seconds_to_time(seconds: float) -> str:
+    ms = int(seconds % 1 * 1000)
+    seconds = int(seconds)
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    return f"{str(h).zfill(2)}:{str(m).zfill(2)}:{str(s).zfill(2)}.{str(ms).zfill(3)}"
 
 
 def get_puid(bot: Bot, event: Event) -> str:
