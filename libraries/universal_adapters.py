@@ -1,10 +1,11 @@
 import base64
 import re
-
-from nonebot.adapters import Bot, Event, MessageSegment
-from nonebot.permission import Permission
-import httpx
 from pathlib import Path
+
+import httpx
+from nonebot.adapters import Bot, Event
+from nonebot.permission import Permission
+
 from .config import get_config
 
 # 不同适配器
@@ -171,6 +172,7 @@ if proxy := get_config('canrot_proxy'):
     _client = httpx.AsyncClient(proxies=proxy)
 else:
     _client = httpx.AsyncClient()
+_client.timeout = 10
 
 
 async def fetch_bytes_data(url: str) -> bytes | None:
