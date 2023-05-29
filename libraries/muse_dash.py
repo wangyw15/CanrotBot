@@ -1,6 +1,11 @@
-from bs4 import BeautifulSoup
-import httpx
+import asyncio
 import re
+from typing import Literal
+
+import httpx
+from bs4 import BeautifulSoup
+
+from .render_by_browser import get_new_page
 
 _client: httpx.AsyncClient | None = None
 
@@ -30,11 +35,11 @@ async def fetch_muse_dash_player_data(player_id: str) -> dict | None:
         return None
     resp = await _client.get(f'https://musedash.moe/player/{player_id}?lang=ChineseS')
     if resp.status_code == 200:
-        return parse_muse_dash_page(resp.text)
+        return _parse_muse_dash_page(resp.text)
     return None
 
 
-def parse_muse_dash_page(content: str) -> dict:
+def _parse_muse_dash_page(content: str) -> dict:
     soup = BeautifulSoup(content, 'html.parser')
     result = {}
     # player name and diff
@@ -68,3 +73,24 @@ def parse_muse_dash_page(content: str) -> dict:
         result['songs'].append(song)
 
     return result
+
+
+async def generate_muse_dash_player_image(player_id: str, image_type: Literal['png', 'jpeg'] = 'png') -> bytes:
+    page = await get_new_page(viewport={'width': 1000, 'height': 2250})
+    await page.goto(f'https://musedash.moe/player/{player_id}', wait_until='networkidle')
+    await page.evaluate("document.querySelector('.navbar').remove()")
+    ret = await page.screenshot(type=image_type)
+    await page.close()
+    return ret
+
+async def _test():
+    with open('test.png', 'wb') as f:
+        f.write(await generate_muse_dash_player_image('test your player id', 'png'))
+
+
+asyncio.run(_test())
+
+__all__ = ['init_web_client',
+           'search_muse_dash_player_id',
+           'fetch_muse_dash_player_data',
+           'generate_muse_dash_player_image']

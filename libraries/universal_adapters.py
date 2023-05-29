@@ -243,6 +243,13 @@ async def send_image(img: bytes | str | Path, bot: Bot, event: Event) -> bool:
     return False
 
 
+def can_send_image(bot: Bot) -> bool:
+    """检测是否可以发送图片"""
+    if is_onebot_v11(bot) or is_onebot_v12(bot) or is_kook(bot):
+        return True
+    return False
+
+
 def get_puid(bot: Bot, event: Event) -> str:
     puid = get_user_id(event)
     if is_onebot_v11(bot) or is_onebot_v12(bot) or is_mirai2(bot):
