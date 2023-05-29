@@ -1,14 +1,15 @@
 from typing import Annotated
 
-from nonebot import on_shell_command, require, get_bot, get_bots
+from nonebot import on_shell_command, require, get_bot
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
+
 require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
 
 from ..libraries import universal_adapters
-from ..libraries.data import data_db, data_cursor
+from ..libraries.data import data_cursor
 
 
 __plugin_meta__ = PluginMetadata(
