@@ -63,7 +63,7 @@ async def _(state: T_State, bot: Bot, event: Event):
         if universal_adapters.is_onebot_v12(bot):
             await _bilibili_video.finish(universal_adapters.ob12.Message(f'[CQ:image,file={data["pic"]}]' + msg))
         if universal_adapters.is_kook(bot):
-            await universal_adapters.send_image_from_url(data["pic"], bot, event)
+            await universal_adapters.send_image(data["pic"], bot, event)
         await _bilibili_video.finish(msg)
 
 _bilibili_video_short_link = on_regex(r'https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}', block=True)
@@ -76,11 +76,13 @@ async def _(state: T_State, bot: Bot, event: Event):
             msg = _generate_bilibili_message(data)
             # image message
             if universal_adapters.is_onebot_v11(bot):
-                await _bilibili_video_short_link.finish(universal_adapters.ob11.Message(f'[CQ:image,file={data["pic"]}]' + msg))
+                await _bilibili_video_short_link.finish(
+                    universal_adapters.ob11.Message(f'[CQ:image,file={data["pic"]}]' + msg))
             if universal_adapters.is_onebot_v12(bot):
-                await _bilibili_video_short_link.finish(universal_adapters.ob12.Message(f'[CQ:image,file={data["pic"]}]' + msg))
+                await _bilibili_video_short_link.finish(
+                    universal_adapters.ob12.Message(f'[CQ:image,file={data["pic"]}]' + msg))
             if universal_adapters.is_kook(bot):
-                await universal_adapters.send_image_from_url(data["pic"], bot, event)
+                await universal_adapters.send_image(data["pic"], bot, event)
             await _bilibili_video_short_link.finish(msg)
 
 _youtube_video = on_regex(link_metadata.youtube_id_pattern, block=True)
@@ -92,11 +94,13 @@ async def _(state: T_State, bot: Bot, event: Event):
         # image message
         if universal_adapters.is_onebot_v11(bot):
             img_data = await link_metadata.fetch_youtube_thumbnail(data)
-            await _youtube_video.finish(universal_adapters.ob11.Message(universal_adapters.ob11.MessageSegment.image(img_data) + msg))
+            await _youtube_video.finish(
+                universal_adapters.ob11.Message(universal_adapters.ob11.MessageSegment.image(img_data) + msg))
         if universal_adapters.is_onebot_v12(bot):
             img_data = await link_metadata.fetch_youtube_thumbnail(data)
             img_base64 = base64.b64encode(img_data).decode('utf-8')
-            await _youtube_video.finish(universal_adapters.ob12.Message(f'[CQ:image,file=base64://{img_base64}]' + msg))
+            await _youtube_video.finish(
+                universal_adapters.ob12.Message(f'[CQ:image,file=base64://{img_base64}]' + msg))
         if universal_adapters.is_kook(bot):
-            await universal_adapters.send_image_from_url(data["snippet"]["thumbnails"]["default"]["url"], bot, event)
+            await universal_adapters.send_image(data["snippet"]["thumbnails"]["default"]["url"], bot, event)
         await _youtube_video.finish(msg)

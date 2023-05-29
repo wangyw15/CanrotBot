@@ -3,7 +3,7 @@ import base64
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.permission import Permission
 import httpx
-
+from pathlib import Path
 from .config import get_config
 
 # different bots
@@ -242,18 +242,37 @@ async def send_image_from_url(img_url: str, bot: Bot, event: Event) -> None:
         await bot.send(event, f'图片链接: {img_url}')
 
 
-async def send_image(img: bytes, bot: Bot, event: Event) -> bool:
+async def send_image(img: bytes | str | Path, bot: Bot, event: Event) -> bool:
+    """
+    为不同的适配器发送图片
+
+    :param img: 图片的`bytes`或者本地路径，`str`类型根据适配器不同有不同的含义，在Kook中看作链接
+    :param bot: 机器人实例
+    :param event: 事件实例
+    """
     if is_onebot_v11(bot):
         await bot.send(event, ob11.MessageSegment.image(file=img))
         return True
     elif is_onebot_v12(bot):
-        b64img = base64.b64encode(img).decode()
-        await bot.send(event, ob12.Message(f'[CQ:image,file=base64://{b64img}]'))
+        if isinstance(img, bytes):
+            b64img = base64.b64encode(img).decode()
+            await bot.send(event, ob12.Message(f'[CQ:image,file=base64://{b64img}]'))
+        elif isinstance(img, str) or isinstance(img, Path):
+            await bot.send(event, ob12.Message(f'[CQ:image,file={img}]'))
         return True
     elif is_kook(bot):
-        url = await bot.upload_file(img)
-        await bot.send(event, kook.MessageSegment.image(url))
-        return True
+        if isinstance(img, bytes):
+            url = await bot.upload_file(img)
+        elif isinstance(img, str):
+            img_data = await fetch_bytes_data(img)
+            if img_data:
+                url = await bot.upload_file(img_data)
+        elif isinstance(img, Path):
+            with open(img, 'rb') as f:
+                url = await bot.upload_file(f.read())
+        if url:
+            await bot.send(event, kook.MessageSegment.image(url))
+            return True
     return False
 
 
