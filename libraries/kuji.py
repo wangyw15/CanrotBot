@@ -31,20 +31,7 @@ async def generate_kuji(image_type: Literal['png', 'jpeg', ''] | None = 'png') -
 
     # generate html
     with open(_kuji_assets_path / 'template.html', 'r', encoding='utf-8') as f:
-        generated_html = f.read()
-
-    generated_content = ''
-    for i in range(len(selected_kuji['content'])):
-        generated_content += \
-            f'<div class="content center" style="grid-column: {5-i};">{selected_kuji["content"][i]}</div>'
-    generated_mean = ''.join([f'<p>{x.split("：")[0]}<br /><span>{x.split("：")[1]}</span></p>'
-                              for x in selected_kuji['mean']])
-    generated_html = generated_html\
-        .replace('{{count}}', selected_kuji['count'])\
-        .replace('{{type}}', selected_kuji['type'])\
-        .replace('{{content}}', generated_content)\
-        .replace('{{straight}}', selected_kuji['straight'])\
-        .replace('{{mean}}', generated_mean)
+        generated_html = f.read().replace('{{kuji_data}}', json.dumps(selected_kuji, ensure_ascii=False))
     img = await render_html(generated_html, _kuji_assets_path, image_type=image_type,
                             viewport={'width': 520, 'height': 820})
     return img, selected_kuji

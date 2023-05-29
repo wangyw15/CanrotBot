@@ -16,7 +16,7 @@
             width: 500px;
             height: 800px;
             grid-template-rows: repeat(5, 1fr);
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: 1.3fr repeat(4, 1fr);
             border: solid #96514d;
         }
         .container>div {
@@ -27,6 +27,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
         }
         .container .title {
             grid-row: 1 / 2;
@@ -35,24 +36,26 @@
             text-align: center;
             line-height: 1.5;
         }
+        .container .title div {
+            width: 100%;
+        }
         .container .content {
             writing-mode: vertical-rl;
             grid-row: 2 / 4;
-            font-size: 40px;
+            font-size: 45px;
         }
         .container .straight {
             writing-mode: vertical-rl;
             grid-column: 2 / 6;
             grid-row: 4 / 6;
-            font-size: 20px;
+            font-size: 19px;
+            line-height: 28px;
             text-decoration: underline #96514d;
-            line-height: 35px;
         }
         .container .mean {
             grid-row: 2 / 6;
             grid-column: 1 / 1;
-            font-size: 20px;
-            line-height: 20px;
+            font-size: 17px;
         }
         .mean span {
             text-decoration: underline #96514d;
@@ -60,24 +63,45 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container" id="container">
     <div class="title center">
-        日本东京浅草寺观音灵签{{count}}<br />
-        {{type}}
+        <div>日本东京浅草寺观音灵签<span id="count"></span></div>
+        <div id="type"></div>
     </div>
-    {{content}}
+
 <!--    <div class="content center" style="grid-column: 5;">-->
 <!--        有名须得遇-->
 <!--    </div>-->
 
     <div class="straight">
-        {{straight}}
     </div>
 
     <div class="mean">
-        {{mean}}
 <!--        <p>愿望：<br /><span>会实现吧。</span></p>-->
     </div>
 </div>
+<script>
+    var data = {{kuji_data}};
+
+    const container = document.querySelector('#container');
+    document.querySelector('#count').innerText = data.count;
+    document.querySelector('#type').innerText = data.type;
+    const straight = document.querySelector('.straight');
+    data.content.forEach((line, index) => {
+        var div = document.createElement('div');
+        div.className = 'content center';
+        div.style.gridColumn = (5 - index).toString();
+        div.innerText = line;
+        container.insertBefore(div, straight);
+    });
+    straight.innerText = data.straight;
+    const mean = document.querySelector('.mean');
+    data.mean.forEach(item => {
+        var p = document.createElement('p');
+        p.innerHTML = '' + item.split('：')[0] + '：<br><span>' + item.split('：')[1] + '</span>';
+        mean.appendChild(p);
+    });
+
+</script>
 </body>
 </html>
