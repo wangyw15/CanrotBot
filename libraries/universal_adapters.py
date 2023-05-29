@@ -1,3 +1,5 @@
+import base64
+
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.permission import Permission
 import httpx
@@ -238,6 +240,21 @@ async def send_image_from_url(img_url: str, bot: Bot, event: Event) -> None:
             await bot.send(event, kook.MessageSegment.image(url))
     else:
         await bot.send(event, f'图片链接: {img_url}')
+
+
+async def send_image(img: bytes, bot: Bot, event: Event) -> bool:
+    if is_onebot_v11(bot):
+        await bot.send(event, ob11.MessageSegment.image(file=img))
+        return True
+    elif is_onebot_v12(bot):
+        b64img = base64.b64encode(img).decode()
+        await bot.send(event, ob12.Message(f'[CQ:image,file=base64://{b64img}]'))
+        return True
+    elif is_kook(bot):
+        url = await bot.upload_file(img)
+        await bot.send(event, kook.MessageSegment.image(url))
+        return True
+    return False
 
 
 def get_puid(bot: Bot, event: Event) -> str:

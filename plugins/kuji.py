@@ -1,5 +1,7 @@
+import base64
+
 from nonebot import on_command
-from nonebot.adapters import Bot, Event
+from nonebot.adapters import Bot, Event, Message, MessageSegment
 from nonebot.plugin import PluginMetadata
 
 from ..libraries import user, economy, universal_adapters, kuji
@@ -24,12 +26,18 @@ async def _(bot: Bot, event: Event):
     msg = '谢谢你的十个胡萝卜片喵~\n'
     if universal_adapters.is_onebot_v11(bot):
         result = await kuji.generate_kuji()
-        msg += f'[CQ:image,file=base64://{result[0]}]'
-        await _kuji_handler.finish(universal_adapters.ob11.Message(msg))
+        msg = msg + universal_adapters.ob11.MessageSegment.image(result[0])
+        await _kuji_handler.finish(msg)
     elif universal_adapters.is_onebot_v12(bot):
         result = await kuji.generate_kuji()
-        msg += f'[CQ:image,file=base64://{result[0]}]'
+        b64img = base64.b64encode(result[0]).decode('utf-8')
+        msg += f'[CQ:image,file=base64://{b64img}]'
         await _kuji_handler.finish(universal_adapters.ob12.Message(msg))
+    elif universal_adapters.is_kook(bot):
+        result = await kuji.generate_kuji()
+        await _kuji_handler.send(msg.strip())
+        await universal_adapters.send_image(result[0], bot, event)
+        await _kuji_handler.finish()
     else:
         result = await kuji.generate_kuji(None)
         msg += kuji.generate_kuji_str(result[1])

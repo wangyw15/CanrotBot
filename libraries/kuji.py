@@ -21,13 +21,13 @@ def _load_kuji_assets() -> None:
             logger.info(f'kuji data: {len(_kuji_data)}')
 
 
-async def generate_kuji(image_type: Literal['png', 'jpeg'] | None = 'png') -> Tuple[str, dict[str, str]]:
+async def generate_kuji(image_type: Literal['png', 'jpeg', ''] | None = 'png') -> Tuple[bytes | None, dict[str, str]]:
     _load_kuji_assets()
     selected_kuji: dict[str, str] = random.choice(_kuji_data)
 
     # without image
     if not image_type:
-        return '', selected_kuji
+        return None, selected_kuji
 
     # generate html
     with open(_kuji_assets_path / 'template.html', 'r', encoding='utf-8') as f:
@@ -47,7 +47,7 @@ async def generate_kuji(image_type: Literal['png', 'jpeg'] | None = 'png') -> Tu
         .replace('{{mean}}', generated_mean)
     img = await render_html(generated_html, _kuji_assets_path, image_type=image_type,
                             viewport={'width': 520, 'height': 820})
-    return base64.b64encode(img).decode('utf-8'), selected_kuji
+    return img, selected_kuji
 
 
 def generate_kuji_str(content: dict[str, str]) -> str:
@@ -66,7 +66,7 @@ _load_kuji_assets()
 
 async def main():
     with open('test.png', 'wb') as f:
-        f.write(base64.b64decode((await generate_kuji())[0]))
+        f.write((await generate_kuji())[0])
 
 if __name__ == '__main__':
     asyncio.run(main())
