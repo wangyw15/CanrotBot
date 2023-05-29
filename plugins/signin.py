@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime
 
 from nonebot import on_command
@@ -54,27 +55,22 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
         msg = '签到成功！\n'
         msg += f'获得 {point_amount} 胡萝卜片\n'
         msg += '✨今日运势✨\n'
-        if universal_adapters.is_onebot_v11(bot):
-            msg += f'[CQ:image,file=base64://{img}]'
-            await _signin_handler.finish(universal_adapters.ob11.Message(msg))
-        elif universal_adapters.is_onebot_v12(bot):
-            msg += f'[CQ:image,file=base64://{img}]'
-            await _signin_handler.finish(universal_adapters.ob12.Message(msg))
-        else:
-            msg += f'运势: {title}\n详情: {content}'
-            await _signin_handler.finish(msg)
     else:
         img = user.get_data_by_uid(uid, 'signin_fortune_image')
-
         msg = '你今天签过到了，再给你看一次哦🤗\n'
-        if universal_adapters.is_onebot_v11(bot):
-            msg += f'[CQ:image,file=base64://{img}]'
-            await _signin_handler.finish(universal_adapters.ob11.Message(msg))
-        elif universal_adapters.is_onebot_v12(bot):
-            msg += f'[CQ:image,file=base64://{img}]'
-            await _signin_handler.finish(universal_adapters.ob12.Message(msg))
-        else:
-            title = user.get_data_by_uid(uid, 'signin_fortune_title')
-            content = user.get_data_by_uid(uid, 'signin_fortune_content')
-            msg += f'运势: {title}\n详情: {content}'
-            await _signin_handler.finish(msg)
+        title = user.get_data_by_uid(uid, 'signin_fortune_title')
+        content = user.get_data_by_uid(uid, 'signin_fortune_content')
+
+    if universal_adapters.is_onebot_v11(bot):
+        msg += f'[CQ:image,file=base64://{img}]'
+        await _signin_handler.finish(universal_adapters.ob11.Message(msg))
+    elif universal_adapters.is_onebot_v12(bot):
+        msg += f'[CQ:image,file=base64://{img}]'
+        await _signin_handler.finish(universal_adapters.ob12.Message(msg))
+    elif universal_adapters.is_kook(bot):
+        await _signin_handler.send(msg.strip())
+        await universal_adapters.send_image(base64.b64decode(img), bot, event)
+        await _signin_handler.finish()
+    else:
+        msg += f'运势: {title}\n详情: {content}'
+        await _signin_handler.finish(msg)
