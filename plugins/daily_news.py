@@ -1,8 +1,8 @@
 from nonebot import on_command
-from nonebot.adapters import Bot
+from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
 
-from ..libraries.universal_adapters import get_image_message_from_url
+from ..libraries.universal_adapters import send_image
 
 __plugin_meta__ = PluginMetadata(
     name='看新闻',
@@ -11,9 +11,9 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-img_url = 'https://api.03c3.cn/zb/'
 
 daily = on_command('daily', aliases={'每日新闻', '新闻'}, block=True)
 @daily.handle()
-async def _(bot: Bot):
-    await daily.finish(await get_image_message_from_url(bot, img_url))
+async def _(bot: Bot, event: Event):
+    await send_image('https://api.03c3.cn/zb/', bot, event)
+    await daily.finish()
