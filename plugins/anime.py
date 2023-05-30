@@ -64,10 +64,8 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
             data = anime.search_anime_by_anilist_id(tracemoe_data['anilist'])
             ret = ''
             # 视觉图
-            if universal_adapters.is_onebot_v11(bot):
-                msg += f'[CQ:image,file={data["picture"]}]\n{msg}'
-            elif universal_adapters.is_onebot_v12(bot):
-                msg += f'[CQ:image,file={data["picture"]}]\n{msg}'
+            if universal_adapters.is_onebot(bot):
+                ret += f'[CQ:image,file={data["picture"]}]\n'
             elif universal_adapters.is_kook(bot):
                 await universal_adapters.send_image(data["picture"], bot, event)
             # 生成消息
@@ -80,10 +78,8 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
             else:
                 ret += f'\n{universal_adapters.MESSAGE_SPLIT_LINE}\n'
             # 视频截图
-            if universal_adapters.is_onebot_v11(bot):
-                msg += f'[CQ:image,file={tracemoe_data["image"]}]\n{msg}'
-            elif universal_adapters.is_onebot_v12(bot):
-                msg += f'[CQ:image,file={tracemoe_data["image"]}]\n{msg}'
+            if universal_adapters.is_onebot(bot):
+                ret += f'[CQ:image,file={tracemoe_data["image"]}]\n'
             elif universal_adapters.is_kook(bot):
                 await universal_adapters.send_image(tracemoe_data["image"], bot, event)
             # 剩下的 tracemoe 消息
