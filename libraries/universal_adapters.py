@@ -238,13 +238,10 @@ async def send_image(img: bytes | str | Path, bot: Bot, event: Event) -> bool:
             return True
     elif is_qqguild(bot):
         if isinstance(img, str):
-            img_data = await fetch_bytes_data(img)
-            if img_data:
-                await bot.send(event, qqguild.MessageSegment.file_image(img_data))
-                return True
+            await bot.send(event, qqguild.MessageSegment.image(img))
         else:
             await bot.send(event, qqguild.MessageSegment.file_image(img))
-            return True
+        return True
     return False
 
 

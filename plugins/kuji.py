@@ -38,6 +38,10 @@ async def _(bot: Bot, event: Event):
         await _kuji_handler.send(msg.strip())
         await universal_adapters.send_image(result[0], bot, event)
         await _kuji_handler.finish()
+    elif universal_adapters.is_qqguild(bot):
+        result = await kuji.generate_kuji()
+        msg += universal_adapters.qqguild.MessageSegment.file_image(result[0])
+        await _kuji_handler.finish(msg)
     else:
         result = await kuji.generate_kuji(None)
         msg += kuji.generate_kuji_str(result[1])
