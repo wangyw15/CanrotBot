@@ -29,6 +29,10 @@ try:
     import nonebot.adapters.console as console
 except ModuleNotFoundError:
     console = None
+try:
+    import nonebot.adapters.qqguild as qqguild
+except ModuleNotFoundError:
+    qqguild = None
 
 # permission
 GROUP = Permission()
@@ -66,17 +70,6 @@ def get_group_id(event: Event) -> str | None:
         return str(event.sender.group.id)
     elif kook and isinstance(event, kook.event.ChannelMessageEvent):
         return str(event.group_id)
-    return None
-
-
-def get_user_id(event: Event) -> str | None:
-    """从不同的事件中获取用户ID"""
-    if ob11 and isinstance(event, ob11.MessageEvent) or ob12 and isinstance(event, ob12.MessageEvent):
-        return str(event.user_id)
-    elif mirai2 and (isinstance(event, mirai2.event.GroupMessage) or isinstance(event, mirai2.event.FriendMessage)):
-        return str(event.get_user_id())
-    elif kook and isinstance(event, kook.event.MessageEvent):
-        return str(event.author_id)
     return None
 
 
@@ -278,13 +271,15 @@ def seconds_to_time(seconds: float) -> str:
 
 
 def get_puid(bot: Bot, event: Event) -> str:
-    puid = get_user_id(event)
+    puid = event.get_user_id()
     if is_onebot_v11(bot) or is_onebot_v12(bot) or is_mirai2(bot):
-        puid = 'qq_' + str(puid)
+        puid = 'qq_' + puid
     elif is_kook(bot):
-        puid = 'kook_' + str(puid)
+        puid = 'kook_' + puid
     elif is_console(bot):
         puid = 'console_console'
+    elif is_qqguild(bot):
+        puid = 'qqguild_' + puid
     return puid
 
 
@@ -321,3 +316,9 @@ def is_console(bot: Bot) -> bool:
 
 def is_onebot(bot: Bot) -> bool:
     return is_onebot_v11(bot) or is_onebot_v12(bot)
+
+
+def is_qqguild(bot: Bot) -> bool:
+    if qqguild:
+        return isinstance(bot, qqguild.Bot)
+    return False
