@@ -126,6 +126,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
                 await _anime_handler.finish(msg)
             elif universal_adapters.is_qqguild(bot):
                 await _anime_handler.finish(
-                    universal_adapters.qqguild.MessageSegment.image(data['picture']) + '\n' + msg)
+                    universal_adapters.qqguild.MessageSegment.image(data['picture']) +
+                    universal_adapters.qqguild.MessageSegment.text('\n' + msg))
             else:
                 await _anime_handler.finish(msg)
