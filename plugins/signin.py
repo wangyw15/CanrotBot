@@ -71,6 +71,9 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
         await _signin_handler.send(msg.strip())
         await universal_adapters.send_image(base64.b64decode(img), bot, event)
         await _signin_handler.finish()
+    elif universal_adapters.is_qqguild(bot):
+        msg += universal_adapters.qqguild.MessageSegment.file_image(base64.b64decode(img))
+        await _signin_handler.finish(msg)
     else:
         msg += f'运势: {title}\n详情: {content}'
         await _signin_handler.finish(msg)

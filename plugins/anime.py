@@ -66,6 +66,8 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
             # 视觉图
             if universal_adapters.is_onebot(bot):
                 ret += f'[CQ:image,file={data["picture"]}]\n'
+            elif universal_adapters.is_qqguild(bot):
+                ret += universal_adapters.qqguild.MessageSegment.image(data["picture"])
             elif universal_adapters.is_kook(bot):
                 await universal_adapters.send_image(data["picture"], bot, event)
             # 生成消息
@@ -80,6 +82,8 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
             # 视频截图
             if universal_adapters.is_onebot(bot):
                 ret += f'[CQ:image,file={tracemoe_data["image"]}]\n'
+            elif universal_adapters.is_qqguild(bot):
+                ret += universal_adapters.qqguild.MessageSegment.image(tracemoe_data["image"])
             elif universal_adapters.is_kook(bot):
                 await universal_adapters.send_image(tracemoe_data["image"], bot, event)
             # 剩下的 tracemoe 消息
@@ -93,6 +97,8 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
                 await bot.send(event, universal_adapters.ob11.Message(ret))
             elif universal_adapters.is_onebot_v12(bot):
                 await bot.send(event, universal_adapters.ob12.Message(ret))
+            elif universal_adapters.is_qqguild(bot):
+                await bot.send(event, universal_adapters.qqguild.Message(ret))
             else:
                 await bot.send(event, ret)
             return
@@ -118,5 +124,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             elif universal_adapters.is_kook(bot):
                 await universal_adapters.send_image(data['picture'], bot, event)
                 await _anime_handler.finish(msg)
+            elif universal_adapters.is_qqguild(bot):
+                await _anime_handler.finish(universal_adapters.qqguild.MessageSegment.image(data['picture']) + msg)
             else:
                 await _anime_handler.finish(msg)

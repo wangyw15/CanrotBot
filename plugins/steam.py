@@ -95,6 +95,11 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                         await _steam_command_handler.send(text_msg)
                         await send_image(bg_img, bot, event)
                         await _steam_command_handler.finish()
+                    elif is_qqguild(bot):
+                        final_msg = qqguild.MessageSegment.image(header_img) + '\n' + \
+                                    text_msg + '\n' + \
+                                    qqguild.MessageSegment.image(bg_img)
+                        await _steam_command_handler.finish(final_msg)
                     else:
                         await _steam_command_handler.finish(text_msg)
                 else:
