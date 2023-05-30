@@ -108,8 +108,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     if len(args) == 2:
         if args[0].lower() == 'search' or args[0] == '搜索':
             # 从不同的地方获取信息
-            if universal_adapters.is_url(args[1]) or \
-                    (isinstance(args[1], MessageSegment) and args[1].type == 'image'):
+            if (isinstance(args[1], MessageSegment) and args[1].type == 'image') or universal_adapters.is_url(args[1]):
                 await _search_anime_by_image(args[1], bot, event)
                 await _anime_handler.finish()
             name, data, possibility = anime.search_anime_by_name(args[1])
