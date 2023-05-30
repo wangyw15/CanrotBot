@@ -261,14 +261,6 @@ def generate_cq_message_from_saucenao_result(api_result: dict) -> Message:
     return msg
 
 
-def seconds_to_time(seconds: float) -> str:
-    ms = int(seconds % 1 * 1000)
-    seconds = int(seconds)
-    m, s = divmod(seconds, 60)
-    h, m = divmod(m, 60)
-    return f"{str(h).zfill(2)}:{str(m).zfill(2)}:{str(s).zfill(2)}.{str(ms).zfill(3)}"
-
-
 def generate_cq_message_from_tracemoe_result(api_result: dict) -> str:
     msg = ""
     if api_result["error"]:

@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 import httpx
-from nonebot.adapters import Bot, Event, MessageSegment
+from nonebot.adapters import Bot, Event, Message, MessageSegment
 from nonebot.permission import Permission
 
 from .config import get_config
@@ -247,9 +247,91 @@ async def send_image(img: bytes | str | Path, bot: Bot, event: Event) -> bool:
 
 def can_send_image(bot: Bot) -> bool:
     """检测是否可以发送图片"""
-    if is_onebot_v11(bot) or is_onebot_v12(bot) or is_kook(bot):
+    if is_onebot_v11(bot) or is_onebot_v12(bot) or is_kook(bot) or is_qqguild(bot):
         return True
     return False
+
+
+async def send_rich_text_message(msg: Message, bot: Bot, event: Event):
+    """
+    发送富文本消息，目前仅支持纯文字和图片
+
+    消息类型中，`image` 代表图片，`text` 代表文字消息，其余类型会被忽略
+
+    如果是文字消息，则保存在 `content` 键中
+
+    如果是图片消息，`url` 键保存图片链接，`bytes` 键保存二进制图片，`path` 保存本地路径（三选一）
+
+    QQ和QQ频道发送为一条消息，Kook则是图文拆分发送，其余则是忽略图片
+
+    :param msg: 富文本消息
+    :param bot: 机器人实例
+    :param event: 事件实例
+    """
+    if is_onebot_v11(bot):
+        final_msg = ob11.Message()
+        for segment in msg:
+            if segment.type == 'image':
+                if 'url' in segment.data:
+                    final_msg.append(ob11.MessageSegment.image(segment.data['url']))
+                elif 'bytes' in segment.data:
+                    final_msg.append(ob11.MessageSegment.image(segment.data['bytes']))
+                elif 'path' in segment.data:
+                    final_msg.append(ob11.MessageSegment.image(segment.data['path']))
+            elif segment.type == 'text' or segment.is_text():
+                final_msg.append(segment.data['content'])
+        await bot.send(event, final_msg)
+    elif is_onebot_v12(bot):
+        final_msg = ob12.Message()
+        for segment in msg:
+            if segment.type == 'image':
+                if 'url' in segment.data:
+                    final_msg.append(f'[CQ:image,file={segment.data["url"]}]')
+                elif 'bytes' in segment.data:
+                    b64img = base64.b64encode(segment.data['bytes']).decode('utf-8')
+                    final_msg.append(f'[CQ:image,file=base64://{b64img}]')
+                elif 'path' in segment.data:
+                    final_msg.append(f'[CQ:image,file={segment.data["path"]}]')
+            elif segment.type == 'text' or segment.is_text():
+                final_msg.append(segment.data['content'])
+        await bot.send(event, final_msg)
+    elif is_kook(bot):
+        tmp = ''
+        for segment in msg:
+            if segment.type == 'image':
+                if tmp.strip():
+                    await bot.send(event, tmp)
+                    tmp = ''
+                if 'url' in segment.data:
+                    await send_image(segment.data['url'], bot, event)
+                elif 'bytes' in segment.data:
+                    await send_image(segment.data['bytes'], bot, event)
+                elif 'path' in segment.data:
+                    await send_image(segment.data['path'], bot, event)
+            elif segment.type == 'text' or segment.is_text():
+                tmp += segment.data['content']
+        if tmp.strip():
+            await bot.send(event, tmp)
+            tmp = ''
+    elif is_qqguild(bot):
+        final_msg = qqguild.Message()
+        for segment in msg:
+            if segment.type == 'image':
+                if 'url' in segment.data:
+                    final_msg.append(qqguild.MessageSegment.image(segment.data['url']))
+                elif 'bytes' in segment.data:
+                    final_msg.append(qqguild.MessageSegment.file_image(segment.data['bytes']))
+                elif 'path' in segment.data:
+                    final_msg.append(qqguild.MessageSegment.file_image(segment.data['path']))
+            elif segment.type == 'text' or segment.is_text():
+                final_msg.append(segment.data['content'])
+        await bot.send(event, final_msg)
+    else:
+        final_msg = ''
+        for segment in msg:
+            if segment.type == 'text':
+                final_msg += segment.data['content']
+        await bot.send(event, final_msg)
 
 
 def is_url(msg: MessageSegment | str) -> bool:
@@ -328,3 +410,7 @@ def is_qqguild(bot: Bot) -> bool:
     if qqguild:
         return isinstance(bot, qqguild.Bot)
     return False
+
+
+def is_qq(bot: Bot) -> bool:
+    return is_onebot(bot) or is_mirai2(bot) or is_qqguild(bot)
