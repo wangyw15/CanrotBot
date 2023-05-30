@@ -57,5 +57,8 @@ async def _():
     for subscriber in subscribers:
         bot_id = subscriber[1]
         id = subscriber[0]
-        bot = get_bot(str(bot_id))
-        await bot.call_api('send_group_msg', group_id=id, message=f'[CQ:image,file={img_url}]')
+        try:
+            bot = get_bot(str(bot_id))
+            await bot.call_api('send_group_msg', group_id=id, message=f'[CQ:image,file={img_url}]')
+        except KeyError:
+            pass

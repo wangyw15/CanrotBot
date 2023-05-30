@@ -209,7 +209,7 @@ async def send_image(img: bytes | str | Path, bot: Bot, event: Event) -> bool:
     """
     为不同的适配器发送图片
 
-    :param img: 图片的`bytes`或者本地路径，`str`类型根据适配器不同有不同的含义，在Kook中看作链接
+    :param img: 图片的`bytes`或者本地路径，`str`类型根据适配器不同有不同的含义，在Kook和QQ频道中看作链接
     :param bot: 机器人实例
     :param event: 事件实例
     """
@@ -235,6 +235,15 @@ async def send_image(img: bytes | str | Path, bot: Bot, event: Event) -> bool:
                 url = await bot.upload_file(f.read())
         if url:
             await bot.send(event, kook.MessageSegment.image(url))
+            return True
+    elif is_qqguild(bot):
+        if isinstance(img, str):
+            img_data = await fetch_bytes_data(img)
+            if img_data:
+                await bot.send(event, qqguild.MessageSegment.file_image(img_data))
+                return True
+        else:
+            await bot.send(event, qqguild.MessageSegment.file_image(img))
             return True
     return False
 
