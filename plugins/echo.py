@@ -4,9 +4,9 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(
-    name='计算器',
-    description='简单的计算器',
-    usage='输入表达式，以等号结尾，比如：1+1=',
+    name='复读机',
+    description='复读你发的话',
+    usage='/<echo|复读|复读机|回声> [要发出来的消息]',
     config=None
 )
 
