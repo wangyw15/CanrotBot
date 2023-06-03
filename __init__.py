@@ -49,7 +49,9 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                 ret += '\n'
             await execute_asset_sql.finish(ret.strip())
         except OperationalError as e:
-            await execute_asset_sql.finish('SQL查询失败\n' + str(e))
+            await execute_asset_sql.finish('SQL执行失败\n' + str(e))
+        except TypeError as e:
+            await execute_data_sql.finish('SQL执行失败或没有输出\n' + str(e))
     await execute_asset_sql.finish('执行SQL失败')
 
 execute_data_sql = on_command('sql_data', aliases={'sql-data', 'sqld', 'dsql', 'data-sql', 'data_sql'}, block=True)
@@ -67,5 +69,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                 ret += '\n'
             await execute_data_sql.finish(ret.strip())
         except OperationalError as e:
-            await execute_data_sql.finish('SQL查询失败\n' + str(e))
+            await execute_data_sql.finish('SQL执行失败\n' + str(e))
+        except TypeError as e:
+            await execute_data_sql.finish('SQL执行失败或没有输出\n' + str(e))
     await execute_data_sql.finish('执行SQL失败')
