@@ -4,3 +4,6 @@
 [submodule "assets/anime-offline-database"]
 	path = assets/anime-offline-database
 	url = https://github.com/manami-project/anime-offline-database
+[submodule "assets/arknights/ArknightsGameResource"]
+	path = assets/arknights/ArknightsGameResource
+	url = https://github.com/yuanyan3060/ArknightsGameResource
