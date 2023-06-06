@@ -10,6 +10,7 @@ from nonebot_plugin_apscheduler import scheduler
 
 from ..libraries import universal_adapters
 from ..libraries.data import data_cursor
+from ..adapters import unified
 
 
 __plugin_meta__ = PluginMetadata(
@@ -28,7 +29,7 @@ daily = on_shell_command('daily', aliases={'每日新闻', '新闻'}, block=True
 @daily.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if len(args) == 0:
-        await universal_adapters.send_image(img_url, bot, event)
+        await unified.MessageSegment.image(img_url, '每日新闻图片').send(bot, event)
         await daily.finish()
     elif len(args) == 1:
         if args[0].lower() == 'subscribe' or args[0] == '订阅':

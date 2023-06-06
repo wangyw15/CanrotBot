@@ -7,6 +7,7 @@ from pydantic import BaseModel, validator
 
 from ..libraries.link_metadata import fetch_steam_app_info
 from ..libraries.universal_adapters import *
+from ..adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='Steam助手',
@@ -83,25 +84,13 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                     header_img = appinfo['header_image']
                     bg_img = appinfo['background_raw']
                     text_msg = _generate_message(appinfo)
-                    
-                    if is_onebot_v11(bot):
-                        await _steam_command_handler.finish(
-                            ob11.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
-                    elif is_onebot_v12(bot):
-                        await _steam_command_handler.finish(
-                            ob12.Message(f'[CQ:image,file={header_img}]\n' + text_msg + f'\n[CQ:image,file={bg_img}'))
-                    elif is_kook(bot):
-                        await send_image(header_img, bot, event)
-                        await _steam_command_handler.send(text_msg)
-                        await send_image(bg_img, bot, event)
-                        await _steam_command_handler.finish()
-                    elif is_qqguild(bot):
-                        final_msg = qqguild.MessageSegment.image(header_img) + '\n' + \
-                                    text_msg + '\n' + \
-                                    qqguild.MessageSegment.image(bg_img)
-                        await _steam_command_handler.finish(final_msg)
-                    else:
-                        await _steam_command_handler.finish(text_msg)
+
+                    msg = unified.Message()
+                    msg.append(unified.MessageSegment.image(header_img, '头图'))
+                    msg.append(unified.MessageSegment.text(text_msg))
+                    msg.append(unified.MessageSegment.image(bg_img, '背景图'))
+                    await msg.send(bot, event)
+                    await _steam_command_handler.finish()
                 else:
                     await _steam_command_handler.finish('未找到该游戏')
             else:
