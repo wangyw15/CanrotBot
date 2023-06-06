@@ -51,7 +51,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             await daily.finish('用法: ' + __plugin_meta__.usage)
 
 
-@scheduler.scheduled_job("cron", hour="8", id="daily_news")
+@scheduler.scheduled_job("cron", hour="10", id="daily_news")
 async def _():
     subscribers: list[list[int, int]] = data_cursor.execute('SELECT * FROM daily_subscribers').fetchall()
     for subscriber in subscribers:
