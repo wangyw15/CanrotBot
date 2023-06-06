@@ -7,6 +7,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from ..libraries import universal_adapters, fortune, user, economy
+from ..adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='签到',
@@ -38,7 +39,9 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     today = datetime.now().strftime('%Y-%m-%d')
     if not last_signin == today:
         can_signin = True
-    
+
+    final_msg = unified.Message()
+
     # signin
     if can_signin:
         # fortune
@@ -52,28 +55,15 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
         point_amount = 20 + rank
         economy.earn(uid, point_amount)
 
-        msg = '签到成功！\n'
-        msg += f'获得 {point_amount} 胡萝卜片\n'
-        msg += '✨今日运势✨\n'
+        final_msg += '签到成功！\n'
+        final_msg += f'获得 {point_amount} 胡萝卜片\n'
+        final_msg += '✨今日运势✨\n'
     else:
         img = user.get_data_by_uid(uid, 'signin_fortune_image')
-        msg = '你今天签过到了，再给你看一次哦🤗\n'
+        final_msg += '你今天签过到了，再给你看一次哦🤗\n'
         title = user.get_data_by_uid(uid, 'signin_fortune_title')
         content = user.get_data_by_uid(uid, 'signin_fortune_content')
 
-    if universal_adapters.is_onebot_v11(bot):
-        msg += f'[CQ:image,file=base64://{img}]'
-        await _signin_handler.finish(universal_adapters.ob11.Message(msg))
-    elif universal_adapters.is_onebot_v12(bot):
-        msg += f'[CQ:image,file=base64://{img}]'
-        await _signin_handler.finish(universal_adapters.ob12.Message(msg))
-    elif universal_adapters.is_kook(bot):
-        await _signin_handler.send(msg.strip())
-        await universal_adapters.send_image(base64.b64decode(img), bot, event)
-        await _signin_handler.finish()
-    elif universal_adapters.is_qqguild(bot):
-        msg += universal_adapters.qqguild.MessageSegment.file_image(base64.b64decode(img))
-        await _signin_handler.finish(msg)
-    else:
-        msg += f'运势: {title}\n详情: {content}'
-        await _signin_handler.finish(msg)
+    final_msg.append(unified.MessageSegment.image(base64.b64decode(img), f'运势: {title}\n详情: {content}'))
+    await final_msg.send(bot, event)
+    await _signin_handler.finish()
