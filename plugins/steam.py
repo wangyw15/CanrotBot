@@ -114,4 +114,4 @@ async def _(bot: Bot, event: Event, state: T_State):
             msg.append(unified.MessageSegment.text(text_msg))
             msg.append(unified.MessageSegment.image(bg_img, '背景图'))
             await msg.send(bot, event)
-            await _steam_command_handler.finish()
+            await _steam_link_handler.finish()
