@@ -5,7 +5,8 @@ from nonebot.plugin import PluginMetadata
 import httpx
 import random
 
-from ..libraries import user, economy, universal_adapters
+from ..libraries import user, economy
+from ..adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='waifu',
@@ -38,12 +39,17 @@ async def _(bot: Bot, event: Event, msg: Message = CommandArg()):
             category = args
         else:
             await waifu.finish('没有这个类型哦')
-    if not economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 2):
+
+    if not unified.Detector.can_send_image(bot):
+        await waifu.finish('这里不能发送图片喵~')
+
+    if not economy.pay(user.get_uid(unified.get_puid(bot, event)), 2):
         await waifu.finish('你的余额不足哦')
+
     await waifu.send('谢谢你的两个胡萝卜片喵~\n正在找图哦~')
     img_url = await get_waifu_url('sfw', category)
     if img_url:
-        await universal_adapters.send_image(img_url, bot, event)
+        await unified.MessageSegment.image(img_url).send(bot, event)
         await waifu.finish()
     else:
         await waifu.finish('获取图片失败')

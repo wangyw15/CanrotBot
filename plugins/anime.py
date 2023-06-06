@@ -7,6 +7,7 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from ..libraries import anime, universal_adapters
+from ..adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='番剧工具',
@@ -63,44 +64,23 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
             tracemoe_data = search_resp['result'][0]
             data = anime.search_anime_by_anilist_id(tracemoe_data['anilist'])
             ret = ''
+            final_msg = unified.Message()
             # 视觉图
-            if universal_adapters.is_onebot(bot):
-                ret += f'[CQ:image,file={data["picture"]}]\n'
-            elif universal_adapters.is_qqguild(bot):
-                ret += universal_adapters.qqguild.MessageSegment.image(data["picture"])
-            elif universal_adapters.is_kook(bot):
-                await universal_adapters.send_image(data["picture"], bot, event)
+            final_msg.append(unified.MessageSegment.image(data['picture'], '封面图'))
             # 生成消息
             if data:
-                ret = generate_message_from_anime_data('', data, tracemoe_data["similarity"])
+                final_msg.append(generate_message_from_anime_data('', data, tracemoe_data["similarity"]))
             # tracemoe 消息
-            if universal_adapters.is_kook(bot):
-                await bot.send(event, ret)
-                ret = ''
-            else:
-                ret += f'\n{universal_adapters.MESSAGE_SPLIT_LINE}\n'
             # 视频截图
-            if universal_adapters.is_onebot(bot):
-                ret += f'[CQ:image,file={tracemoe_data["image"]}]\n'
-            elif universal_adapters.is_qqguild(bot):
-                ret += universal_adapters.qqguild.MessageSegment.image(tracemoe_data["image"])
-            elif universal_adapters.is_kook(bot):
-                await universal_adapters.send_image(tracemoe_data["image"], bot, event)
+            final_msg.append(unified.MessageSegment.image(tracemoe_data['image'], '封面图'))
             # 剩下的 tracemoe 消息
-            ret += f'trace.moe 信息:\n' \
-                   f'番剧文件名: {tracemoe_data["filename"]}\n' \
-                   f'第 {tracemoe_data["episode"]} 集\n' \
-                   f'时间: {universal_adapters.seconds_to_time(tracemoe_data["from"])}~' \
-                   f'{universal_adapters.seconds_to_time(tracemoe_data["to"])}\n' \
-                   f'AniList 链接: https://anilist.co/anime/{tracemoe_data["anilist"]}\n'
-            if universal_adapters.is_onebot_v11(bot):
-                await bot.send(event, universal_adapters.ob11.Message(ret))
-            elif universal_adapters.is_onebot_v12(bot):
-                await bot.send(event, universal_adapters.ob12.Message(ret))
-            elif universal_adapters.is_qqguild(bot):
-                await bot.send(event, universal_adapters.qqguild.Message(ret))
-            else:
-                await bot.send(event, ret)
+            final_msg.append(f'trace.moe 信息:\n'
+                             f'番剧文件名: {tracemoe_data["filename"]}\n'
+                             f'第 {tracemoe_data["episode"]} 集\n'
+                             f'时间: {universal_adapters.seconds_to_time(tracemoe_data["from"])}~'
+                             f'{universal_adapters.seconds_to_time(tracemoe_data["to"])}\n'
+                             f'AniList 链接: https://anilist.co/anime/{tracemoe_data["anilist"]}\n')
+            await final_msg.send(bot, event)
             return
     await bot.send(event, '搜索失败')
 
@@ -114,19 +94,9 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
                 await _search_anime_by_image(args[1], bot, event)
                 await _anime_handler.finish()
             name, data, possibility = anime.search_anime_by_name(args[1])
-            msg = generate_message_from_anime_data(name, data, possibility)
-            if universal_adapters.is_onebot_v11(bot):
-                msg = f'[CQ:image,file={data["picture"]}]\n{msg}'
-                await _anime_handler.finish(universal_adapters.ob11.Message(msg))
-            elif universal_adapters.is_onebot_v12(bot):
-                msg = f'[CQ:image,file={data["picture"]}]\n{msg}'
-                await _anime_handler.finish(universal_adapters.ob12.Message(msg))
-            elif universal_adapters.is_kook(bot):
-                await universal_adapters.send_image(data['picture'], bot, event)
-                await _anime_handler.finish(msg)
-            elif universal_adapters.is_qqguild(bot):
-                await _anime_handler.finish(
-                    universal_adapters.qqguild.MessageSegment.image(data['picture']) +
-                    universal_adapters.qqguild.MessageSegment.text('\n' + msg))
-            else:
-                await _anime_handler.finish(msg)
+            text_msg = generate_message_from_anime_data(name, data, possibility)
+            msg = unified.Message()
+            msg.append(unified.MessageSegment.image(data['picture'], f'{name} 封面图'))
+            msg.append(text_msg)
+            await msg.send(bot, event)
+            await _anime_handler.finish()

@@ -179,6 +179,7 @@ class Message(BaseMessage[MessageSegment]):
                         final_msg += '\n[图片]\n'
                 elif seg.type == MessageSegmentTypes.AT:
                     final_msg += f'@{seg.data["user_id"]}'
+            final_msg:str = final_msg.strip()
 
         await bot.send(event, final_msg)
 

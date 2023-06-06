@@ -21,6 +21,9 @@ else:
 _client.timeout = 10
 
 
+MESSAGE_SPLIT_LINE = "--------------------"
+
+
 async def fetch_bytes_data(url: str) -> bytes | None:
     """从URL获取bytes数据"""
     resp = await _client.get(url)
@@ -137,4 +140,4 @@ def get_puid(bot: Bot, event: Event) -> str:
     return puid
 
 
-__all__ = ['fetch_bytes_data', 'fetch_json_data', 'get_group_id', 'get_bot_name', 'get_user_name', 'get_puid']
+__all__ = ['fetch_bytes_data', 'fetch_json_data', 'get_group_id', 'get_bot_name', 'get_user_name', 'get_puid', 'MESSAGE_SPLIT_LINE']

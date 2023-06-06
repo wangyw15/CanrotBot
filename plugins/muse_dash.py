@@ -3,8 +3,9 @@ from nonebot.adapters import MessageSegment, Bot, Event
 from nonebot.params import CommandArg, ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 from typing import Annotated
-from ..libraries import muse_dash, user, universal_adapters
+from ..libraries import muse_dash, user
 from ..libraries.config import get_config
+from ..adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='MuseDash查分',
@@ -16,7 +17,7 @@ __plugin_meta__ = PluginMetadata(
 muse_dash.init_web_client(get_config('canrot_proxy'))
 
 
-async def generate_muse_dash_message(player_id: str) -> list[str]:
+async def generate_muse_dash_message(player_id: str) -> str:
     """生成消息"""
     if player_id:
         if data := await muse_dash.fetch_muse_dash_player_data(player_id):
@@ -27,7 +28,8 @@ async def generate_muse_dash_message(player_id: str) -> list[str]:
                        f'平均准确率: {data["avg"]}%\n' +
                        f'上次更新: {data["last_update"]} 前\n']
             for song in data['songs']:
-                ret_msg.append(f'[CQ:image,file={song["icon"]}]\n' +
+                ret_msg.append(unified.MESSAGE_SPLIT_LINE + '\n' +
+                               f'[CQ:image,file={song["icon"]}]\n' +
                                f'曲目: {song["name"]} (Lv.{song["level"]})\n' +
                                f'作曲家: {song["musician"]}\n' +
                                f'准确度: {song["accuracy"]}%\n' +
@@ -36,8 +38,8 @@ async def generate_muse_dash_message(player_id: str) -> list[str]:
                                f'精灵: {song["sprite"]}\n' +
                                f'总排名: {song["total_rank"]}\n'
                                )
-            return ret_msg
-    return []
+            return ''.join(ret_msg).strip()
+    return ''
 
 
 _muse_dash = on_shell_command('muse-dash', aliases={'md', 'muse_dash', '喵斯', '喵斯快跑'}, block=True)
@@ -45,7 +47,7 @@ _muse_dash = on_shell_command('muse-dash', aliases={'md', 'muse_dash', '喵斯',
 
 @_muse_dash.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
-    puid = universal_adapters.get_puid(bot, event)
+    puid = unified.get_puid(bot, event)
     uid = user.get_uid(puid)
     if args:
         # 帮助信息
@@ -67,9 +69,14 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             if player_id and player_name:
                 user.set_data_by_uid(uid, 'muse_dash_name', player_name)
                 user.set_data_by_uid(uid, 'muse_dash_moe_id', player_id)
-                await _muse_dash.send(f'绑定成功\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}')
-                ret_msg = await generate_muse_dash_message(player_id)
-                await universal_adapters.send_group_forward_message(ret_msg, bot, event)
+                final_msg = unified.Message()
+                final_msg.append(f'绑定成功\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}')
+                if unified.Detector.can_send_image(bot):
+                    final_msg.append(unified.MessageSegment.image(
+                        await muse_dash.generate_muse_dash_player_image(player_id)))
+                else:
+                    final_msg.append(await generate_muse_dash_message(player_id))
+                await final_msg.send(bot, event)
                 await _muse_dash.finish()
             else:
                 await _muse_dash.finish('绑定失败')
@@ -103,23 +110,21 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             # 生成消息
             if player_id:
                 await _muse_dash.send('正在查分喵~')
-                if universal_adapters.can_send_image(bot):
+                if unified.Detector.can_send_image(bot):
                     img = await muse_dash.generate_muse_dash_player_image(player_id)
-                    await universal_adapters.send_image(img, bot, event)
-                    await _muse_dash.finish()
-                ret_msg = await generate_muse_dash_message(player_id)
-                await universal_adapters.send_group_forward_message(ret_msg, bot, event)
+                    await unified.MessageSegment.image(img).send(bot, event)
+                else:
+                    await _muse_dash.send(await generate_muse_dash_message(player_id))
                 await _muse_dash.finish()
     else:
         if uid:
             if player_id := user.get_data_by_uid(uid, 'muse_dash_moe_id'):
                 await _muse_dash.send('正在查分喵~')
-                if universal_adapters.can_send_image(bot):
+                if unified.Detector.can_send_image(bot):
                     img = await muse_dash.generate_muse_dash_player_image(player_id)
-                    await universal_adapters.send_image(img, bot, event)
-                    await _muse_dash.finish()
-                ret_msg = await generate_muse_dash_message(player_id)
-                await universal_adapters.send_group_forward_message(ret_msg, bot, event)
+                    await unified.MessageSegment.image(img).send(bot, event)
+                else:
+                    await _muse_dash.send(await generate_muse_dash_message(player_id))
                 await _muse_dash.finish()
             else:
                 await _muse_dash.finish('您还没有绑定 MuseDash.moe 账号，请使用 /muse-dash help 查看帮助信息')
