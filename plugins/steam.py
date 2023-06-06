@@ -72,6 +72,18 @@ def _generate_message(app_info: dict) -> str:
     return ret
 
 
+async def _send_steam_message(appinfo: dict, bot: Bot, event: Event):
+    header_img = appinfo['header_image']
+    bg_img = appinfo['background_raw']
+    text_msg = _generate_message(appinfo)
+
+    msg = unified.Message()
+    msg.append(unified.MessageSegment.image(header_img, '头图'))
+    msg.append(unified.MessageSegment.text(text_msg))
+    msg.append(unified.MessageSegment.image(bg_img, '背景图'))
+    await msg.send(bot, event)
+
+
 _steam_command_handler = on_command('steam', aliases={'sbeam', '蒸汽', '蒸汽平台'}, block=True)
 @_steam_command_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
@@ -80,15 +92,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             if appinfo := await fetch_steam_app_info(msg, _steam_config.steam_language, _steam_config.steam_region):
                 if appinfo.get(msg, {}).get('success', False):
                     appinfo = appinfo[msg]['data']
-                    header_img = appinfo['header_image']
-                    bg_img = appinfo['background_raw']
-                    text_msg = _generate_message(appinfo)
-
-                    msg = unified.Message()
-                    msg.append(unified.MessageSegment.image(header_img, '头图'))
-                    msg.append(unified.MessageSegment.text(text_msg))
-                    msg.append(unified.MessageSegment.image(bg_img, '背景图'))
-                    await msg.send(bot, event)
+                    await _send_steam_message(appinfo, bot, event)
                     await _steam_command_handler.finish()
                 else:
                     await _steam_command_handler.finish('未找到该游戏')
@@ -105,13 +109,5 @@ async def _(bot: Bot, event: Event, state: T_State):
     if appinfo := await fetch_steam_app_info(appid, _steam_config.steam_language, _steam_config.steam_region):
         if appinfo.get(appid, {}).get('success', False):
             appinfo = appinfo[appid]['data']
-            header_img = appinfo['header_image']
-            bg_img = appinfo['background_raw']
-            text_msg = _generate_message(appinfo)
-
-            msg = unified.Message()
-            msg.append(unified.MessageSegment.image(header_img, '头图'))
-            msg.append(unified.MessageSegment.text(text_msg))
-            msg.append(unified.MessageSegment.image(bg_img, '背景图'))
-            await msg.send(bot, event)
+            await _send_steam_message(appinfo, bot, event)
             await _steam_link_handler.finish()
