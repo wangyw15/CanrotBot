@@ -1,5 +1,3 @@
-from enum import Enum
-
 # 不同适配器
 try:
     import nonebot.adapters.onebot.v11 as onebot_v11
@@ -27,8 +25,7 @@ except ModuleNotFoundError:
     console = None
 
 
-class Adapters(Enum):
-    """支持的适配器"""
+class Adapters:
     ONEBOT_V11 = onebot_v11
     ONEBOT_V12 = onebot_v12
     MIRAI2 = mirai2
@@ -37,4 +34,4 @@ class Adapters(Enum):
     CONSOLE = console
 
 
-__all__ = ['Adapters']
+__all__ = ['Adapters', 'onebot_v11', 'onebot_v12', 'mirai2', 'qqguild', 'kook', 'console']

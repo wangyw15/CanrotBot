@@ -1,5 +1,5 @@
 from nonebot.adapters import Bot, Event
-from .adapters import Adapters
+from . import adapters
 
 
 class Detector:
@@ -8,44 +8,44 @@ class Detector:
     """
     @staticmethod
     def is_onebot_v11(context: Bot | Event) -> bool:
-        if Adapters.ONEBOT_V11.value:
-            return isinstance(context, Adapters.ONEBOT_V11.value.Bot) \
-                or isinstance(context, Adapters.ONEBOT_V11.value.Event)
+        if adapters.onebot_v11:
+            return isinstance(context, adapters.onebot_v11.Bot) \
+                or isinstance(context, adapters.onebot_v11.Event)
         return False
 
     @staticmethod
     def is_onebot_v12(context: Bot | Event) -> bool:
-        if Adapters.ONEBOT_V12.value:
-            return isinstance(context, Adapters.ONEBOT_V12.value.Bot) \
-                or isinstance(context, Adapters.ONEBOT_V12.value.Event)
+        if adapters.onebot_v12:
+            return isinstance(context, adapters.onebot_v12.Bot) \
+                or isinstance(context, adapters.onebot_v12.Event)
         return False
 
     @staticmethod
     def is_mirai2(context: Bot | Event) -> bool:
-        if Adapters.MIRAI2.value:
-            return isinstance(context, Adapters.MIRAI2.value.Bot) \
-                or isinstance(context, Adapters.MIRAI2.value.Event)
+        if adapters.mirai2:
+            return isinstance(context, adapters.mirai2.Bot) \
+                or isinstance(context, adapters.mirai2.Event)
         return False
 
     @staticmethod
     def is_qqguild(context: Bot | Event) -> bool:
-        if Adapters.QQGUILD.value:
-            return isinstance(context, Adapters.QQGUILD.value.Bot) \
-                or isinstance(context, Adapters.QQGUILD.value.Event)
+        if adapters.qqguild:
+            return isinstance(context, adapters.qqguild.Bot) \
+                or isinstance(context, adapters.qqguild.Event)
         return False
 
     @staticmethod
     def is_kook(context: Bot | Event) -> bool:
-        if Adapters.KOOK.value:
-            return isinstance(context, Adapters.KOOK.value.Bot) \
-                or isinstance(context, Adapters.KOOK.value.Event)
+        if adapters.kook:
+            return isinstance(context, adapters.kook.Bot) \
+                or isinstance(context, adapters.kook.Event)
         return False
 
     @staticmethod
     def is_console(context: Bot | Event) -> bool:
-        if Adapters.CONSOLE.value:
-            return isinstance(context, Adapters.CONSOLE.value.Bot) \
-                or isinstance(context, Adapters.CONSOLE.value.Event)
+        if adapters.console:
+            return isinstance(context, adapters.console.Bot) \
+                or isinstance(context, adapters.console.Event)
         return False
 
     @staticmethod
