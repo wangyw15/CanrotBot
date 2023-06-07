@@ -18,7 +18,7 @@ __plugin_meta__ = PluginMetadata(
 _arknights_handler = on_shell_command('arknights', aliases={'粥', '舟', '方舟', '明日方舟'}, block=True)
 @_arknights_handler.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
-    if len(args) == 1:
+    if len(args) == 0:
         await _arknights_handler.finish('用法: ' + __plugin_meta__.usage +
                                         '\n命令列表:\n十连, gacha: 一发十连！')
     if args[0] in ['十连', 'gacha']:
