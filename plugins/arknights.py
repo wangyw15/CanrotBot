@@ -54,7 +54,8 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         else:
             gacha_result['last_5'] += 1
         # 保存抽卡结果
-        user.set_data_by_uid(uid, 'arknights_gacha_result', json.dumps(gacha_result, ensure_ascii=False))
+        user.set_data_by_uid(uid, 'arknights_gacha_result', 
+                             json.dumps(gacha_result, ensure_ascii=False).replace('"', '\\"'))
 
         # 发送消息
         msg = unified.Message()
