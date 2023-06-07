@@ -36,24 +36,37 @@
             justify-content: center;
             border: solid 0.1px;
             box-sizing: border-box;
+            position: relative;
         }
 
         img.portrait {
             height:60%;
             position: relative;
-            top: 10%;
             box-shadow: 0 15px 15px -10px black
         }
 
         img.type {
             background-color: black;
             padding: 3%;
-            position: relative;
-            bottom: 20%;
-            margin-bottom: -100%;
+            position: absolute;
+            bottom: 14%;
             width: 60%;
             filter: invert(1);
             box-shadow: 0 5px 10px 1px white
+        }
+
+        div.rarity {
+            position: absolute;
+            top: 17.5%;
+            color: white;
+            text-shadow: 0 0 5px black;
+            font-size: 1.1em;
+            z-index: 1;
+        }
+
+        div.rarity>span {
+            display: inline-block;
+            transform: rotate(10deg);
         }
 
         .n {
@@ -70,6 +83,7 @@
 
         .ssr {
             background-image: linear-gradient(transparent, orange 20%, orange 80%, transparent);
+            border-image: linear-gradient(#F80, #2ED) 1 1;
         }
     </style>
 </head>
@@ -85,6 +99,15 @@
     operators.forEach(item => {
         let result = document.createElement('div');
         result.classList.add('result');
+
+        // rarity stars
+        let stars = document.createElement('div');
+        stars.classList.add('rarity');
+        for (let i = 0; i < item['rarity'] + 1; i++) {
+            let star = document.createElement('span');
+            star.innerText = '★';
+            stars.append(star);
+        }
         // rarity color
         if (item['rarity'] === 2)
             result.classList.add('n');
@@ -103,6 +126,7 @@
         type.classList.add('type');
         type.src = 'operator_type_images/' + item['profession'] + '.png';
 
+        result.append(stars);
         result.append(portrait);
         result.append(type);
         document.querySelector('.result-container').append(result);
