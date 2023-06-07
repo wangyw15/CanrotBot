@@ -1,0 +1,112 @@
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .main {
+            background-color: #303030;
+            width: 1000px;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .result-container {
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            height: 100%;
+            width: 95%;
+            box-shadow: 0 0 10px 5px black;
+        }
+
+        .result {
+            height: 100%;
+            width: 10%;
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            border: solid 0.1px;
+            box-sizing: border-box;
+        }
+
+        img.portrait {
+            height:60%;
+            position: relative;
+            top: 10%;
+            box-shadow: 0 15px 15px -10px black
+        }
+
+        img.type {
+            background-color: black;
+            padding: 3%;
+            position: relative;
+            bottom: 20%;
+            margin-bottom: -100%;
+            width: 60%;
+            filter: invert(1);
+            box-shadow: 0 5px 10px 1px white
+        }
+
+        .n {
+            background-color: transparent;
+        }
+
+        .r{
+            background-image: linear-gradient(transparent, mediumpurple 20%, white 20%, white 80%, mediumpurple 80%, transparent);
+        }
+
+        .sr {
+            background-image: linear-gradient(transparent, palegoldenrod 20%, palegoldenrod 80%, transparent);
+        }
+
+        .ssr {
+            background-image: linear-gradient(transparent, orange 20%, orange 80%, transparent);
+        }
+    </style>
+</head>
+<body>
+<div class="main">
+    <div class="result-container">
+
+    </div>
+</div>
+<script>
+    let operators = {{CHARACTERS}};
+
+    operators.forEach(item => {
+        let result = document.createElement('div');
+        result.classList.add('result');
+        // rarity color
+        if (item['rarity'] === 2)
+            result.classList.add('n');
+        else if (item['rarity'] === 3)
+            result.classList.add('r');
+        else if (item['rarity'] === 4)
+            result.classList.add('sr');
+        else if (item['rarity'] === 5)
+            result.classList.add('ssr');
+        // portrait
+        let portrait = document.createElement('img');
+        portrait.classList.add('portrait');
+        portrait.src = 'ArknightsGameResource/portrait/' + item['phases'][0]['characterPrefabKey'] + '_1.png';
+        // type image
+        let type = document.createElement('img');
+        type.classList.add('type');
+        type.src = 'operator_type_images/' + item['profession'] + '.png';
+
+        result.append(portrait);
+        result.append(type);
+        document.querySelector('.result-container').append(result);
+    });
+</script>
+</body>
+</html>
