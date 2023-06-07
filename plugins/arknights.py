@@ -24,7 +24,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
                                         '\n命令列表:\n十连, gacha: 一发十连！')
 
     uid = user.get_uid(unified.get_puid(bot, event))
-    if args[0] in ['十连', 'gacha']:
+    if args[0] in ['gacha', '十连', '抽卡']:
         # 付钱
         if not economy.pay(uid, 25):
             await _arknights_handler.finish('你的余额不足喵~')
@@ -81,7 +81,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         await msg.send(bot, event)
         await _arknights_handler.finish()
 
-    if args[0] in ['gachainfo', '抽卡记录', '抽卡统计']:
+    if args[0] in ['gachainfo', '抽卡记录', '抽卡统计', '抽卡历史', '十连历史', '十连统计']:
         gacha_result_str = user.get_data_by_uid(uid, 'arknights_gacha_result')
         if gacha_result_str == '':
             # 未抽过卡
