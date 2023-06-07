@@ -22,8 +22,9 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     if len(args) == 0:
         await _arknights_handler.finish('用法: ' + __plugin_meta__.usage +
                                         '\n命令列表:\n十连, gacha: 一发十连！')
+
+    uid = user.get_uid(unified.get_puid(bot, event))
     if args[0] in ['十连', 'gacha']:
-        uid = user.get_uid(unified.get_puid(bot, event))
         # 付钱
         if not economy.pay(uid, 25):
             await _arknights_handler.finish('你的余额不足喵~')
@@ -67,7 +68,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             operator_msg += f"{operator['rarity'] + 1}星 {operator['name']}\n"
         msg.append('明日方舟抽卡结果: \n' + operator_msg)
         # 统计抽卡结果
-        msg.append(f"本次抽卡结果: {gacha_result['5']}个六星, "
+        msg.append(f"历史抽卡结果: {gacha_result['5']}个六星, "
                    f"{gacha_result['4']}个五星, "
                    f"{gacha_result['3']}个四星, "
                    f"{gacha_result['2']}个三星\n")
@@ -79,3 +80,19 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         msg.append(unified.MessageSegment.image(img, '十连结果'))
         await msg.send(bot, event)
         await _arknights_handler.finish()
+
+    if args[0] in ['gachainfo', '抽卡记录', '抽卡统计']:
+        gacha_result_str = user.get_data_by_uid(uid, 'arknights_gacha_result')
+        if gacha_result_str == '':
+            # 未抽过卡
+            await _arknights_handler.finish('你还没有抽过卡喵~')
+        else:
+            gacha_result = json.loads(gacha_result_str)
+            msg = '明日方舟抽卡统计: \n' \
+                  f"一共抽了{gacha_result['times']}发\n" \
+                  f"{gacha_result['5']}个六星\n" \
+                  f"{gacha_result['4']}个五星\n" \
+                  f"{gacha_result['3']}个四星\n" \
+                  f"{gacha_result['2']}个三星\n" \
+                  f"距离上次六星已经{gacha_result['last_5']}次十连了喵~"
+            await _arknights_handler.finish(msg)
