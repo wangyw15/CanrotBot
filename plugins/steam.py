@@ -73,9 +73,9 @@ def _generate_message(app_info: dict) -> str:
 
 
 async def _send_steam_message(appinfo: dict, bot: Bot, event: Event):
-    header_img = appinfo['header_image']
-    bg_img = appinfo['background_raw']
-    text_msg = _generate_message(appinfo)
+    header_img: str = appinfo['header_image']
+    bg_img: str = appinfo['background_raw']
+    text_msg: str = _generate_message(appinfo)
 
     msg = unified.Message()
     msg.append(unified.MessageSegment.image(header_img, '头图'))

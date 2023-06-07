@@ -150,7 +150,10 @@ class Message(BaseMessage[MessageSegment]):
                     if isinstance(seg.data['file'], str):
                         # 为了能发送所有图片，这里直接下载了
                         file_data = await fetch_bytes_data(seg.data['file'])
-                        final_msg.append(adapters.qqguild.MessageSegment.file_image(file_data))
+                        if file_data:
+                            final_msg.append(adapters.qqguild.MessageSegment.file_image(file_data))
+                        else:
+                            final_msg.append(f'\n{str(seg)}\n')
                     else:
                         final_msg.append(adapters.qqguild.MessageSegment.file_image(seg.data['file']))
                 elif seg.type == MessageSegmentTypes.AT:
@@ -175,10 +178,7 @@ class Message(BaseMessage[MessageSegment]):
                 if seg.type == MessageSegmentTypes.TEXT:
                     final_msg += seg.data['text']
                 elif seg.type == MessageSegmentTypes.IMAGE:
-                    if 'alt' in seg.data:
-                        final_msg += f'\n[图片描述: {seg.data["alt"]}]\n'
-                    else:
-                        final_msg += '\n[图片]\n'
+                    final_msg += f'\n{str(seg)}\n'
                 elif seg.type == MessageSegmentTypes.AT:
                     final_msg += f'@{seg.data["user_id"]}'
             final_msg:str = final_msg.strip()
