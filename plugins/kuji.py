@@ -1,12 +1,11 @@
-import base64
-
 from nonebot import on_command
-from nonebot.adapters import Bot, Event, Message, MessageSegment
+from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
 
-from ..libraries import user, economy, universal_adapters, kuji
-from ..libraries.assets import get_assets
 from ..adapters import unified
+from ..libraries import user, economy, kuji
+from ..libraries.assets import get_assets
+
 
 __plugin_meta__ = PluginMetadata(
     name='浅草寺',
@@ -21,7 +20,7 @@ kuji_data: list[str] = [x[1] for x in get_assets('kuji')]
 _kuji_handler = on_command('kuji', aliases={'浅草寺'}, block=True)
 @_kuji_handler.handle()
 async def _(bot: Bot, event: Event):
-    if not economy.pay(user.get_uid(universal_adapters.get_puid(bot, event)), 10):
+    if not economy.pay(user.get_uid(user.get_puid(bot, event)), 10):
         await _kuji_handler.finish('你的余额不足哦')
 
     msg = unified.Message()

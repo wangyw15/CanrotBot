@@ -19,7 +19,7 @@ __plugin_meta__ = PluginMetadata(
 _signin_handler = on_command('signin', aliases={'签到', '每日签到', '抽签'}, block=True)
 @_signin_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    puid = unified.get_puid(bot, event)
+    puid = user.get_puid(bot, event)
     if not user.puid_user_exists(puid):
         await _signin_handler.finish('你还没有注册')
     

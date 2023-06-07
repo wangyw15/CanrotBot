@@ -5,7 +5,7 @@ from nonebot.plugin import PluginMetadata
 import jieba
 import random
 
-from ..libraries.universal_adapters import get_user_name, get_bot_name
+from ..adapters import unified
 from ..libraries.assets import get_assets
 
 __plugin_meta__ = PluginMetadata(
@@ -55,8 +55,8 @@ transitions = markov_chain(reply_data, 3)
 generative_response = on_command('generative_reponse', aliases={'gr', '生成回复'}, block=True)
 @generative_response.handle()
 async def _(bot, event, msg: Message = CommandArg()):
-    my_name = await get_bot_name(event, bot, '我')
-    user_name = await get_user_name(event, bot, '主人')
+    my_name = await unified.util.get_bot_name(event, bot, '我')
+    user_name = await unified.util.get_user_name(event, bot, '主人')
     length = 50
     if msg := msg.extract_plain_text().strip():
         length = int(msg)

@@ -127,17 +127,9 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
     return default
 
 
-def get_puid(bot: Bot, event: Event) -> str:
-    puid = event.get_user_id()
-    if Detector.is_onebot_v11(bot) or Detector.is_onebot_v12(bot) or Detector.is_mirai2(bot):
-        puid = 'qq_' + puid
-    elif Detector.is_kook(bot):
-        puid = 'kook_' + puid
-    elif Detector.is_console(bot):
-        puid = 'console_console'
-    elif Detector.is_qqguild(bot):
-        puid = 'qqguild_' + puid
-    return puid
-
-
-__all__ = ['fetch_bytes_data', 'fetch_json_data', 'get_group_id', 'get_bot_name', 'get_user_name', 'get_puid', 'MESSAGE_SPLIT_LINE']
+__all__ = ['fetch_bytes_data',
+           'fetch_json_data',
+           'get_group_id',
+           'get_bot_name',
+           'get_user_name',
+           'MESSAGE_SPLIT_LINE']

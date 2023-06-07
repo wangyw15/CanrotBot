@@ -25,13 +25,4 @@ except ModuleNotFoundError:
     console = None
 
 
-class Adapters:
-    ONEBOT_V11 = onebot_v11
-    ONEBOT_V12 = onebot_v12
-    MIRAI2 = mirai2
-    QQGUILD = qqguild
-    KOOK = kook
-    CONSOLE = console
-
-
-__all__ = ['Adapters', 'onebot_v11', 'onebot_v12', 'mirai2', 'qqguild', 'kook', 'console']
+__all__ = ['onebot_v11', 'onebot_v12', 'mirai2', 'qqguild', 'kook', 'console']

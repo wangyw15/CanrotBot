@@ -1,11 +1,12 @@
+import random
+
 from nonebot import on_command
 from nonebot.adapters import Message, Bot, Event
 from nonebot.params import CommandArg, Arg
-from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
-import random
+from nonebot.typing import T_State
 
-from ..libraries import universal_adapters, user, economy
+from ..libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='猜数字',
@@ -46,7 +47,7 @@ async def _(state: T_State, bot: Bot, event: Event, guess: Message = Arg()):
     elif guess == answer:
         state[_GUESS_NUMBER_TURNS] += 1
         point_amounts = len(answer) * 10 - 2 * (int(state[_GUESS_NUMBER_TURNS]) - 8)
-        economy.earn(user.get_uid(universal_adapters.get_puid(bot, event)), point_amounts)
+        economy.earn(user.get_uid(user.get_puid(bot, event)), point_amounts)
         await guess_number.finish(f'居然{state[_GUESS_NUMBER_TURNS]}轮就让你猜出来了。哼，{point_amounts}个胡萝卜片拿去')
     elif not guess.isdigit():
         await guess_number.reject('你输入的不是数字喵~')

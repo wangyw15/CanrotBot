@@ -148,7 +148,9 @@ class Message(BaseMessage[MessageSegment]):
                     final_msg.append(adapters.qqguild.MessageSegment.text(seg.data['text']))
                 elif seg.type == MessageSegmentTypes.IMAGE:
                     if isinstance(seg.data['file'], str):
-                        final_msg.append(adapters.qqguild.MessageSegment.image(seg.data['file']))
+                        # 为了能发送所有图片，这里直接下载了
+                        file_data = await fetch_bytes_data(seg.data['file'])
+                        final_msg.append(adapters.qqguild.MessageSegment.file_image(file_data))
                     else:
                         final_msg.append(adapters.qqguild.MessageSegment.file_image(seg.data['file']))
                 elif seg.type == MessageSegmentTypes.AT:

@@ -3,13 +3,13 @@ from sqlite3 import OperationalError
 
 import nonebot
 from nonebot import on_command, load_plugins
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
+from nonebot.params import CommandArg, Message
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
 from .libraries import config, assets, data
 from .libraries.universal_adapters import *
+
 
 __plugin_meta__ = PluginMetadata(
     name='CanrotBot',
@@ -37,7 +37,7 @@ async def _(bot: Bot, event: Event):
 execute_asset_sql = on_command('sql_asset', aliases={'sql-asset', 'sqla', 'asql', 'asset-sql', 'asset_sql'}, block=True)
 @execute_asset_sql.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    if not (await SUPERUSER(bot, event) or is_console(bot)):
+    if not (await SUPERUSER(bot, event) or unified.Detector.is_console(bot)):
         await execute_asset_sql.finish('权限不足')
     if msg := args.extract_plain_text():
         try:
@@ -57,7 +57,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
 execute_data_sql = on_command('sql_data', aliases={'sql-data', 'sqld', 'dsql', 'data-sql', 'data_sql'}, block=True)
 @execute_data_sql.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    if not (await SUPERUSER(bot, event) or is_console(bot)):
+    if not (await SUPERUSER(bot, event) or unified.Detector.is_console(bot)):
         await execute_data_sql.finish('权限不足')
     if msg := args.extract_plain_text():
         try:

@@ -54,7 +54,7 @@ class Detector:
 
     @staticmethod
     def is_qq(context: Bot | Event) -> bool:
-        return Detector.is_onebot(context) or Detector.is_mirai2(context) or Detector.is_qqguild(context)
+        return Detector.is_onebot(context) or Detector.is_mirai2(context)
 
     @staticmethod
     def can_send_image(context: Bot | Event) -> bool:

@@ -23,7 +23,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         await _arknights_handler.finish('用法: ' + __plugin_meta__.usage +
                                         '\n命令列表:\n十连, gacha: 一发十连！')
 
-    uid = user.get_uid(unified.get_puid(bot, event))
+    uid = user.get_uid(user.get_puid(bot, event))
     if args[0] in ['gacha', '十连', '抽卡']:
         # 付钱
         if not economy.pay(uid, 25):

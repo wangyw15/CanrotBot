@@ -1,17 +1,12 @@
-from .adapters import Adapters
+from . import adapters
 from .detector import Detector
 from .message import Message, MessageSegment, MessageSegmentTypes
-from .util import *
+from . import util
 
-__all__ = ['Adapters',
+__all__ = ['adapters',
            'Detector',
            'MessageSegmentTypes',
            'MessageSegment',
            'Message',
-           'fetch_bytes_data',
-           'fetch_json_data',
-           'get_group_id',
-           'get_bot_name',
-           'get_user_name',
-           'get_puid'
+           'util'
            ]

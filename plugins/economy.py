@@ -3,7 +3,7 @@ from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from ..libraries import user, economy, universal_adapters
+from ..libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='经济服务',
@@ -16,7 +16,7 @@ _economy = on_command('economy', aliases={'e', '钱包', '银行', '经济', 'ba
 @_economy.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     # check if registered
-    puid = universal_adapters.get_puid(bot, event)
+    puid = user.get_puid(bot, event)
     if not user.puid_user_exists(puid):
         await _economy.finish(f'puid: {puid}\n你还没有注册')
     

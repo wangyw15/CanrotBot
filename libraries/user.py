@@ -2,7 +2,10 @@
 import uuid
 from sqlite3 import OperationalError
 
+from nonebot.adapters import Bot, Event
+
 from .data import data_cursor, data_db
+from ..adapters import unified
 
 
 # initialize the database
@@ -58,6 +61,19 @@ def register(puid: str) -> str:
     data_cursor.execute(f'INSERT INTO users (puid, uid) VALUES ("{puid}", "{uid}")')
     data_db.commit()
     return str(uid)
+
+
+def get_puid(bot: Bot, event: Event) -> str:
+    puid = event.get_user_id()
+    if unified.Detector.is_onebot_v11(bot) or unified.Detector.is_onebot_v12(bot) or unified.Detector.is_mirai2(bot):
+        puid = 'qq_' + puid
+    elif unified.Detector.is_kook(bot):
+        puid = 'kook_' + puid
+    elif unified.Detector.is_console(bot):
+        puid = 'console_console'
+    elif unified.Detector.is_qqguild(bot):
+        puid = 'qqguild_' + puid
+    return puid
 
 
 def get_uid(puid: str) -> str:

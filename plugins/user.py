@@ -3,7 +3,7 @@ from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from ..libraries import user, universal_adapters
+from ..libraries import user
 
 __plugin_meta__ = PluginMetadata(
     name='用户服务',
@@ -15,7 +15,7 @@ __plugin_meta__ = PluginMetadata(
 _user = on_command('user', aliases={'u', '用户', '我'}, block=True)
 @_user.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    puid = universal_adapters.get_puid(bot, event)
+    puid = user.get_puid(bot, event)
     if msg := args.extract_plain_text():
         splitted_args = [x.strip() for x in msg.split()]
         if msg == 'register' or msg == 'reg' or msg == '注册':

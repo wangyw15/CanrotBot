@@ -1,5 +1,4 @@
 import asyncio
-import base64
 import json
 import random
 from pathlib import Path

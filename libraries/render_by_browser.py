@@ -1,14 +1,8 @@
-import base64
-import json
-import os
-import random
-import tempfile
 from pathlib import Path
-from typing import Tuple, Literal
+from typing import Literal
 
 from nonebot import logger, get_driver
 from playwright.async_api import Browser, Playwright, async_playwright, Page
-
 
 _playwright: Playwright | None = None
 _browser: Browser | None = None

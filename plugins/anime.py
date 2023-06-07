@@ -9,6 +9,7 @@ from nonebot.plugin import PluginMetadata
 from ..libraries import anime, universal_adapters
 from ..adapters import unified
 
+
 __plugin_meta__ = PluginMetadata(
     name='番剧工具',
     description='是个提供番剧相关的插件，但是现在只提供番剧搜索功能',
@@ -50,11 +51,11 @@ def generate_message_from_anime_data(name: str, data: dict, possibility: float) 
 async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Event) -> None:
     img_url = ''
     if isinstance(msg, MessageSegment) and msg.type == 'image':
-        if universal_adapters.is_onebot_v11(bot) or universal_adapters.is_onebot_v12(bot):
+        if unified.Detector.is_onebot_v11(bot) or unified.Detector.is_onebot_v12(bot):
             img_url = msg.data['url'].strip()
-        elif universal_adapters.is_kook(bot):
+        elif unified.Detector.is_kook(bot):
             img_url = msg.data['file_key'].strip()
-    elif isinstance(msg, universal_adapters.kook.MessageSegment) and msg.type == 'kmarkdown':
+    elif isinstance(msg, unified.adapters.kook.MessageSegment) and msg.type == 'kmarkdown':
         img_url = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
     elif universal_adapters.is_url(msg):
         img_url = msg.strip()

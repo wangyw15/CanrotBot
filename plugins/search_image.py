@@ -1,8 +1,8 @@
 import urllib.parse
 
+import httpx
 from nonebot import on_command, get_driver
-from nonebot.adapters import Message
-from nonebot.params import CommandArg, Arg
+from nonebot.params import CommandArg, Arg, Message
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from pydantic import BaseModel, validator
@@ -85,7 +85,7 @@ def generate_cq_message_from_saucenao_result(api_result: dict) -> Message:
     results: list[dict] = api_result["results"]
     for api_result in results:
         # split line
-        msg += MESSAGE_SPLIT_LINE + "\n"
+        msg += unified.util.MESSAGE_SPLIT_LINE + "\n"
 
         header: dict = api_result["header"]
         data: dict = api_result["data"]
@@ -267,7 +267,7 @@ def generate_cq_message_from_tracemoe_result(api_result: dict) -> str:
         return "搜索失败: " + api_result["error"]
     msg += f'已搜索 {api_result["frameCount"]} 帧\n'
     for result in api_result["result"][0: _config.search_result_count]:
-        msg += MESSAGE_SPLIT_LINE + "\n"
+        msg += unified.util.MESSAGE_SPLIT_LINE + "\n"
         msg += f'[CQ:image,file={result["image"]}]\n'
         msg += f'相似度: {round(result["similarity"]*100, 2)}%\n'
         msg += f'番剧文件名: {result["filename"]}\n'
@@ -299,7 +299,7 @@ async def _(state: T_State, bot: Bot, args: Message = CommandArg()):
             await _search_image.finish("无效的搜图网站选项")
     state["SEARCH_IMAGE_API"] = api
 
-    if is_onebot_v11(bot) or is_onebot_v12(bot) or is_kook(bot):
+    if unified.Detector.is_onebot_v11(bot) or unified.Detector.is_onebot_v12(bot) or unified.Detector.is_kook(bot):
         await _search_image.send("请发送图片或图片链接")
     else:
         await _search_image.send("请发送图片链接")
@@ -309,9 +309,9 @@ async def _(state: T_State, bot: Bot, args: Message = CommandArg()):
 async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
     # get img url
     img_url: str = ""
-    if (is_onebot_v11(bot) or is_onebot_v12(bot)) and image[0].type == 'image':
+    if (unified.Detector.is_onebot_v11(bot) or unified.Detector.is_onebot_v12(bot)) and image[0].type == 'image':
         img_url = image[0].data['url'].strip()
-    elif is_kook(bot) and image[0].type == 'image':
+    elif unified.Detector.is_kook(bot) and image[0].type == 'image':
         img_url = image[0].data['file_key'].strip()
     else:
         img_url = image.extract_plain_text().strip()
@@ -331,7 +331,7 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
                 msg = generate_cq_message_from_tracemoe_result(search_resp)
             else:
                 await _search_image.finish("搜索失败")
-        splitted_msg: list[str] = [x.strip() for x in msg.split(MESSAGE_SPLIT_LINE) if x]
+        splitted_msg: list[str] = [x.strip() for x in msg.split(unified.util.MESSAGE_SPLIT_LINE) if x]
         splitted_msg.insert(0, f'原图\n[CQ:image,file={img_url}]')
         await send_group_forward_message(splitted_msg, bot, event, header='搜图结果:')
         await _search_image.finish()

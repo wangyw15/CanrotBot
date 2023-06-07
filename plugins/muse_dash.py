@@ -1,11 +1,13 @@
+from typing import Annotated
+
 from nonebot import on_shell_command
 from nonebot.adapters import MessageSegment, Bot, Event
-from nonebot.params import CommandArg, ShellCommandArgv
+from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
-from typing import Annotated
+
+from ..adapters import unified
 from ..libraries import muse_dash, user
 from ..libraries.config import get_config
-from ..adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='MuseDash查分',
@@ -28,7 +30,7 @@ async def generate_muse_dash_message(player_id: str) -> str:
                        f'平均准确率: {data["avg"]}%\n' +
                        f'上次更新: {data["last_update"]} 前\n']
             for song in data['songs']:
-                ret_msg.append(unified.MESSAGE_SPLIT_LINE + '\n' +
+                ret_msg.append(unified.util.MESSAGE_SPLIT_LINE + '\n' +
                                f'[CQ:image,file={song["icon"]}]\n' +
                                f'曲目: {song["name"]} (Lv.{song["level"]})\n' +
                                f'作曲家: {song["musician"]}\n' +
@@ -47,7 +49,7 @@ _muse_dash = on_shell_command('muse-dash', aliases={'md', 'muse_dash', '喵斯',
 
 @_muse_dash.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
-    puid = unified.get_puid(bot, event)
+    puid = user.get_puid(bot, event)
     uid = user.get_uid(puid)
     if args:
         # 帮助信息
