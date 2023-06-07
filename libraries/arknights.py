@@ -7,6 +7,7 @@ from nonebot import logger
 
 from . import render_by_browser
 
+
 _arknights_assets_path = Path(__file__).parent.parent / 'assets' / 'arknights'
 _arknights_all_characters: dict[str, dict] = {}
 _arknights_gacha_operators: dict[int, list[dict]] = {}
@@ -30,8 +31,11 @@ def _load_arknights_data() -> None:
     for k, v in _arknights_all_characters.items():
         if v['rarity'] not in _arknights_gacha_operators:
             _arknights_gacha_operators[v['rarity']] = []
-        if v['profession'] in _arknights_operator_professions:
-            _arknights_gacha_operators[v['rarity']].append(v)
+        if v['profession'] not in _arknights_operator_professions:
+            continue
+        if not v['itemObtainApproach'] == '招募寻访':
+            continue
+        _arknights_gacha_operators[v['rarity']].append(v)
 
 
 _load_arknights_data()
@@ -54,7 +58,7 @@ async def generate_gacha() -> Tuple[bytes, list[dict]]:
 
     # generate html
     with (_arknights_assets_path / 'gacha.html').open('r', encoding='utf-8') as f:
-        generated_html = f.read().replace('{{CHARACTERS}}', json.dumps(characters))
+        generated_html = f.read().replace('{{CHARACTERS}}', json.dumps(characters, ensure_ascii=False))
 
     # render
     img = await render_by_browser.render_html(generated_html, _arknights_assets_path,

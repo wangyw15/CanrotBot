@@ -27,6 +27,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
 
         img, operators = await arknights.generate_gacha()
         msg = unified.Message()
+        msg.append('你的二十五个胡萝卜片我就收下了喵~\n')
         operator_msg = ''
         for operator in operators:
             operator_msg += f"{operator['rarity'] + 1}星 {operator['name']}\n"
