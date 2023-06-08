@@ -36,6 +36,7 @@ def _load_arknights_data() -> None:
         if not v['itemObtainApproach'] == '招募寻访':
             continue
         _arknights_gacha_operators[v['rarity']].append(v)
+    logger.info(f'arknights gacha operators: {len(_arknights_gacha_operators)}')
 
 
 _load_arknights_data()
@@ -47,17 +48,19 @@ async def generate_gacha(last_5_times: int = 0) -> Tuple[bytes, list[dict]]:
 
     :param last_5_times: 距离上次抽卡出 6 星的次数
     """
-    # get characters
+    # 寻访干员列表
     characters: list[dict] = []
+    # 六星概率提升
+    possibility_offset: float = 0
+    if last_5_times > 50:
+        possibility_offset = (last_5_times - 50) * 0.02
+    # 抽卡
     while len(characters) != 10:
         magic_number = random.random()
-        # 六星概率提升
-        possibility_offset: float = 0
-        if last_5_times > 50:
-            possibility_offset = (last_5_times - 50) * 0.02
         # 决定等级
         if magic_number < 0.02 + possibility_offset:
             rarity = 5
+            possibility_offset = 0  # 抽到六星之后重置概率提升
         elif magic_number < 0.08 + possibility_offset:
             rarity = 4
         elif magic_number < 0.5 + possibility_offset:
@@ -66,11 +69,11 @@ async def generate_gacha(last_5_times: int = 0) -> Tuple[bytes, list[dict]]:
             rarity = 2
         characters.append(random.choice(_arknights_gacha_operators[rarity]))
 
-    # generate html
+    # 生成 html
     with (_arknights_assets_path / 'gacha.html').open('r', encoding='utf-8') as f:
         generated_html = f.read().replace('{{CHARACTERS}}', json.dumps(characters, ensure_ascii=False))
 
-    # render
+    # 生成图片
     img = await render_by_browser.render_html(generated_html, _arknights_assets_path,
                                               viewport={'width': 1000, 'height': 500})
     return img, characters
