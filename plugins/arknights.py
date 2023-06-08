@@ -92,9 +92,9 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             gacha_result = json.loads(gacha_result_str)
             msg = '明日方舟抽卡统计: \n' \
                   f"寻访次数: {gacha_result['times']}\n" \
-                  f"消耗合成玉: {gacha_result['times'] * 600}" \
-                  f"= 至纯源石: {round(gacha_result['times'] * 600 / 180, 2)}" \
-                  f"= RMB: {round(gacha_result['times'] * 600 / 180 * 6, 2)}" \
+                  f"消耗合成玉: {gacha_result['times'] * 600}\n" \
+                  f"= 至纯源石: {round(gacha_result['times'] * 600 / 180, 2)}\n" \
+                  f"= RMB: {round(gacha_result['times'] * 600 / 180 * 6, 2)}\n" \
                   f"3星干员: {gacha_result['2']}\n" \
                   f"4星干员: {gacha_result['3']}\n" \
                   f"5星干员: {gacha_result['4']}\n" \
