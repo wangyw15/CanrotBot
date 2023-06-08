@@ -55,7 +55,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         if got_ssr:
             gacha_result['last_5'] = 0
         else:
-            gacha_result['last_5'] += 1
+            gacha_result['last_5'] += 10
         # 保存寻访结果
         user.set_data_by_uid(uid, 'arknights_gacha_result',
                              json.dumps(gacha_result, ensure_ascii=False).replace('"', '""'))
