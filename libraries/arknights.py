@@ -41,16 +41,26 @@ def _load_arknights_data() -> None:
 _load_arknights_data()
 
 
-async def generate_gacha() -> Tuple[bytes, list[dict]]:
+async def generate_gacha(last_5_times: int = 0) -> Tuple[bytes, list[dict]]:
+    """
+    明日方舟十连抽卡
+
+    :param last_5_times: 距离上次抽卡出 6 星的次数
+    """
     # get characters
     characters: list[dict] = []
     while len(characters) != 10:
         magic_number = random.random()
-        if magic_number < 0.02:
+        # 六星概率提升
+        possibility_offset: float = 0
+        if last_5_times > 50:
+            possibility_offset = (last_5_times - 50) * 0.02
+        # 决定等级
+        if magic_number < 0.02 + possibility_offset:
             rarity = 5
-        elif magic_number < 0.08:
+        elif magic_number < 0.08 + possibility_offset:
             rarity = 4
-        elif magic_number < 0.5:
+        elif magic_number < 0.5 + possibility_offset:
             rarity = 3
         else:
             rarity = 2

@@ -29,10 +29,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         if not economy.pay(uid, 25):
             await _arknights_handler.finish('你的余额不足喵~')
 
-        # 抽卡
-        img, operators = await arknights.generate_gacha()
-
-        # 统计结果
+        # 获取历史寻访结果
         gacha_result_str = user.get_data_by_uid(uid, 'arknights_gacha_result')
         if gacha_result_str == '':
             # 未抽过卡
@@ -40,21 +37,26 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             gacha_result = {'5': 0, '4': 0, '3': 0, '2': 0, 'times': 0, 'last_5': 0}
         else:
             gacha_result = json.loads(gacha_result_str)
+
+        # 抽卡
+        img, operators = await arknights.generate_gacha(gacha_result['last_5'])
+
+        # 统计本次寻访结果
         # 是否抽到六星
         got_ssr = False
         # 抽卡次数+10
         gacha_result['times'] += 10
-        # 统计抽卡结果
+        # 统计寻访结果
         for operator in operators:
             if operator['rarity'] == 5:
                 got_ssr = True
             gacha_result[str(operator['rarity'])] += 1
-        # 上次抽卡是六星
+        # 上次抽到六星
         if got_ssr:
             gacha_result['last_5'] = 0
         else:
             gacha_result['last_5'] += 1
-        # 保存抽卡结果
+        # 保存寻访结果
         user.set_data_by_uid(uid, 'arknights_gacha_result',
                              json.dumps(gacha_result, ensure_ascii=False).replace('"', '""'))
 
@@ -67,7 +69,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         for operator in operators:
             operator_msg += f"{operator['rarity'] + 1}星 {operator['name']}\n"
         msg.append('明日方舟抽卡结果: \n' + operator_msg)
-        # 统计抽卡结果
+        # 统计寻访结果
         msg.append(f"历史抽卡结果: {gacha_result['5']}个六星, "
                    f"{gacha_result['4']}个五星, "
                    f"{gacha_result['3']}个四星, "
@@ -81,7 +83,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         await msg.send(bot, event)
         await _arknights_handler.finish()
 
-    if args[0] in ['gachainfo', '抽卡记录', '抽卡统计', '抽卡历史', '十连历史', '十连统计']:
+    if args[0] in ['gachainfo', '抽卡记录', '抽卡统计', '抽卡历史', '十连历史', '十连统计', '寻访历史', '寻访统计']:
         gacha_result_str = user.get_data_by_uid(uid, 'arknights_gacha_result')
         if gacha_result_str == '':
             # 未抽过卡
@@ -89,10 +91,13 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         else:
             gacha_result = json.loads(gacha_result_str)
             msg = '明日方舟抽卡统计: \n' \
-                  f"一共抽了{gacha_result['times']}发\n" \
-                  f"{gacha_result['5']}个六星\n" \
-                  f"{gacha_result['4']}个五星\n" \
-                  f"{gacha_result['3']}个四星\n" \
-                  f"{gacha_result['2']}个三星\n" \
-                  f"距离上次六星已经{gacha_result['last_5']}次十连了喵~"
+                  f"寻访次数: {gacha_result['times']}\n" \
+                  f"消耗合成玉: {gacha_result['times'] * 600}" \
+                  f"= 至纯源石: {round(gacha_result['times'] * 600 / 180, 2)}" \
+                  f"= RMB: {round(gacha_result['times'] * 600 / 180 * 6, 2)}" \
+                  f"3星干员: {gacha_result['2']}\n" \
+                  f"4星干员: {gacha_result['3']}\n" \
+                  f"5星干员: {gacha_result['4']}\n" \
+                  f"6星干员: {gacha_result['5']}\n" \
+                  f"距离上次抽到6星次数: {gacha_result['last_5']}"
             await _arknights_handler.finish(msg)
