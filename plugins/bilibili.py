@@ -80,5 +80,5 @@ async def _(bot: Bot, event: Event):
                 msg += f'{project["project_name"]}\n' \
                        f'开始时间: {start_time.strftime("%Y年%m月%d日")}\n' \
                        f'结束时间: {end_time.strftime("%Y年%m月%d日")}\n' \
-                       f'链接: {project["url"]}\n\n'
+                       f'链接: https://show.bilibili.com/platform/detail.html?id={project["id"]}\n\n'
         await _bilibili_projects_handlers.finish(msg)
