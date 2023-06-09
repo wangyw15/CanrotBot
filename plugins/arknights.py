@@ -76,7 +76,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
                    f"{gacha_result['2']}个三星\n")
         # 是否抽到六星
         if got_ssr:
-            msg.append(f"恭喜你抽到六星了喵！距离上次六星已经{gacha_result['last_5']}次十连了喵~")
+            msg.append(f"恭喜你抽到六星了喵！距离上次六星已经{gacha_result['last_5']}抽了喵~")
         else:
             msg.append(f"距离上次六星已经{gacha_result['last_5']}次十连了喵~")
         msg.append(unified.MessageSegment.image(img, '十连结果'))
