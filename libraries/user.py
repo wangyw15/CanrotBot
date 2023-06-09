@@ -1,4 +1,5 @@
 # puid (platform user id): qq_1234567890, kook_1234567890, ...
+import re
 import uuid
 from sqlite3 import OperationalError
 
@@ -70,7 +71,7 @@ def get_puid(bot: Bot, event: Event) -> str:
     elif unified.Detector.is_kook(bot):
         puid = 'kook_' + puid
     elif unified.Detector.is_console(bot):
-        puid = 'console_console'
+        puid = 'console_0'
     elif unified.Detector.is_qqguild(bot):
         puid = 'qqguild_' + puid
     return puid
@@ -83,6 +84,11 @@ def get_uid(puid: str) -> str:
     temp_c = data_cursor.execute(f'SELECT uid FROM users WHERE puid == "{puid}"')
     data: list[list[str]] = temp_c.fetchall()
     return data[0][0]
+
+
+def check_puid_validation(puid: str) -> bool:
+    """检查PUID是否有效"""
+    return re.match('^[a-z]+_[0-9]+$', puid) is not None
 
 
 def get_bind_by_uid(uid: str) -> list[str]:

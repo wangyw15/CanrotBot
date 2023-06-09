@@ -38,6 +38,8 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             another_puid = splitted_args[1]
             if user.puid_user_exists(another_puid):
                 await _user.finish('该用户已经绑定或注册过了')
+            if not user.check_puid_validation(another_puid):
+                await _user.finish('PUID 不合法')
             uid = user.get_uid(puid)
             user.bind(another_puid, uid)
             await _user.finish('绑定成功')
