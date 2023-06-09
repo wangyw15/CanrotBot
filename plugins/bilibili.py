@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from nonebot import on_regex
+from nonebot import on_regex, on_fullmatch
 from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
@@ -62,3 +62,23 @@ async def _(state: T_State, bot: Bot, event: Event):
             final_msg.append(msg)
             await final_msg.send(bot, event)
             await _bilibili_video_short_link.finish()
+
+
+_bilibili_projects_handlers = on_fullmatch('我要看展', block=True)
+@_bilibili_projects_handlers.handle()
+async def _(bot: Bot, event: Event):
+    projects = await bilibili.fetch_all_projects()
+    if projects:
+        msg = '现在的正在进行的展览有:\n\n'
+        for project in projects:
+            start_time = datetime.strptime(project['start_time'], '%Y.%m.%d')
+            try:
+                end_time = datetime.strptime(project['end_time'], '%Y.%m.%d')
+            except ValueError:
+                end_time = datetime.strptime(str(start_time.year) + '.' + project['end_time'], '%Y.%m.%d')
+            if start_time <= datetime.now() <= end_time:
+                msg += f'{project["project_name"]}\n' \
+                       f'开始时间: {start_time.strftime("%Y年%m月%d日")}\n' \
+                       f'结束时间: {end_time.strftime("%Y年%m月%d日")}\n' \
+                       f'链接: {project["url"]}\n\n'
+        await _bilibili_projects_handlers.finish(msg)
