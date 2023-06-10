@@ -2,9 +2,9 @@ import base64
 from datetime import datetime
 from typing import Annotated
 
-from nonebot import on_command
+from nonebot import on_shell_command
 from nonebot.adapters import Bot, Event, MessageSegment
-from nonebot.params import CommandArg, ShellCommandArgv
+from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from ..libraries import fortune, user, economy
@@ -18,7 +18,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-_signin_handler = on_command('signin', aliases={'签到', '每日签到', '抽签'}, block=True)
+_signin_handler = on_shell_command('signin', aliases={'签到', '每日签到', '抽签'}, block=True)
 @_signin_handler.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     # 查看所有主题
