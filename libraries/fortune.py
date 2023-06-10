@@ -54,38 +54,45 @@ def get_theme_key_from_name(name: str) -> str:
     return 'random'
 
 
-async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jpeg'] = 'png') \
-        -> Tuple[str, str, str, int]:
+async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jpeg'] = 'png',
+                           title: str = '', content: str = '', rank: int = 0) -> Tuple[bytes, str, str, int]:
     """
-    generate fortune image with theme
+    生成给定主题的运势图片，如果不给定运势内容则随机选择
 
-    returns (base64 encoded image, title, content, rank)
+    :param theme: 运势主题
+    :param image_type: 返回图片格式
+    :param title: 运势标题
+    :param content: 运势内容
+    :param rank: 运势等级
+
+    :return: 图片，标题，内容，运势等级
     """
     if theme == 'random' or theme not in _themes:
         theme = random.choice(list(_themes.keys()))
-    # choose copywriting
+    # c选择运势内容
     copywriting = random.choice(_copywriting)
-    title = copywriting['good-luck']
-    rank = copywriting['rank']
-    text = random.choice(copywriting['content'])
+    title = title if title else copywriting['good-luck']
+    rank = rank if rank else copywriting['rank']
+    text = content if content else random.choice(copywriting['content'])
 
-    # choose base image
+    # 选择背景图
     base_image_path = _get_random_base_image(theme).relative_to(_fortune_assets_path)
 
-    # draw image
-    # generate html content
+    # 生成 html
     with open(_fortune_assets_path / 'template.html', 'r') as f:
         raw_content = f.read()
     raw_content = raw_content \
         .replace('{image_path}', str(base_image_path).replace('\\', '/')) \
         .replace('{title}', title) \
         .replace('{content}', text)
-    # generate image
+    # 生成图片
     bytes_data = await render_html(raw_content, str(_fortune_assets_path), image_type,
                                    viewport={'width': 480, 'height': 480})
-    # save image
-    base64_str = base64.b64encode(bytes_data).decode('utf-8')
-    return base64_str, title, text, rank
+    return bytes_data, title, text, rank
+
+
+def get_themes() -> list[str]:
+    return [x[0] for _, x in _themes.items()]
 
 
 _load_fortune_assets()
