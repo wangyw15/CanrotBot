@@ -34,7 +34,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     # 设置主题
     theme = 'random'
     if len(args) == 1:
-        theme = args[0]
+        theme = fortune.get_theme_key_from_name(args[0])
 
     # 判断是否签到过
     last_signin = user.get_data_by_uid(uid, 'signin_date')
@@ -51,7 +51,6 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     # 签到
     if can_signin:
         # 生成运势内容和对应图片
-        theme = fortune.get_theme_key_from_name(theme)
         img, title, content, rank = await fortune.generate_fortune(theme)
         user.set_data_by_uid(uid, 'signin_date', today)
         user.set_data_by_uid(uid, 'signin_fortune_image', base64.b64encode(img).decode('utf-8'))

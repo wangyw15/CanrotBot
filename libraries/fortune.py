@@ -1,4 +1,3 @@
-import base64
 import json
 import random
 from pathlib import Path
@@ -69,7 +68,7 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
     """
     if theme == 'random' or theme not in _themes:
         theme = random.choice(list(_themes.keys()))
-    # c选择运势内容
+    # 选择运势内容
     copywriting = random.choice(_copywriting)
     title = title if title else copywriting['good-luck']
     rank = rank if rank else copywriting['rank']
@@ -100,7 +99,7 @@ _load_fortune_assets()
 
 async def main():
     with open('test.png', 'wb') as f:
-        f.write(base64.b64decode((await generate_fortune())[0]))
+        f.write((await generate_fortune())[0])
 
 
 if __name__ == '__main__':
