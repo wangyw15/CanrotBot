@@ -18,7 +18,7 @@ __plugin_meta__ = PluginMetadata(
 _qqmusic_id_pattern = r'(?:https?:\/\/)?(?:\S+\.)?y\.qq\.com\/\S+(?:songid=|songDetail\/)(\d+)'
 _client = AsyncClient()
 
-_cloudmusic_handler = on_regex(r'(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(\S+\/)?song\?\S*id=(\d+)', block=True)
+_cloudmusic_handler = on_regex(r'(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+\/)?song\?\S*id=(\d+)', block=True)
 @_cloudmusic_handler.handle()
 async def _(state: T_State, bot: Bot):
     music_id = state['_matched_groups'][0]
@@ -48,7 +48,7 @@ async def _(state: T_State, bot: Bot):
     if resp.is_success and resp.status_code == 302:
         music_id = re.search(_qqmusic_id_pattern, resp.headers['Location']).groups()[0]
         if unified.Detector.is_onebot_v11(bot):
-            await _cloudmusic_handler.finish(unified.adapters.onebot_v11.Message(f'[CQ:music,type=qq,id={music_id}]'))
+            await _qqmusic_shortlink_handler.finish(unified.adapters.onebot_v11.Message(f'[CQ:music,type=qq,id={music_id}]'))
         elif unified.Detector.is_onebot_v12(bot):
-            await _cloudmusic_handler.finish(unified.adapters.onebot_v12.Message(f'[CQ:music,type=qq,id={music_id}]'))
-        await _cloudmusic_handler.finish()
+            await _qqmusic_shortlink_handler.finish(unified.adapters.onebot_v12.Message(f'[CQ:music,type=qq,id={music_id}]'))
+        await _qqmusic_shortlink_handler.finish()
