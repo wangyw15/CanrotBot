@@ -1,4 +1,4 @@
-from nonebot import on_regex
+from nonebot import on_regex, logger
 from nonebot.adapters import Bot, Event
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
@@ -45,7 +45,7 @@ _qqmusic_shortlink_handler = on_regex(r'(?:https?:\/\/)?c6\.y\.qq\.com\/base\/fc
 async def _(state: T_State, bot: Bot):
     link = state['_matched_str']
     resp = await _client.get(link, follow_redirects=False)
-    if resp.is_success and resp.status_code == 302:
+    if resp.status_code == 302:
         music_id = re.search(_qqmusic_id_pattern, resp.headers['Location']).groups()[0]
         if unified.Detector.is_onebot_v11(bot):
             await _qqmusic_shortlink_handler.finish(unified.adapters.onebot_v11.Message(f'[CQ:music,type=qq,id={music_id}]'))

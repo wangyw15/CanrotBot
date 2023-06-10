@@ -32,7 +32,7 @@ async def fetch_video_data(vid: str) -> dict | None:
 
 async def get_bvid_from_short_link(url: str) -> str | None:
     resp = await _client.get(url, follow_redirects=False)
-    if resp and resp.status_code == 302:
+    if resp.status_code == 302:
         return re.match(bilibili_vid_pattern, resp.headers['Location']).groups()[0]
     return None
 
