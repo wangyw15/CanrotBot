@@ -16,33 +16,37 @@
 
 # 功能列表
 
-|      功能       |                                            作用                                             |
-|:-------------:|:-----------------------------------------------------------------------------------------:|
-|     番剧相关      |                                         现在只做了搜索番剧                                         |
-|    不能好好说话     |                                       把一串字母变成涩涩的话！                                        |
-|      计算器      |                                            算数                                             |
-|      cp文      |                                          随机生成cp文                                          |
-|      发癫文      |                                          随机发送发癫文                                          |
-|     汇率转换      |                                          就是汇率转换                                           |
-|      嘴臭       |                                           发个嘴臭文                                           |
-|     每日新闻      |                 从[这里](https://api.03c3.cn/zb/)来的每日新闻图片<br>还支持订阅，每天十点定时发送                  |
-|      复读机      |                                        复读你说的话（测试用）                                        |
-|      猜数字      |                                      详见[下面](#猜数字规则)                                       |
-|      一言       |   来自于[一言](https://hitokoto.cn/)的[句子包](https://github.com/hitokoto-osc/sentences-bundle)   |
-|      浅草寺      |                                           浅草寺抽签                                           |
-|     链接元数据     |                                 从支持的链接中获取元数据，包括标题、描述、图片等                                  |
-| MuseDash 玩家信息 |                        数据来源于 [MuseDash.moe](https://musedash.moe/)                        |
-|    能不能好好说话    |                   调用[能不能好好说话？](https://lab.magiconch.com/nbnhhsh/)查找全名                    |
-|     自动回复      | 词库来源于[Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)，机器人根据词库来概率自动水群 |
-|   roll 个老婆    |                        从 [waifu.pics](https://waifu.pics/) 随机抽取纸片人                        |
-|     理科笑话      |                                          随机的理科笑话                                          |
-|      搜图       |          从 [SauceNAO](https://saucenao.com) 或者 [trace.moe](https://trace.moe) 搜图          |
-|      签到       |                                        每日签到，而且附带运势                                        |
-|   Steam 助手    |                                      根据 appid 查询游戏信息                                      |
-|     舔狗语录      |                                          随机的舔狗语录                                          |
-|    vtb小作文     |                                         随机的管人小作文                                          |
-|   wordle 游戏   |   就是 wordle 游戏，用[NYTimes Wordle](https://www.nytimes.com/games/wordle/index.html)的词库做的    |
-|     淫语翻译机     |             把[RimoChan/yinglish](https://github.com/RimoChan/yinglish)包装成了机器人             |
+|        功能         |                                            作用                                             |
+|:-----------------:|:-----------------------------------------------------------------------------------------:|
+|       番剧相关        |                                         现在只做了搜索番剧                                         |
+|       明日方舟        |                                         现在只做了模拟寻访                                         |
+|     Bilibili      |                                   可以查会员购里面的展览（现在只能查上海的）                                   |
+|      不能好好说话       |                                       把一串字母变成涩涩的话！                                        |
+|        计算器        |                                            算数                                             |
+|        cp文        |                                          随机生成cp文                                          |
+|        发癫文        |                                          随机发送发癫文                                          |
+|       汇率转换        |                                          就是汇率转换                                           |
+|        嘴臭         |                                           发个嘴臭文                                           |
+|       每日新闻        |                 从[这里](https://api.03c3.cn/zb/)来的每日新闻图片<br>还支持订阅，每天十点定时发送                  |
+|        复读机        |                                        复读你说的话（测试用）                                        |
+|        猜数字        |                                      详见[下面](#猜数字规则)                                       |
+|        一言         |   来自于[一言](https://hitokoto.cn/)的[句子包](https://github.com/hitokoto-osc/sentences-bundle)   |
+|        浅草寺        |                                           浅草寺抽签                                           |
+|       链接元数据       |                                 从支持的链接中获取元数据，包括标题、描述、图片等                                  |
+| 偶像大师<br>百万现场 剧场时光 |                                         只做了查活动功能                                          |
+|   MuseDash 玩家信息   |                        数据来源于 [MuseDash.moe](https://musedash.moe/)                        |
+|       音乐卡片        |                                   可以把QQ和网易云音乐分享链接转为音乐卡片                                   |
+|      能不能好好说话      |                   调用[能不能好好说话？](https://lab.magiconch.com/nbnhhsh/)查找全名                    |
+|       自动回复        | 词库来源于[Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)，机器人根据词库来概率自动水群 |
+|     roll 个老婆      |                        从 [waifu.pics](https://waifu.pics/) 随机抽取纸片人                        |
+|       理科笑话        |                                          随机的理科笑话                                          |
+|        搜图         |          从 [SauceNAO](https://saucenao.com) 或者 [trace.moe](https://trace.moe) 搜图          |
+|        签到         |                                        每日签到，而且附带运势                                        |
+|     Steam 助手      |                                      根据 appid 查询游戏信息                                      |
+|       舔狗语录        |                                          随机的舔狗语录                                          |
+|      vtb小作文       |                                         随机的管人小作文                                          |
+|     wordle 游戏     |   就是 wordle 游戏，用[NYTimes Wordle](https://www.nytimes.com/games/wordle/index.html)的词库做的    |
+|       淫语翻译机       |             把[RimoChan/yinglish](https://github.com/RimoChan/yinglish)包装成了机器人             |
 
 # 功能说明
 
@@ -99,20 +103,22 @@ saucenao_api_key="你的 api key"
   - ~~还在看~~
 - [x] 抽签
   - 替换第三方插件
-- [ ] 考虑删除 meme 图
+- [ ] 考虑 meme 图
 - [ ] ~~换个 ChatGPT 插件，或者自己写~~
 - [ ] ShindanMaker
 - [ ] WolframAlpha
 
 # 功能或数据来源
 
-|                                        来源                                         | 说明 |
-|:---------------------------------------------------------------------------------:| :-: |
-| [hitokoto-osc/sentences-bundle](https://github.com/hitokoto-osc/sentences-bundle) | 一言数据 |
-|       [Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)       | 自动回复的部分数据 |
-|             [FloatTech/zbpdata](https://github.com/FloatTech/zbpdata)             | 自动回复等数据来源 |
-|               [RimoChan/bnhhsh](https://github.com/RimoChan/bnhhsh)               | 不能好好说话 |
-|       [Paper-co](https://free-paper-texture.com/japanese-paper-texture-2/)        | 浅草寺背景图片来源 |
+|                                                 来源                                                  |    说明     |
+|:---------------------------------------------------------------------------------------------------:|:---------:|
+|          [hitokoto-osc/sentences-bundle](https://github.com/hitokoto-osc/sentences-bundle)          |   一言数据    |
+|                [Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)                | 自动回复的部分数据 |
+|                      [FloatTech/zbpdata](https://github.com/FloatTech/zbpdata)                      | 自动回复等数据来源 |
+|                        [RimoChan/bnhhsh](https://github.com/RimoChan/bnhhsh)                        |  不能好好说话   |
+|                [Paper-co](https://free-paper-texture.com/japanese-paper-texture-2/)                 | 浅草寺背景图片来源 |
+| [MinatoAquaCrews/nonebot_plugin_fortune](https://github.com/MinatoAquaCrews/nonebot_plugin_fortune) |   运势数据    |
+|                             [Princess](https://api.matsurihi.me/docs/)                              | MLTD API  |
 
 # 特别
 
