@@ -94,7 +94,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             if (isinstance(args[1], MessageSegment) and args[1].type == 'image') or universal_adapters.is_url(args[1]):
                 await _search_anime_by_image(args[1], bot, event)
                 await _anime_handler.finish()
-            name, data, possibility = anime.search_anime_by_name(''.join(args[1:]))
+            name, data, possibility = anime.search_anime_by_name(' '.join(args[1:]))
             text_msg = generate_message_from_anime_data(name, data, possibility)
             msg = unified.Message()
             msg.append(unified.MessageSegment.image(data['picture'], f'{name} 封面图'))
