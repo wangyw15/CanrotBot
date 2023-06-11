@@ -25,6 +25,7 @@
 |        计算器        |                                            算数                                             |
 |        cp文        |                                          随机生成cp文                                          |
 |        发癫文        |                                          随机发送发癫文                                          |
+|       疯狂星期四       |                         随机发送疯狂星期四文案<br>天天疯狂：疯狂星期四<br>支持日文触发：狂乱木曜日                         |
 |       汇率转换        |                                          就是汇率转换                                           |
 |        嘴臭         |                                           发个嘴臭文                                           |
 |       每日新闻        |                 从[这里](https://api.03c3.cn/zb/)来的每日新闻图片<br>还支持订阅，每天十点定时发送                  |
@@ -110,15 +111,16 @@ saucenao_api_key="你的 api key"
 
 # 功能或数据来源
 
-|                                                 来源                                                  |    说明     |
-|:---------------------------------------------------------------------------------------------------:|:---------:|
-|          [hitokoto-osc/sentences-bundle](https://github.com/hitokoto-osc/sentences-bundle)          |   一言数据    |
-|                [Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)                | 自动回复的部分数据 |
-|                      [FloatTech/zbpdata](https://github.com/FloatTech/zbpdata)                      | 自动回复等数据来源 |
-|                        [RimoChan/bnhhsh](https://github.com/RimoChan/bnhhsh)                        |  不能好好说话   |
-|                [Paper-co](https://free-paper-texture.com/japanese-paper-texture-2/)                 | 浅草寺背景图片来源 |
-| [MinatoAquaCrews/nonebot_plugin_fortune](https://github.com/MinatoAquaCrews/nonebot_plugin_fortune) |   运势数据    |
-|                             [Princess](https://api.matsurihi.me/docs/)                              | MLTD API  |
+|                                                        来源                                                         |    说明     |
+|:-----------------------------------------------------------------------------------------------------------------:|:---------:|
+|                 [hitokoto-osc/sentences-bundle](https://github.com/hitokoto-osc/sentences-bundle)                 |   一言数据    |
+|                       [Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)                       | 自动回复的部分数据 |
+|                             [FloatTech/zbpdata](https://github.com/FloatTech/zbpdata)                             | 自动回复等数据来源 |
+|                               [RimoChan/bnhhsh](https://github.com/RimoChan/bnhhsh)                               |  不能好好说话   |
+|                       [Paper-co](https://free-paper-texture.com/japanese-paper-texture-2/)                        | 浅草寺背景图片来源 |
+|        [MinatoAquaCrews/nonebot_plugin_fortune](https://github.com/MinatoAquaCrews/nonebot_plugin_fortune)        |   运势数据    |
+|                                    [Princess](https://api.matsurihi.me/docs/)                                     | MLTD API  |
+| [MinatoAquaCrews/nonebot_plugin_crazy_thursday](https://github.com/MinatoAquaCrews/nonebot_plugin_crazy_thursday) |  疯狂星期四文案  |
 
 # 特别
 
