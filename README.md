@@ -36,7 +36,7 @@
 |       链接元数据       |                                 从支持的链接中获取元数据，包括标题、描述、图片等                                  |
 | 偶像大师<br>百万现场 剧场时光 |                                         只做了查活动功能                                          |
 |   MuseDash 玩家信息   |                        数据来源于 [MuseDash.moe](https://musedash.moe/)                        |
-|       音乐卡片        |                                   可以把QQ和网易云音乐分享链接转为音乐卡片                                   |
+|        音乐         |                              可以把QQ和网易云音乐分享链接转为音乐卡片<br>也可以点歌                               |
 |      能不能好好说话      |                   调用[能不能好好说话？](https://lab.magiconch.com/nbnhhsh/)查找全名                    |
 |       自动回复        | 词库来源于[Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus)，机器人根据词库来概率自动水群 |
 |     roll 个老婆      |                        从 [waifu.pics](https://waifu.pics/) 随机抽取纸片人                        |
