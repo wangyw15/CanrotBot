@@ -23,14 +23,15 @@ def _generate_youtube_message(data: dict) -> str:
     # publish time
     date = datetime.datetime.strptime(data['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ') + datetime.timedelta(hours=8)
     # generate message
-    msg = f'标题: \n{data["snippet"]["title"]}\n' \
-          f'频道: \n{data["snippet"]["channelTitle"]}\n' \
-          f'发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%S")}\n' \
-          f'播放: {data["statistics"]["viewCount"]}\n' \
-          f'点赞: {data["statistics"]["likeCount"]}\n' if 'likeCount' in data["statistics"] else '' \
-          f'评论: {data["statistics"]["commentCount"]}\n' \
-          f'简介:\n{desc}\n' \
-          f'视频链接: \nhttps://youtu.be/{data["id"]}'
+    msg = ''
+    msg += f'标题: \n{data["snippet"]["title"]}\n' \
+           f'频道: \n{data["snippet"]["channelTitle"]}\n' \
+           f'发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%S")}\n' \
+           f'播放: {data["statistics"]["viewCount"]}\n'
+    msg += f'点赞: {data["statistics"]["likeCount"]}\n' if 'likeCount' in data["statistics"] else ''
+    msg += f'评论: {data["statistics"]["commentCount"]}\n' \
+           f'简介:\n{desc}\n' \
+           f'视频链接: \nhttps://youtu.be/{data["id"]}'
     return msg
 
 
