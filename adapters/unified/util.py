@@ -32,7 +32,7 @@ async def fetch_bytes_data(url: str) -> bytes | None:
     return None
 
 
-async def fetch_json_data(url: str) -> dict | None:
+async def fetch_json_data(url: str) -> Any | None:
     """从URL获取json数据"""
     resp = await _client.get(url)
     if resp.is_success and resp.status_code == 200:

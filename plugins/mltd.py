@@ -47,25 +47,25 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         data = await mltd.get_events()
         if data:
             msg = unified.Message('现在正在进行的活动:\n\n')
-            for event in data:
+            for mltd_event in data:
                 # 活动信息
-                text_msg = f"{event['name']}\n" \
-                           f"类型: {event_type[event['type'] - 1]}\n" \
-                           f"Appeal 类型: {appeal_type[event['appealType']]}\n" \
-                           f"活动开始时间: {iso8601_to_local(event['schedule']['beginAt'])}\n" \
-                           f"活动结束时间: {iso8601_to_local(event['schedule']['endAt'])}\n" \
-                           f"页面开放时间: {iso8601_to_local(event['schedule']['pageOpenedAt'])}\n" \
-                           f"页面关闭时间: {iso8601_to_local(event['schedule']['pageClosedAt'])}\n"
-                text_msg += f"加速开始时间: {iso8601_to_local(event['schedule']['boostBeginAt'])}\n" \
-                            if event['schedule']['boostBeginAt'] else ''
-                text_msg += f"加速结束时间: {iso8601_to_local(event['schedule']['boostEndAt'])}\n" \
-                            if event['schedule']['boostEndAt'] else ''
-                text_msg += f"活动物品: {event['item']['name']}" if event['item']['name'] else ''
+                text_msg = f"{mltd_event['name']}\n" \
+                           f"类型: {event_type[mltd_event['type'] - 1]}\n" \
+                           f"Appeal 类型: {appeal_type[mltd_event['appealType']]}\n" \
+                           f"活动开始时间: {iso8601_to_local(mltd_event['schedule']['beginAt'])}\n" \
+                           f"活动结束时间: {iso8601_to_local(mltd_event['schedule']['endAt'])}\n" \
+                           f"页面开放时间: {iso8601_to_local(mltd_event['schedule']['pageOpenedAt'])}\n" \
+                           f"页面关闭时间: {iso8601_to_local(mltd_event['schedule']['pageClosedAt'])}\n"
+                text_msg += f"加速开始时间: {iso8601_to_local(mltd_event['schedule']['boostBeginAt'])}\n" \
+                            if mltd_event['schedule']['boostBeginAt'] else ''
+                text_msg += f"加速结束时间: {iso8601_to_local(mltd_event['schedule']['boostEndAt'])}\n" \
+                            if mltd_event['schedule']['boostEndAt'] else ''
+                text_msg += f"活动物品: {mltd_event['item']['name']}" if mltd_event['item']['name'] else ''
                 text_msg += '\n\n'
                 # 活动封面
-                img_url = f"https://storage.matsurihi.me/mltd/event_bg/{str(event['id']).zfill(4)}.png"
+                img_url = f"https://storage.matsurihi.me/mltd/event_bg/{str(mltd_event['id']).zfill(4)}.png"
                 # 构建信息
-                msg.append(unified.MessageSegment.image(img_url))
+                msg.append(unified.MessageSegment.image(img_url, mltd_event['name'] + ' 封面图'))
                 msg.append(text_msg)
             await msg.send(bot, event)
             await _mltd_handler.finish()

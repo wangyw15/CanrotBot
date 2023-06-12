@@ -181,7 +181,7 @@ class Message(BaseMessage[MessageSegment]):
                     final_msg += f'\n{str(seg)}\n'
                 elif seg.type == MessageSegmentTypes.AT:
                     final_msg += f'@{seg.data["user_id"]}'
-            final_msg:str = final_msg.strip()
+            final_msg: str = final_msg.strip()
 
         await bot.send(event, final_msg)
 
