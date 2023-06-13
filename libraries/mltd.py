@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal
 
-import render_by_browser
+from . import render_by_browser
 from ..adapters import unified
 
 _cards: list[dict] = []
