@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            width: 1920px;
+            height: 1080px;
+            background-color: #dcdcdc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #gasha_app {
+            height: 50%;
+            width: 60%;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.60);
+            box-sizing: border-box;
+            padding: 5%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        .icon {
+            position: relative;
+            margin: 0 5% 5% 0;
+            width: 15%;
+        }
+
+        .icon>img:first-child {
+            width: 100%;
+        }
+
+        .icon-overlay {
+            position: absolute;
+            background-repeat: no-repeat;
+        }
+
+        .rarity-border {
+            width: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .group-icon {
+            width: 30%;
+            left: 0;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+<script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
+
+<div id="gasha_app">
+    <div v-for="idol in idols" class="icon">
+        <img :src="'https://storage.matsurihi.me/mltd/icon_l/' + idol.resourceId + '_0.png'" />
+        <!--rarity border-->
+        <img v-if="idol.rarity == 2" class="icon-overlay rarity-border" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_frm_R.png" />
+        <img v-if="idol.rarity == 3" class="icon-overlay rarity-border" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_frm_SR.png" />
+        <img v-if="idol.rarity == 4" class="icon-overlay rarity-border" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_frm_SSR.png" />
+        <!--group icon-->
+        <img v-if="idol.idolType == 1" class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_000.png" />
+        <img v-if="idol.idolType == 2" class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_001.png" />
+        <img v-if="idol.idolType == 3" class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_002.png" />
+        <img v-if="idol.idolType == 5" class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_004.png" />
+    </div>
+</div>
+
+<script>
+    const app = {
+        data() {
+            return {
+                "idols": '{DATA_HERE}'
+            };
+        }
+    };
+
+    Vue.createApp(app).mount('#gasha_app');
+</script>
+</body>
+</html>

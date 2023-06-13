@@ -1,16 +1,17 @@
 import difflib
 import json
+import random
 from datetime import datetime
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Tuple
 
 from . import render_by_browser
 from ..adapters import unified
 
+_mltd_assets_path = Path(__file__).parent.parent / 'assets' / 'mltd'
 _cards: list[dict] = []
 _cards_zh: list[dict] = []
 _cards_last_fetch: datetime | None = None
-_card_info_template_path = Path(__file__).parent.parent / 'assets' / 'mltd' / 'card_info.html'
 
 
 async def load_cards(force_reload: bool = False) -> None:
@@ -47,11 +48,10 @@ async def search_card(keyword: str, force_jp: bool = False) -> dict:
 
 
 async def generate_card_info_image(card: dict) -> bytes:
-    with _card_info_template_path.open('r', encoding='utf-8') as f:
+    with (_mltd_assets_path / 'card_info.html').open('r', encoding='utf-8') as f:
         html = f.read()
     html = html.replace("'{DATA_HERE}'", json.dumps(card))
-    return await render_by_browser.render_html(html, _card_info_template_path.parent,
-                                               viewport={'width': 1280, 'height': 1000})
+    return await render_by_browser.render_html(html, _mltd_assets_path, viewport={'width': 1280, 'height': 1000})
 
 
 async def get_events(time: Literal['now'] | datetime = 'now') -> list[dict] | None:
@@ -62,9 +62,24 @@ async def get_events(time: Literal['now'] | datetime = 'now') -> list[dict] | No
         return await unified.util.fetch_json_data(f'https://api.matsurihi.me/api/mltd/v2/events?at={t}')
 
 
+async def gasha() -> Tuple[bytes, list[dict]]:
+    await load_cards()
+    idols: list[dict] = []
+    while len(idols) != 10:
+        card = random.choice(_cards)
+        # 不出N卡且只出常驻卡
+        if card['rarity'] == 1 or card['exType'] != 0:
+            continue
+        idols.append(card)
+    with (_mltd_assets_path / 'gasha.html').open('r', encoding='utf-8') as f:
+        html = f.read()
+    html = html.replace("'{DATA_HERE}'", json.dumps(idols))
+    img = await render_by_browser.render_html(html, _mltd_assets_path, viewport={'width': 1920, 'height': 1080})
+    return img, idols
+
+
 async def main():
-    with open('out.png', 'wb') as f:
-        f.write(await generate_card_info_image(await search_card('追憶のサンドグラス　星井美希', True)))
+    await gasha()
 
 
 if __name__ == '__main__':

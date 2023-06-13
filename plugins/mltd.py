@@ -7,7 +7,7 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from ..adapters import unified
-from ..libraries import mltd
+from ..libraries import mltd, user, economy
 
 
 __plugin_meta__ = PluginMetadata(
@@ -80,6 +80,15 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             await unified.MessageSegment.image(await mltd.generate_card_info_image(card)).send(bot, event)
             await _mltd_handler.finish()
         await _mltd_handler.finish('这里不支持发送图片所以没法查卡喵~')
+    elif args[0] in ['抽卡', '十连', 'gasha', 'gacha']:
+        uid = user.get_uid(user.get_puid(bot, event))
+        if not economy.pay(uid, 25):
+            await _mltd_handler.finish('你没有足够的胡萝卜片喵~')
+        msg = unified.Message('谢谢你的25个胡萝卜片喵~')
+        img, data = await mltd.gasha()
+        msg.append(unified.MessageSegment.image(img))
+        await msg.send(bot, event)
+        await _mltd_handler.finish()
     elif args[0] in ['更新', 'update']:
         await _mltd_handler.send('正在更新卡片数据喵~')
         await mltd.load_cards(True)
