@@ -72,7 +72,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             await _mltd_handler.finish()
         else:
             await _mltd_handler.finish('现在还没有活动喵~')
-    elif args[0] in ['查卡']:
+    elif args[0] in ['查卡', 'card']:
         if unified.Detector.can_send_image(bot):
             await _mltd_handler.send('正在搜索喵~')
             card_name = ' '.join(args[1:])
@@ -80,3 +80,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             await unified.MessageSegment.image(await mltd.generate_card_info_image(card)).send(bot, event)
             await _mltd_handler.finish()
         await _mltd_handler.finish('这里不支持发送图片所以没法查卡喵~')
+    elif args[0] in ['更新', 'update']:
+        await _mltd_handler.send('正在更新卡片数据喵~')
+        await mltd.load_cards(True)
+        await _mltd_handler.finish('更新完毕喵~')

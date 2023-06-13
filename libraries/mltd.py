@@ -13,10 +13,10 @@ _cards_last_fetch: datetime | None = None
 _card_info_template_path = Path(__file__).parent.parent / 'assets' / 'mltd' / 'card_info.html'
 
 
-async def _load_cards(force_reload: bool = False) -> None:
+async def load_cards(force_reload: bool = False) -> None:
     global _cards, _cards_zh, _cards_last_fetch
     if force_reload or not _cards or not _cards_zh or not _cards_last_fetch \
-            or (datetime.now() - _cards_last_fetch).total_seconds() > 3600:
+            or (datetime.now() - _cards_last_fetch).total_seconds() > 3600*24:
         _cards = await unified.util.fetch_json_data(
             'https://api.matsurihi.me/api/mltd/v2/cards?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true')
         _cards_zh = await unified.util.fetch_json_data(
@@ -25,7 +25,7 @@ async def _load_cards(force_reload: bool = False) -> None:
 
 
 async def search_card(keyword: str, force_jp: bool = False) -> dict:
-    await _load_cards()
+    await load_cards()
     best = 0.0
     ret = {}
     # 优先搜索中文内容
