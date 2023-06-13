@@ -272,13 +272,13 @@
                 {{ parameters.visual.afterAwakened.max }}
                 ({{ parameters.visual.afterAwakened.max + parameters.visual.masterBonus * masterRankMax }})
             </p>
-            <p class="half-width">
+            <p class="full-width">
                 <span class="badge badge-appeal">总 Appeal</span>
                 {{ parameters.vocal.afterAwakened.max + parameters.dance.afterAwakened.max + parameters.visual.afterAwakened.max }}
                 ({{ parameters.vocal.afterAwakened.max + parameters.vocal.masterBonus * masterRankMax + parameters.dance.afterAwakened.max + parameters.dance.masterBonus * masterRankMax + parameters.visual.afterAwakened.max + parameters.visual.masterBonus * masterRankMax }})
             </p>
             <div v-if="centerEffect.id != 0">
-                <p class="half-width">
+                <p class="full-width">
                     <span class="badge badge-center">中心效果</span>
                     {{ centerEffect.name }}
                 </p>
