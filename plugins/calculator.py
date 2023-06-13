@@ -1,4 +1,5 @@
 from nonebot import on_regex
+from nonebot.exception import FinishedException
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 
@@ -15,5 +16,7 @@ async def _(state: T_State):
     try:
         result = eval(state['_matched_groups'][0].strip())
         await calculator.finish(f"{state['_matched_groups'][0]}={str(result)}")
+    except FinishedException:
+        pass
     except:
         await calculator.finish('计算错误')
