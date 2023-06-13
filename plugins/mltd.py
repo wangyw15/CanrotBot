@@ -74,6 +74,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             await _mltd_handler.finish('现在还没有活动喵~')
     elif args[0] in ['查卡']:
         if unified.Detector.can_send_image(bot):
+            await _mltd_handler.send('正在搜索喵~')
             card_name = ' '.join(args[1:])
             card = await mltd.search_card(card_name)
             await unified.MessageSegment.image(await mltd.generate_card_info_image(card)).send(bot, event)
