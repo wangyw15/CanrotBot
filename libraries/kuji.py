@@ -30,7 +30,7 @@ async def generate_kuji(image_type: Literal['png', 'jpeg', ''] | None = 'png') -
 
     # generate html
     with open(_kuji_assets_path / 'template.html', 'r', encoding='utf-8') as f:
-        generated_html = f.read().replace('{{kuji_data}}', json.dumps(selected_kuji, ensure_ascii=False))
+        generated_html = f.read().replace("'{DATA_HERE}'", json.dumps(selected_kuji, ensure_ascii=False))
     img = await render_html(generated_html, _kuji_assets_path, image_type=image_type,
                             viewport={'width': 520, 'height': 820})
     return img, selected_kuji

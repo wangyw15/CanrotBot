@@ -63,45 +63,33 @@
     </style>
 </head>
 <body>
+<script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
 <div class="container" id="container">
     <div class="title center">
-        <div>日本东京浅草寺观音灵签<span id="count"></span></div>
-        <div id="type"></div>
+        <div>日本东京浅草寺观音灵签{{ count }}</div>
+        <div>{{ type }}</div>
     </div>
 
-<!--    <div class="content center" style="grid-column: 5;">-->
-<!--        有名须得遇-->
-<!--    </div>-->
+    <div v-for="(line, index) in content" class="content center" :style="'grid-column: ' + (5 - index) + ';'">
+        {{ line }}
+    </div>
 
     <div class="straight">
+        {{ straight }}
     </div>
 
     <div class="mean">
-<!--        <p>愿望：<br /><span>会实现吧。</span></p>-->
+        <p v-for="m in mean">{{ m.split('：')[0] }}：<br /><span>{{ m.split('：')[1] }}</span></p>
     </div>
 </div>
 <script>
-    var data = {{kuji_data}};
+    const app = {
+        data() {
+            return '{DATA_HERE}';
+        }
+    };
 
-    const container = document.querySelector('#container');
-    document.querySelector('#count').innerText = data.count;
-    document.querySelector('#type').innerText = data.type;
-    const straight = document.querySelector('.straight');
-    data.content.forEach((line, index) => {
-        var div = document.createElement('div');
-        div.className = 'content center';
-        div.style.gridColumn = (5 - index).toString();
-        div.innerText = line;
-        container.insertBefore(div, straight);
-    });
-    straight.innerText = data.straight;
-    const mean = document.querySelector('.mean');
-    data.mean.forEach(item => {
-        var p = document.createElement('p');
-        p.innerHTML = '' + item.split('：')[0] + '：<br><span>' + item.split('：')[1] + '</span>';
-        mean.appendChild(p);
-    });
-
+    Vue.createApp(app).mount('#container');
 </script>
 </body>
 </html>
