@@ -61,9 +61,9 @@ async def generate_gacha(last_5_times: int = 0) -> Tuple[bytes, list[dict]]:
         if magic_number < 0.02 + possibility_offset:
             rarity = 5
             possibility_offset = 0  # 抽到六星之后重置概率提升
-        elif magic_number < 0.08 + possibility_offset:
+        elif magic_number < 0.10 + possibility_offset:
             rarity = 4
-        elif magic_number < 0.5 + possibility_offset:
+        elif magic_number < 0.60 + possibility_offset:
             rarity = 3
         else:
             rarity = 2
