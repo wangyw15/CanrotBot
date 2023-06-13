@@ -162,7 +162,7 @@
     </p>
     <h1>觉醒前</h1>
     <div class="awaken-container">
-        <img :src="'https://storage.matsurihi.me/mltd/card/' + resourceId + '_0_b.png'" />
+        <img :src="'https://storage.matsurihi.me/mltd/card/' + resourceId + '_0_a.png'" />
         <div class="param-container">
             <p class="full-width">
                 <span class="badge badge-general">稀有度</span>
@@ -236,7 +236,7 @@
 
     <h1>觉醒后</h1>
     <div class="awaken-container">
-        <img :src="'https://storage.matsurihi.me/mltd/card/' + resourceId + '_1_b.png'" />
+        <img :src="'https://storage.matsurihi.me/mltd/card/' + resourceId + '_1_a.png'" />
         <div class="param-container">
             <p class="full-width">
                 <span class="badge badge-general">稀有度</span>
@@ -314,21 +314,21 @@
             <div class="costume">
                 <h2>{{ costumes.default.name }}</h2>
                 <div class="costume-info">
-                    <img :src="'https://storage.matsurihi.me/mltd/costume_icon_ll/' + resourceId + '.png'" />
+                    <img :src="'https://storage.matsurihi.me/mltd/costume_icon_ll/' + costumes.default.resourceId + '.png'" />
                     <span>{{ costumes.default.description }}</span>
                 </div>
             </div>
             <div class="costume" v-if="costumes.bonus">
                 <h2>{{ costumes.bonus.name }}</h2>
                 <div class="costume-info">
-                    <img :src="'https://storage.matsurihi.me/mltd/costume_icon_ll/' + resourceId + '_v.png'" />
+                    <img :src="'https://storage.matsurihi.me/mltd/costume_icon_ll/' + costumes.bonus.resourceId + '.png'" />
                     <span>{{ costumes.bonus.description }}</span>
                 </div>
             </div>
             <div class="costume" v-if="costumes.rank5">
                 <h2>{{ costumes.rank5.name }}</h2>
                 <div class="costume-info">
-                    <img :src="'https://storage.matsurihi.me/mltd/costume_icon_ll/' + resourceId + '_v2.png'" />
+                    <img :src="'https://storage.matsurihi.me/mltd/costume_icon_ll/' + costumes.rank5.resourceId + '.png'" />
                     <span>{{ costumes.rank5.description }}</span>
                 </div>
             </div>
