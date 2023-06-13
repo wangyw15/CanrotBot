@@ -24,11 +24,12 @@ async def get_new_page(**kwargs) -> Page:
     return page
 
 
-async def render_html(html: str, base_path: str | Path, image_type: Literal['png', 'jpeg'] = 'png', **kwargs) -> bytes:
+async def render_html(html: str, base_path: str | Path, image_type: Literal['png', 'jpeg'] = 'png',
+                      full_page: bool = True, **kwargs) -> bytes:
     page = await get_new_page(**kwargs)
     await page.goto(f'file://{base_path}', wait_until='networkidle')
     await page.set_content(html)
-    result = await page.screenshot(type=image_type)
+    result = await page.screenshot(type=image_type, full_page=full_page)
     await page.close()
     return result
 
