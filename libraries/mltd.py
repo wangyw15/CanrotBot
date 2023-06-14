@@ -74,15 +74,23 @@ async def get_events(time: Literal['now'] | datetime = 'now') -> list[dict] | No
 async def gasha() -> Tuple[bytes, list[dict]]:
     await load_cards()
     cards: list[dict] = []
+    # SR保底
+    got_sr_or_better = False
     # 抽卡
     while len(cards) != 10:
         magic_number = random.random()
         if magic_number < 0.03:
             cards.append(random.choice(_cards_for_gasha[4]))
+            got_sr_or_better = True
         elif magic_number < 0.15:
             cards.append(random.choice(_cards_for_gasha[3]))
+            got_sr_or_better = True
         else:
             cards.append(random.choice(_cards_for_gasha[2]))
+    # SR保底
+    if not got_sr_or_better:
+        cards[random.randint(0, 9)] = random.choice(_cards_for_gasha[3])
+    # 生成图片
     with (_mltd_assets_path / 'gasha.html').open('r', encoding='utf-8') as f:
         html = f.read()
     html = html.replace("'{DATA_HERE}'", json.dumps(cards))
