@@ -71,7 +71,7 @@ async def generate_gacha(last_5_times: int = 0) -> Tuple[bytes, list[dict]]:
 
     # 生成 html
     with (_arknights_assets_path / 'gacha.html').open('r', encoding='utf-8') as f:
-        generated_html = f.read().replace('{{CHARACTERS}}', json.dumps(characters, ensure_ascii=False))
+        generated_html = f.read().replace("'{{DATA_HERE}}'", json.dumps(characters, ensure_ascii=False))
 
     # 生成图片
     img = await render_by_browser.render_html(generated_html, _arknights_assets_path,

@@ -1,5 +1,6 @@
 <html>
 <head>
+    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <style>
         body {
             margin: 0;
@@ -89,47 +90,25 @@
 <body>
 <div class="main">
     <div class="result-container">
-
+        <div v-for="card in cards" class="result" :class="{ n: card.rarity == 2, r: card.rarity == 3, sr: card.rarity == 4, ssr: card.rarity == 5 }">
+            <div class="rarity">
+                <span v-for="_ in Array(card.rarity + 1)">★</span>
+            </div>
+            <img class="portrait" :src="'ArknightsGameResource/portrait/' + card.phases[0].characterPrefabKey + '_1.png'"/>
+            <img class="type" :src="'operator_type_images/' + card.profession + '.png'"/>
+        </div>
     </div>
 </div>
 <script>
-    let operators = {{CHARACTERS}};
-
-    operators.forEach(item => {
-        let result = document.createElement('div');
-        result.classList.add('result');
-
-        // rarity stars
-        let stars = document.createElement('div');
-        stars.classList.add('rarity');
-        for (let i = 0; i < item['rarity'] + 1; i++) {
-            let star = document.createElement('span');
-            star.innerText = '★';
-            stars.append(star);
+    const app = {
+        data() {
+            return {
+                'cards': '{{DATA_HERE}}'
+            };
         }
-        // rarity color
-        if (item['rarity'] === 2)
-            result.classList.add('n');
-        else if (item['rarity'] === 3)
-            result.classList.add('r');
-        else if (item['rarity'] === 4)
-            result.classList.add('sr');
-        else if (item['rarity'] === 5)
-            result.classList.add('ssr');
-        // portrait
-        let portrait = document.createElement('img');
-        portrait.classList.add('portrait');
-        portrait.src = 'ArknightsGameResource/portrait/' + item['phases'][0]['characterPrefabKey'] + '_1.png';
-        // type image
-        let type = document.createElement('img');
-        type.classList.add('type');
-        type.src = 'operator_type_images/' + item['profession'] + '.png';
+    }
 
-        result.append(stars);
-        result.append(portrait);
-        result.append(type);
-        document.querySelector('.result-container').append(result);
-    });
+    Vue.createApp(app).mount('.result-container');
 </script>
 </body>
 </html>
