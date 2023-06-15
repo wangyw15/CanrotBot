@@ -1,9 +1,8 @@
-from httpx import AsyncClient
 from typing import Tuple
-from ..adapters import unified
+
 from bs4 import BeautifulSoup
 
-_client = AsyncClient()
+from ..adapters import unified
 
 
 async def get_line_sticker(sticker_id: str) -> Tuple[str, bytes]:
@@ -15,6 +14,6 @@ async def get_line_sticker(sticker_id: str) -> Tuple[str, bytes]:
     file_data = await unified.util.fetch_bytes_data(
         f'https://stickershop.line-scdn.net/stickershop/v1/product/{sticker_id}/iphone/stickerpack@2x.zip')
     if not file_data:
-        file_data = await _client.get(
+        file_data = await unified.util.fetch_bytes_data(
             f'https://stickershop.line-scdn.net/stickershop/v1/product/{sticker_id}/iphone/stickers@2x.zip')
     return sticker_name, file_data
