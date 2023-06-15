@@ -1,6 +1,7 @@
 import base64
 from io import BytesIO
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Type, Iterable
 
 from nonebot.adapters import Bot, Event
@@ -184,6 +185,24 @@ class Message(BaseMessage[MessageSegment]):
             final_msg: str = final_msg.strip()
 
         await bot.send(event, final_msg)
+
+    @staticmethod
+    async def send_file(content: bytes, name: str, bot: Bot, event: Event):
+        if Detector.is_onebot(bot):
+            with NamedTemporaryFile() as f:
+                f.write(content)
+                f.flush()
+                if isinstance(event, adapters.onebot_v11.PrivateMessageEvent) \
+                        or isinstance(event, adapters.onebot_v12.PrivateMessageEvent):
+                    await bot.call_api('upload_private_file', user_id=event.get_user_id(), file=f.name, name=name)
+                elif isinstance(event, adapters.onebot_v11.GroupMessageEvent) \
+                        or isinstance(event, adapters.onebot_v12.GroupMessageEvent):
+                    await bot.call_api('upload_group_file', group_id=event.group_id, file=f.name, name=name)
+        elif isinstance(bot, adapters.kook.Bot):
+            url = await bot.upload_file(content)
+            await bot.send(event, adapters.kook.MessageSegment.file(url, name))
+        else:
+            await bot.send(event, f'[此处暂不支持发送文件，文件名: {name}]')
 
 
 __all__ = ['MessageSegmentTypes', 'MessageSegment', 'Message']
