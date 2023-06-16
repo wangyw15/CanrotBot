@@ -2,7 +2,7 @@ from nonebot import on_command
 from nonebot.plugin import PluginMetadata
 import random
 
-from ..libraries.assets import get_assets
+from ..libraries import random_text
 
 __plugin_meta__ = PluginMetadata(
     name='舔狗语录',
@@ -11,10 +11,10 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-tiangou_data: list[str] = [x[1] for x in get_assets('tiangou')]
+_tiangou_data: list[str] = random_text.get_data('tiangou')
 
 # message
-tiangou = on_command('tiangou', aliases={'舔狗'}, block=True)
-@tiangou.handle()
+_tiangou_handler = on_command('tiangou', aliases={'舔狗'}, block=True)
+@_tiangou_handler.handle()
 async def _():
-    await tiangou.finish(random.choice(tiangou_data))
+    await _tiangou_handler.finish(random.choice(_tiangou_data))

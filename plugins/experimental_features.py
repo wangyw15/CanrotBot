@@ -6,7 +6,7 @@ import jieba
 import random
 
 from ..adapters import unified
-from ..libraries.assets import get_assets
+from ..libraries import random_text
 
 __plugin_meta__ = PluginMetadata(
     name='实验性功能',
@@ -17,7 +17,7 @@ __plugin_meta__ = PluginMetadata(
 
 jieba.add_word('{name}')
 jieba.add_word('{me}')
-reply_data: list[list[str]] = [list(jieba.lcut(x[2])) for x in get_assets('reply')]
+_reply_data: list[list[str]] = [list(jieba.lcut(x['response'])) for x in random_text.get_data('reply')]
 
 
 # generate markov chain
@@ -50,15 +50,17 @@ def generate_reponse(transitions: dict[str, dict[str, float]], max_len = 50) -> 
         current = next
     return ''.join(response)
 
-transitions = markov_chain(reply_data, 3)
 
-generative_response = on_command('generative_reponse', aliases={'gr', '生成回复'}, block=True)
-@generative_response.handle()
+transitions = markov_chain(_reply_data, 3)
+
+_generative_response_handler = on_command('generative_reponse', aliases={'gr', '生成回复'}, block=True)
+@_generative_response_handler.handle()
 async def _(bot, event, msg: Message = CommandArg()):
     my_name = await unified.util.get_bot_name(event, bot, '我')
     user_name = await unified.util.get_user_name(event, bot, '主人')
     length = 50
     if msg := msg.extract_plain_text().strip():
         length = int(msg)
-    await generative_response.finish(generate_reponse(transitions, length).format(name=user_name, me=my_name) + '\n--------------------\n实验性功能，不保证语句合理性')
+    await _generative_response_handler.finish(generate_reponse(transitions, length).format(
+        name=user_name, me=my_name) + '\n--------------------\n实验性功能，不保证语句合理性')
     

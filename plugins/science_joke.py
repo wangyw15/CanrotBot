@@ -4,7 +4,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 import random
 
-from ..libraries.assets import get_assets
+from ..libraries import random_text
 from ..adapters import unified
 
 __plugin_meta__ = PluginMetadata(
@@ -14,13 +14,13 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-science_joke_data: list[str] = [x[1] for x in get_assets('science_joke')]
+_science_joke_data: list[str] = random_text.get_data('science_jokes')
 
 # message
-science_joke = on_command('science-joke', aliases={'理科笑话', 'science_joke'}, block=True)
-@science_joke.handle()
+_science_joke_handler = on_command('science-joke', aliases={'理科笑话', 'science_joke'}, block=True)
+@_science_joke_handler.handle()
 async def _(event: Event, bot: Bot, args: Message = CommandArg()):
     name = await unified.util.get_user_name(event, bot, 'ta')
     if msg := args.extract_plain_text():
         name = msg
-    await science_joke.finish(random.choice(science_joke_data).format(name=name))
+    await _science_joke_handler.finish(random.choice(_science_joke_data).format(name=name))

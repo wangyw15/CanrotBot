@@ -7,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from pydantic import BaseModel
 
-from ..libraries.assets import get_assets
+from ..libraries import random_text
 
 __plugin_meta__ = PluginMetadata(
     name='Wordle',
@@ -27,7 +27,7 @@ class WordleConfig(BaseModel):
 config = WordleConfig.parse_obj(get_driver().config)
 
 # load wordle data
-words = [x[1] for x in get_assets('wordle')]
+words = random_text.get_data('wordle')
 
 
 def get_wordle_result(answer: str, guess: str) -> str:

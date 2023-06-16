@@ -6,7 +6,7 @@ from nonebot.adapters import MessageSegment
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
-from ..libraries.assets import get_assets
+from ..libraries import random_text
 
 __plugin_meta__ = PluginMetadata(
     name='CP',
@@ -15,11 +15,13 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-cp_stories: list[str] = [x[3] for x in get_assets('cp_story')]
+_cp_stories: list[dict[str, str]] = random_text.get_data('cp_story')
 
-cp = on_shell_command('cp', aliases={'cp文'}, block=True)
-@cp.handle()
+_cp_handler = on_shell_command('cp', aliases={'cp文'}, block=True)
+@_cp_handler.handle()
 async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
+    data = random.choice(_cp_stories)
     if len(args) == 2:
-        await cp.finish(random.choice(cp_stories).format(s=args[0], m=args[1]))
-    await cp.finish('请输入攻和受的名字，如：/cp 攻 受')
+        await _cp_handler.finish(data['story'].format(s=args[0], m=args[1]))
+    await _cp_handler.finish(
+        data['story'].format(s=data['s'] if data['s'] else '小攻', m=data['m'] if data['m'] else '小受'))

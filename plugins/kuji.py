@@ -4,7 +4,6 @@ from nonebot.plugin import PluginMetadata
 
 from ..adapters import unified
 from ..libraries import user, economy, kuji
-from ..libraries.assets import get_assets
 
 
 __plugin_meta__ = PluginMetadata(
@@ -13,8 +12,6 @@ __plugin_meta__ = PluginMetadata(
     usage='/<kuji|浅草寺>',
     config=None
 )
-
-kuji_data: list[str] = [x[1] for x in get_assets('kuji')]
 
 # message
 _kuji_handler = on_command('kuji', aliases={'浅草寺'}, block=True)

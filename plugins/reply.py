@@ -9,7 +9,7 @@ from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel, validator
 
 from ..adapters import unified
-from ..libraries.assets import get_assets
+from ..libraries import random_text
 
 
 # config
@@ -48,7 +48,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 # load data
-reply_data: list[dict[str, str | None]] = [{ 'pattern': x[1], 'response': x[2], 'character': x[3] } for x in get_assets('reply')]
+reply_data: list[dict[str, str | None]] = random_text.get_data('reply')
 
 def is_negative(msg: str) -> bool:
     return '不' in msg

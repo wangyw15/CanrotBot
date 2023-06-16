@@ -2,7 +2,7 @@ from nonebot import on_command
 from nonebot.plugin import PluginMetadata
 import random
 
-from ..libraries.assets import get_assets
+from ..libraries import random_text
 
 __plugin_meta__ = PluginMetadata(
     name='vtb小作文',
@@ -11,10 +11,10 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-vtb_story_data: list[str] = [x[1] for x in get_assets('vtb_story')]
+_vtb_story_data: list[str] = random_text.get_data('vtb_story')
 
 # message
-vtb_story = on_command('vtb-story', aliases={'vtb_story', 'vtb小作文'}, block=True)
-@vtb_story.handle()
+_vtb_story_handler = on_command('vtb-story', aliases={'vtb_story', 'vtb小作文'}, block=True)
+@_vtb_story_handler.handle()
 async def _():
-    await vtb_story.finish(random.choice(vtb_story_data))
+    await _vtb_story_handler.finish(random.choice(_vtb_story_data))

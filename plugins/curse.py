@@ -2,7 +2,7 @@ from nonebot import on_command
 from nonebot.plugin import PluginMetadata
 import random
 
-from ..libraries.assets import get_assets
+from ..libraries import random_text
 
 __plugin_meta__ = PluginMetadata(
     name='嘴臭',
@@ -11,10 +11,10 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-curse_data: list[str] = [x[1] for x in get_assets('curse')]
+_curse_data: list[dict[str, str]] = random_text.get_data('curse')
 
 # message
-curse = on_command('curse', aliases={'嘴臭', '诅咒'}, block=True)
-@curse.handle()
+_curse_handler = on_command('curse', aliases={'嘴臭', '诅咒'}, block=True)
+@_curse_handler.handle()
 async def _():
-    await curse.finish(random.choice(curse_data))
+    await _curse_handler.finish(random.choice(_curse_data)['content'])
