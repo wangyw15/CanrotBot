@@ -1,15 +1,14 @@
 from pathlib import Path
 from sqlite3 import OperationalError
 
-import nonebot
 from nonebot import on_command, load_plugins
+from nonebot.adapters import Bot, Event
 from nonebot.params import CommandArg, Message
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
-from .libraries import config, data
-from .libraries.universal_adapters import *
-
+from .adapters import unified
+from .libraries import config, data, help
 
 __plugin_meta__ = PluginMetadata(
     name='CanrotBot',
@@ -30,12 +29,13 @@ canrot_load_plugins()
 plugin_help = on_command('help', aliases={'帮助'}, block=True)
 @plugin_help.handle()
 async def _(bot: Bot, event: Event):
-    splitted_msg: list[str] = []
-    for plugin in nonebot.get_loaded_plugins():
-        if plugin.metadata:
-            splitted_msg.append(f'{plugin.metadata.name}\n描述：{plugin.metadata.description}\n用法：{plugin.metadata.usage}')
-    await send_group_forward_message(splitted_msg, bot, event, header='机器人帮助：')
-    await plugin_help.finish()
+    if unified.Detector.can_send_image(bot):
+        _, img = await help.generate_help_message()
+        await unified.MessageSegment.image(img).send(bot, event)
+        await plugin_help.finish()
+    else:
+        msg, _ = await help.generate_help_message(False)
+        await plugin_help.finish(msg)
 
 
 execute_data_sql = on_command('sql_data', aliases={'sql-data', 'sqld', 'dsql', 'data-sql', 'data_sql'}, block=True)
