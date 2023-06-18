@@ -39,11 +39,3 @@ async def send_group_forward_message(content: list[str], bot: Bot, event: Event,
         return
     await bot.send(event, msg)
 
-
-def seconds_to_time(seconds: float) -> str:
-    ms = int(seconds % 1 * 1000)
-    seconds = int(seconds)
-    m, s = divmod(seconds, 60)
-    h, m = divmod(m, 60)
-    return f"{str(h).zfill(2)}:{str(m).zfill(2)}:{str(s).zfill(2)}.{str(ms).zfill(3)}"
-
