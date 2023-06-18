@@ -1,6 +1,5 @@
-import re
+from nonebot.adapters import Bot, Event
 
-from nonebot.adapters import Bot, Event, MessageSegment
 from ..adapters import unified
 
 
@@ -39,22 +38,6 @@ async def send_group_forward_message(content: list[str], bot: Bot, event: Event,
         await bot.send(event, unified.adapters.onebot_v12.Message(msg))
         return
     await bot.send(event, msg)
-
-
-def is_url(msg: MessageSegment | str) -> bool:
-    """检测是否为URL"""
-    if isinstance(msg, str):
-        return re.match(r'^https?://', msg) is not None
-    elif msg.is_text():
-        msg = str(msg)
-        return re.match(r'^https?://', msg) is not None
-    elif isinstance(msg, unified.adapters.kook.MessageSegment):
-        if msg.type == 'kmarkdown':
-            msg = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
-            return re.match(r'^https?://', msg) is not None
-        elif msg.type == 'text':
-            return re.match(r'^https?://', msg.plain_text()) is not None
-    return False
 
 
 def seconds_to_time(seconds: float) -> str:

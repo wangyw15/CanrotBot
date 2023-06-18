@@ -6,7 +6,7 @@ from nonebot.adapters import MessageSegment, Bot, Event
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
-from ..libraries import anime, universal_adapters
+from ..libraries import anime
 from ..adapters import unified
 
 
@@ -57,7 +57,7 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
             img_url = msg.data['file_key'].strip()
     elif isinstance(msg, unified.adapters.kook.MessageSegment) and msg.type == 'kmarkdown':
         img_url = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
-    elif universal_adapters.is_url(msg):
+    elif unified.util.is_url(msg):
         img_url = msg.strip()
     if img_url:
         search_resp = await anime.search_anime_by_image(img_url)
@@ -78,8 +78,8 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
             final_msg.append(f'trace.moe 信息:\n'
                              f'番剧文件名: {tracemoe_data["filename"]}\n'
                              f'第 {tracemoe_data["episode"]} 集\n'
-                             f'时间: {universal_adapters.seconds_to_time(tracemoe_data["from"])}~'
-                             f'{universal_adapters.seconds_to_time(tracemoe_data["to"])}\n'
+                             f'时间: {unified.util.seconds_to_time(tracemoe_data["from"])}~'
+                             f'{unified.util.seconds_to_time(tracemoe_data["to"])}\n'
                              f'AniList 链接: https://anilist.co/anime/{tracemoe_data["anilist"]}\n')
             await final_msg.send(bot, event)
             return
@@ -91,7 +91,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     if len(args) == 2:
         if args[0].lower() == 'search' or args[0] == '搜索':
             # 从不同的地方获取信息
-            if (isinstance(args[1], MessageSegment) and args[1].type == 'image') or universal_adapters.is_url(args[1]):
+            if (isinstance(args[1], MessageSegment) and args[1].type == 'image') or unified.util.is_url(args[1]):
                 await _search_anime_by_image(args[1], bot, event)
                 await _anime_handler.finish()
             name, data, possibility = anime.search_anime_by_name(' '.join(args[1:]))

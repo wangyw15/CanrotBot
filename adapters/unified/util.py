@@ -1,10 +1,11 @@
-from nonebot import get_driver
-from nonebot.adapters import Bot, Event
+import re
 from typing import Any
+
 import httpx
+from nonebot import get_driver
+from nonebot.adapters import Bot, Event, MessageSegment
 
 from . import Detector, adapters
-
 
 _driver = get_driver()
 _global_config = _driver.config
@@ -125,6 +126,30 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
             user_info = await bot.user_view(user_id=bot.self_id, group_id=event.group_id)
             return user_info.nickname
     return default
+
+
+def is_url(msg: MessageSegment | str) -> bool:
+    """检测是否为URL"""
+    if isinstance(msg, str):
+        return re.match(r'^https?://', msg) is not None
+    elif msg.is_text():
+        msg = str(msg)
+        return re.match(r'^https?://', msg) is not None
+    elif isinstance(msg, adapters.kook.MessageSegment):
+        if msg.type == 'kmarkdown':
+            msg = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
+            return re.match(r'^https?://', msg) is not None
+        elif msg.type == 'text':
+            return re.match(r'^https?://', msg.plain_text()) is not None
+    return False
+
+
+def seconds_to_time(seconds: float) -> str:
+    ms = int(seconds % 1 * 1000)
+    seconds = int(seconds)
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    return f"{str(h).zfill(2)}:{str(m).zfill(2)}:{str(s).zfill(2)}.{str(ms).zfill(3)}"
 
 
 __all__ = ['fetch_bytes_data',
