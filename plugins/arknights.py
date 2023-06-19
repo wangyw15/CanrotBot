@@ -6,7 +6,8 @@ from nonebot.adapters import MessageSegment, Bot, Event
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
-from ..libraries import arknights, economy, user
+from ..libraries import arknights
+from ..essentials.libraries import user, economy
 from ..adapters import unified
 
 __plugin_meta__ = PluginMetadata(

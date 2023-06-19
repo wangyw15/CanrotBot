@@ -3,8 +3,8 @@ from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
 
 from ..adapters import unified
-from ..libraries import user, economy, kuji
-
+from ..libraries import kuji
+from ..essentials.libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='浅草寺',

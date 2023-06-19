@@ -5,7 +5,7 @@ from nonebot.plugin import PluginMetadata
 import httpx
 import random
 
-from ..libraries import user, economy
+from ..essentials.libraries import user, economy
 from ..adapters import unified
 
 __plugin_meta__ = PluginMetadata(

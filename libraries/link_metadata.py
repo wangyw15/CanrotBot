@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from .config import get_config
+from ..essentials.libraries.config import get_config
 
 youtube_id_pattern = r'(?:https?:\/\/)?(?:youtu\.be\/|(?:\w{3}\.)?youtube\.com\/watch\?.*v=)([a-zA-Z0-9-_]+)'
 

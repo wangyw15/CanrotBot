@@ -7,8 +7,8 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from ..adapters import unified
-from ..libraries import mltd, user, economy
-
+from ..libraries import mltd
+from ..essentials.libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='MLTD',

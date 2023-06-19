@@ -6,7 +6,7 @@ from sqlite3 import OperationalError
 from nonebot.adapters import Bot, Event
 
 from .data import data_cursor, data_db
-from ..adapters import unified
+from ...adapters import unified
 
 
 # initialize the database

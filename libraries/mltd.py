@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, Tuple
 
-from . import render_by_browser
+from ..essentials.libraries import render_by_browser
 from ..adapters import unified
 
 _mltd_assets_path = Path(__file__).parent.parent / 'assets' / 'mltd'

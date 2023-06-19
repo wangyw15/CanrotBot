@@ -6,8 +6,9 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from ..adapters import unified
-from ..libraries import muse_dash, user
-from ..libraries.config import get_config
+from ..libraries import muse_dash
+from ..essentials.libraries import user
+from ..essentials.libraries.config import get_config
 
 __plugin_meta__ = PluginMetadata(
     name='MuseDash查分',

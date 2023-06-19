@@ -5,7 +5,7 @@ from typing import Tuple, Literal
 
 from nonebot import logger
 
-from .render_by_browser import render_html
+from ..essentials.libraries.render_by_browser import render_html
 
 _fortune_assets_path = Path(__file__).parent.parent / "assets/fortune"
 _fortune_assets_version: str = ''

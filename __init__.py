@@ -8,7 +8,7 @@ from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
 from .adapters import unified
-from .libraries import config, data, help
+from .essentials.libraries import config, help, data
 
 __plugin_meta__ = PluginMetadata(
     name='CanrotBot',
@@ -19,6 +19,10 @@ __plugin_meta__ = PluginMetadata(
 
 
 def canrot_load_plugins() -> None:
+    # 基础插件
+    essentianls_plugins_path = (Path(__file__).parent / 'essentials' / 'plugins').resolve()
+    load_plugins(str(essentianls_plugins_path))
+    # 普通插件
     plugins_path = (Path(__file__).parent / 'plugins').resolve()
     load_plugins(str(plugins_path))
 
