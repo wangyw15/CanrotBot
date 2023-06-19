@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from nonebot import logger
+from nonebot import logger, load_plugins
 
 _random_text_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'random_text'
 _random_text_data: dict[str, list] = {}
@@ -20,4 +20,5 @@ load_random_text_data()
 def get_data(name: str) -> list:
     return _random_text_data[name]
 
-from . import *
+
+load_plugins(str(Path(__file__).parent))
