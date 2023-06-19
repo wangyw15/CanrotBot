@@ -1,12 +1,13 @@
+import random
+
+import jieba
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-import jieba
-import random
 
+from . import random_text
 from ..adapters import unified
-from ..libraries import random_text
 
 __plugin_meta__ = PluginMetadata(
     name='实验性功能',

@@ -7,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from pydantic import BaseModel
 
-from ..libraries import random_text
+from . import random_text
 
 __plugin_meta__ = PluginMetadata(
     name='Wordle',

@@ -7,7 +7,7 @@ from . import render_by_browser
 from ...adapters import unified
 
 
-_help_assets_path = Path(__file__).parent.parent / 'assets' / 'help'
+_help_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'help'
 _plugin_metadatas: list[dict[str, str]] = []
 _help_text: str | None = None
 _help_image: bytes | None = None

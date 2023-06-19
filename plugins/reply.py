@@ -8,8 +8,8 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel, validator
 
+from . import random_text
 from ..adapters import unified
-from ..libraries import random_text
 
 
 # config
