@@ -70,6 +70,14 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             if unified.Detector.is_onebot(bot):
                 await _send_music_card(bot, event, 'qq', music_id)
                 await _qq_music_handler.finish()
+        else:
+            search_result = await music.search_netease_music(keyword)
+            if search_result:
+                music_id = search_result[0]['id']
+                if unified.Detector.is_onebot(bot):
+                    await _send_music_card(bot, event, '163', music_id)
+                    await _qq_music_handler.finish()
+        await _qq_music_handler.finish('没找到这首歌喵~')
     else:
         await _qq_music_handler.finish('请输入歌曲名')
 
@@ -87,5 +95,13 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             if unified.Detector.is_onebot(bot):
                 await _send_music_card(bot, event, '163', music_id)
                 await _netease_music_handler.finish()
+        else:
+            search_result = await music.search_qq_music(keyword)
+            if search_result:
+                music_id = search_result[0]['id']
+                if unified.Detector.is_onebot(bot):
+                    await _send_music_card(bot, event, 'qq', music_id)
+                    await _netease_music_handler.finish()
+        await _netease_music_handler.finish('没找到这首歌喵~')
     else:
         await _netease_music_handler.finish('请输入歌曲名')
