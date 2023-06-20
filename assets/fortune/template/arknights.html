@@ -13,14 +13,14 @@
         }
 
         body {
+            --size: 480px;
             margin: 0;
             padding: 0;
-            width: 480px;
-            height: 480px;
+            width: var(--size);
+            height: var(--size);
         }
 
         #main {
-            --border-width: 15px;
             position: relative;
             width: 100%;
             height: 100%;
@@ -36,7 +36,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            border: solid 15px rgba(0, 0, 0, 0.5);
+            border: solid 1rem rgba(0, 0, 0, 0.5);
             box-sizing: border-box;
         }
 
@@ -52,79 +52,75 @@
         .fortune-container {
             --container-color: rgb(58, 58, 58);
             position: absolute;
-            left: 43px;
-            top: 59px;
-            width: 193px;
-            height: 395px;
-            border: solid 4px var(--container-color);
+            left: 9%;
+            top: 12%;
+            width: 40%;
+            height: 82%;
+            border: solid 0.3rem var(--container-color);
             box-sizing: border-box;
             background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 2;
         }
 
         .fortune-inner-box {
-            position: absolute;
-            left: 8px;
-            top: 9px;
-            width: 169px;
-            height: 369px;
-            border: solid 3px var(--container-color);
+            --fortune-inner-box-margin: 0.5rem;
+            width: calc(100% - var(--fortune-inner-box-margin));
+            height: calc(100% - var(--fortune-inner-box-margin));
+            border: solid 0.2rem var(--container-color);
             box-sizing: border-box;
             background-color: white;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-content: center;
+            align-items: center;
         }
 
         .title-container {
+            width: 100%;
+            height: 15%;
             font-family: 'Mamelon', serif;
-            font-size: 45px;
+            font-size: 3rem;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
             background-color: var(--container-color);
             color: #F5F5F5;
-            height: 55px;
         }
 
         .fortune-label {
+            --fortune-label-letter-spacing: 1.5rem;
             font-family: 'sakura', serif;
-            font-size: 25px;
-            display: flex;
-            position: absolute;
-            left: 26px;
-            top: 64px;
-            width: 136px;
-            letter-spacing: 30px;
-            text-indent: 28px;
-            border-bottom: solid black 3px;
+            font-size: 1.5rem;
+            text-align: center;
+            letter-spacing: var(--fortune-label-letter-spacing);
+            text-indent: var(--fortune-label-letter-spacing);
+            border-bottom: solid black 0.15rem;
+            width: 85%;
         }
 
         .content-container {
             display: flex;
             align-items: center;
-            position: absolute;
-            left: 11px;
-            top: 102px;
-            height: 272px;
-            width: 162px;
+            padding: 0.5rem;
+            height: 100%;
+            width: 100%;
             color: #323232;
             font-family: 'sakura', serif;
-            font-size: 25px;
+            font-size: 1.6rem;
             writing-mode: vertical-rl;
         }
 
         .character {
             position: absolute;
-            left: 92px;
-            top: 23px;
-            width: 516px;
+            left: 20%;
+            top: 5%;
+            width: 100%;
             z-index: 1;
-        }
-
-        .reference {
-            position: absolute;
-            left: calc(0px - var(--border-width));
-            top: calc(0px - var(--border-width));
-            opacity: 0%;
         }
     </style>
 </head>
@@ -137,12 +133,12 @@
             <div class="title-container">
                 {{ title }}
             </div>
-        </div>
-        <div class="fortune-label">
-            運勢
-        </div>
-        <div class="content-container">
-            {{ content }}
+            <div class="fortune-label">
+                運勢
+            </div>
+            <div class="content-container">
+                {{ content }}
+            </div>
         </div>
     </div>
     <img class="character" :src="`../../arknights/ArknightsGameResource/skin/${key}_1b.png`" />
