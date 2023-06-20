@@ -29,8 +29,8 @@
 
 # 功能列表
 
-|        功能         |                                            作用                                             |
-|:-----------------:|:-----------------------------------------------------------------------------------------:|
+| 功能 | 作用 |
+|:-:|:-:|
 | 番剧相关 | 现在只做了搜索番剧 |
 | 明日方舟 | 现在只做了模拟寻访 |
 | Bilibili | 可以查会员购里面的展览（现在只能查上海的） |
@@ -63,6 +63,7 @@
 | 淫语翻译机 | 把[RimoChan/yinglish](https://github.com/RimoChan/yinglish)包装成了机器人 |
 | 提取 Line 贴纸 | 发送 Line 贴纸商店链接即可 |
 | 疯狂星期四 | 随机发送疯狂星期四文案 |
+| Pixiv | 根据id发送对应图片 |
 
 # 功能说明
 
@@ -126,8 +127,8 @@ saucenao_api_key="你的 api key"
 
 # 功能或数据来源
 
-|                                                        来源                                                         |    说明     |
-|:-----------------------------------------------------------------------------------------------------------------:|:---------:|
+| 来源 | 说明 |
+|:-:|:-:|
 | [hitokoto-osc/sentences-bundle](https://github.com/hitokoto-osc/sentences-bundle) |   一言数据    |
 | [Kyomotoi/AnimeThesaurus](https://github.com/Kyomotoi/AnimeThesaurus) | 自动回复的部分数据 |
 | [FloatTech/zbpdata](https://github.com/FloatTech/zbpdata) | 自动回复等数据来源 |
