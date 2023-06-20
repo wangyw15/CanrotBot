@@ -30,7 +30,7 @@ _pixiv_headers = {
 
 
 _pixiv_handler = on_shell_command('pixiv', aliases={'Pixiv', '蓝p', '蓝P'})
-@_pixiv_handler()
+@_pixiv_handler.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if len(args) == 1 and args[0].isdigit():
         resp = await _client.get(f'https://px2.rainchan.win/json/{args[0]}')
