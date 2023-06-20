@@ -34,6 +34,11 @@ async def load_cards(force_reload: bool = False) -> None:
             _cards_for_gasha[card['rarity']].append(card)
 
 
+async def get_cards() -> list[dict]:
+    await load_cards()
+    return _cards
+
+
 async def search_card(keyword: str, force_jp: bool = False) -> dict:
     await load_cards()
     best = 0.0

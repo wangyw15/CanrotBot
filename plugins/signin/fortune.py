@@ -7,6 +7,8 @@ from nonebot import logger
 
 from ...essentials.libraries.render_by_browser import render_html
 from ..arknights import arknights
+from ..mltd import mltd
+
 
 _fortune_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'fortune'
 _fortune_assets_version: str = ''
@@ -64,6 +66,14 @@ def _generate_arknights_html(title: str, content: str) -> str:
     return html
 
 
+async def _generate_mltd_html(title: str, content: str) -> str:
+    card = random.choice(await mltd.get_cards())
+    with (_fortune_assets_path / 'template' / 'mltd.html').open('r', encoding='utf-8') as f:
+        html = f.read().replace('{{resource_key}}', card['resourceId']) \
+            .replace('{{title}}', title).replace('{{content}}', content)
+    return html
+
+
 async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jpeg'] = 'png',
                            title: str = '', content: str = '', rank: int = 0) -> Tuple[bytes, str, str, int]:
     """
@@ -86,6 +96,8 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
     # 特殊主题
     if theme == 'arknights':
         raw_content = _generate_arknights_html(title, text)
+    elif theme == 'mltd':
+        raw_content = await _generate_mltd_html(title, text)
     else:
         # 传统主题
         if theme == 'random' or theme not in _themes:
