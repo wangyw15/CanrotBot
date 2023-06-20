@@ -6,8 +6,8 @@ from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
+from essentials.libraries import util
 from . import random_text
-from adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='实验性功能',
@@ -57,8 +57,8 @@ transitions = markov_chain(_reply_data, 3)
 _generative_response_handler = on_command('generative_reponse', aliases={'gr', '生成回复'}, block=True)
 @_generative_response_handler.handle()
 async def _(bot, event, msg: Message = CommandArg()):
-    my_name = await unified.util.get_bot_name(event, bot, '我')
-    user_name = await unified.util.get_user_name(event, bot, '主人')
+    my_name = await util.get_bot_name(event, bot, '我')
+    user_name = await util.get_user_name(event, bot, '主人')
     length = 50
     if msg := msg.extract_plain_text().strip():
         length = int(msg)

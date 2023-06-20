@@ -8,6 +8,7 @@ from nonebot.plugin import PluginMetadata
 require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
 
+from essentials.libraries import util
 from essentials.libraries.data import data_cursor
 from adapters import unified
 
@@ -34,7 +35,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         if args[0].lower() == 'subscribe' or args[0] == '订阅':
             if unified.Detector.is_onebot_v11(bot):
                 bot_id = bot.self_id
-                id = unified.util.get_group_id(event)
+                id = util.get_group_id(event)
                 data_cursor.execute(f'REPLACE INTO daily_subscribers (id, bot) VALUES ({id}, {bot_id})')
                 await daily.finish('每日新闻订阅成功')
             else:
@@ -42,7 +43,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         elif args[0].lower() == 'unsubscribe' or args[0] == '退订':
             if unified.Detector.is_onebot_v11(bot):
                 bot_id = bot.self_id
-                id = unified.util.get_group_id(event)
+                id = util.get_group_id(event)
                 data_cursor.execute(f'DELETE FROM daily_subscribers WHERE id == {id} AND bot == {bot_id}')
                 await daily.finish('每日新闻退订成功')
             else:

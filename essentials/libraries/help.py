@@ -1,11 +1,11 @@
-from nonebot import get_loaded_plugins
-from typing import Tuple
-from pathlib import Path
 import json
+from pathlib import Path
+from typing import Tuple
 
+from nonebot import get_loaded_plugins
+
+from essentials.libraries import util
 from . import render_by_browser
-from adapters import unified
-
 
 _help_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'help'
 _plugin_metadatas: list[dict[str, str]] = []
@@ -26,12 +26,12 @@ async def generate_help_message(with_image: bool = True) -> Tuple[str, bytes | N
                 })
     # 文本帮助信息
     if _help_text is None:
-        _help_text = unified.util.MESSAGE_SPLIT_LINE
+        _help_text = util.MESSAGE_SPLIT_LINE
         for plugin in _plugin_metadatas:
             _help_text += f'{plugin["name"]}:\n' \
                           f'描述:\n{plugin["description"]}\n' \
                           f'用法:\n{plugin["usage"]}\n' + \
-                          unified.util.MESSAGE_SPLIT_LINE + '\n'
+                          util.MESSAGE_SPLIT_LINE + '\n'
         _help_text = _help_text.strip()
     # 图片帮助信息
     if with_image and _help_image is None:

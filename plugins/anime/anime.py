@@ -7,7 +7,7 @@ from typing import Tuple
 
 from nonebot import logger
 
-from adapters import unified
+from essentials.libraries import util
 
 _anime_offline_database_path = Path(__file__).parent.parent.parent / 'assets/anime-offline-database'
 _animes: list[dict] = []
@@ -66,7 +66,7 @@ async def search_anime_by_image(img_url: str) -> dict | None:
     :return: 番剧信息
     """
     api_url = "https://api.trace.moe/search?url={url}"
-    if data := await unified.util.fetch_json_data(api_url.format(url=urllib.parse.quote_plus(img_url))):
+    if data := await util.fetch_json_data(api_url.format(url=urllib.parse.quote_plus(img_url))):
         return data
     return None
 

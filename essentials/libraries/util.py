@@ -5,7 +5,7 @@ import httpx
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event, MessageSegment
 
-from . import Detector, adapters
+from adapters.unified import Detector, adapters
 
 _driver = get_driver()
 _global_config = _driver.config
@@ -25,17 +25,17 @@ _client.timeout = 10
 MESSAGE_SPLIT_LINE = "--------------------"
 
 
-async def fetch_bytes_data(url: str) -> bytes | None:
+async def fetch_bytes_data(url: str, *args, **kwargs) -> bytes | None:
     """从URL获取bytes数据"""
-    resp = await _client.get(url)
+    resp = await _client.get(url, *args, **kwargs)
     if resp.is_success and resp.status_code == 200:
         return resp.content
     return None
 
 
-async def fetch_json_data(url: str) -> Any | None:
+async def fetch_json_data(url: str, *args, **kwargs) -> Any | None:
     """从URL获取json数据"""
-    resp = await _client.get(url)
+    resp = await _client.get(url, *args, **kwargs)
     if resp.is_success and resp.status_code == 200:
         return resp.json()
     return None

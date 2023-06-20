@@ -6,7 +6,7 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from adapters import unified
-from essentials.libraries import user
+from essentials.libraries import user, util
 from essentials.libraries.config import get_config
 from . import muse_dash
 
@@ -31,7 +31,7 @@ async def generate_muse_dash_message(player_id: str) -> str:
                        f'平均准确率: {data["avg"]}%\n' +
                        f'上次更新: {data["last_update"]} 前\n']
             for song in data['songs']:
-                ret_msg.append(unified.util.MESSAGE_SPLIT_LINE + '\n' +
+                ret_msg.append(util.MESSAGE_SPLIT_LINE + '\n' +
                                f'[CQ:image,file={song["icon"]}]\n' +
                                f'曲目: {song["name"]} (Lv.{song["level"]})\n' +
                                f'作曲家: {song["musician"]}\n' +

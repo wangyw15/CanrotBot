@@ -11,7 +11,7 @@ from nonebot.typing import overrides
 
 from . import adapters
 from .detector import Detector
-from .util import fetch_bytes_data
+from essentials.libraries.util import fetch_bytes_data
 
 
 class MessageSegmentTypes:

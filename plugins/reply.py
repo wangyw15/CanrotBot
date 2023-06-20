@@ -8,7 +8,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel, validator
 
-from adapters import unified
+from essentials.libraries import util
 from . import random_text
 
 
@@ -109,8 +109,8 @@ auto_reply = on_regex(r'.*', rule=random_trigger, block=True, priority=100)
 async def _(event: Event, bot: Bot, args: Message = CommandArg()):
     """reply handler"""
     if msg := args.extract_plain_text():
-        my_name = await unified.util.get_bot_name(event, bot, config.reply_my_name)
-        user_name = await unified.util.get_user_name(event, bot, config.reply_sender_name)
+        my_name = await util.get_bot_name(event, bot, config.reply_my_name)
+        user_name = await util.get_user_name(event, bot, config.reply_sender_name)
         resp = generate_response(msg).format(me=my_name, name=user_name, segment='\n')
         for i in resp.split('\n'):
             await reply.send(i)
@@ -120,11 +120,11 @@ async def _(event: Event, bot: Bot, args: Message = CommandArg()):
 @auto_reply.handle()
 async def _(event: Event, bot: Bot):
     """auto reply handler"""
-    if group_id := unified.util.get_group_id(event):
+    if group_id := util.get_group_id(event):
         group_id = int(group_id)
         if group_id in config.reply_whitelist_groups:
-            my_name = await unified.util.get_bot_name(event, bot, config.reply_my_name)
-            user_name = await unified.util.get_user_name(event, bot, config.reply_sender_name)
+            my_name = await util.get_bot_name(event, bot, config.reply_my_name)
+            user_name = await util.get_user_name(event, bot, config.reply_sender_name)
             if msg := event.get_plaintext():
                 resp = generate_response(msg, False).format(me=my_name, name=user_name)
                 if resp != config.reply_unknown_response:

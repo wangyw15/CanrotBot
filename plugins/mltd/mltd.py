@@ -5,8 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, Tuple
 
-from adapters import unified
-from essentials.libraries import render_by_browser
+from essentials.libraries import render_by_browser, util
 
 _mltd_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'mltd'
 _cards: list[dict] = []
@@ -19,9 +18,9 @@ async def load_cards(force_reload: bool = False) -> None:
     global _cards, _cards_zh, _cards_last_fetch, _cards_for_gasha
     if force_reload or not _cards or not _cards_zh or not _cards_last_fetch \
             or (datetime.now() - _cards_last_fetch).total_seconds() > 3600*24:
-        _cards = await unified.util.fetch_json_data(
+        _cards = await util.fetch_json_data(
             'https://api.matsurihi.me/api/mltd/v2/cards?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true')
-        _cards_zh = await unified.util.fetch_json_data(
+        _cards_zh = await util.fetch_json_data(
             'https://api.matsurihi.me/api/mltd/v2/zh/cards?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true')
         _cards_last_fetch = datetime.now()
         # 生成卡池
@@ -70,10 +69,10 @@ async def generate_card_info_image(card: dict) -> bytes:
 
 async def get_events(time: Literal['now'] | datetime = 'now') -> list[dict] | None:
     if time == 'now':
-        return await unified.util.fetch_json_data(f'https://api.matsurihi.me/api/mltd/v2/events?at=now')
+        return await util.fetch_json_data(f'https://api.matsurihi.me/api/mltd/v2/events?at=now')
     elif isinstance(time, datetime):
         t = datetime.now().astimezone().replace(microsecond=0).isoformat()
-        return await unified.util.fetch_json_data(f'https://api.matsurihi.me/api/mltd/v2/events?at={t}')
+        return await util.fetch_json_data(f'https://api.matsurihi.me/api/mltd/v2/events?at={t}')
 
 
 async def gasha() -> Tuple[bytes, list[dict]]:
