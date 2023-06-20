@@ -37,7 +37,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         if resp.is_success and resp.status_code == 200:
             data = resp.json()
             if not data['error']:
-                imgurl = data['body']['urls']['original']
+                imgurl = data['body'][0]['urls']['original']
                 imgresp = await _client.get(imgurl, headers=_pixiv_headers)
                 if imgresp.is_success and imgresp.status_code == 200:
                     await unified.MessageSegment.image(imgresp.content).send(bot, event)
