@@ -3,7 +3,7 @@ import random
 from pathlib import Path
 from typing import Tuple, Literal
 
-from nonebot import logger, require
+from nonebot import logger
 
 from ...essentials.libraries.render_by_browser import render_html
 from ..arknights import arknights
@@ -91,7 +91,8 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
         if theme == 'random' or theme not in _themes:
             theme = random.choice(list(_themes.keys()))
         # 选择背景图
-        base_image_path = _get_random_base_image(theme).relative_to(_fortune_assets_path / 'template')
+        image_full_path = _get_random_base_image(theme)
+        base_image_path = image_full_path.parent.name + '/' + image_full_path.name
 
         # 生成 html
         with open(_fortune_assets_path / 'template' / 'default.html', 'r') as f:
