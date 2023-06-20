@@ -3,9 +3,10 @@ import random
 from pathlib import Path
 from typing import Tuple, Literal
 
-from nonebot import logger
+from nonebot import logger, require
 
 from ...essentials.libraries.render_by_browser import render_html
+from ..arknights import arknights
 
 _fortune_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'fortune'
 _fortune_assets_version: str = ''
@@ -53,6 +54,16 @@ def get_theme_key_from_name(name: str) -> str:
     return 'random'
 
 
+def _generate_arknights_html(title: str, content: str) -> str:
+    rarity = random.choice(list(arknights._arknights_gacha_operators.keys()))
+    operator: dict = random.choice(arknights._arknights_gacha_operators[rarity])
+    operator_prefab_key = operator['phases'][0]['characterPrefabKey']
+    with (_fortune_assets_path / 'template' / 'arknights.html').open('r', encoding='utf-8') as f:
+        html = f.read().replace('{{resource_key}}', operator_prefab_key)\
+            .replace('{{title}}', title).replace('{{content}}', content)
+    return html
+
+
 async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jpeg'] = 'png',
                            title: str = '', content: str = '', rank: int = 0) -> Tuple[bytes, str, str, int]:
     """
@@ -66,26 +77,32 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
 
     :return: 图片，标题，内容，运势等级
     """
-    if theme == 'random' or theme not in _themes:
-        theme = random.choice(list(_themes.keys()))
     # 选择运势内容
     copywriting = random.choice(_copywriting)
     title = title if title else copywriting['good-luck']
     rank = rank if rank else copywriting['rank']
     text = content if content else random.choice(copywriting['content'])
 
-    # 选择背景图
-    base_image_path = _get_random_base_image(theme).relative_to(_fortune_assets_path)
+    # 特殊主题
+    if theme == 'arknights':
+        raw_content = _generate_arknights_html(title, text)
+    else:
+        # 传统主题
+        if theme == 'random' or theme not in _themes:
+            theme = random.choice(list(_themes.keys()))
+        # 选择背景图
+        base_image_path = _get_random_base_image(theme).relative_to(_fortune_assets_path / 'template')
 
-    # 生成 html
-    with open(_fortune_assets_path / 'template.html', 'r') as f:
-        raw_content = f.read()
-    raw_content = raw_content \
-        .replace('{image_path}', str(base_image_path).replace('\\', '/')) \
-        .replace('{title}', title) \
-        .replace('{content}', text)
+        # 生成 html
+        with open(_fortune_assets_path / 'template' / 'default.html', 'r') as f:
+            raw_content = f.read()
+        raw_content = raw_content \
+            .replace('{image_path}', str(base_image_path).replace('\\', '/')) \
+            .replace('{title}', title) \
+            .replace('{content}', text)
+
     # 生成图片
-    bytes_data = await render_html(raw_content, str(_fortune_assets_path), image_type,
+    bytes_data = await render_html(raw_content, str(_fortune_assets_path / 'template'), image_type,
                                    viewport={'width': 480, 'height': 480})
     return bytes_data, title, text, rank
 
