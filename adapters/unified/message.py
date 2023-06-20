@@ -11,7 +11,7 @@ from nonebot.typing import overrides
 
 from . import adapters
 from .detector import Detector
-from essentials.libraries.util import fetch_bytes_data
+from essentials.libraries import util
 
 
 class MessageSegmentTypes:
@@ -83,7 +83,7 @@ class Message(BaseMessage[MessageSegment]):
         """
         if Detector.is_kook(bot):
             if isinstance(img, str):
-                img_data = await fetch_bytes_data(img)
+                img_data = await util.fetch_bytes_data(img)
                 if img_data:
                     url = await bot.upload_file(img_data)
             elif isinstance(img, Path):
@@ -150,7 +150,7 @@ class Message(BaseMessage[MessageSegment]):
                 elif seg.type == MessageSegmentTypes.IMAGE:
                     if isinstance(seg.data['file'], str):
                         # 为了能发送所有图片，这里直接下载了
-                        file_data = await fetch_bytes_data(seg.data['file'])
+                        file_data = await util.fetch_bytes_data(seg.data['file'])
                         if file_data:
                             final_msg.append(adapters.qqguild.MessageSegment.file_image(file_data))
                         else:
