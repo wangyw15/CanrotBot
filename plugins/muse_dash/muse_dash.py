@@ -5,7 +5,7 @@ from typing import Literal
 import httpx
 from bs4 import BeautifulSoup
 
-from ...essentials.libraries.render_by_browser import get_new_page
+from essentials.libraries.render_by_browser import get_new_page
 
 _client: httpx.AsyncClient | None = None
 

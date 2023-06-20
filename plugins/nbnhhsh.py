@@ -1,8 +1,8 @@
+import httpx
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-import httpx
 
 __plugin_meta__ = PluginMetadata(
     name='能不能好好说话',

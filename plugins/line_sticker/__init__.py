@@ -4,7 +4,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
 from . import line_sticker
-from ...adapters import unified
+from adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='Line 表情包下载',

@@ -1,4 +1,9 @@
+import sys
 from pathlib import Path
+
+# 能够作为单独的插件使用
+sys.path.append(str(Path(__file__).parent.resolve()))
+
 from sqlite3 import OperationalError
 
 from nonebot import on_command, load_plugins
@@ -9,6 +14,7 @@ from nonebot.plugin import PluginMetadata
 
 from .adapters import unified
 from .essentials.libraries import config, help, data
+
 
 __plugin_meta__ = PluginMetadata(
     name='CanrotBot',

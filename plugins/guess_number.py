@@ -6,7 +6,7 @@ from nonebot.params import CommandArg, Arg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
-from ..essentials.libraries import user, economy
+from essentials.libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='猜数字',

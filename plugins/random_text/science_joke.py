@@ -5,7 +5,7 @@ from nonebot.plugin import PluginMetadata
 import random
 
 from . import get_data
-from ...adapters import unified
+from adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='理科笑话',

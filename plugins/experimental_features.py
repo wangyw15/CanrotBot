@@ -7,7 +7,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from . import random_text
-from ..adapters import unified
+from adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='实验性功能',

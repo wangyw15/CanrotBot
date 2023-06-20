@@ -1,8 +1,7 @@
 import re
-
-from httpx import Response, AsyncClient
 from typing import Literal
 
+from httpx import Response, AsyncClient
 
 _client = AsyncClient()
 _projects_url = 'https://show.bilibili.com/api/ticket/project/listV3?page={page}&pagesize=20&platform=web&area={area}&p_type={project_type}&style=1'

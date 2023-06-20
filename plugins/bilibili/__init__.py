@@ -5,7 +5,7 @@ from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
-from ...adapters import unified
+from adapters import unified
 from . import bilibili
 
 __plugin_meta__ = PluginMetadata(

@@ -6,7 +6,7 @@ from typing import Tuple, Literal
 
 from nonebot import logger
 
-from ...essentials.libraries.render_by_browser import render_html
+from essentials.libraries.render_by_browser import render_html
 
 _kuji_assets_path = Path(__file__).parent.parent.parent / 'assets/kuji'
 _kuji_data: list[dict[str, str]] = []

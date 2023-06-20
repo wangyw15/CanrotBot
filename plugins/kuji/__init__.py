@@ -2,9 +2,9 @@ from nonebot import on_command
 from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
 
+from adapters import unified
+from essentials.libraries import user, economy
 from . import kuji
-from ...adapters import unified
-from ...essentials.libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='浅草寺',

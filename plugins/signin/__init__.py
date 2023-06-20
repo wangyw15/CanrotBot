@@ -7,9 +7,9 @@ from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
+from adapters import unified
+from essentials.libraries import user, economy
 from . import fortune
-from ...essentials.libraries import user, economy
-from ...adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='签到',

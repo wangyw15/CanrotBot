@@ -3,7 +3,7 @@ from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from ..libraries import user
+from essentials.libraries import user
 
 __plugin_meta__ = PluginMetadata(
     name='用户服务',

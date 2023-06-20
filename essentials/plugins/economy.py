@@ -3,7 +3,7 @@ from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from ..libraries import user, economy
+from essentials.libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='经济服务',

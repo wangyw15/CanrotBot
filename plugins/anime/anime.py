@@ -7,7 +7,7 @@ from typing import Tuple
 
 from nonebot import logger
 
-from ...adapters import unified
+from adapters import unified
 
 _anime_offline_database_path = Path(__file__).parent.parent.parent / 'assets/anime-offline-database'
 _animes: list[dict] = []

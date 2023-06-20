@@ -6,8 +6,8 @@ from nonebot.params import ShellCommandArgv, Arg, Message
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
+from adapters import unified
 from . import search_image
-from ...adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name="识图",

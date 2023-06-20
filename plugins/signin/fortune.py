@@ -5,7 +5,7 @@ from typing import Tuple, Literal
 
 from nonebot import logger
 
-from ...essentials.libraries.render_by_browser import render_html
+from essentials.libraries.render_by_browser import render_html
 from ..arknights import arknights
 from ..mltd import mltd
 

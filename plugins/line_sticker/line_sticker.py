@@ -2,7 +2,7 @@ from typing import Tuple
 
 from bs4 import BeautifulSoup
 
-from ...adapters import unified
+from adapters import unified
 
 
 async def get_line_sticker(sticker_id: str) -> Tuple[str, bytes]:

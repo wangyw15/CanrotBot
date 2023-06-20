@@ -5,8 +5,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, Tuple
 
-from ...adapters import unified
-from ...essentials.libraries import render_by_browser
+from adapters import unified
+from essentials.libraries import render_by_browser
 
 _mltd_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'mltd'
 _cards: list[dict] = []

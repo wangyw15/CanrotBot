@@ -5,8 +5,8 @@ from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
+from adapters import unified
 from . import youtube_id_pattern, fetch_youtube_data, fetch_youtube_thumbnail
-from ...adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='链接元数据',

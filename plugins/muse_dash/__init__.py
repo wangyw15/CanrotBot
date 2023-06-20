@@ -5,10 +5,10 @@ from nonebot.adapters import MessageSegment, Bot, Event
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
+from adapters import unified
+from essentials.libraries import user
+from essentials.libraries.config import get_config
 from . import muse_dash
-from ...adapters import unified
-from ...essentials.libraries import user
-from ...essentials.libraries.config import get_config
 
 __plugin_meta__ = PluginMetadata(
     name='MuseDash查分',

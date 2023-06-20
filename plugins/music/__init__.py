@@ -7,8 +7,8 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
+from adapters import unified
 from . import music
-from ...adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='音乐插件',

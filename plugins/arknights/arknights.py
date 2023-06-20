@@ -5,7 +5,7 @@ from typing import Tuple
 
 from nonebot import logger
 
-from ...essentials.libraries import render_by_browser
+from essentials.libraries import render_by_browser
 
 _arknights_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'arknights'
 _arknights_all_characters: dict[str, dict] = {}

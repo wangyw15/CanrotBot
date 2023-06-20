@@ -1,12 +1,13 @@
+import random
+
+import httpx
 from nonebot import on_command
 from nonebot.adapters import Message, Bot, Event
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-import httpx
-import random
 
-from ..essentials.libraries import user, economy
-from ..adapters import unified
+from adapters import unified
+from essentials.libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='waifu',

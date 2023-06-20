@@ -7,7 +7,7 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from . import anime
-from ...adapters import unified
+from adapters import unified
 
 
 __plugin_meta__ = PluginMetadata(

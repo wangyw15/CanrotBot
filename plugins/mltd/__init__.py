@@ -6,9 +6,9 @@ from nonebot.adapters import MessageSegment, Bot, Event
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
+from adapters import unified
+from essentials.libraries import user, economy
 from . import mltd
-from ...adapters import unified
-from ...essentials.libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='MLTD',

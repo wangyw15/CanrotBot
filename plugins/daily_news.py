@@ -8,8 +8,8 @@ from nonebot.plugin import PluginMetadata
 require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
 
-from ..essentials.libraries.data import data_cursor
-from ..adapters import unified
+from essentials.libraries.data import data_cursor
+from adapters import unified
 
 
 __plugin_meta__ = PluginMetadata(

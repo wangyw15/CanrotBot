@@ -4,7 +4,7 @@ import httpx
 from nonebot import get_driver
 from pydantic import BaseModel, validator
 
-from ...adapters import unified
+from adapters import unified
 
 
 class SearchImageConfig(BaseModel):
