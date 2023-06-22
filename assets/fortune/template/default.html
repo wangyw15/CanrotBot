@@ -16,7 +16,7 @@
         }
         .main {
             display: block;
-            background: url("../image/{image_path}");
+            background: url("../image/{{image_path}}");
             background-size: cover;
             width: 480px;
             height: 480px;
@@ -49,8 +49,8 @@
 </head>
 <body>
 <div class="main">
-    <div class="title">{title}</div>
-    <div class="content">{content}</div>
+    <div class="title">{{title}}</div>
+    <div class="content">{{content}}</div>
 </div>
 </body>
 </html>
