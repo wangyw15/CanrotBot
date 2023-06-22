@@ -2,7 +2,7 @@ import urllib.parse
 
 import httpx
 from nonebot import get_driver
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 from adapters import unified
 from essentials.libraries import util
@@ -12,18 +12,6 @@ class SearchImageConfig(BaseModel):
     canrot_proxy: str = ""
     saucenao_api_key: str = ""
     search_result_count: int = 1
-
-    @validator("saucenao_api_key")
-    def saucenao_api_key_validator(cls, v):
-        if (not v) or (not isinstance(v, str)):
-            raise ValueError("saucenao_api_key must be a str")
-        return v
-
-    @validator("search_result_count")
-    def search_result_count_validator(cls, v):
-        if (not v) or (not isinstance(v, int)):
-            raise ValueError("search_result_count must be a int")
-        return v
 
 
 _config = SearchImageConfig.parse_obj(get_driver().config)

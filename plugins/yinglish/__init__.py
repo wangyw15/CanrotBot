@@ -4,7 +4,7 @@ from nonebot import get_driver, on_shell_command
 from nonebot.adapters import MessageSegment
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 from . import yinglish
 
@@ -18,12 +18,6 @@ __plugin_meta__ = PluginMetadata(
 # config
 class YinglishConfig(BaseModel):
     yinglish_rate: float = 1.0
-    
-    @validator('yinglish_rate')
-    def yinglish_rate_validator(cls, v):
-        if not isinstance(v, float) or v < 0 or v > 1.0:
-            raise ValueError('yinglish_rate must be a float between 0.0 and 1.0')
-        return v
 
 
 _config = YinglishConfig.parse_obj(get_driver().config)

@@ -6,7 +6,7 @@ from nonebot import get_driver, on_command, on_regex
 from nonebot.adapters import Message, Bot, Event
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 from essentials.libraries import util
 from . import random_text
@@ -15,28 +15,11 @@ from . import random_text
 # config
 class ReplyConfig(BaseModel):
     reply_unknown_response: str = '我不知道怎么回答你喵~'
-    reply_auto_rate: float = 1.0
+    reply_auto_rate: float = 1.0  # 0~1
     reply_my_name: str = '我'
     reply_sender_name: str = '主人'
     reply_whitelist_groups: list[int] = []
 
-    @validator('reply_unknown_response')
-    def reply_unknown_response_validator(cls, v):
-        if not isinstance(v, str):
-            raise ValueError('reply_unknown_response must be a str')
-        return v
-    
-    @validator('reply_auto_rate')
-    def reply_auto_rate_validator(cls, v):
-        if not isinstance(v, float) or v < 0 or v > 1.0:
-            raise ValueError('reply_auto_rate must be a float between 0.0 and 1.0')
-        return v
-    
-    @validator('reply_whitelist_groups')
-    def reply_whitelist_groups_validator(cls, v):
-        if not isinstance(v, list):
-            raise ValueError('reply_whitelist_groups must be a list')
-        return v
 
 config = ReplyConfig.parse_obj(get_driver().config)
 

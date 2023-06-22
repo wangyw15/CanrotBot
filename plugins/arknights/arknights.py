@@ -9,7 +9,7 @@ from essentials.libraries import render_by_browser
 
 _arknights_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'arknights'
 _arknights_all_characters: dict[str, dict] = {}
-_arknights_gacha_operators: dict[int, list[dict]] = {}
+arknights_gacha_operators: dict[int, list[dict]] = {}
 _arknights_operator_professions = ['PIONEER', 'WARRIOR', 'SNIPER', 'CASTER', 'SUPPORT', 'MEDIC', 'SPECIAL', 'TANK']
 
 
@@ -28,14 +28,14 @@ def _load_arknights_data() -> None:
 
     # generate gacha operators
     for k, v in _arknights_all_characters.items():
-        if v['rarity'] not in _arknights_gacha_operators:
-            _arknights_gacha_operators[v['rarity']] = []
+        if v['rarity'] not in arknights_gacha_operators:
+            arknights_gacha_operators[v['rarity']] = []
         if v['profession'] not in _arknights_operator_professions:
             continue
         if not v['itemObtainApproach'] == '招募寻访':
             continue
-        _arknights_gacha_operators[v['rarity']].append(v)
-    logger.info(f'arknights gacha operators: {len(_arknights_gacha_operators)}')
+        arknights_gacha_operators[v['rarity']].append(v)
+    logger.info(f'arknights gacha operators: {len(arknights_gacha_operators)}')
 
 
 _load_arknights_data()
@@ -66,7 +66,7 @@ async def generate_gacha(last_5_times: int = 0) -> Tuple[bytes, list[dict]]:
             rarity = 3
         else:
             rarity = 2
-        characters.append(random.choice(_arknights_gacha_operators[rarity]))
+        characters.append(random.choice(arknights_gacha_operators[rarity]))
 
     # 生成 html
     with (_arknights_assets_path / 'gacha.html').open('r', encoding='utf-8') as f:

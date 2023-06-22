@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-# 能够作为单独的插件使用
+# 能够作为单独插件使用
 sys.path.append(str(Path(__file__).parent.resolve()))
 
 from sqlite3 import OperationalError

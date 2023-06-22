@@ -3,7 +3,7 @@ from nonebot.adapters import Message, Bot, Event
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 from adapters import unified
 from . import steam
@@ -22,18 +22,6 @@ class SteamConfig(BaseModel):
     """
     steam_region: str = 'cn'
     steam_language: str = 'zh-cn'
-    
-    @validator('steam_region')
-    def steam_region_validator(cls, v):
-        if (not isinstance(v, str)) or (not v):
-            raise ValueError('steam_region must be a str')
-        return v
-    
-    @validator('steam_language')
-    def steam_language_validator(cls, v):
-        if (not isinstance(v, str)) or (not v):
-            raise ValueError('steam_language must be a str')
-        return v
 
 
 _steam_config = SteamConfig.parse_obj(get_driver().config)
