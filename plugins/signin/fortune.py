@@ -5,8 +5,8 @@ from typing import Tuple, Literal
 
 from nonebot import logger
 
-import azurlane
 from essentials.libraries.render_by_browser import render_html
+from . import azurlane
 from ..arknights import arknights
 from ..mltd import mltd
 
