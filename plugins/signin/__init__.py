@@ -69,7 +69,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
 
         title = user.get_data_by_uid(uid, 'signin_fortune_title')
         content = user.get_data_by_uid(uid, 'signin_fortune_content')
-        if theme == 'random':
+        if theme == 'random' and user.get_data_by_uid(uid, 'signin_fortune_image'):
             img = base64.b64decode(user.get_data_by_uid(uid, 'signin_fortune_image'))
         else:
             # 重新按内容生成图片
