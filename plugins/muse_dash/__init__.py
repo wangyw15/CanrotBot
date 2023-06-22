@@ -7,7 +7,6 @@ from nonebot.plugin import PluginMetadata
 
 from adapters import unified
 from essentials.libraries import user, util
-from essentials.libraries.config import get_config
 from . import muse_dash
 
 __plugin_meta__ = PluginMetadata(
@@ -16,8 +15,6 @@ __plugin_meta__ = PluginMetadata(
     usage='/<md|muse-dash|muse_dash|喵斯|喵斯快跑> [功能]\n功能: \n<help|帮助>: 显示此帮助信息\n<bind|绑定> <玩家名|id>: 绑定 MuseDash.moe 账号\n<unbind|解绑>: 解绑 MuseDash.moe 账号\n<玩家名>: 查询玩家数据\n<me|我|我的|info|信息>\n/<md|muse-dash|muse_dash|喵斯|喵斯快跑>: 查询已绑定账号的数据',
     config=None
 )
-
-muse_dash.init_web_client(get_config('canrot_proxy'))
 
 
 async def generate_muse_dash_message(player_id: str) -> str:

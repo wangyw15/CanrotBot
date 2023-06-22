@@ -41,6 +41,14 @@ async def fetch_json_data(url: str, *args, **kwargs) -> Any | None:
     return None
 
 
+async def fetch_text_data(url: str, *args, **kwargs) -> str | None:
+    """从URL获取字符串"""
+    resp = await _client.get(url, *args, **kwargs)
+    if resp.is_success and resp.status_code == 200:
+        return resp.text
+    return None
+
+
 def get_group_id(event: Event) -> str | None:
     """从不同的事件中获取群ID"""
     if isinstance(event, adapters.onebot_v11.GroupMessageEvent) \
@@ -154,6 +162,7 @@ def seconds_to_time(seconds: float) -> str:
 
 __all__ = ['fetch_bytes_data',
            'fetch_json_data',
+           'fetch_text_data',
            'get_group_id',
            'get_bot_name',
            'get_user_name',

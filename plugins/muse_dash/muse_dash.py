@@ -2,40 +2,21 @@ import asyncio
 import re
 from typing import Literal
 
-import httpx
 from bs4 import BeautifulSoup
 
-from essentials.libraries.render_by_browser import get_new_page
-
-_client: httpx.AsyncClient | None = None
-
-
-def init_web_client(proxy: str = None) -> None:
-    global _client
-    if proxy:
-        _client = httpx.AsyncClient(proxies=proxy)
-    else:
-        _client = httpx.AsyncClient()
-    _client.timeout = 10
+from essentials.libraries import render_by_browser, util
 
 
 async def search_muse_dash_player_id(player_name: str) -> str | None:
-    if not _client:
-        return None
-    resp = await _client.get(f'https://api.musedash.moe/search/{player_name}')
-    if resp.status_code == 200:
-        data: list[list[str]] = resp.json()
-        if data and len(data) != 0 and data[0][0] == player_name:
-            return data[0][1]
+    data: list[list[str]] = await util.fetch_json_data(f'https://api.musedash.moe/search/{player_name}')
+    if data and len(data) != 0 and data[0][0] == player_name:
+        return data[0][1]
     return None
 
 
 async def fetch_muse_dash_player_data(player_id: str) -> dict | None:
-    if not _client:
-        return None
-    resp = await _client.get(f'https://musedash.moe/player/{player_id}?lang=ChineseS')
-    if resp.status_code == 200:
-        return _parse_muse_dash_page(resp.text)
+    if txt := await util.fetch_text_data(f'https://musedash.moe/player/{player_id}?lang=ChineseS'):
+        return _parse_muse_dash_page(txt)
     return None
 
 
@@ -76,7 +57,7 @@ def _parse_muse_dash_page(content: str) -> dict:
 
 
 async def generate_muse_dash_player_image(player_id: str, image_type: Literal['png', 'jpeg'] = 'png') -> bytes:
-    page = await get_new_page(viewport={'width': 1000, 'height': 2250})
+    page = await render_by_browser.get_new_page(viewport={'width': 1000, 'height': 2250})
     await page.goto(f'https://musedash.moe/player/{player_id}', wait_until='networkidle')
     await page.evaluate("document.querySelector('.navbar').remove()")
     ret = await page.screenshot(type=image_type)
@@ -91,7 +72,6 @@ async def _test():
 if __name__ == '__main__':
     asyncio.run(_test())
 
-__all__ = ['init_web_client',
-           'search_muse_dash_player_id',
+__all__ = ['search_muse_dash_player_id',
            'fetch_muse_dash_player_data',
            'generate_muse_dash_player_image']
