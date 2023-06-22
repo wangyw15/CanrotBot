@@ -50,6 +50,7 @@ def _get_random_base_image(theme: str = 'random') -> Path:
 
 
 def get_theme_key_from_name(name: str) -> str:
+    name = name.lower()
     for k, v in _themes.items():
         if name == k or name in v:
             return k
