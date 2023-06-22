@@ -84,6 +84,10 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
 
     :return: 图片，标题，内容，运势等级
     """
+    # 选定主题
+    if theme == 'random' or theme not in _themes:
+        theme = random.choice(list(_themes.keys()))
+
     # 选择运势内容
     copywriting = random.choice(_copywriting)
     title = title if title else copywriting['good-luck']
@@ -98,9 +102,7 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
     elif theme == 'azurlane':
         raw_content = await azurlane.generate_fortune_html()
     else:
-        # 传统主题
-        if theme == 'random' or theme not in _themes:
-            theme = random.choice(list(_themes.keys()))
+        # 普通主题
         # 选择背景图
         image_full_path = _get_random_base_image(theme)
         base_image_path = image_full_path.parent.name + '/' + image_full_path.name
