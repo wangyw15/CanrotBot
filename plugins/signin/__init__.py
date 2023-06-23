@@ -11,6 +11,7 @@ from adapters import unified
 from essentials.libraries import user, economy
 from . import fortune
 
+
 __plugin_meta__ = PluginMetadata(
     name='签到',
     description='每日签到，能够抽签和获得积分',
@@ -23,7 +24,7 @@ _signin_handler = on_shell_command('signin', aliases={'签到', '每日签到', 
 @_signin_handler.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     # 查看所有主题
-    if len(args) == 1 and args[0] in ['查看主题', 'listtheme', 'listthemes', 'list_theme', 'list_themes']:
+    if len(args) == 1 and args[0] in ['查看主题', 'listtheme', 'listthemes', 'list_theme', 'list_themes', 'themes']:
         await _signin_handler.finish('所有主题：\n\n' + '\n'.join(fortune.get_themes()))
 
     # 获取 uid
@@ -35,7 +36,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     # 设置主题
     theme = 'random'
     if len(args) == 1:
-        theme = fortune.get_theme_key_from_name(args[0])
+        theme = args[0]
 
     # 判断是否签到过
     last_signin = user.get_data_by_uid(uid, 'signin_date')

@@ -1,11 +1,10 @@
 import random
 from datetime import datetime
-from pathlib import Path
 
 import httpx
 from bs4 import BeautifulSoup
 
-_fortune_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'fortune'
+from . import fortune
 
 _ships: dict[str, str] = {}
 _ships_last_fetch: datetime | None = None
@@ -38,8 +37,12 @@ async def get_random_ship_image_url() -> str | None:
 
 
 async def generate_fortune_html() -> str:
-    with (_fortune_assets_path / 'template' / 'azurlane.html').open('r', encoding='utf-8') as f:
+    with (fortune.fortune_assets_path / 'template' / 'azurlane.html').open('r', encoding='utf-8') as f:
         return f.read().replace('{{image}}', await get_random_ship_image_url())
+
+
+# 注册主题
+fortune.register_theme('azurlane', generate_fortune_html, ["碧蓝航线", "碧蓝", "azure", "Azure", "AzurLane", "blhx"])
 
 
 async def main():
