@@ -35,6 +35,7 @@ def dice_expression(expr: str) -> Tuple[int, str]:
     复杂骰子表达式，如d10+1+2d6
 
     :param expr: 骰子表达式
+    :return: (计算结果, 计算后的表达式)
     """
     expr = expr.lower()
     expr_arr = list(expr)
