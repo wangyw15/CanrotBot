@@ -5,6 +5,7 @@ from . import dice
 
 
 _dice_handler = on_regex(r'((\d+)?d(\d+)|\d+)(\+((\d+)?d(\d+)|\d+))*', block=True)
-@_dice_handler.handler()
+@_dice_handler.handle()
 async def _(state: T_State):
-    await _dice_handler.finish(str(dice.dice_command(state['_matched_str'])))
+    command = state['_matched_str']
+    await _dice_handler.finish(command + ' = ' + str(dice.dice_command(command)))
