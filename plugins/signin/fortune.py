@@ -31,7 +31,7 @@ def _load_fortune_assets() -> None:
     # 加载主题模块
     for _, name, _ in pkgutil.iter_modules([str(Path(__file__).parent)]):
         if not name.startswith('_') and name != 'fortune':
-            importlib.import_module(f'plugins.signin.{name}')
+            importlib.import_module('.'.join(__name__.split('.')[:-1]) + f'.{name}')
             logger.info(f'Loaded fortune theme plugin: {name}')
 
 
