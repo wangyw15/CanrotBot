@@ -37,18 +37,16 @@ def dice_expression(expr: str) -> Tuple[int, str]:
     :param expr: 骰子表达式
     """
     expr = expr.lower()
-    calculated_expr = ''
-    simple_exp = ''
-    for c in expr:
-        if c.isdigit() or c in ['d']:
-            simple_exp += c
-        else:
-            if simple_exp:
-                calculated_expr += str(simple_dice_expression(simple_exp))
-                simple_exp = ''
-            calculated_expr += c
-    if simple_exp:
-        calculated_expr += str(simple_dice_expression(simple_exp))
+    expr_arr = list(expr)
+    simple_seg: list[Tuple[Tuple, str]] = []  # 简单骰子表达式的位置和内容
+    # 找出所有骰子表达式
+    for i in re.finditer(r'((\d+)?[Dd](\d+)|\d+)', expr):
+        simple_seg.append((i.span(), i.group()))
+    simple_seg.reverse()  # 从后往前替换，避免替换后索引变化
+    # 替换骰子表达式为数字
+    for i in simple_seg:
+        expr_arr[i[0][0]:i[0][1]] = [str(simple_dice_expression(i[1]))]
+    calculated_expr = ''.join(expr_arr)  # 计算后的表达式
     return eval(calculated_expr), calculated_expr
 
 
