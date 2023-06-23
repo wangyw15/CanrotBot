@@ -1,4 +1,6 @@
 import random
+import re
+from typing import Tuple
 
 
 def simple_dice(a: int, b: int) -> int:
@@ -11,31 +13,43 @@ def simple_dice(a: int, b: int) -> int:
     return random.randint(a, b)
 
 
-def simple_dice_command(command: str) -> int:
+def simple_dice_expression(expr: str) -> int:
     """
-    简单骰子指令，如1d10，2d6，d100
+    简单骰子表达式，如1d10，2d6，d100
 
-    :param command: 骰子指令
+    :param expr: 骰子表达式
     """
-    if command.isdigit():
-        return int(command)
-    command = command.lower()
+    if expr.isdigit():
+        return int(expr)
+    expr = expr.lower()
     # 不指定次数
-    if command.startswith('d'):
-        return simple_dice(1, int(command[1:]))
+    if expr.startswith('d'):
+        return simple_dice(1, int(expr[1:]))
     # 指定次数
-    nums = [int(x) for x in command.split('d')]
+    nums = [int(x) for x in expr.split('d')]
     return sum(simple_dice(1, nums[1]) for _ in range(nums[0]))
 
 
-def dice_command(command: str) -> int:
+def dice_expression(expr: str) -> Tuple[int, str]:
     """
-    复杂骰子指令，如d10+1+2d6
+    复杂骰子表达式，如d10+1+2d6
 
-    :param command: 骰子指令
+    :param expr: 骰子表达式
     """
-    command = command.lower()
-    return sum(simple_dice_command(x) for x in command.split('+'))
+    expr = expr.lower()
+    calculated_expr = ''
+    simple_exp = ''
+    for c in expr:
+        if c.isdigit() or c in ['d']:
+            simple_exp += c
+        else:
+            if simple_exp:
+                calculated_expr += str(simple_dice_expression(simple_exp))
+                simple_exp = ''
+            calculated_expr += c
+    if simple_exp:
+        calculated_expr += str(simple_dice_expression(simple_exp))
+    return eval(calculated_expr), calculated_expr
 
 
 def main():
@@ -43,7 +57,7 @@ def main():
         command = input('> ')
         if command == 'exit':
             break
-        print(dice_command(command))
+        print(dice_expression(command))
 
 
 if __name__ == '__main__':

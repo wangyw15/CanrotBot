@@ -21,6 +21,6 @@ _dice_handler = on_shell_command('dice', aliases={'骰子', 'd'}, block=True)
 async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if len(args) == 1:
         if re.match(r'((\d+)?[Dd](\d+)|\d+)(\+((\d+)?[Dd](\d+)|\d+))*', args[0]):
-            await _dice_handler.finish(args[0] + ' = ' + str(dice.dice_command(args[0])))
+            await _dice_handler.finish(args[0] + ' = ' + str(dice.dice_expression(args[0])))
         else:
             await _dice_handler.finish('骰子指令格式错误')
