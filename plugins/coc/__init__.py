@@ -1,11 +1,22 @@
-from nonebot import on_regex
-from nonebot.params import T_State
+from typing import Annotated
+
+from nonebot import on_shell_command
+from nonebot.adapters import MessageSegment
+from nonebot.params import ShellCommandArgv
+from nonebot.plugin import PluginMetadata
 
 from . import dice
 
+__plugin_meta__ = PluginMetadata(
+    name='跑团工具',
+    description='只做了骰子',
+    usage='/<dice|d|骰子> <骰子指令>',
+    config=None
+)
 
-_dice_handler = on_regex(r'((\d+)?d(\d+)|\d+)(\+((\d+)?d(\d+)|\d+))*', block=True)
+
+_dice_handler = on_shell_command('dice', aliases={'骰子', 'd'}, block=True)
 @_dice_handler.handle()
-async def _(state: T_State):
-    command = state['_matched_str']
-    await _dice_handler.finish(command + ' = ' + str(dice.dice_command(command)))
+async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
+    if len(args) == 1:
+        await _dice_handler.finish(args[0] + ' = ' + str(dice.dice_command(args[0])))
