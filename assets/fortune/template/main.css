@@ -25,6 +25,13 @@ body {
     overflow: hidden;
 }
 
+.background-image {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+
 .main-border {
     position: absolute;
     left: 0;
