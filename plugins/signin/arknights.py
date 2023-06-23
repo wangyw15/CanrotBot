@@ -4,7 +4,7 @@ from . import fortune
 from ..arknights import arknights
 
 
-def _generate_arknights_html() -> str:
+async def _generate_arknights_html() -> str:
     rarity = random.choice(list(arknights.arknights_gacha_operators.keys()))
     operator: dict = random.choice(arknights.arknights_gacha_operators[rarity])
     operator_prefab_key = operator['phases'][0]['characterPrefabKey']

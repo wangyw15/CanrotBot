@@ -34,7 +34,7 @@ def _get_legacy_theme_key_from_name(name: str) -> str:
 
 
 def _html_generator(theme: str) -> Callable:
-    def _generate_html() -> str:
+    async def _generate_html() -> str:
         # 选择背景图
         image_full_path = _get_random_base_image(theme)
         base_image_path = image_full_path.parent.name + '/' + image_full_path.name

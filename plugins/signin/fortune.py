@@ -86,9 +86,9 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
 
     # 新版主题
     if t := get_theme_by_name(theme):
-        raw_content: str = _themes[t]['generator']()
+        raw_content: str = await _themes[t]['generator']()
     else:
-        raw_content: str = random.choice(list(_themes.values()))['generator']()
+        raw_content: str = await random.choice(list(_themes.values()))['generator']()
 
     # 生成图片
     raw_content = raw_content.replace('{{title}}', title).replace('{{content}}', text)
