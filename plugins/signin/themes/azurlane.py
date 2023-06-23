@@ -4,7 +4,7 @@ from datetime import datetime
 import httpx
 from bs4 import BeautifulSoup
 
-from . import fortune
+from .. import fortune
 
 _ships: dict[str, str] = {}
 _ships_last_fetch: datetime | None = None

@@ -2,13 +2,11 @@ import json
 import random
 from pathlib import Path
 from typing import Tuple, Literal, Callable
-import pkgutil
-import importlib
 
 from nonebot import logger
 
 from essentials.libraries.render_by_browser import render_html
-
+from . import themes
 
 fortune_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'fortune'
 _fortune_assets_version: str = ''
@@ -28,11 +26,7 @@ def _load_fortune_assets() -> None:
             _copywriting = data['copywriting']
             logger.info(f"Fortune copywriting: {len(_copywriting)}")
 
-    # 加载主题模块
-    for _, name, _ in pkgutil.iter_modules([str(Path(__file__).parent)]):
-        if not name.startswith('_') and name != 'fortune':
-            importlib.import_module('.'.join(__name__.split('.')[:-1]) + f'.{name}')
-            logger.info(f'Loaded fortune theme plugin: {name}')
+    themes.load_themes()
 
 
 def register_theme(name: str, html_generator: Callable, aliases: list[str] | None = None) -> None:

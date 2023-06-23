@@ -1,10 +1,11 @@
-import random
-from nonebot import logger
 import json
-from . import fortune
+import random
 from pathlib import Path
 from typing import Callable
 
+from nonebot import logger
+
+from .. import fortune
 
 _legacy_themes: dict[str, list[str]] = {}
 
