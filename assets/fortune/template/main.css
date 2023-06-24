@@ -85,7 +85,7 @@ body {
     width: 100%;
     height: 15%;
     font-family: 'Mamelon', serif;
-    font-size: 3rem;
+    font-size: calc(0.095 * var(--size));
     display: flex;
     justify-content: center;
     align-items: center;
@@ -95,12 +95,9 @@ body {
 }
 
 .fortune-label {
-    --fortune-label-letter-spacing: 1.5rem;
-    font-family: 'sakura', serif;
-    font-size: 1.5rem;
+    font-family: 'sakura', sans-serif;
+    font-size: calc(0.04 * var(--size));
     text-align: center;
-    letter-spacing: var(--fortune-label-letter-spacing);
-    text-indent: var(--fortune-label-letter-spacing);
     border-bottom: solid black 0.15rem;
     width: 85%;
 }
@@ -112,8 +109,8 @@ body {
     height: 100%;
     width: 100%;
     color: #323232;
-    font-family: 'sakura', serif;
-    font-size: 1.6rem;
+    font-family: 'sakura', sans-serif;
+    font-size: calc(0.05 * var(--size));
     writing-mode: vertical-rl;
 }
 
