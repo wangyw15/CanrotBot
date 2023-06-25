@@ -23,7 +23,7 @@ async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
         if args[0] in ['events', 'calendar', '活动', '日历']:
             data = await idolypride.get_today_events()
             if data:
-                msg = ''
+                msg = '偶像荣耀现在的活动: \n\n'
                 for i in data:
                     msg += f'{i["name"]}\n' \
                            f'开始时间: {i["start"].strftime("%Y-%m-%d")}\n' \
