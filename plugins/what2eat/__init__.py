@@ -21,3 +21,4 @@ _brand_handler = on_regex(r'我(?:想|要)(吃|喝)(\S+)', block=True)
 async def _(state: T_State):
     if state['_matched_groups'][0] == '喝':
         await _brand_handler.finish(f'可以试试 {what2eat.get_drink_by_brand(state["_matched_groups"][1])}')
+    await _brand_handler.finish()
