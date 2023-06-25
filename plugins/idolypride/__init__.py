@@ -1,9 +1,9 @@
 from typing import Annotated
+from urllib import parse
 
 from nonebot import on_shell_command
 from nonebot.adapters import MessageSegment
 from nonebot.params import ShellCommandArgv
-from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 
 from . import idolypride
@@ -29,7 +29,7 @@ async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
                            f'开始时间: {i["start"].strftime("%Y-%m-%d")}\n' \
                            f'结束时间: {i["end"].strftime("%Y-%m-%d")}\n' \
                            f'类型: {i["type"]}\n'
-                    msg += f'链接: https://wiki.biligame.com/idolypride/{i["page"]}\n' if i["page"] else ''
+                    msg += f'链接: https://wiki.biligame.com/idolypride/{parse.quote(i["page"])}\n' if i["page"] else ''
                     msg += '\n'
                 await _ip_handler.finish(msg.strip())
             else:
