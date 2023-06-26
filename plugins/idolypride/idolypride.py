@@ -1,9 +1,28 @@
-import httpx
 from datetime import datetime
-import json
 
+import httpx
+from bs4 import BeautifulSoup
 
 _client = httpx.AsyncClient()
+_idols: list[dict[str, str]] = []
+
+
+async def get_idols() -> list[dict[str, str]]:
+    global _idols
+    if not _idols:
+        resp = await _client.get('https://wiki.biligame.com/idolypride/%E8%A7%92%E8%89%B2%E5%9B%BE%E9%89%B4')
+        if resp.is_success and resp.status_code == 200:
+            soup = BeautifulSoup(resp.text)
+            for group in soup.select('div.char'):
+                group_name = group.select_one('div:first-child span').text.split()[0]
+                for character in group.select('.sawimg>a'):
+                    _idols.append({
+                        'name': character.attrs['title'],
+                        'group': group_name,
+                        'portrait': character.select_one('img').attrs['src'],
+                        'page': 'https://wiki.biligame.com' + character.attrs['href']
+                    })
+    return _idols
 
 
 async def get_full_calendar() -> list[dict]:
@@ -36,8 +55,7 @@ async def get_today_events() -> list[dict]:
 
 
 async def main():
-    data = await get_today_events()
-    print(data)
+    print(await get_idols())
 
 
 if __name__ == '__main__':
