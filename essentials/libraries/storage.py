@@ -4,7 +4,7 @@ from pathlib import Path
 
 from .config import canrot_config
 
-_base_data_path = Path(canrot_config.canrot_data_dir)
+_base_data_path = Path(canrot_config.canrot_data_path)
 _dict_data: dict[str, dict[str, str]] = {}
 _file_pointers: dict[Path, typing.IO] = {}
 _DICT_FILE_NAME = '_dict.json'
