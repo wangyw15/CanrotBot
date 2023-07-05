@@ -44,7 +44,7 @@ async def _(bot: Bot, event: Event, msg: Message = CommandArg()):
     if not unified.Detector.can_send_image(bot):
         await waifu.finish('这里不能发送图片喵~')
 
-    if not economy.pay(user.get_uid(user.get_puid(bot, event)), 2):
+    if not economy.pay(user.get_uid(user.get_puid(bot, event)), 2, "随机 waifu"):
         await waifu.finish('你的余额不足哦')
 
     await waifu.send('谢谢你的两个胡萝卜片喵~\n正在找图哦~')

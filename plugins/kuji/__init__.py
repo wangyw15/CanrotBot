@@ -17,7 +17,7 @@ __plugin_meta__ = PluginMetadata(
 _kuji_handler = on_command('kuji', aliases={'浅草寺'}, block=True)
 @_kuji_handler.handle()
 async def _(bot: Bot, event: Event):
-    if not economy.pay(user.get_uid(user.get_puid(bot, event)), 10):
+    if not economy.pay(user.get_uid(user.get_puid(bot, event)), 10, "赛博浅草寺求签"):
         await _kuji_handler.finish('你的余额不足哦')
 
     msg = unified.Message()

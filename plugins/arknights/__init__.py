@@ -27,7 +27,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     uid = user.get_uid(user.get_puid(bot, event))
     if args[0] in ['gacha', '十连', '抽卡']:
         # 付钱
-        if not economy.pay(uid, 25):
+        if not economy.pay(uid, 25, '方舟十连'):
             await _arknights_handler.finish('你的余额不足喵~')
 
         # 抽卡

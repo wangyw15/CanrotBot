@@ -1,4 +1,3 @@
-import base64
 from datetime import datetime
 from typing import Annotated
 
@@ -65,7 +64,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             f.write(img)
         # 签到获得积分
         point_amount = 20 + rank
-        economy.earn(uid, point_amount)
+        economy.earn(uid, point_amount, "每日签到")
 
         final_msg += '签到成功！\n'
         final_msg += f'获得 {point_amount} 胡萝卜片\n'

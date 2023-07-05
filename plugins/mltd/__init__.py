@@ -82,7 +82,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         await _mltd_handler.finish('这里不支持发送图片所以没法查卡喵~')
     elif args[0] in ['抽卡', '十连', 'gasha', 'gacha']:
         uid = user.get_uid(user.get_puid(bot, event))
-        if not economy.pay(uid, 25):
+        if not economy.pay(uid, 25, "mltd 十连"):
             await _mltd_handler.finish('你没有足够的胡萝卜片喵~')
         msg = unified.Message('谢谢你的25个胡萝卜片喵~')
         img, data = await mltd.gasha()
