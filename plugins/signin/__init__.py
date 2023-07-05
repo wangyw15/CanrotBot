@@ -43,7 +43,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     # 判断是否签到过
     last_signin = _signin_data[uid]
     can_signin = False
-    if not last_signin or 'signin_date' not in last_signin:
+    if not last_signin or 'last_date' not in last_signin:
         can_signin = True
     today = datetime.now().strftime('%Y-%m-%d')
     if not last_signin == today:
@@ -57,9 +57,9 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         # 生成运势内容和对应图片
         img, title, content, rank = await fortune.generate_fortune(theme)
         _signin_data[uid] = {
-            'signin_date': today,
-            'signin_fortune_title': title,
-            'signin_fortune_content': content
+            'last_date': today,
+            'fortune_title': title,
+            'fortune_content': content
         }
         with _signin_data.open(uid + '.png') as f:
             f.write(img)
@@ -73,8 +73,8 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     else:
         final_msg += '你今天签过到了，再给你看一次哦🤗\n'
 
-        title = _signin_data[uid]['signin_fortune_title']
-        content = _signin_data[uid]['signin_fortune_content']
+        title = _signin_data[uid]['fortune_title']
+        content = _signin_data[uid]['fortune_content']
         if theme == 'random' and _signin_data.exists(uid + '.png'):
             with _signin_data.open(uid + '.png') as f:
                 img = f.read()
