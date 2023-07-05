@@ -7,7 +7,6 @@ from pydantic import BaseModel
 class CanrotConfig(BaseModel):
     canrot_enable: bool = True  # always enable aio
     canrot_proxy: str = ''  # starts with http or https
-    canrot_data: str = './canrot_data.db'
     canrot_data_dir: str = './canrot_data'
 
 
