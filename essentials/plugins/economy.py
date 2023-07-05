@@ -4,6 +4,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from essentials.libraries import user, economy
+from datetime import datetime
 
 __plugin_meta__ = PluginMetadata(
     name='经济服务',
@@ -24,7 +25,15 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     if msg := args.extract_plain_text():
         splitted_args = [x.strip().lower() for x in msg.split()]
         if msg == 'info' or msg == '信息' or msg == 'balance' or msg == '余额':
-            await _economy.finish(f'puid: {puid}\nuid: {uid}\n当前余额: {economy.get_balance(uid)} 胡萝卜片')
+            final = f'puid: {puid}\nuid: {uid}\n当前余额: {economy.get_balance(uid)} 胡萝卜片\n\n最近五条交易记录:'
+            history = economy.get_history(uid)
+            for i in history[:5]:
+                final += f"\n时间: {datetime.fromisoformat(i['time']).strftime('%Y-%m-%d %H:%M:%S')}" \
+                         f"\n变动: {i['amount']}" \
+                         f"\n余额: {i['balance']}" \
+                         f"\n备注: {i['description']}" \
+                         f"\n--------------------"
+            await _economy.finish(final)
         elif splitted_args[0] == 'transfer' or splitted_args[0] == '转账':
             another = splitted_args[1]
             amount = float(splitted_args[2])
