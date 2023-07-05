@@ -1,10 +1,6 @@
-from typing import Annotated
-
 from nonebot import on_regex
-from nonebot.adapters import MessageSegment
-from nonebot.params import ShellCommandArgv
-from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
 
 from . import what2eat
 

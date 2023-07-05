@@ -1,6 +1,7 @@
+import json
 from typing import Annotated
 
-from nonebot import on_shell_command, require, get_bot
+from nonebot import on_shell_command, get_bot, require
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
@@ -8,10 +9,8 @@ from nonebot.plugin import PluginMetadata
 require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
 
-from essentials.libraries import util
-from essentials.libraries.data import data_cursor
 from adapters import unified
-
+from essentials.libraries import storage, util
 
 __plugin_meta__ = PluginMetadata(
     name='看新闻',
@@ -21,31 +20,40 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-img_url = 'https://api.03c3.cn/zb/'
-data_cursor.execute('CREATE TABLE IF NOT EXISTS daily_subscribers (id INTEGER PRIMARY KEY, bot INTEGER)')
+_img_url = 'https://api.03c3.cn/zb/'
+_subscribers: list[dict[str, str]] = []  # [{'bot': 'xxx', 'gid': 'xxx'}]
+
+# 读取订阅者
+if storage.get_path('daily_subscribers.json').exists():
+    _subscribers = storage.load_json('daily_subscribers.json')
 
 
 daily = on_shell_command('daily', aliases={'每日新闻', '新闻'}, block=True)
 @daily.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if len(args) == 0:
-        await unified.MessageSegment.image(img_url, '每日新闻图片').send(bot, event)
+        await unified.MessageSegment.image(_img_url, '每日新闻图片').send(bot, event)
         await daily.finish()
     elif len(args) == 1:
         if args[0].lower() == 'subscribe' or args[0] == '订阅':
             if unified.Detector.is_onebot_v11(bot):
                 bot_id = bot.self_id
-                id = util.get_group_id(event)
-                data_cursor.execute(f'REPLACE INTO daily_subscribers (id, bot) VALUES ({id}, {bot_id})')
+                gid = util.get_group_id(event)
+                _subscribers.append({'bot': bot_id, 'gid': gid})
+                storage.write_json('daily_subscribers.json', _subscribers)
                 await daily.finish('每日新闻订阅成功')
             else:
                 await daily.finish('该功能仅支持 OneBot v11')
         elif args[0].lower() == 'unsubscribe' or args[0] == '退订':
             if unified.Detector.is_onebot_v11(bot):
                 bot_id = bot.self_id
-                id = util.get_group_id(event)
-                data_cursor.execute(f'DELETE FROM daily_subscribers WHERE id == {id} AND bot == {bot_id}')
-                await daily.finish('每日新闻退订成功')
+                gid = util.get_group_id(event)
+                try:
+                    _subscribers.remove({'bot': bot_id, 'gid': gid})
+                    storage.write_json('daily_subscribers.json', _subscribers)
+                    await daily.finish('每日新闻退订成功')
+                except ValueError:
+                    await daily.finish('每日新闻未订阅')
             else:
                 await daily.finish('该功能仅支持 OneBot v11')
         else:
@@ -54,12 +62,11 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
 
 @scheduler.scheduled_job("cron", hour="10", id="daily_news")
 async def _():
-    subscribers: list[list[int, int]] = data_cursor.execute('SELECT * FROM daily_subscribers').fetchall()
-    for subscriber in subscribers:
-        bot_id = subscriber[1]
-        id = subscriber[0]
+    for subscriber in _subscribers:
+        bot_id = subscriber['bot']
+        gid = subscriber['gid']
         try:
             bot = get_bot(str(bot_id))
-            await bot.call_api('send_group_msg', group_id=id, message=f'[CQ:image,file={img_url}]')
+            await bot.call_api('send_group_msg', group_id=gid, message=f'[CQ:image,file={_img_url}]')
         except KeyError:
             pass

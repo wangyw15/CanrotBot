@@ -16,6 +16,8 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
+_md_data = user.UserDataStorage[dict[str, str]]('muse_dash')
+
 
 async def generate_muse_dash_message(player_id: str) -> str:
     """生成消息"""
@@ -67,8 +69,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             else:
                 player_id = await muse_dash.search_muse_dash_player_id(player_name)
             if player_id and player_name:
-                user.set_data_by_uid(uid, 'muse_dash_name', player_name)
-                user.set_data_by_uid(uid, 'muse_dash_moe_id', player_id)
+                _md_data[uid] = {'name': player_name, 'id': player_id}
                 final_msg = unified.Message()
                 final_msg.append(f'绑定成功\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}')
                 if unified.Detector.can_send_image(bot):
@@ -84,16 +85,15 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             # 解绑账号
             if not uid:
                 await _muse_dash.finish('你还未注册账号')
-            user.set_data_by_uid(uid, 'muse_dash_name', '')
-            user.set_data_by_uid(uid, 'muse_dash_moe_id', '')
+            _md_data[uid] = {'name': '', 'id': ''}
             await _muse_dash.finish('解绑成功')
         elif args[0].lower() == 'me' or args[0] == '我' or args[0] == '我的' or args[0].lower() == 'info' or \
                 args[0] == '信息':
             # 检查绑定信息
             if not uid:
                 await _muse_dash.finish('你还未注册账号')
-            player_name = user.get_data_by_uid(uid, 'muse_dash_name')
-            player_id = user.get_data_by_uid(uid, 'muse_dash_moe_id')
+            player_name = _md_data[uid]['name']
+            player_id = _md_data[uid]['id']
             if player_id and player_name:
                 await _muse_dash.finish(f'已绑定账号信息:\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}')
             else:
