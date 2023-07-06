@@ -44,7 +44,34 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
                 final_msg = '调查员列表:\n\n'
                 for cid, card in cards.items():
                     final_msg += f'调查员卡片 id: {cid}\n'
-                    final_msg += '\n'.join([f'{k}={v}' for k, v in card.items()])
+                    # 基本信息
+                    final_msg += f'姓名: {card["name"]}\n'
+                    final_msg += f'性别: {card["gender"]}\n'
+                    final_msg += f'年龄: {card["age"]}\n'
+                    final_msg += f'职业: {card["profession"]}\n'
+                    # 基本属性
+                    for k, v in card['basic_properties'].items():
+                        final_msg += f'{investigator.get_property_name(k)}: {v}\n'
+                    # 技能
+                    if card['skills']:
+                        final_msg += '技能:\n'
+                        for k, v in card['skills'].items():
+                            final_msg += f'{k}: {v}\n'
+                    # 属性
+                    if card['properties']:
+                        final_msg += '属性:\n'
+                        for k, v in card['properties'].items():
+                            final_msg += f'{k}: {v}\n'
+                    # 背包
+                    if card['items']:
+                        final_msg += '背包:\n'
+                        for k, v in card['items'].items():
+                            final_msg += f'{k}: {v}\n'
+                    # 额外信息
+                    if card['extra']:
+                        final_msg += '额外信息:\n'
+                        for k, v in card['extra'].items():
+                            final_msg += f'{k}: {v}\n'
                     final_msg += '\n\n'
                 await _card_handler.finish(final_msg.strip())
             else:
@@ -56,6 +83,10 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
         else:
             await _card_handler.finish(f'删除失败')
     elif len(args) > 0 and args[0].lower() in ['a', 'add', '导入', '添加']:
-        cid = investigator.set_card(uid, investigator.generate_card(' '.join(args[1:])))
-        await _card_handler.finish(f'添加成功，人物卡 id 为 {cid}')
+        card = investigator.generate_card(' '.join(args[1:]))
+        if not card:
+            await _card_handler.finish('数据不完整或格式错误')
+        else:
+            cid = investigator.set_card(uid, card)
+            await _card_handler.finish(f'添加成功，人物卡 id 为 {cid}')
     await _card_handler.finish(__plugin_meta__.usage)

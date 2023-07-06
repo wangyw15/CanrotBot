@@ -113,13 +113,7 @@ def generate_card(raw: str) -> dict[str]:
     :return: 人物卡
     """
     # 初始化人物卡
-    card: dict[str] = {}
-    # 类型标注
-    card['basic_properties']: list[dict[str, int]] = []
-    card['properties']: list[dict[str, int]] = []
-    card['skills']: list[dict[str, int]] = []
-    card['items']: list[dict[str]] = []
-    card['extra']: dict = {}
+    card: dict[str] = {'basic_properties': {}, 'properties': {}, 'skills': {}, 'items': {}, 'extra': {}}
 
     for i in re.split('[,，]', raw):
         k, v = i.split('=')
@@ -139,6 +133,10 @@ def generate_card(raw: str) -> dict[str]:
             card['skills'].append({k: int(v)})
         else:
             card['items'].append({k: v})
+    if 'name' not in card or 'gender' not in card or 'age' not in card or 'profession' not in card:
+        return {}
+    if len(card['basic_properties']) != len(_basic_property_names):
+        return {}
     return card
 
 
@@ -148,10 +146,10 @@ _ = ''' card example
     "gender": "xxx",
     "age": 18,
     "profession": "xxx",
-    "basic_properties": [{"aaa": 20, "bbb": 30}],
-    "skills": [{"aaa": 20, "bbb": 30}],
-    "properties": [{"aaa": 20, "bbb": 30}],
-    "items": [{...}],
+    "basic_properties": {"aaa": 20, "bbb": 30},
+    "skills": {"aaa": 20, "bbb": 30},
+    "properties": {"aaa": 20, "bbb": 30},
+    "items": {"aaa": ...},
     "extra": {"xxx": ...}
 }
 '''
