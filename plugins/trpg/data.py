@@ -1,4 +1,4 @@
-from essentials.libraries import user, storage
+from essentials.libraries import storage
 
 trpg_data = storage.PersistentData('trpg')
 
