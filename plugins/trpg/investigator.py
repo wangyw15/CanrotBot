@@ -128,11 +128,11 @@ def generate_card(raw: str) -> dict[str]:
         elif k == '职业':
             card['profession'] = v
         elif k in _basic_property_names:
-            card['basic_properties'].append({get_property_key(k): int(v)})
+            card['basic_properties'][get_property_key(k)] = int(v)
         elif v.isdigit():
-            card['skills'].append({k: int(v)})
+            card['skills'][k] = int(v)
         else:
-            card['items'].append({k: v})
+            card['items'][k] = v
     if 'name' not in card or 'gender' not in card or 'age' not in card or 'profession' not in card:
         return {}
     if len(card['basic_properties']) != len(_basic_property_names):
