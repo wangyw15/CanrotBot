@@ -1,5 +1,8 @@
 import re
+import hashlib
 from typing import Any
+from datetime import datetime
+import random
 
 import httpx
 from nonebot import get_driver
@@ -23,10 +26,21 @@ _client.timeout = 10
 
 
 MESSAGE_SPLIT_LINE = "--------------------"
+"""
+消息分割线
+"""
 
 
 async def fetch_bytes_data(url: str, *args, **kwargs) -> bytes | None:
-    """从URL获取bytes数据"""
+    """
+    从 URL 获取 bytes 数据
+
+    :param url: URL
+    :param args: 传递给 httpx.AsyncClient.get 的参数
+    :param kwargs: 传递给 httpx.AsyncClient.get 的参数
+
+    :return: bytes 数据
+    """
     resp = await _client.get(url, *args, **kwargs)
     if resp.is_success and resp.status_code == 200:
         return resp.content
@@ -34,7 +48,15 @@ async def fetch_bytes_data(url: str, *args, **kwargs) -> bytes | None:
 
 
 async def fetch_json_data(url: str, *args, **kwargs) -> Any | None:
-    """从URL获取json数据"""
+    """
+    从 URL 获取 json 数据
+
+    :param url: URL
+    :param args: 传递给 httpx.AsyncClient.get 的参数
+    :param kwargs: 传递给 httpx.AsyncClient.get 的参数
+
+    :return: json 数据
+    """
     resp = await _client.get(url, *args, **kwargs)
     if resp.is_success and resp.status_code == 200:
         return resp.json()
@@ -42,7 +64,15 @@ async def fetch_json_data(url: str, *args, **kwargs) -> Any | None:
 
 
 async def fetch_text_data(url: str, *args, **kwargs) -> str | None:
-    """从URL获取字符串"""
+    """
+    从 URL 获取字符串
+
+    :param url: URL
+    :param args: 传递给 httpx.AsyncClient.get 的参数
+    :param kwargs: 传递给 httpx.AsyncClient.get 的参数
+
+    :return: 字符串
+    """
     resp = await _client.get(url, *args, **kwargs)
     if resp.is_success and resp.status_code == 200:
         return resp.text
@@ -50,7 +80,13 @@ async def fetch_text_data(url: str, *args, **kwargs) -> str | None:
 
 
 def get_group_id(event: Event) -> str | None:
-    """从不同的事件中获取群ID"""
+    """
+    从不同的事件中获取群 ID
+
+    :param event: 事件
+
+    :return: 群 ID
+    """
     if isinstance(event, adapters.onebot_v11.GroupMessageEvent) \
             or isinstance(event, adapters.onebot_v12.GroupMessageEvent):
         return str(event.group_id)
@@ -64,7 +100,15 @@ def get_group_id(event: Event) -> str | None:
 
 
 async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | None:
-    """从不同的事件中获取用户昵称"""
+    """
+    从不同的事件中获取用户昵称
+
+    :param event: 事件
+    :param bot: Bot对象
+    :param default: 默认值
+
+    :return: 用户昵称
+    """
     # onebot v11
     if Detector.is_onebot_v11(bot):
         if isinstance(event, adapters.onebot_v11.GroupMessageEvent):
@@ -99,7 +143,15 @@ async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | No
 
 
 async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | None:
-    """从不同的事件中获取机器人昵称"""
+    """
+    从不同的事件中获取机器人昵称
+
+    :param event: 事件
+    :param bot: 机器人
+    :param default: 默认值
+
+    :return: 机器人昵称
+    """
     # onebot v11
     if Detector.is_onebot_v11(bot):
         if isinstance(event, adapters.onebot_v11.GroupMessageEvent):
@@ -137,7 +189,13 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
 
 
 def is_url(msg: MessageSegment | str) -> bool:
-    """检测是否为URL"""
+    """
+    检测是否为 URL
+
+    :param msg: 消息内容
+
+    :return: 是否为 URL
+    """
     if isinstance(msg, str):
         return re.match(r'^https?://', msg) is not None
     elif msg.is_text():
@@ -153,11 +211,33 @@ def is_url(msg: MessageSegment | str) -> bool:
 
 
 def seconds_to_time(seconds: float) -> str:
+    """
+    时间戳转换为时间
+
+    :param seconds: 时间戳
+
+    :return: 时间
+    """
     ms = int(seconds % 1 * 1000)
     seconds = int(seconds)
     m, s = divmod(seconds, 60)
     h, m = divmod(m, 60)
     return f"{str(h).zfill(2)}:{str(m).zfill(2)}:{str(s).zfill(2)}.{str(ms).zfill(3)}"
+
+
+def random_str(length: int) -> str:
+    """
+    随机字符串，可以用作 id
+
+    :param length: 长度
+
+    :return: 随机字符串
+    """
+    ret: list[str] = []
+    while len(ret) < length:
+        ret.extend(hashlib.md5(str(datetime.now().timestamp()).encode(), usedforsecurity=True).hexdigest())
+    random.shuffle(ret)
+    return ''.join(ret[:length])
 
 
 __all__ = ['fetch_bytes_data',
@@ -166,4 +246,5 @@ __all__ = ['fetch_bytes_data',
            'get_group_id',
            'get_bot_name',
            'get_user_name',
+           'random_str',
            'MESSAGE_SPLIT_LINE']

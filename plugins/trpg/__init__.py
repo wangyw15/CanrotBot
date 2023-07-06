@@ -30,9 +30,9 @@ _card_handler = on_shell_command('card', aliases={'c', '调查员', '人物卡'}
 @_card_handler.handle()
 async def _(args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if len(args) == 1 and args[0].lower() in ['r', 'random', '随机', '随机生成']:
-        card = investigator.random_investigator()
+        card = investigator.random_basic_properties()
         msg = ''
         for k, v in card.items():
-            msg += f'{investigator.get_property_name(k)}: {v}\n'
+            msg += f'{k}: {v}\n'
         await _card_handler.finish(msg.strip())
     await _card_handler.finish(__plugin_meta__.usage)

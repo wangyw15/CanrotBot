@@ -3,7 +3,7 @@ from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from essentials.libraries import user, economy
+from essentials.libraries import user, economy, util
 from datetime import datetime
 
 __plugin_meta__ = PluginMetadata(
@@ -32,7 +32,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                          f"\n变动: {i['amount']}" \
                          f"\n余额: {i['balance']}" \
                          f"\n备注: {i['description']}" \
-                         f"\n--------------------"
+                         f"\n{util.MESSAGE_SPLIT_LINE}"
             await _economy.finish(final)
         elif splitted_args[0] == 'transfer' or splitted_args[0] == '转账':
             another = splitted_args[1]

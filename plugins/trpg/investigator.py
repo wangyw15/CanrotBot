@@ -1,25 +1,51 @@
-from . import dice
-from essentials.libraries import asset
+from . import dice, data
+from essentials.libraries import asset, util
 
 _assets = asset.Asset('trpg')
 
 
-def random_investigator() -> dict[str, int]:
-    return {
-        'str': dice.dice_expression('3d6*5')[0],
-        'con': dice.dice_expression('3d6*5')[0],
-        'siz': dice.dice_expression('(2d6+6)*5')[0],
-        'dex': dice.dice_expression('3d6*5')[0],
-        'app': dice.dice_expression('3d6*5')[0],
-        'int': dice.dice_expression('(2d6+6)*5')[0],
-        'pow': dice.dice_expression('3d6*5')[0],
-        'edu': dice.dice_expression('(2d6+6)*5')[0],
-        'luck': dice.dice_expression('3d6*5')[0],
-    }
+def random_basic_properties() -> dict[str, int]:
+    """
+    随机生成基础属性
+
+    :return: 基础属性
+    """
+    ret: dict[str, int] = {}
+    for name, expr in _assets['basic_properties'].items():
+        ret[name] = dice.dice_expression(expr)[0]
+    return ret
 
 
-def get_property_name(key: str) -> str:
-    key = key.lower()
-    if key in _assets['noun']:
-        return _assets['noun'][key]
-    return ''
+def set_card(uid: str, card: dict[str], card_id: str = ''):
+    """
+    添加或修改人物卡，如果 card_id 为空则随机生成
+
+    不对传入的 card 信息做检查
+
+    :param uid: uid
+    :param card: 人物卡
+    :param card_id: 人物卡 id
+    """
+    if not card_id:
+        while True:
+            card_id = util.random_str(8)
+            if card_id not in data.trpg_data[uid]['cards']:
+                break
+    if 'cards' not in data.trpg_data[uid]:
+        data.trpg_data[uid]['cards'] = {}
+    data.trpg_data[uid]['cards'][card_id] = card
+    data.trpg_data.save()
+
+
+_ = ''' card example
+{
+    "name": "xxx",
+    "gender": "xxx",
+    "age": 18,
+    "profession": "xxx",
+    "properties": [{"aaa": 20, "bbb": 30}],
+    "skills": [{"aaa": 20, "bbb": 30}],
+    "items": [{...}],
+    "extra": {"xxx": ...}
+}
+'''
