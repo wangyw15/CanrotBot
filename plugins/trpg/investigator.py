@@ -1,3 +1,5 @@
+import re
+
 from essentials.libraries import asset, util
 from . import dice, data
 
@@ -119,7 +121,7 @@ def generate_card(raw: str) -> dict[str]:
     card['items']: list[dict[str]] = []
     card['extra']: dict = {}
 
-    for i in raw.split('&'):
+    for i in re.split('[,，]', raw):
         k, v = i.split('=')
         k: str = k.strip()
         v: str = v.strip()
