@@ -1,4 +1,3 @@
-import json
 from typing import Annotated
 
 from nonebot import on_shell_command
@@ -6,9 +5,9 @@ from nonebot.adapters import MessageSegment, Bot, Event
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
-from . import arknights
-from essentials.libraries import user, economy
 from adapters import unified
+from essentials.libraries import user, economy
+from . import arknights
 
 __plugin_meta__ = PluginMetadata(
     name='明日方舟助手',

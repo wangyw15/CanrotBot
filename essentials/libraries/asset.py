@@ -1,0 +1,23 @@
+import json
+import typing
+from pathlib import Path
+
+_asset_base_path = Path(__file__).parent.parent.parent / 'assets'
+
+
+class Asset:
+    def __init__(self, asset_name: str):
+        self.__base_path = _asset_base_path / asset_name
+        if not self.__base_path.exists() or not self.__base_path.is_dir():
+            raise FileNotFoundError(f'Asset "{asset_name}" not found')
+        # 自动加载json文件
+        self.__data: dict[str] = {}
+        for i in self.__base_path.glob('*.json'):
+            if i.is_file():
+                self.__data[i.stem] = json.loads(i.read_text(encoding='utf8'))
+
+    def __getitem__(self, key: str):
+        return self.__data[key]
+
+    def open(self, file_name: str, *args, **kwargs) -> typing.IO:
+        return (self.__base_path / file_name).open(*args, **kwargs)
