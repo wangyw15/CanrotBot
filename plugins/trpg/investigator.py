@@ -113,6 +113,7 @@ def generate_card(raw: str) -> dict[str]:
     # 初始化人物卡
     card: dict[str] = {}
     # 类型标注
+    card['basic_properties']: list[dict[str, int]] = []
     card['properties']: list[dict[str, int]] = []
     card['skills']: list[dict[str, int]] = []
     card['items']: list[dict[str]] = []
@@ -131,7 +132,7 @@ def generate_card(raw: str) -> dict[str]:
         elif k == '职业':
             card['profession'] = v
         elif k in _basic_property_names:
-            card['properties'].append({get_property_key(k): int(v)})
+            card['basic_properties'].append({get_property_key(k): int(v)})
         elif v.isdigit():
             card['skills'].append({k: int(v)})
         else:
@@ -145,8 +146,9 @@ _ = ''' card example
     "gender": "xxx",
     "age": 18,
     "profession": "xxx",
-    "properties": [{"aaa": 20, "bbb": 30}],
+    "basic_properties": [{"aaa": 20, "bbb": 30}],
     "skills": [{"aaa": 20, "bbb": 30}],
+    "properties": [{"aaa": 20, "bbb": 30}],
     "items": [{...}],
     "extra": {"xxx": ...}
 }
