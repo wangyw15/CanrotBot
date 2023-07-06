@@ -6,7 +6,7 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from adapters import unified
-from essentials.libraries import user, util
+from essentials.libraries import storage, util
 from . import muse_dash
 
 __plugin_meta__ = PluginMetadata(
@@ -16,7 +16,7 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-_md_data = user.UserDataStorage[dict[str, str]]('muse_dash')
+_md_data = storage.PersistentData[dict[str, str]]('muse_dash')
 
 
 async def generate_muse_dash_message(player_id: str) -> str:

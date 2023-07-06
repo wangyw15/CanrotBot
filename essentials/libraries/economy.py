@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from . import user
+from . import storage
 
-_economy_data = user.UserDataStorage[dict[str]]('economy')
+_economy_data = storage.PersistentData[dict[str]]('economy')
 
 
 def _add_history(uid: str, amount: float, balance: float, description: str = '', time: datetime | None = None):

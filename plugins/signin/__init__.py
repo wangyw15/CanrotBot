@@ -7,7 +7,7 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from adapters import unified
-from essentials.libraries import user, economy
+from essentials.libraries import user, economy, storage
 from . import fortune
 
 __plugin_meta__ = PluginMetadata(
@@ -17,7 +17,7 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-_signin_data = user.UserDataStorage[dict[str, str]]('signin')
+_signin_data = storage.PersistentData[dict[str, str]]('signin')
 
 _signin_handler = on_shell_command('signin', aliases={'签到', '每日签到', '抽签'}, block=True)
 

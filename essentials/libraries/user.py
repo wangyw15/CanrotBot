@@ -1,87 +1,15 @@
 # puid (platform user id): qq_1234567890, kook_1234567890, ...
 # uid (user id): uuid4
 # 按道理来说应该要缓存一下文件指针，但是大概提升不了多少性能（毕竟没那么多并发
-import json
 import re
-import typing
 import uuid
-from pathlib import Path
 
 from nonebot.adapters import Bot, Event
 
 from adapters import unified
 from . import storage
 
-TData = typing.TypeVar('TData', bound=typing.Union[list, dict])
-
-
-class UserDataStorage(typing.Generic[TData]):
-    def __init__(self, storage_name: str):
-        self.__storage_name: str = storage_name
-        self.__data: dict[str] = {}
-        self.__base_path: Path = storage.get_path(self.__storage_name)
-        # 自动创建文件夹
-        if not self.__base_path.exists():
-            self.__base_path.mkdir(parents=True, exist_ok=True)
-        # 加载数据
-        for i in storage.get_path(self.__storage_name).iterdir():
-            if i.is_file() and i.suffix == '.json':
-                self.__data[i.stem] = json.loads(i.read_text(encoding='utf-8'))
-
-    def _write(self, file_name: str, obj: TData):
-        path = self.__base_path / f'{file_name}.json'
-        path.write_text(json.dumps(obj, indent=4, ensure_ascii=False), encoding='utf-8')
-
-    @property
-    def storage_name(self):
-        return self.__storage_name
-
-    @property
-    def data(self):
-        return self.__data
-
-    def __contains__(self, file_name: str):
-        return file_name in self.__data
-
-    def __getitem__(self, file_name: str) -> typing.Union[TData, None]:
-        if file_name not in self.__data:
-            return None
-        return self.__data[file_name]
-
-    def __setitem__(self, file_name: str, obj: TData):
-        self.__data[file_name] = obj
-        self._write(file_name, obj)
-
-    def save(self):
-        """
-        保存所有数据
-        """
-        for file_name, data in self.__data.items():
-            self._write(file_name, data)
-
-    def open(self, file_name: str) -> typing.IO:
-        """
-        打开文件
-
-        :param file_name: 文件名
-
-        :return: 文件指针
-        """
-        path = self.__base_path / file_name
-        return path.open('w+b')
-
-    def exists(self, file_name: str) -> bool:
-        """
-        检查文件是否存在
-
-        :param file_name: 文件名
-
-        :return: 文件是否存在
-        """
-        return (self.__base_path / file_name).exists()
-
-
-_user_data = UserDataStorage[dict[str]]('user')
+_user_data = storage.PersistentData[dict[str]]('user')
 
 
 def puid_user_exists(puid: str) -> bool:

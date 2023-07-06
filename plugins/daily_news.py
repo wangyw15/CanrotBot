@@ -1,4 +1,3 @@
-import json
 from typing import Annotated
 
 from nonebot import on_shell_command, get_bot, require
@@ -21,11 +20,7 @@ __plugin_meta__ = PluginMetadata(
 
 
 _img_url = 'https://api.03c3.cn/zb/'
-_subscribers: list[dict[str, str]] = []  # [{'bot': 'xxx', 'gid': 'xxx'}]
-
-# 读取订阅者
-if storage.get_path('daily_subscribers.json').exists():
-    _subscribers = storage.load_json('daily_subscribers.json')
+_subscribers = storage.PersistentList[dict[str, str]]('daily_subscribers')  # [{'bot': 'xxx', 'gid': 'xxx'}]
 
 
 daily = on_shell_command('daily', aliases={'每日新闻', '新闻'}, block=True)
@@ -40,7 +35,6 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
                 bot_id = bot.self_id
                 gid = util.get_group_id(event)
                 _subscribers.append({'bot': bot_id, 'gid': gid})
-                storage.write_json('daily_subscribers.json', _subscribers)
                 await daily.finish('每日新闻订阅成功')
             else:
                 await daily.finish('该功能仅支持 OneBot v11')
@@ -50,7 +44,6 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
                 gid = util.get_group_id(event)
                 try:
                     _subscribers.remove({'bot': bot_id, 'gid': gid})
-                    storage.write_json('daily_subscribers.json', _subscribers)
                     await daily.finish('每日新闻退订成功')
                 except ValueError:
                     await daily.finish('每日新闻未订阅')
