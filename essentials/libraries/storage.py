@@ -100,9 +100,9 @@ class PersistentData(typing.Generic[_T]):
     def __contains__(self, file_name: str):
         return file_name in self.__data
 
-    def __getitem__(self, file_name: str) -> typing.Union[_T, None]:
+    def __getitem__(self, file_name: str) -> _T:
         if file_name not in self.__data:
-            return None
+            self.__data[file_name] = {}
         return self.__data[file_name]
 
     def __setitem__(self, file_name: str, obj: _T):

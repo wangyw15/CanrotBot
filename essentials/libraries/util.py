@@ -5,7 +5,7 @@ from datetime import datetime
 import random
 
 import httpx
-from nonebot import get_driver, require
+from nonebot import get_driver
 from nonebot.adapters import Bot, Event, MessageSegment
 
 from adapters.unified import Detector, adapters
@@ -85,61 +85,20 @@ def get_group_id(event: Event) -> str | None:
 
     :param event: 事件
 
-    :return: 群 ID
+    :return: 群 ID (platform_id)
     """
     if isinstance(event, adapters.onebot_v11.GroupMessageEvent) \
             or isinstance(event, adapters.onebot_v12.GroupMessageEvent):
-        return str(event.group_id)
+        return 'qq_' + str(event.group_id)
     elif isinstance(event, adapters.mirai2.GroupMessage):
-        return str(event.sender.group.id)
-    elif isinstance(event, adapters.qqguild.Event):
-        pass
+        return 'qq_' + str(event.sender.group.id)
+    elif isinstance(event, adapters.qqguild.MessageEvent):
+        return 'qqguild_' + str(event.channel_id)
     elif isinstance(event, adapters.kook.event.ChannelMessageEvent):
-        return str(event.group_id)
+        return 'kook_' + str(event.group_id)
+    elif isinstance(event, adapters.console.MessageEvent):
+        return 'console_0'
     return None
-
-
-async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | None:
-    """
-    从不同的事件中获取用户昵称
-
-    :param event: 事件
-    :param bot: Bot对象
-    :param default: 默认值
-
-    :return: 用户昵称
-    """
-    # onebot v11
-    if Detector.is_onebot_v11(bot):
-        if isinstance(event, adapters.onebot_v11.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v11.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(user_id=event.user_id)
-            return user_info['nickname']
-    # onebot v12
-    elif Detector.is_onebot_v12(bot):
-        if isinstance(event, adapters.onebot_v12.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v12.PrivateMessageEvent):
-            user_info = await bot.get_stranger_info(user_id=event.user_id)
-            return user_info['nickname']
-    # mirai2
-    elif Detector.is_mirai2(bot):
-        if isinstance(event, adapters.mirai2.GroupMessage):
-            return event.sender.name
-        elif isinstance(event, adapters.mirai2.FriendMessage):
-            return event.sender.nickname
-    # kook
-    elif Detector.is_kook(bot):
-        if isinstance(event, adapters.kook.Event) and hasattr(event, 'extra'):
-            return event.extra.author.nickname
-    return default
 
 
 async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | None:
@@ -245,6 +204,5 @@ __all__ = ['fetch_bytes_data',
            'fetch_text_data',
            'get_group_id',
            'get_bot_name',
-           'get_user_name',
            'random_str',
            'MESSAGE_SPLIT_LINE']

@@ -6,6 +6,7 @@ from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
+import essentials.libraries.user
 from essentials.libraries import asset, util
 
 __plugin_meta__ = PluginMetadata(
@@ -57,7 +58,7 @@ _generative_response_handler = on_command('generative_reponse', aliases={'gr', '
 @_generative_response_handler.handle()
 async def _(bot, event, msg: Message = CommandArg()):
     my_name = await util.get_bot_name(event, bot, '我')
-    user_name = await util.get_user_name(event, bot, '主人')
+    user_name = await essentials.libraries.user.get_user_name(event, bot, '主人')
     length = 50
     if msg := msg.extract_plain_text().strip():
         length = int(msg)
