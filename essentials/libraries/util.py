@@ -79,7 +79,7 @@ async def fetch_text_data(url: str, *args, **kwargs) -> str | None:
     return None
 
 
-def get_group_id(event: Event) -> str | None:
+def get_group_id(event: Event) -> str:
     """
     从不同的事件中获取群 ID
 
@@ -87,18 +87,18 @@ def get_group_id(event: Event) -> str | None:
 
     :return: 群 ID (platform_id)
     """
-    if isinstance(event, adapters.onebot_v11.GroupMessageEvent) \
-            or isinstance(event, adapters.onebot_v12.GroupMessageEvent):
+    if adapters.onebot_v11 and isinstance(event, adapters.onebot_v11.GroupMessageEvent) \
+            or adapters.onebot_v12 and isinstance(event, adapters.onebot_v12.GroupMessageEvent):
         return 'qq_' + str(event.group_id)
-    elif isinstance(event, adapters.qqguild.MessageEvent):
-        return 'qqguild_' + str(event.channel_id)
-    elif isinstance(event, adapters.mirai2.GroupMessage):
+    elif adapters.mirai2 and isinstance(event, adapters.mirai2.GroupMessage):
         return 'qq_' + str(event.sender.group.id)
-    elif isinstance(event, adapters.kook.event.ChannelMessageEvent):
+    elif adapters.qqguild and isinstance(event, adapters.qqguild.MessageEvent):
+        return 'qqguild_' + str(event.channel_id)
+    elif adapters.kook and isinstance(event, adapters.kook.event.ChannelMessageEvent):
         return 'kook_' + str(event.group_id)
-    elif isinstance(event, adapters.console.MessageEvent):
+    elif adapters.console and isinstance(event, adapters.console.MessageEvent):
         return 'console_0'
-    return None
+    return ''
 
 
 async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | None:
