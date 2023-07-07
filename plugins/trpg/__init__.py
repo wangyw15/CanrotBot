@@ -64,10 +64,10 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
                         final_msg += '技能:\n'
                         for k, v in card['skills'].items():
                             final_msg += f'{k}: {v}\n'
-                    # 属性
-                    if card['properties']:
-                        final_msg += '属性:\n'
-                        for k, v in card['properties'].items():
+                    # 额外属性
+                    if card['additional_properties']:
+                        final_msg += '额外属性:\n'
+                        for k, v in card['additional_properties'].items():
                             final_msg += f'{k}: {v}\n'
                     # 背包
                     if card['items']:
