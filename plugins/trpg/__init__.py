@@ -103,3 +103,34 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
             iid = investigator.set_investigator(uid, card)
             await _investigator_handler.finish(f'添加成功，人物卡 id 为 {iid}')
     await _investigator_handler.finish(__plugin_meta__.usage)
+
+
+_check_handler = on_shell_command('check', aliases={'c', '检定'}, block=True)
+@_check_handler.handle()
+async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
+    puid = user.get_puid(bot, event)
+    uid = user.get_uid(puid)
+    if not uid:
+        await _investigator_handler.finish('还未注册或绑定账号')
+    if not investigator.get_selected_investigator(uid):
+        await _investigator_handler.finish('还未选择调查员')
+    iid, card = investigator.get_selected_investigator(uid).popitem()
+    if len(args) == 1:
+        if args[0] in investigator.basic_property_names:
+            target = card['basic_properties'][investigator.get_property_key(args[0])]
+            dice_result = dice.simple_dice_expression('d100')
+            check_result = '失败'
+            if dice_result == 1:
+                check_result = '大成功'
+            elif dice_result <= target / 5:
+                check_result = '极难成功'
+            elif dice_result <= target / 2:
+                check_result = '困难成功'
+            elif dice_result <= target:
+                check_result = '成功'
+            elif target >= 50 and dice_result == 100 or target < 50 and dice_result >= 96:
+                check_result = '大失败'
+            await _check_handler.finish(f'调查员 {card["name"]}\n'
+                                        f'{args[0]}: {target}\n'
+                                        f'd100 = {dice_result}\n'
+                                        f'{check_result}')

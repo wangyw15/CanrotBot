@@ -4,7 +4,7 @@ from essentials.libraries import asset, util
 from . import dice, data
 
 _assets = asset.Asset('trpg')
-_basic_property_names = [x['name'] for x in _assets['basic_properties'].values()]
+basic_property_names = [x['name'] for x in _assets['basic_properties'].values()]
 _investigators_key = 'investigators'
 
 
@@ -159,7 +159,14 @@ def generate_investigator(raw: str) -> dict[str]:
     :return: 人物卡
     """
     # 初始化人物卡
-    investigator: dict[str] = {'basic_properties': {}, 'properties': {}, 'skills': {}, 'items': {}, 'extra': {}}
+    investigator: dict[str] = {
+        'basic_properties': {},
+        'additional_properties': {},
+        'skills': {},
+        'status': {},
+        'items': {},
+        'extra': {}
+    }
 
     for i in re.split('[,，]', raw):
         k, v = i.split('=')
@@ -173,7 +180,7 @@ def generate_investigator(raw: str) -> dict[str]:
             investigator['age'] = int(v)
         elif k == '职业':
             investigator['profession'] = v
-        elif k in _basic_property_names:
+        elif k in basic_property_names:
             investigator['basic_properties'][get_property_key(k)] = int(v)
         elif v.isdigit():
             investigator['skills'][k] = int(v)
@@ -182,7 +189,7 @@ def generate_investigator(raw: str) -> dict[str]:
     if 'name' not in investigator or 'gender' not in investigator \
             or 'age' not in investigator or 'profession' not in investigator:
         return {}
-    if len(investigator['basic_properties']) != len(_basic_property_names):
+    if len(investigator['basic_properties']) != len(basic_property_names):
         return {}
     return investigator
 
@@ -194,8 +201,9 @@ _ = ''' investigator example
     "age": 18,
     "profession": "xxx",
     "basic_properties": {"aaa": 20, "bbb": 30},
+    "additional_properties": {"aaa": 20, "bbb": 30},
     "skills": {"aaa": 20, "bbb": 30},
-    "properties": {"aaa": 20, "bbb": 30},
+    "status": {"hp": 15, "san": 80}
     "items": {"aaa": ...},
     "extra": {"xxx": ...}
 }
