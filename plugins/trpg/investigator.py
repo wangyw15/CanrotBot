@@ -5,6 +5,7 @@ from . import dice, data
 
 _assets = asset.Asset('trpg')
 _basic_property_names = [x['name'] for x in _assets['basic_properties'].values()]
+_investigators_key = 'investigators'
 
 
 def get_property_name(key: str) -> str:
@@ -46,65 +47,110 @@ def random_basic_properties() -> dict[str, int]:
     return ret
 
 
-def set_card(uid: str, card: dict[str], card_id: str = '') -> str:
+def set_investigator(uid: str, investigator: dict[str], investigator_id: str = '') -> str:
     """
-    添加或修改人物卡，如果 card_id 为空则随机生成
+    添加或修改人物卡，如果 investigator_id 为空则随机生成
 
-    不对传入的 card 信息做检查
+    不对传入的 investigator 信息做检查
 
     :param uid: uid
-    :param card: 人物卡
-    :param card_id: 人物卡 id
+    :param investigator: 人物卡
+    :param investigator_id: 人物卡 id
 
     :return: 人物卡 id
     """
     if uid not in data.trpg_data:
         data.trpg_data[uid] = {}
-    if 'cards' not in data.trpg_data[uid]:
-        data.trpg_data[uid]['cards'] = {}
-    if not card_id:
+    if _investigators_key not in data.trpg_data[uid]:
+        data.trpg_data[uid][_investigators_key] = {}
+    if not investigator_id:
         while True:
-            card_id = util.random_str(8)
-            if card_id not in data.trpg_data[uid]['cards']:
+            investigator_id = util.random_str(8)
+            if investigator_id not in data.trpg_data[uid][_investigators_key]:
                 break
-    data.trpg_data[uid]['cards'][card_id] = card
+    data.trpg_data[uid][_investigators_key][investigator_id] = investigator
     data.trpg_data.save()
-    return card_id
+    return investigator_id
 
 
-def get_card(uid: str, card_id: str = '') -> dict[str, dict[str]]:
+def get_investigator(uid: str, investigator_id: str = '') -> dict[str, dict[str]]:
     """
     获取人物卡
 
     :param uid: uid
-    :param card_id: 人物卡 id
+    :param investigator_id: 人物卡 id
 
-    :return: card_id 存在则返回对应人物卡，为空则返回所有人物卡，不存在则返回空字典
+    :return: investigator_id 存在则返回对应人物卡，为空则返回所有人物卡，不存在则返回空字典
     """
-    if uid in data.trpg_data and 'cards' in data.trpg_data[uid]:
-        if card_id in data.trpg_data[uid]['cards']:
-            return {card_id: data.trpg_data[uid]['cards'][card_id]}
-        elif not card_id:
-            return data.trpg_data[uid]['cards']
+    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
+        if investigator_id in data.trpg_data[uid][_investigators_key]:
+            return {investigator_id: data.trpg_data[uid][_investigators_key][investigator_id]}
+        elif not investigator_id:
+            return data.trpg_data[uid][_investigators_key]
     return {}
 
 
-def delete_card(uid:str, card_id: str) -> bool:
+def set_selected_investigator(uid: str, investigator_id: str) -> bool:
+    """
+    设置当前人物卡
+
+    :param uid: uid
+    :param investigator_id: 人物卡 id
+
+    :return: 是否成功
+    """
+    if uid not in data.trpg_data or investigator_id not in data.trpg_data[uid][_investigators_key]:
+        return False
+    data.trpg_data[uid]['selected_investigator'] = investigator_id
+    data.trpg_data.save()
+    return True
+
+
+def get_selected_investigator(uid: str) -> dict[str]:
+    """
+    获取当前人物卡
+
+    :param uid: uid
+
+    :return: 当前人物卡，未设置则返回空字典
+    """
+    if uid in data.trpg_data and 'selected_investigator' in data.trpg_data[uid] \
+            and data.trpg_data[uid]['selected_investigator']:
+        iid = data.trpg_data[uid]['selected_investigator']
+        return {iid: data.trpg_data[uid][_investigators_key][iid]}
+    return {}
+
+
+def delete_investigator(uid: str, investigator_id: str) -> bool:
     """
     删除人物卡
 
     :param uid: uid
-    :param card_id: 人物卡 id
+    :param investigator_id: 人物卡 id
     """
-    if uid in data.trpg_data and 'cards' in data.trpg_data[uid]:
-        if card_id in data.trpg_data[uid]['cards']:
-            del data.trpg_data[uid]['cards'][card_id]
+    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
+        if investigator_id in data.trpg_data[uid][_investigators_key]:
+            del data.trpg_data[uid][_investigators_key][investigator_id]
             data.trpg_data.save()
             return True
     return False
 
 
-def generate_card(raw: str) -> dict[str]:
+def check_investigator_id(uid: str, investigator_id: str) -> bool:
+    """
+    检查人物卡 id 是否存在
+
+    :param uid: uid
+    :param investigator_id: 人物卡 id
+
+    :return: 是否存在
+    """
+    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
+        return investigator_id in data.trpg_data[uid][_investigators_key]
+    return False
+
+
+def generate_investigator(raw: str) -> dict[str]:
     """
     生成人物卡
 
@@ -113,34 +159,35 @@ def generate_card(raw: str) -> dict[str]:
     :return: 人物卡
     """
     # 初始化人物卡
-    card: dict[str] = {'basic_properties': {}, 'properties': {}, 'skills': {}, 'items': {}, 'extra': {}}
+    investigator: dict[str] = {'basic_properties': {}, 'properties': {}, 'skills': {}, 'items': {}, 'extra': {}}
 
     for i in re.split('[,，]', raw):
         k, v = i.split('=')
         k: str = k.strip()
         v: str = v.strip()
         if k == '姓名':
-            card['name'] = v
+            investigator['name'] = v
         elif k == '性别':
-            card['gender'] = v
+            investigator['gender'] = v
         elif k == '年龄':
-            card['age'] = int(v)
+            investigator['age'] = int(v)
         elif k == '职业':
-            card['profession'] = v
+            investigator['profession'] = v
         elif k in _basic_property_names:
-            card['basic_properties'][get_property_key(k)] = int(v)
+            investigator['basic_properties'][get_property_key(k)] = int(v)
         elif v.isdigit():
-            card['skills'][k] = int(v)
+            investigator['skills'][k] = int(v)
         else:
-            card['items'][k] = v
-    if 'name' not in card or 'gender' not in card or 'age' not in card or 'profession' not in card:
+            investigator['items'][k] = v
+    if 'name' not in investigator or 'gender' not in investigator \
+            or 'age' not in investigator or 'profession' not in investigator:
         return {}
-    if len(card['basic_properties']) != len(_basic_property_names):
+    if len(investigator['basic_properties']) != len(_basic_property_names):
         return {}
-    return card
+    return investigator
 
 
-_ = ''' card example
+_ = ''' investigator example
 {
     "name": "xxx",
     "gender": "xxx",

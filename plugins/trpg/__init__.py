@@ -27,23 +27,28 @@ async def _(args: Message = CommandArg()):
             await _dice_handler.finish(expr + ' = ' + calculated_expr + ' = ' + str(result))
 
 
-_card_handler = on_shell_command('card', aliases={'c', '调查员', '人物卡'}, block=True)
-@_card_handler.handle()
+_investigator_handler = on_shell_command('investigator', aliases={'i', '调查员', '人物卡'}, block=True)
+@_investigator_handler.handle()
 async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     puid = user.get_puid(bot, event)
     uid = user.get_uid(puid)
     if not uid:
-        await _card_handler.finish('还未注册或绑定账号')
+        await _investigator_handler.finish('还未注册或绑定账号')
     if len(args) == 1:
         if args[0].lower() in ['r', 'random', '随机', '随机生成']:
             card = investigator.random_basic_properties()
-            await _card_handler.finish('&'.join([f'{k}={v}' for k, v in card.items()]))
+            await _investigator_handler.finish('&'.join([f'{k}={v}' for k, v in card.items()]))
         elif args[0].lower() in ['l', 'list', '卡片列表']:
-            cards = investigator.get_card(uid)
+            cards = investigator.get_investigator(uid)
+            selected_card = investigator.get_selected_investigator(uid)
             if cards:
-                final_msg = '调查员列表:\n\n'
-                for cid, card in cards.items():
-                    final_msg += f'调查员卡片 id: {cid}\n'
+                final_msg = '调查员列表: (*表示当前选定的调查员)\n\n'
+                for iid, card in cards.items():
+                    if selected_card:
+                        selected_iid, _ = selected_card.popitem()
+                        if iid == selected_iid:
+                            final_msg += '*'
+                    final_msg += f'调查员 id: {iid}\n'
                     # 基本信息
                     final_msg += f'姓名: {card["name"]}\n'
                     final_msg += f'性别: {card["gender"]}\n'
@@ -73,20 +78,28 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
                         for k, v in card['extra'].items():
                             final_msg += f'{k}: {v}\n'
                     final_msg += '\n\n'
-                await _card_handler.finish(final_msg.strip())
+                await _investigator_handler.finish(final_msg.strip())
             else:
-                await _card_handler.finish('还未导入人物卡')
-    elif len(args) == 2 and args[0].lower() in ['d', 'delete', '删除', '移除']:
-        cid = args[1]
-        if investigator.delete_card(uid, cid):
-            await _card_handler.finish(f'调查员 {cid} 删除成功')
-        else:
-            await _card_handler.finish(f'删除失败')
+                await _investigator_handler.finish('还未导入人物卡')
+    elif len(args) == 2:
+        if args[0].lower() in ['d', 'delete', '删除', '移除']:
+            iid = args[1]
+            if investigator.check_investigator_id(uid, iid):
+                card = investigator.get_investigator(uid, iid)
+                if investigator.delete_investigator(uid, iid):
+                    await _investigator_handler.finish(f'调查员 {card[iid]["name"]}({iid}) 删除成功')
+            await _investigator_handler.finish(f'删除失败')
+        elif args[0].lower() in ['s', 'select', 'set', '选择', '设置']:
+            iid = args[1]
+            if investigator.check_investigator_id(uid, iid):
+                investigator.set_selected_investigator(uid, iid)
+                card = investigator.get_investigator(uid, iid)
+                await _investigator_handler.finish(f'已选择调查员 {card[iid]["name"]}({iid})')
     elif len(args) > 0 and args[0].lower() in ['a', 'add', '导入', '添加']:
-        card = investigator.generate_card(' '.join(args[1:]))
+        card = investigator.generate_investigator(' '.join(args[1:]))
         if not card:
-            await _card_handler.finish('数据不完整或格式错误')
+            await _investigator_handler.finish('数据不完整或格式错误')
         else:
-            cid = investigator.set_card(uid, card)
-            await _card_handler.finish(f'添加成功，人物卡 id 为 {cid}')
-    await _card_handler.finish(__plugin_meta__.usage)
+            iid = investigator.set_investigator(uid, card)
+            await _investigator_handler.finish(f'添加成功，人物卡 id 为 {iid}')
+    await _investigator_handler.finish(__plugin_meta__.usage)
