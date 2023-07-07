@@ -1,4 +1,3 @@
-import json
 import random
 
 from nonebot import logger
@@ -6,8 +5,7 @@ from nonebot import logger
 from essentials.libraries import asset
 
 # 加载数据
-with asset.get_assets_path('what2eat.json').open('r', encoding='utf-8') as f:
-    _what2eat_data: dict[str, list[dict]] = json.load(f)
+_what2eat_data: dict[str, list[dict]] = asset.load_json('what2eat.json')
 logger.info(f'What2eat drink: {len(_what2eat_data["drink"])}')
 logger.info(f'What2eat food: {len(_what2eat_data["food"])}')
 

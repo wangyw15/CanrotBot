@@ -1,4 +1,3 @@
-import json
 import random
 
 from nonebot import get_driver, on_command
@@ -28,7 +27,7 @@ class WordleConfig(BaseModel):
 config = WordleConfig.parse_obj(get_driver().config)
 
 # load wordle data
-words = json.loads(asset.get_assets_path('wordle.json').read_text(encoding='utf-8'))
+words = asset.load_json('reply.json')
 
 
 def get_wordle_result(answer: str, guess: str) -> str:

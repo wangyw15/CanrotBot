@@ -13,6 +13,11 @@ def get_assets_path(asset_name: str) -> Path:
     return _asset_base_path / asset_name
 
 
+def load_json(file_name: str) -> typing.Any:
+    with (_asset_base_path / file_name).open(encoding='utf-8') as f:
+        return json.load(f)
+
+
 class Asset:
     def __init__(self, asset_name: str):
         self.__base_path = _asset_base_path / asset_name

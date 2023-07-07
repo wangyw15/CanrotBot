@@ -8,8 +8,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel
 
-from essentials.libraries import util
-from . import random_text
+from essentials.libraries import asset, util
 
 
 # config
@@ -30,8 +29,9 @@ __plugin_meta__ = PluginMetadata(
     config=ReplyConfig
 )
 
-# load data
-reply_data: list[dict[str, str | None]] = random_text.get_data('reply')
+# 加载数据
+reply_data: list[dict[str, str | None]] = asset.load_json('reply.json')
+
 
 def is_negative(msg: str) -> bool:
     return '不' in msg

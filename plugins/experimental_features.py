@@ -6,8 +6,7 @@ from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from essentials.libraries import util
-from . import random_text
+from essentials.libraries import asset, util
 
 __plugin_meta__ = PluginMetadata(
     name='实验性功能',
@@ -18,7 +17,7 @@ __plugin_meta__ = PluginMetadata(
 
 jieba.add_word('{name}')
 jieba.add_word('{me}')
-_reply_data: list[list[str]] = [list(jieba.lcut(x['response'])) for x in random_text.get_data('reply')]
+_reply_data: list[list[str]] = [list(jieba.lcut(x['response'])) for x in asset.load_json('reply.json')]
 
 
 # generate markov chain
