@@ -1,7 +1,7 @@
 import random
 
 from .. import fortune
-from ...arknights import arknights
+from libraries import arknights
 
 
 async def _generate_arknights_html() -> str:

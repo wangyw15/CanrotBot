@@ -1,7 +1,7 @@
 import random
 
 from .. import fortune
-from ...mltd import mltd
+from libraries import mltd
 
 
 async def _generate_mltd_html() -> str:

@@ -7,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 
 from adapters import unified
 from essentials.libraries import user, economy
-from . import arknights
+from libraries import arknights
 
 __plugin_meta__ = PluginMetadata(
     name='明日方舟助手',
