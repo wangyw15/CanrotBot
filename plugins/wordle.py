@@ -1,3 +1,4 @@
+import json
 import random
 
 from nonebot import get_driver, on_command
@@ -7,7 +8,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from pydantic import BaseModel
 
-from . import random_text
+from essentials.libraries import asset
 
 __plugin_meta__ = PluginMetadata(
     name='Wordle',
@@ -27,7 +28,7 @@ class WordleConfig(BaseModel):
 config = WordleConfig.parse_obj(get_driver().config)
 
 # load wordle data
-words = random_text.get_data('wordle')
+words = json.loads(asset.get_assets_path('wordle.json').read_text(encoding='utf-8'))
 
 
 def get_wordle_result(answer: str, guess: str) -> str:
