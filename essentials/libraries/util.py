@@ -90,10 +90,10 @@ def get_group_id(event: Event) -> str | None:
     if isinstance(event, adapters.onebot_v11.GroupMessageEvent) \
             or isinstance(event, adapters.onebot_v12.GroupMessageEvent):
         return 'qq_' + str(event.group_id)
-    elif isinstance(event, adapters.mirai2.GroupMessage):
-        return 'qq_' + str(event.sender.group.id)
     elif isinstance(event, adapters.qqguild.MessageEvent):
         return 'qqguild_' + str(event.channel_id)
+    elif isinstance(event, adapters.mirai2.GroupMessage):
+        return 'qq_' + str(event.sender.group.id)
     elif isinstance(event, adapters.kook.event.ChannelMessageEvent):
         return 'kook_' + str(event.group_id)
     elif isinstance(event, adapters.console.MessageEvent):
