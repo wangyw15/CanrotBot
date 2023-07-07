@@ -1,9 +1,6 @@
 import random
 
-from essentials.libraries import util
 from .. import fortune
-
-util.require_plugin('mltd')
 from ...mltd import mltd
 
 

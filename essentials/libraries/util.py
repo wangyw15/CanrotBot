@@ -240,17 +240,6 @@ def random_str(length: int) -> str:
     return ''.join(ret[:length])
 
 
-def require_plugin(name: str):
-    """
-    导入模块
-
-    :param name: 模块名
-
-    :return: 模块
-    """
-    require('.'.join(__name__.split('.')[:-3]) + '.' + name)
-
-
 __all__ = ['fetch_bytes_data',
            'fetch_json_data',
            'fetch_text_data',
@@ -258,5 +247,4 @@ __all__ = ['fetch_bytes_data',
            'get_bot_name',
            'get_user_name',
            'random_str',
-           'require_plugin',
            'MESSAGE_SPLIT_LINE']
