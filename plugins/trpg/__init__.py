@@ -10,8 +10,10 @@ from . import dice, investigator
 
 __plugin_meta__ = PluginMetadata(
     name='跑团工具',
-    description='只做了骰子',
-    usage='/<dice|d|骰子> <骰子指令>',
+    description='基本的跑团工具',
+    usage='/<dice|d|骰子> <骰子指令>\n'
+          '/<investigator|i|调查员|人物卡> <r|l|d|s|a>\n'
+          '/<c|check|检定> <属性名称>',
     config=None
 )
 
