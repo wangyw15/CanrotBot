@@ -39,7 +39,7 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
     if len(args) == 1:
         if args[0].lower() in ['r', 'random', '随机', '随机生成']:
             card = investigator.random_basic_properties()
-            await _investigator_handler.finish('&'.join([f'{k}={v}' for k, v in card.items()]))
+            await _investigator_handler.finish('，'.join([f'{k}={v}' for k, v in card.items()]))
         elif args[0].lower() in ['l', 'list', '卡片列表']:
             cards = investigator.get_investigator(uid)
             selected_card = investigator.get_selected_investigator(uid)
