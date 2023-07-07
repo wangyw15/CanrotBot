@@ -3,7 +3,10 @@ import pickle
 import tempfile
 from pathlib import Path
 
-_bnhhsh_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'bnhhsh'
+from essentials.libraries import asset
+
+_bnhhsh_assets_path = asset.get_assets_path('bnhhsh')
+
 
 def 破处():
     def 缩(s):

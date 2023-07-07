@@ -1,9 +1,10 @@
 import json
 import random
-from pathlib import Path
 
 from nonebot import logger, on_regex
 from nonebot.plugin import PluginMetadata
+
+from essentials.libraries import asset
 
 __plugin_meta__ = PluginMetadata(
     name='疯狂星期四',
@@ -17,7 +18,7 @@ _crazy_thursday_posts: list[str] = []
 
 def _load_crazy_thursday_data() -> None:
     global _crazy_thursday_posts
-    with (Path(__file__).parent.parent / 'assets' / 'crazy_thursday.json').open('r', encoding='utf-8') as f:
+    with asset.get_assets_path('crazy_thursday.json').open('r', encoding='utf-8') as f:
         data = json.load(f)
         _crazy_thursday_posts = data['post']
         logger.info('Crazy thursday data version: ' + str(data['version']))

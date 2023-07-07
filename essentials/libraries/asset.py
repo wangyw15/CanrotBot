@@ -5,6 +5,14 @@ from pathlib import Path
 _asset_base_path = Path(__file__).parent.parent.parent / 'assets'
 
 
+def get_assets_base_path() -> Path:
+    return _asset_base_path
+
+
+def get_assets_path(asset_name: str) -> Path:
+    return _asset_base_path / asset_name
+
+
 class Asset:
     def __init__(self, asset_name: str):
         self.__base_path = _asset_base_path / asset_name

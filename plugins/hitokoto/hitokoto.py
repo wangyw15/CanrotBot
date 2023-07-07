@@ -1,11 +1,12 @@
 import json
 import random
 from datetime import datetime
-from pathlib import Path
 
 from nonebot import logger
 
-_hitokoto_assets_path = Path(__file__).parent.parent.parent / 'assets/hitokoto'
+from essentials.libraries import asset
+
+_hitokoto_assets_path = asset.get_assets_path('hitokoto')
 _version: dict = {}
 _categories: list[dict] = []
 _sentences: dict[str, list[dict]] = {}

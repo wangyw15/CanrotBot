@@ -2,14 +2,13 @@ import asyncio
 import difflib
 import json
 import urllib.parse
-from pathlib import Path
 from typing import Tuple
 
 from nonebot import logger
 
-from essentials.libraries import util
+from essentials.libraries import asset, util
 
-_anime_offline_database_path = Path(__file__).parent.parent.parent / 'assets/anime-offline-database'
+_anime_offline_database_path = asset.get_assets_path('anime-offline-database')
 _animes: list[dict] = []
 
 

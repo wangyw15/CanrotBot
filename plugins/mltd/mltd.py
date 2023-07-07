@@ -5,9 +5,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, Tuple
 
-from essentials.libraries import render_by_browser, util
+from essentials.libraries import asset, render_by_browser, util
 
-_mltd_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'mltd'
+_mltd_assets_path = asset.get_assets_path('mltd')
 _cards: list[dict] = []
 _cards_zh: list[dict] = []
 _cards_last_fetch: datetime | None = None

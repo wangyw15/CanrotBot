@@ -1,11 +1,12 @@
 import json
 import random
-from pathlib import Path
 
 from nonebot import logger
 
+from essentials.libraries import asset
+
 # 加载数据
-with (Path(__file__).parent.parent.parent / "assets" / "what2eat.json").open('r', encoding='utf-8') as f:
+with asset.get_assets_path('what2eat.json').open('r', encoding='utf-8') as f:
     _what2eat_data: dict[str, list[dict]] = json.load(f)
 logger.info(f'What2eat drink: {len(_what2eat_data["drink"])}')
 logger.info(f'What2eat food: {len(_what2eat_data["food"])}')

@@ -1,14 +1,13 @@
 import json
 import random
 from datetime import datetime
-from pathlib import Path
 from typing import Tuple
 
 from nonebot import logger
 
-from essentials.libraries import render_by_browser, storage
+from essentials.libraries import asset, render_by_browser, storage
 
-_arknights_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'arknights'
+_arknights_assets_path = asset.get_assets_path('arknights')
 _arknights_all_characters: dict[str, dict] = {}
 arknights_gacha_operators: dict[int, list[dict]] = {}
 _arknights_operator_professions = ['PIONEER', 'WARRIOR', 'SNIPER', 'CASTER', 'SUPPORT', 'MEDIC', 'SPECIAL', 'TANK']

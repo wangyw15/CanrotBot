@@ -9,7 +9,7 @@ from nonebot.plugin import PluginMetadata
 sys.path.append(str(Path(__file__).parent.resolve()))
 
 from .adapters import unified
-from .essentials.libraries import config, help
+from .essentials.libraries import asset, config, help
 
 __plugin_meta__ = PluginMetadata(
     name='CanrotBot',

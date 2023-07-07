@@ -1,13 +1,11 @@
 import json
-from pathlib import Path
 from typing import Tuple
 
 from nonebot import get_loaded_plugins
 
-from essentials.libraries import util
-from . import render_by_browser
+from . import asset, render_by_browser, util
 
-_help_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'help'
+_help_assets_path = asset.get_assets_path('help')
 _plugin_metadatas: list[dict[str, str]] = []
 _help_text: str | None = None
 _help_image: bytes | None = None

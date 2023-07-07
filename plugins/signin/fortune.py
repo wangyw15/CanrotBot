@@ -5,10 +5,10 @@ from typing import Tuple, Literal, Callable
 
 from nonebot import logger
 
-from essentials.libraries.render_by_browser import render_html
+from essentials.libraries import asset, render_by_browser
 from . import themes
 
-fortune_assets_path = Path(__file__).parent.parent.parent / 'assets' / 'fortune'
+fortune_assets_path = asset.get_assets_path('fortune')
 _fortune_assets_version: str = ''
 _copywriting: list[dict] = []
 _themes: dict[str, dict] = {}
@@ -86,8 +86,8 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
 
     # 生成图片
     raw_content = raw_content.replace('{{title}}', title).replace('{{content}}', text)
-    bytes_data = await render_html(raw_content, str(fortune_assets_path / 'template'), image_type,
-                                   viewport={'width': 480, 'height': 480})
+    bytes_data = await render_by_browser.render_html(raw_content, str(fortune_assets_path / 'template'), image_type,
+                                                     viewport={'width': 480, 'height': 480})
     return bytes_data, title, text, rank
 
 

@@ -1,14 +1,13 @@
 import asyncio
 import json
 import random
-from pathlib import Path
 from typing import Tuple, Literal
 
 from nonebot import logger
 
-from essentials.libraries.render_by_browser import render_html
+from essentials.libraries import asset, render_by_browser
 
-_kuji_assets_path = Path(__file__).parent.parent.parent / 'assets/kuji'
+_kuji_assets_path = asset.get_assets_path('kuji')
 _kuji_data: list[dict[str, str]] = []
 
 
@@ -31,8 +30,8 @@ async def generate_kuji(image_type: Literal['png', 'jpeg', ''] | None = 'png') -
     # generate html
     with open(_kuji_assets_path / 'template.html', 'r', encoding='utf-8') as f:
         generated_html = f.read().replace("'{DATA_HERE}'", json.dumps(selected_kuji, ensure_ascii=False))
-    img = await render_html(generated_html, _kuji_assets_path, image_type=image_type,
-                            viewport={'width': 520, 'height': 820})
+    img = await render_by_browser.render_html(generated_html, _kuji_assets_path, image_type=image_type,
+                                              viewport={'width': 520, 'height': 820})
     return img, selected_kuji
 
 
