@@ -85,8 +85,19 @@ def generate_response(msg: str, fallback_keyword: bool = True) -> str:
     return config.reply_unknown_response
 
 
+def _check_reply(event: Event) -> bool:
+    if group_id := util.get_group_id(event):  # 确保是群消息
+        if group_id in _reply_group_config and _reply_group_config[group_id]['enabled']:  # 确保群开启了自动回复
+            rate = config.reply_auto_rate
+            if 'rate' in _reply_group_config[group_id]:
+                rate = _reply_group_config[group_id]['rate']
+            if random.random() < rate:
+                return True
+    return False
+
+
 reply = on_command('reply', aliases={'回复', '说话', '回答我'}, block=True)
-auto_reply = on_regex(r'.*', block=True, priority=100)  # TODO 不同群不同概率
+auto_reply = on_regex(r'.*', rule=_check_reply, block=True, priority=100)
 
 
 @reply.handle()
@@ -103,13 +114,17 @@ async def _(event: Event, bot: Bot, args: Message = CommandArg()):
                 _reply_group_config.save()
                 await reply.finish('已禁用自动回复')
             elif msg.lower().startswith('_rate'):
-                rate = float(msg.split()[1])
-                if 0 <= rate <= 1:
-                    _reply_group_config[gid]['rate'] = rate
-                    _reply_group_config.save()
-                    await reply.finish(f'已将自动回复概率设置为{rate * 100}%')
+                splitted = msg.split()
+                if len(splitted) == 1:
+                    await reply.finish(f'当前自动回复概率为{_reply_group_config[gid]["rate"] * 100}%')
                 else:
-                    await reply.finish('概率必须在0~1之间')
+                    rate = float(msg.split()[1])
+                    if 0 <= rate <= 1:
+                        _reply_group_config[gid]['rate'] = rate
+                        _reply_group_config.save()
+                        await reply.finish(f'已将自动回复概率设置为{rate * 100}%')
+                    else:
+                        await reply.finish('概率必须在0~1之间')
         my_name = await util.get_bot_name(event, bot, config.reply_my_name)
         user_name = await essentials.libraries.user.get_user_name(event, bot, config.reply_sender_name)
         resp = generate_response(msg).format(me=my_name, name=user_name, segment='\n')
@@ -121,17 +136,11 @@ async def _(event: Event, bot: Bot, args: Message = CommandArg()):
 
 @auto_reply.handle()
 async def _(event: Event, bot: Bot):
-    if group_id := util.get_group_id(event):  # 确保是群消息
-        if group_id in _reply_group_config and _reply_group_config[group_id]['enabled']:  # 确保群开启了自动回复
-            rate = config.reply_auto_rate
-            if 'rate' in _reply_group_config[group_id]:
-                rate = _reply_group_config[group_id]['rate']
-            if random.random() < rate: # 概率
-                my_name = await util.get_bot_name(event, bot, config.reply_my_name)
-                user_name = await essentials.libraries.user.get_user_name(event, bot, config.reply_sender_name)
-                if msg := event.get_plaintext():
-                    resp = generate_response(msg, False).format(me=my_name, name=user_name)
-                    if resp != config.reply_unknown_response:
-                        for i in resp.split('\n'):
-                            await reply.send(i)
+    my_name = await util.get_bot_name(event, bot, config.reply_my_name)
+    user_name = await essentials.libraries.user.get_user_name(event, bot, config.reply_sender_name)
+    if msg := event.get_plaintext():
+        resp = generate_response(msg, False).format(me=my_name, name=user_name)
+        if resp != config.reply_unknown_response:
+            for i in resp.split('\n'):
+                await reply.send(i)
     await reply.finish()
