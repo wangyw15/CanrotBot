@@ -10,7 +10,7 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-calculator = on_regex(r'^([\d()\-+*/.]+)=$', block=True)
+calculator = on_regex(r'^([\d()\-+*/.]+)[=＝]$', block=True)
 @calculator.handle()
 async def _(state: T_State):
     try:

@@ -51,7 +51,7 @@ async def _(args: Message = CommandArg()):
 
 
 # currency convert from foreign to rmb
-currency_convert_to_rmb = on_regex(r'^([\d()\-+*/.]+)([a-zA-Z\u4e00-\u9fa5]+)=$', block=True)
+currency_convert_to_rmb = on_regex(r'^([\d()\-+*/.]+)([a-zA-Z\u4e00-\u9fa5]+)[=＝]$', block=True)
 @currency_convert_to_rmb.handle()
 async def _(state: T_State):
     amount: float | int = eval(state['_matched_groups'][0].strip())
@@ -71,8 +71,8 @@ async def _(state: T_State):
 
 
 # currency convert from rmb to foreign
-currency_convert_to_foreign = on_regex(r'^([\d()\-+*/.]+)(?:rmb|人民币|￥)=(?:[?？]|多少)?([a-zA-Z\u4e00-\u9fa5]+)$',
-                                       flags=re.IGNORECASE, block=True)
+currency_convert_to_foreign = on_regex(
+    r'^([\d()\-+*/.]+)(?:rmb|人民币|￥)[=＝](?:[?？]|多少)?([a-zA-Z\u4e00-\u9fa5]+)$', flags=re.IGNORECASE, block=True)
 @currency_convert_to_foreign.handle()
 async def _(state: T_State):
     amount: float | int = eval(state['_matched_groups'][0].strip())
