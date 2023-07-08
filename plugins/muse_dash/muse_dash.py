@@ -64,6 +64,32 @@ async def generate_muse_dash_player_image(player_id: str, image_type: Literal['p
     await page.close()
     return ret
 
+
+async def generate_muse_dash_message(player_id: str) -> str:
+    """生成消息"""
+    if player_id:
+        if data := await fetch_muse_dash_player_data(player_id):
+            ret_msg = [f'玩家名：{data["name"]}\n' +
+                       f'偏差值: {data["diff"]}\n' +
+                       f'记录条数: {data["records"]}\n' +
+                       f'完美数: {data["perfects"]}\n' +
+                       f'平均准确率: {data["avg"]}%\n' +
+                       f'上次更新: {data["last_update"]} 前\n']
+            for song in data['songs']:
+                ret_msg.append(util.MESSAGE_SPLIT_LINE + '\n' +
+                               f'[CQ:image,file={song["icon"]}]\n' +
+                               f'曲目: {song["name"]} (Lv.{song["level"]})\n' +
+                               f'作曲家: {song["musician"]}\n' +
+                               f'准确度: {song["accuracy"]}%\n' +
+                               f'得分: {song["score"]}\n' +
+                               f'角色: {song["character"]}\n' +
+                               f'精灵: {song["sprite"]}\n' +
+                               f'总排名: {song["total_rank"]}\n'
+                               )
+            return ''.join(ret_msg).strip()
+    return ''
+
+
 async def _test():
     with open('test.png', 'wb') as f:
         f.write(await generate_muse_dash_player_image('test your player id', 'png'))
