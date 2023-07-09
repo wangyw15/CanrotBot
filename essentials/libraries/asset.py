@@ -32,5 +32,8 @@ class Asset:
     def __getitem__(self, key: str):
         return self.__data[key]
 
+    def items(self):
+        return self.__data.items()
+
     def open(self, file_name: str, *args, **kwargs) -> typing.IO:
         return (self.__base_path / file_name).open(*args, **kwargs)

@@ -1,8 +1,6 @@
-from typing import Annotated
-
-from nonebot import on_shell_command
-from nonebot.adapters import MessageSegment
-from nonebot.params import ShellCommandArgv
+from nonebot import on_command
+from nonebot.adapters import Message
+from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from . import bnhhsh
@@ -14,9 +12,9 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-_bnhhsh_handler = on_shell_command('bnhhsh', aliases={'不能好好说话'}, block=True)
+_bnhhsh_handler = on_command('bnhhsh', aliases={'不能好好说话'}, block=True)
 @_bnhhsh_handler.handle()
-async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
-    if len(args) == 1:
-        await _bnhhsh_handler.finish(bnhhsh.dp(args[0]))
+async def _(args: Message = CommandArg()):
+    if msg :=args.extract_plain_text():
+        await _bnhhsh_handler.finish(bnhhsh.generate(msg))
     await _bnhhsh_handler.finish('用法: ' + __plugin_meta__.usage)

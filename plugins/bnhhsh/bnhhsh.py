@@ -1,81 +1,56 @@
-import json
-import pickle
-import tempfile
-from pathlib import Path
+import pypinyin
 
 from essentials.libraries import asset
 
-_bnhhsh_assets_path = asset.get_assets_path('bnhhsh')
+_bnhhsh_data: dict[int, dict[str, dict[str, float]]] = asset.load_json('bnhhsh.json')
+_bnhhsh_data: dict[int, dict[str, dict[str, float]]] = {int(k): v for k, v in _bnhhsh_data.items()}
+_longest = max(_bnhhsh_data.keys())
 
 
-def 破处():
-    def 缩(s):
-        from pypinyin import pinyin, Style
-        q = pinyin(s, style=Style.FIRST_LETTER)
-        return ''.join([x[0].lower() for x in q])
-    def 丢(词桶, 词表, 痛苦):
-        for i in 词表:
-            k = 缩(i)
-            w = 词桶.setdefault(len(i), {})
-            if y:=w.get(k):
-                if y[1] > 痛苦:
-                    w[k] = [f'{i}', 痛苦]
-            else:
-                w[k] = [f'{i}', 痛苦]
-    with open(_bnhhsh_assets_path/'色情词库.json', encoding='utf8') as f:
-        色情词库 = json.load(f)    
-    with open(_bnhhsh_assets_path/'色情词库_数据增强.json', encoding='utf8') as f:
-        色情词库_数据增强 = json.load(f)
-    with open(_bnhhsh_assets_path/'莉沫词库.json', encoding='utf8') as f:
-        莉沫词库 = json.load(f)
-    with open(_bnhhsh_assets_path/'常用汉字.json', encoding='utf8') as f:
-        常用汉字 = json.load(f)
-    with open(_bnhhsh_assets_path/'现代汉语常用词表.json', encoding='utf8') as f:
-        现代汉语常用词表 = json.load(f)
-    词桶 = {
-        1: {'i': ['爱', 0.1], 'u': ['幼', 0.1]}
-    }
-    丢(词桶, 色情词库, 0.001)
-    丢(词桶, 莉沫词库, 0.01)
-    丢(词桶, 色情词库_数据增强, 0.1)
-    丢(词桶, 常用汉字, 0.11)
-    丢(词桶, 现代汉语常用词表, 0.2)
-    n = max(词桶)
-    for i in range(1, n+1):
-        词桶.setdefault(i, {})
-    with open(Path(tempfile.gettempdir())/'bnhhsh词桶v1.2.2.pkl', 'wb') as f:
-        pickle.dump(词桶, f)
+def get_pinyin_abbr(content: str) -> str:
+    """
+    获取拼音首字母缩写
 
-q = Path(Path(tempfile.gettempdir())/'bnhhsh词桶v1.2.2.pkl')
-if not q.is_file():
-    破处()
-with open(q, 'rb') as f:
-    词桶 = pickle.load(f)
+    :param content: 内容
 
-n = max(词桶)
+    :return: 拼音
+    """
+    return ''.join([x[0].lower() for x in pypinyin.pinyin(content, style=pypinyin.Style.FIRST_LETTER)])
 
-def yndp(target):
-    代价 = {-1: 0}
-    记录 = {-1: []}
+
+def yndp(target: str):
+    cost = {-1: 0}
+    record = {-1: []}
     for x in range(len(target)):
-        代价[x] = 2**32
-        for k in range(n, 0, -1):
+        cost[x] = 2**32
+        for k in range(_longest, 0, -1):
             s = x-k+1
             if s < 0:
                 continue
-            if c:=词桶[k].get(target[s:x+1]):
-                词, 痛苦 = c
-                if 代价[x-k]+痛苦 < 代价[x]:
-                    代价[x] = 代价[x-k]+痛苦
-                    记录[x] = 记录[x-k].copy()
-                    记录[x].append((s, x+1, 词))
-        if 代价[x-1]+1 < 代价[x]:
-            代价[x] = 代价[x-1]+1
-            记录[x] = 记录[x-1].copy()
+            if abbr_map := _bnhhsh_data[k].get(target[s:x+1]):
+                least_pain = 2**32
+                least_word = ''
+                for word, pain in abbr_map.items():
+                    if pain < least_pain:
+                        least_pain = pain
+                        least_word = word
+                if cost[x-k]+least_pain < cost[x]:
+                    cost[x] = cost[x-k]+least_pain
+                    record[x] = record[x-k].copy()
+                    record[x].append((s, x+1, least_word))
+        if cost[x-1]+1 < cost[x]:
+            cost[x] = cost[x-1]+1
+            record[x] = record[x-1].copy()
     target = [*target]
-    for a, b, c in 记录[len(target)-1][::-1]:
-        target[a:b] = c
-    return ''.join(target), 代价[len(target)-1]
+    for a, b, abbr_map in record[len(target)-1][::-1]:
+        target[a:b] = abbr_map
+    return ''.join(target), cost[len(target)-1]
 
-def dp(target):
+
+def generate(target: str):
     return yndp(target)[0]
+
+
+if __name__ == '__main__':
+    while True:
+        print(generate(input('>>> ')))
