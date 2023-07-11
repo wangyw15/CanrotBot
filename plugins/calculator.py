@@ -1,6 +1,8 @@
+import typing
+
 from nonebot import on_regex
 from nonebot.exception import FinishedException
-from nonebot.typing import T_State
+from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(
@@ -12,10 +14,10 @@ __plugin_meta__ = PluginMetadata(
 
 calculator = on_regex(r'^([\d()\-+*/.]+)[=＝]$', block=True)
 @calculator.handle()
-async def _(state: T_State):
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     try:
-        result = eval(state['_matched_groups'][0].strip())
-        await calculator.finish(f"{state['_matched_groups'][0]}={str(result)}")
+        result = eval(reg[0].strip())
+        await calculator.finish(f'{reg[0]}={str(result)}')
     except FinishedException:
         pass
     except:
