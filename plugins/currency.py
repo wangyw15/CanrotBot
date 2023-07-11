@@ -1,10 +1,11 @@
-from nonebot import on_command, on_regex
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.typing import T_State
-from nonebot.plugin import PluginMetadata
 import re
+import typing
+
 import httpx
+from nonebot import on_command, on_regex
+from nonebot.adapters import Message
+from nonebot.params import CommandArg, RegexGroup
+from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(
     name='查汇率',
@@ -25,7 +26,7 @@ async def fetch_currency() -> list[dict[str, str]]:
     return []
 
 
-# currency search
+# 搜索指定汇率信息
 currency_query = on_command('currency', aliases={'汇率'}, block=True)
 @currency_query.handle()
 async def _(args: Message = CommandArg()):
@@ -50,12 +51,12 @@ async def _(args: Message = CommandArg()):
         await currency_query.finish('请输入货币名称')
 
 
-# currency convert from foreign to rmb
+# 外币转换至人民币
 currency_convert_to_rmb = on_regex(r'^([\d()\-+*/.]+)([a-zA-Z\u4e00-\u9fa5]+)[=＝]$', block=True)
 @currency_convert_to_rmb.handle()
-async def _(state: T_State):
-    amount: float | int = eval(state['_matched_groups'][0].strip())
-    currency: str = state['_matched_groups'][1].strip()
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
+    amount: float | int = eval(reg[0].strip())
+    currency: str = reg[1].strip()
     if amount and currency:
         currency_data = await fetch_currency()
         if not currency_data:
@@ -70,13 +71,13 @@ async def _(state: T_State):
         await currency_query.finish('查询格式有误')
 
 
-# currency convert from rmb to foreign
+# 人民币转外币
 currency_convert_to_foreign = on_regex(
     r'^([\d()\-+*/.]+)(?:rmb|人民币|￥)[=＝](?:[?？]|多少)?([a-zA-Z\u4e00-\u9fa5]+)$', flags=re.IGNORECASE, block=True)
 @currency_convert_to_foreign.handle()
-async def _(state: T_State):
-    amount: float | int = eval(state['_matched_groups'][0].strip())
-    currency: str = state['_matched_groups'][1].strip()
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
+    amount: float | int = eval(reg[0].strip())
+    currency: str = reg[1].strip()
     if amount and currency:
         currency_data = await fetch_currency()
         if not currency_data:
