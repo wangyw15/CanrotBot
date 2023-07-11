@@ -180,7 +180,7 @@ async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | No
     # mirai2
     elif Detector.is_mirai2(bot):
         if isinstance(event, adapters.mirai2.GroupMessage):
-            resp = bot.member_list(target=event.sender.group.id)
+            resp = await bot.member_list(target=event.sender.group.id)
             if resp['code'] == 0 and 'data' in resp:
                 for member in resp['data']:
                     if member['id'] == event.sender.id:
