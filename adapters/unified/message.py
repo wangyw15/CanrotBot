@@ -82,6 +82,7 @@ class Message(BaseMessage[MessageSegment]):
         :param event: 事件实例
         """
         if Detector.is_kook(bot):
+            url = ''
             if isinstance(img, str):
                 img_data = await util.fetch_bytes_data(img)
                 if img_data:
@@ -110,22 +111,25 @@ class Message(BaseMessage[MessageSegment]):
                 elif seg.type == MessageSegmentTypes.AT:
                     final_msg.append(adapters.onebot_v11.MessageSegment.at(seg.data['user_id']))
         elif Detector.is_onebot_v12(bot):
-            tmp = ''
             for seg in self:
                 if seg.type == MessageSegmentTypes.TEXT:
-                    tmp += seg.data['text']
+                    final_msg.append(adapters.onebot_v12.MessageSegment.text(seg.data['text']))
                 elif seg.type == MessageSegmentTypes.IMAGE:
-                    if isinstance(seg.data["file"], bytes):
-                        b64img = base64.b64encode(seg.data["file"]).decode()
-                        tmp += f'[CQ:image,file=base64://{b64img}]'
-                    elif isinstance(seg.data["file"], BytesIO):
-                        b64img = base64.b64encode(seg.data["file"].read()).decode()
-                        tmp += f'[CQ:image,file=base64://{b64img}]'
-                    elif isinstance(seg.data["file"], str) or isinstance(seg.data["file"], Path):
-                        tmp += f'[CQ:image,file={seg.data["file"]}]'
+                    img_data: bytes | None = None
+                    if isinstance(seg.data['file'], bytes):
+                        img_data = seg.data['file']
+                    elif isinstance(seg.data['file'], BytesIO):
+                        img_data = seg.data['file'].read()
+                    elif isinstance(seg.data['file'], str):
+                        img_data = await util.fetch_bytes_data(seg.data['file'])
+                    elif isinstance(seg.data["file"], Path):
+                        img_data = seg.data['file'].read_bytes()
+                    if img_data:
+                        resp = await bot.upload_file(type='data', data=img_data)
+                        if resp:
+                            final_msg.append(adapters.onebot_v12.MessageSegment.image(resp['file_id']))
                 elif seg.type == MessageSegmentTypes.AT:
-                    tmp += f'[CQ:at,qq={seg.data["user_id"]}]'
-            final_msg = adapters.onebot_v12.Message(tmp)
+                    final_msg.append(adapters.onebot_v12.MessageSegment.mention(user_id=seg.data['user_id']))
         elif Detector.is_mirai2(bot):
             for seg in self:
                 if seg.type == MessageSegmentTypes.TEXT:
