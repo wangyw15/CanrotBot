@@ -1,10 +1,12 @@
+import typing
+
 from nonebot import on_regex
 from nonebot.adapters import Bot, Event
+from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
-from nonebot.typing import T_State
 
-from . import line_sticker
 from adapters import unified
+from . import line_sticker
 
 __plugin_meta__ = PluginMetadata(
     name='Line 表情包下载',
@@ -16,10 +18,10 @@ __plugin_meta__ = PluginMetadata(
 
 _line_stricker_handler = on_regex(r'(?:https?:\/\/)?store\.line\.me\/stickershop\/product\/(\d+)', block=True)
 @_line_stricker_handler.handle()
-async def _(bot: Bot, event: Event, state: T_State):
+async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     if not (unified.Detector.is_onebot(bot) or unified.Detector.is_kook(bot)):
         await _line_stricker_handler.finish()
-    sticker_id = state['_matched_groups'][0].strip()
+    sticker_id = reg[0].strip()
     name, content = await line_sticker.get_line_sticker(sticker_id)
     await unified.Message.send_file(content, name + '.zip', bot, event)
     await _line_stricker_handler.finish()
