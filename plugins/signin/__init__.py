@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated
 
-from nonebot import on_shell_command, logger
+from nonebot import on_shell_command
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
@@ -76,12 +76,12 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         title = _signin_data[uid]['fortune_title']
         content = _signin_data[uid]['fortune_content']
         if theme == 'random' and _signin_data.exists(uid + '.png'):
-            with _signin_data.open(uid + '.png') as f:
-                img = f.read()
+            with _signin_data.open(uid + '.png', mode='rb') as f:
+                img: bytes = f.read()
         else:
             # 重新按内容生成图片
             img, _, _, _ = await fortune.generate_fortune(theme, title=title, content=content)
-            with _signin_data.open(uid + '.png') as f:
+            with _signin_data.open(uid + '.png', mode='wb') as f:
                 f.write(img)
 
     final_msg.append(unified.MessageSegment.image(img, f'运势: {title}\n详情: {content}'))

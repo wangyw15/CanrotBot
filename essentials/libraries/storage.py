@@ -116,7 +116,7 @@ class PersistentData(typing.Generic[_T]):
         for file_name, data in self.__data.items():
             self._write(file_name, data)
 
-    def open(self, file_name: str) -> typing.IO:
+    def open(self, file_name: str, *args, **kwargs) -> typing.IO:
         """
         打开文件
 
@@ -124,8 +124,7 @@ class PersistentData(typing.Generic[_T]):
 
         :return: 文件指针
         """
-        path = self.__base_path / file_name
-        return path.open('w+b')
+        return (self.__base_path / file_name).open(*args, **kwargs)
 
     def exists(self, file_name: str) -> bool:
         """
