@@ -1,11 +1,10 @@
 import re
-from typing import Literal
+import typing
 
 from nonebot import on_regex, on_command
 from nonebot.adapters import Bot, Event, Message
-from nonebot.params import CommandArg
+from nonebot.params import CommandArg, RegexGroup, RegexStr
 from nonebot.plugin import PluginMetadata
-from nonebot.typing import T_State
 
 from adapters import unified
 from . import music
@@ -20,7 +19,7 @@ __plugin_meta__ = PluginMetadata(
 _qqmusic_id_pattern = r'(?:https?:\/\/)?(?:\S+\.)?y\.qq\.com\/\S+(?:songid=|songDetail\/)(\d+)'
 
 
-async def _send_music_card(bot: Bot, event: Event, music_type: Literal['qq', '163'], music_id: str | int):
+async def _send_music_card(bot: Bot, event: Event, music_type: typing.Literal['qq', '163'], music_id: str | int):
     if unified.Detector.is_onebot_v11(bot):
         await bot.send(event, unified.adapters.onebot_v11.Message(f'[CQ:music,type={music_type},id={music_id}]'))
     elif unified.Detector.is_onebot_v12(bot):
@@ -29,8 +28,8 @@ async def _send_music_card(bot: Bot, event: Event, music_type: Literal['qq', '16
 
 _cloudmusic_handler = on_regex(r'(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+\/)?song\?\S*id=(\d+)', block=True)
 @_cloudmusic_handler.handle()
-async def _(state: T_State, bot: Bot, event: Event):
-    music_id = state['_matched_groups'][0]
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
+    music_id = reg[0]
     if unified.Detector.is_onebot(bot):
         await _send_music_card(bot, event, '163', music_id)
     await _cloudmusic_handler.finish()
@@ -38,8 +37,8 @@ async def _(state: T_State, bot: Bot, event: Event):
 
 _qqmusic_link_handler = on_regex(_qqmusic_id_pattern, block=True)
 @_qqmusic_link_handler.handle()
-async def _(state: T_State, bot: Bot, event: Event):
-    music_id = state['_matched_groups'][0]
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
+    music_id = reg[0]
     if unified.Detector.is_onebot(bot):
         await _send_music_card(bot, event, 'qq', music_id)
     await _qqmusic_link_handler.finish()
@@ -47,9 +46,8 @@ async def _(state: T_State, bot: Bot, event: Event):
 
 _qqmusic_shortlink_handler = on_regex(r'(?:https?:\/\/)?c6\.y\.qq\.com\/base\/fcgi-bin\/u\?__=(\w+)', block=True)
 @_qqmusic_shortlink_handler.handle()
-async def _(state: T_State, bot: Bot, event: Event):
-    link = state['_matched_str']
-    resolved = await music.resolve_shortlink(link)
+async def _(reg: typing.Annotated[str, RegexStr()], bot: Bot, event: Event):
+    resolved = await music.resolve_shortlink(reg)
     if resolved:
         music_id = re.search(_qqmusic_id_pattern, resolved).groups()[0]
         if unified.Detector.is_onebot(bot):
