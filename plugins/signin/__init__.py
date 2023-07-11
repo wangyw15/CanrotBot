@@ -42,11 +42,12 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     # 判断是否签到过
     last_signin = _signin_data[uid]
     can_signin = False
+    today = datetime.now().strftime('%Y-%m-%d')
     if not last_signin or 'last_date' not in last_signin:
         can_signin = True
-    today = datetime.now().strftime('%Y-%m-%d')
-    if not last_signin['last_date'] == today:
-        can_signin = True
+    else:
+        if not last_signin['last_date'] == today:
+            can_signin = True
 
     # 构造消息
     final_msg = unified.Message()
