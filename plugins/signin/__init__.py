@@ -76,8 +76,8 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         title = _signin_data[uid]['fortune_title']
         content = _signin_data[uid]['fortune_content']
         if theme == 'random' and _signin_data.exists(uid + '.png'):
-            with _signin_data.open(uid + '.png', mode='rb') as f:
-                img: bytes = f.read()
+            with _signin_data.get_path(uid + '.png').open(mode='rb') as f:
+                img: bytes = bytes(f.read())
         else:
             # 重新按内容生成图片
             img, _, _, _ = await fortune.generate_fortune(theme, title=title, content=content)

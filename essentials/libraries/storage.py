@@ -135,3 +135,13 @@ class PersistentData(typing.Generic[_T]):
         :return: 文件是否存在
         """
         return (self.__base_path / file_name).exists()
+
+    def get_path(self, file_name: str) -> Path:
+        """
+        获取文件路径
+
+        :param file_name: 文件名
+
+        :return: 文件路径
+        """
+        return self.__base_path / file_name
