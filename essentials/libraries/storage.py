@@ -76,12 +76,12 @@ class PersistentData(typing.Generic[_T]):
     def __init__(self, storage_name: str):
         self.__storage_name: str = storage_name
         self.__data: dict[str] = {}
-        self.__base_path: Path = get_path(self.__storage_name)
+        self.__base_path: Path = _base_data_path / self.__storage_name
         # 自动创建文件夹
         if not self.__base_path.exists():
             self.__base_path.mkdir(parents=True, exist_ok=True)
         # 加载数据
-        for i in get_path(self.__storage_name).iterdir():
+        for i in self.__base_path.iterdir():
             if i.is_file() and i.suffix == '.json':
                 self.__data[i.stem] = json.loads(i.read_text(encoding='utf-8'))
 

@@ -19,6 +19,7 @@ def get_pinyin_abbr(content: str) -> str:
 
 
 def yndp(target: str):
+    # TODO 继续重构
     cost = {-1: 0}
     record = {-1: []}
     for x in range(len(target)):

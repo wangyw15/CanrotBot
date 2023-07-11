@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated
 
-from nonebot import on_shell_command
+from nonebot import on_shell_command, logger
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
@@ -45,7 +45,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     if not last_signin or 'last_date' not in last_signin:
         can_signin = True
     today = datetime.now().strftime('%Y-%m-%d')
-    if not last_signin == today:
+    if not last_signin['last_date'] == today:
         can_signin = True
 
     # 构造消息
