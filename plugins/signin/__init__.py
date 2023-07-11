@@ -61,7 +61,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             'fortune_title': title,
             'fortune_content': content
         }
-        with _signin_data.open(uid + '.png') as f:
+        with _signin_data.get_path(uid + '.png').open(mode='wb') as f:
             f.write(img)
         # 签到获得积分
         point_amount = 20 + rank
