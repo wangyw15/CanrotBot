@@ -59,6 +59,6 @@ class Detector:
     @staticmethod
     def can_send_image(context: Bot | Event) -> bool:
         """检测是否可以发送图片"""
-        if Detector.is_onebot(context) or Detector.is_kook(context) or Detector.is_qqguild(context):
+        if Detector.is_qq(context) or Detector.is_kook(context) or Detector.is_qqguild(context):
             return True
         return False
