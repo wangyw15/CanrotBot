@@ -195,6 +195,28 @@ def generate_investigator(raw: str) -> dict[str]:
     return investigator
 
 
+def get_success_rank(value: int, target: int) -> typing.Tuple[int, str]:
+    """
+    获取成功等级
+
+    :param value: 检定值
+    :param target: 目标值
+
+    :return: 成功等级，成功等级描述
+    """
+    if value == 1:
+        return 5, '大成功'
+    elif value <= target / 5:
+        return 4, '极难成功'
+    elif value <= target / 2:
+        return 3, '困难成功'
+    elif value <= target:
+        return 2, '成功'
+    elif target >= 50 and value == 100 or target < 50 and value >= 96:
+        return 0, '大失败'
+    return 1, '失败'
+
+
 def property_check(uid: str, property_name: str, value: int | None = None) -> typing.Tuple[str, int, int]:
     """
     属性检定
@@ -210,17 +232,7 @@ def property_check(uid: str, property_name: str, value: int | None = None) -> ty
     if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
         iid, card = get_selected_investigator(uid).popitem()
         target = card['basic_properties'][get_property_key(property_name)]
-        check_result = '失败'
-        if value == 1:
-            check_result = '大成功'
-        elif value <= target / 5:
-            check_result = '极难成功'
-        elif value <= target / 2:
-            check_result = '困难成功'
-        elif value <= target:
-            check_result = '成功'
-        elif target >= 50 and value == 100 or target < 50 and value >= 96:
-            check_result = '大失败'
+        _, check_result = get_success_rank(value, target)
         return check_result, target, value
 
 
