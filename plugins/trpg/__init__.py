@@ -119,19 +119,7 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
     iid, card = investigator.get_selected_investigator(uid).popitem()
     if len(args) == 1:
         if args[0] in investigator.basic_property_names:
-            target = card['basic_properties'][investigator.get_property_key(args[0])]
-            dice_result = dice.simple_dice_expression('d100')
-            check_result = '失败'
-            if dice_result == 1:
-                check_result = '大成功'
-            elif dice_result <= target / 5:
-                check_result = '极难成功'
-            elif dice_result <= target / 2:
-                check_result = '困难成功'
-            elif dice_result <= target:
-                check_result = '成功'
-            elif target >= 50 and dice_result == 100 or target < 50 and dice_result >= 96:
-                check_result = '大失败'
+            check_result, dice_result, target = investigator.property_check(uid, args[0])
             await _check_handler.finish(f'调查员 {card["name"]}\n'
                                         f'{args[0]}: {target}\n'
                                         f'd100 = {dice_result}\n'
