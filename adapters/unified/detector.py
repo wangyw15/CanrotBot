@@ -124,3 +124,16 @@ class Detector:
         if Detector.is_qq(context) or Detector.is_kook(context) or Detector.is_qqguild(context):
             return True
         return False
+
+    @staticmethod
+    def can_send_file(context: Bot | Event) -> bool:
+        """
+        检测是否可以发送文件
+
+        :param context: Bot | Event
+
+        :return: 是否可以发送文件
+        """
+        if Detector.is_onebot(context) or Detector.is_kook(context):
+            return True
+        return False

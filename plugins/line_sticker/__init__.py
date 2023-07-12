@@ -19,7 +19,7 @@ __plugin_meta__ = PluginMetadata(
 _line_stricker_handler = on_regex(r'(?:https?:\/\/)?store\.line\.me\/stickershop\/product\/(\d+)', block=True)
 @_line_stricker_handler.handle()
 async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
-    if not (unified.Detector.is_onebot(bot) or unified.Detector.is_kook(bot)):
+    if not unified.Detector.can_send_file(bot):
         await _line_stricker_handler.finish()
     sticker_id = reg[0].strip()
     name, content = await line_sticker.get_line_sticker(sticker_id)
