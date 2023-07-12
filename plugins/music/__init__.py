@@ -24,6 +24,24 @@ async def _send_music_card(bot: Bot, event: Event, music_type: typing.Literal['q
         await bot.send(event, unified.adapters.onebot_v11.Message(f'[CQ:music,type={music_type},id={music_id}]'))
     elif unified.Detector.is_onebot_v12(bot):
         await bot.send(event, unified.adapters.onebot_v12.Message(f'[CQ:music,type={music_type},id={music_id}]'))
+    elif unified.Detector.is_mirai2(bot):
+        kind = ''
+        if music_type == 'qq':
+            kind = 'QQMusic'
+        elif music_type == '163':
+            kind = 'NeteaseCloudMusic'
+        if kind:
+            info = await music.fetch_music_info(music_type, music_id)
+            if info:
+                await bot.send(event, unified.adapters.mirai2.MessageSegment.music_share(
+                              kind=music_type,
+                              title=info['title'],
+                              summary='',
+                              jump_url=f'https://music.163.com/#/song?id={music_id}',
+                              picture_url=info['cover'],
+                              music_url=f'https://music.163.com/song/media/outer/url?id={music_id}.mp3',
+                              brief=info['artists']))
+
 
 
 _cloudmusic_handler = on_regex(r'(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+\/)?song\?\S*id=(\d+)', block=True)

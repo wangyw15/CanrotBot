@@ -1,3 +1,5 @@
+import typing
+
 import httpx
 
 _client = httpx.AsyncClient()
@@ -27,6 +29,20 @@ async def search_qq_music(keyword: str) -> list[dict]:
         if data['code'] == 0:
             return data['data']['song']['itemlist']
     return []
+
+
+async def fetch_music_info(music_type: typing.Literal['qq', '163'], music_id: str | int) -> dict:
+    ret = {}
+    if music_type == '163':
+        resp = await _client.get(f'https://autumnfish.cn/song/detail?ids={music_id}')
+        if resp.is_success and resp.status_code == 200:
+            data = resp.json()['songs'][0]
+            ret['title'] = data['name']
+            ret['artists'] = ','.join([artist['name'] for artist in data['ar']])
+            ret['cover'] = data['al']['picUrl']
+    elif music_type == 'qq':
+        pass
+    return ret
 
 
 async def main():
