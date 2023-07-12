@@ -1,8 +1,9 @@
+import typing
+
 from nonebot import get_driver, on_command, on_regex
 from nonebot.adapters import Message, Bot, Event
-from nonebot.params import CommandArg
+from nonebot.params import CommandArg, RegexGroup
 from nonebot.plugin import PluginMetadata
-from nonebot.typing import T_State
 from pydantic import BaseModel
 
 from adapters import unified
@@ -92,8 +93,8 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
 
 _steam_link_handler = on_regex(r'(?:https?:\/\/)?store\.steampowered\.com\/app\/(\d+)', block=True)
 @_steam_link_handler.handle()
-async def _(bot: Bot, event: Event, state: T_State):
-    appid = state['_matched_groups'][0]
+async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
+    appid = reg[0]
     if appinfo := await steam.fetch_app_info(appid, _steam_config.steam_language, _steam_config.steam_region):
         if appinfo.get(appid, {}).get('success', False):
             appinfo = appinfo[appid]['data']
