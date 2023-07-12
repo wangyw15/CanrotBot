@@ -48,7 +48,7 @@ _cloudmusic_handler = on_regex(r'(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+
 @_cloudmusic_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
     music_id = reg[0]
-    if unified.Detector.is_onebot(bot):
+    if unified.Detector.is_qq(bot):
         await _send_music_card(bot, event, '163', music_id)
     await _cloudmusic_handler.finish()
 
@@ -57,7 +57,7 @@ _qqmusic_link_handler = on_regex(_qqmusic_id_pattern, block=True)
 @_qqmusic_link_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
     music_id = reg[0]
-    if unified.Detector.is_onebot(bot):
+    if unified.Detector.is_qq(bot):
         await _send_music_card(bot, event, 'qq', music_id)
     await _qqmusic_link_handler.finish()
 
@@ -68,7 +68,7 @@ async def _(reg: typing.Annotated[str, RegexStr()], bot: Bot, event: Event):
     resolved = await music.resolve_shortlink(reg)
     if resolved:
         music_id = re.search(_qqmusic_id_pattern, resolved).groups()[0]
-        if unified.Detector.is_onebot(bot):
+        if unified.Detector.is_qq(bot):
             await _send_music_card(bot, event, 'qq', music_id)
         await _qqmusic_shortlink_handler.finish()
 
@@ -76,23 +76,21 @@ async def _(reg: typing.Annotated[str, RegexStr()], bot: Bot, event: Event):
 _qq_music_handler = on_command('点歌', block=True)
 @_qq_music_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    if not unified.Detector.is_onebot(bot):
-        await _qq_music_handler.finish('只有 OneBot 协议才支持点歌')
+    if not unified.Detector.is_qq(bot):
+        await _qq_music_handler.finish('只有 QQ 才支持点歌')
 
     if keyword := args.extract_plain_text():
         search_result = await music.search_qq_music(keyword)
         if search_result:
             music_id = search_result[0]['id']
-            if unified.Detector.is_onebot(bot):
-                await _send_music_card(bot, event, 'qq', music_id)
-                await _qq_music_handler.finish()
+            await _send_music_card(bot, event, 'qq', music_id)
+            await _qq_music_handler.finish()
         else:
             search_result = await music.search_netease_music(keyword)
             if search_result:
                 music_id = search_result[0]['id']
-                if unified.Detector.is_onebot(bot):
-                    await _send_music_card(bot, event, '163', music_id)
-                    await _qq_music_handler.finish()
+                await _send_music_card(bot, event, '163', music_id)
+                await _qq_music_handler.finish()
         await _qq_music_handler.finish('没找到这首歌喵~')
     else:
         await _qq_music_handler.finish('请输入歌曲名')
@@ -101,23 +99,21 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
 _netease_music_handler = on_command('网易点歌', block=True)
 @_netease_music_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    if not unified.Detector.is_onebot(bot):
-        await _netease_music_handler.finish('只有 OneBot 协议才支持点歌')
+    if not unified.Detector.is_qq(bot):
+        await _netease_music_handler.finish('只有 QQ 才支持点歌')
 
     if keyword := args.extract_plain_text():
         search_result = await music.search_netease_music(keyword)
         if search_result:
             music_id = search_result[0]['id']
-            if unified.Detector.is_onebot(bot):
-                await _send_music_card(bot, event, '163', music_id)
-                await _netease_music_handler.finish()
+            await _send_music_card(bot, event, '163', music_id)
+            await _netease_music_handler.finish()
         else:
             search_result = await music.search_qq_music(keyword)
             if search_result:
                 music_id = search_result[0]['id']
-                if unified.Detector.is_onebot(bot):
-                    await _send_music_card(bot, event, 'qq', music_id)
-                    await _netease_music_handler.finish()
+                await _send_music_card(bot, event, 'qq', music_id)
+                await _netease_music_handler.finish()
         await _netease_music_handler.finish('没找到这首歌喵~')
     else:
         await _netease_music_handler.finish('请输入歌曲名')
