@@ -1,9 +1,10 @@
+import typing
 from datetime import datetime
 
 from nonebot import on_regex, on_fullmatch
 from nonebot.adapters import Bot, Event
+from nonebot.params import RegexGroup, RegexStr
 from nonebot.plugin import PluginMetadata
-from nonebot.typing import T_State
 
 from adapters import unified
 from . import bilibili
@@ -38,8 +39,8 @@ def _generate_bilibili_message(data: dict) -> str:
 
 _bilibili_video = on_regex(bilibili.bilibili_vid_pattern, block=True)
 @_bilibili_video.handle()
-async def _(state: T_State, bot: Bot, event: Event):
-    data = await bilibili.fetch_video_data(state['_matched_groups'][0])
+async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
+    data = await bilibili.fetch_video_data(reg[0])
     if data:
         msg = _generate_bilibili_message(data)
         final_msg = unified.Message()
@@ -51,8 +52,8 @@ async def _(state: T_State, bot: Bot, event: Event):
 
 _bilibili_video_short_link = on_regex(r'https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}', block=True)
 @_bilibili_video_short_link.handle()
-async def _(state: T_State, bot: Bot, event: Event):
-    vid = await bilibili.get_bvid_from_short_link(state['_matched_str'])
+async def _(bot: Bot, event: Event, reg: typing.Annotated[str, RegexStr()]):
+    vid = await bilibili.get_bvid_from_short_link(reg)
     if vid:
         data = await bilibili.fetch_video_data(vid)
         if data:
