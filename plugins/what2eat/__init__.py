@@ -1,6 +1,8 @@
+import typing
+
 from nonebot import on_regex
+from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
-from nonebot.typing import T_State
 
 from . import what2eat
 
@@ -14,7 +16,7 @@ __plugin_meta__ = PluginMetadata(
 
 _brand_handler = on_regex(r'我(?:想|要)(吃|喝)(\S+)', block=True)
 @_brand_handler.handle()
-async def _(state: T_State):
-    if state['_matched_groups'][0] == '喝':
-        await _brand_handler.finish(f'可以试试 {what2eat.get_drink_by_brand(state["_matched_groups"][1])}')
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
+    if reg[0] == '喝':
+        await _brand_handler.finish(f'可以试试 {what2eat.get_drink_by_brand(reg[1])}')
     await _brand_handler.finish()
