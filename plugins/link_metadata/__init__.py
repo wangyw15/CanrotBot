@@ -1,9 +1,10 @@
 import datetime
+import typing
 
 from nonebot import on_regex
 from nonebot.adapters import Bot, Event
+from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
-from nonebot.typing import T_State
 
 from adapters import unified
 from .youtube import youtube_id_pattern, fetch_youtube_data, fetch_youtube_thumbnail
@@ -17,13 +18,13 @@ __plugin_meta__ = PluginMetadata(
 
 
 def _generate_youtube_message(data: dict) -> str:
-    # either use the first line of description or the first 50 characters of description
+    # 选择第一行或者前200个字符
     desc = '\n'.join([x.strip() for x in data['snippet']['description'].split('\n') if x.strip() != ''])
     if len(desc) > 200:
         desc = desc[:200] + '...'
-    # publish time
+    # 发布时间
     date = datetime.datetime.strptime(data['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ') + datetime.timedelta(hours=8)
-    # generate message
+    # 生成信息
     msg = ''
     msg += f'标题: \n{data["snippet"]["title"]}\n' \
            f'频道: \n{data["snippet"]["channelTitle"]}\n' \
@@ -38,8 +39,8 @@ def _generate_youtube_message(data: dict) -> str:
 
 _youtube_video = on_regex(youtube_id_pattern, block=True)
 @_youtube_video.handle()
-async def _(state: T_State, bot: Bot, event: Event):
-    data = await fetch_youtube_data(state['_matched_groups'][0])
+async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
+    data = await fetch_youtube_data(reg[0])
     if data:
         msg = _generate_youtube_message(data)
         img_data = await fetch_youtube_thumbnail(data)
