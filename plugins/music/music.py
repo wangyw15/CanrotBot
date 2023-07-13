@@ -38,7 +38,7 @@ async def fetch_music_info(music_type: typing.Literal['qq', '163'], music_id: st
         if resp.is_success and resp.status_code == 200:
             data = resp.json()['songs'][0]
             ret['title'] = data['name']
-            ret['artists'] = ','.join([artist['name'] for artist in data['ar']])
+            ret['artists'] = '/'.join([artist['name'] for artist in data['ar']])
             ret['cover'] = data['al']['picUrl']
     elif music_type == 'qq':
         pass
