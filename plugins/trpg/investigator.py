@@ -225,7 +225,7 @@ def property_check(uid: str, property_name: str, value: int | None = None) -> ty
     :param property_name: 属性名
     :param value: 检定值，为空则随机生成
 
-    :return: 检定结果，目标值，检定值
+    :return: 检定结果，检定值，目标值
     """
     if not value:
         value = dice.simple_dice_expression('d100')
@@ -233,7 +233,7 @@ def property_check(uid: str, property_name: str, value: int | None = None) -> ty
         iid, card = get_selected_investigator(uid).popitem()
         target = card['basic_properties'][get_property_key(property_name)]
         _, check_result = get_success_rank(value, target)
-        return check_result, target, value
+        return check_result, value, target
 
 
 _ = ''' investigator example
