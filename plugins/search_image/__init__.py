@@ -35,7 +35,7 @@ async def _(state: T_State, bot: Bot, args: Annotated[list[str | MessageSegment]
             await _search_image.finish("无效的搜图网站选项")
     state["SEARCH_IMAGE_API"] = api
 
-    if unified.Detector.is_onebot_v11(bot) or unified.Detector.is_onebot_v12(bot) or unified.Detector.is_kook(bot):
+    if unified.Detector.is_qq(bot) or unified.Detector.is_kook(bot):
         await _search_image.send("请发送图片或图片链接")
     else:
         await _search_image.send("请发送图片链接")

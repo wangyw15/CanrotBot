@@ -51,8 +51,8 @@ def generate_message_from_anime_data(name: str, data: dict, possibility: float) 
 
 async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Event) -> None:
     img_url = ''
-    if isinstance(msg, MessageSegment) and msg.type == 'image':
-        if unified.Detector.is_onebot_v11(bot) or unified.Detector.is_onebot_v12(bot):
+    if isinstance(msg, MessageSegment) and msg.type.lower() == 'image':
+        if unified.Detector.is_qq(bot):
             img_url = msg.data['url'].strip()
         elif unified.Detector.is_kook(bot):
             img_url = msg.data['file_key'].strip()
