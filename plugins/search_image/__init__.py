@@ -45,7 +45,8 @@ async def _(state: T_State, bot: Bot, args: Annotated[list[str | MessageSegment]
 async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
     # get img url
     img_url: str = ""
-    if (unified.Detector.is_onebot_v11(bot) or unified.Detector.is_onebot_v12(bot)) and image[0].type == 'image':
+    if unified.Detector.is_onebot(bot) and image[0].type == 'image' \
+            or unified.Detector.is_mirai2(bot) and image[0].type == unified.adapters.mirai2.MessageType.IMAGE:
         img_url = image[0].data['url'].strip()
     elif unified.Detector.is_kook(bot) and image[0].type == 'image':
         img_url = image[0].data['file_key'].strip()
