@@ -51,42 +51,38 @@ async def _(args: Message = CommandArg()):
         await currency_query.finish('请输入货币名称')
 
 
-# 外币转换至人民币
-currency_convert_to_rmb = on_regex(r'^([\d()\-+*/.]+)([a-zA-Z\u4e00-\u9fa5]+)[=＝]$', block=True)
-@currency_convert_to_rmb.handle()
-async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
-    amount: float | int = eval(reg[0].strip())
-    currency: str = reg[1].strip()
-    if amount and currency:
-        currency_data = await fetch_currency()
-        if not currency_data:
-            await currency_convert_to_rmb.finish('获取汇率失败')
-        for item in currency_data:
-            if currency.lower() == item['currencyENName'].lower() or currency == item['currencyCHName']:
-                price = float(item['foreignSell'])
-                await currency_convert_to_rmb.finish(
-                    f"{amount}{item['currencyCHName']} = {round(amount / 100 * price, 4)}人民币")
-        await currency_query.finish('未找到该货币')
-    else:
-        await currency_query.finish('查询格式有误')
-
-
-# 人民币转外币
+# 汇率转换
 currency_convert_to_foreign = on_regex(
-    r'^([\d()\-+*/.]+)(?:rmb|人民币|￥)[=＝](?:[?？]|多少)?([a-zA-Z\u4e00-\u9fa5]+)$', flags=re.IGNORECASE, block=True)
+    r'^(\d+(?:.\d+)?)([a-zA-Z\u4e00-\u9fa5]+)[=＝]([a-zA-Z\u4e00-\u9fa5]+)$', flags=re.IGNORECASE, block=True)
 @currency_convert_to_foreign.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     amount: float | int = eval(reg[0].strip())
-    currency: str = reg[1].strip()
-    if amount and currency:
+    currency_from: str = reg[1].strip()
+    currency_to: str = reg[2].strip()
+    if amount and currency_from and currency_to:
         currency_data = await fetch_currency()
         if not currency_data:
             await currency_convert_to_foreign.finish('获取汇率失败')
+        price_from = ''
+        price_to = ''
+        name_from = ''
+        name_to = ''
         for item in currency_data:
-            if currency.lower() == item['currencyENName'].lower() or currency == item['currencyCHName']:
-                price = float(item['foreignSell'])
-                await currency_convert_to_foreign.finish(
-                    f"{amount}人民币 = {round(amount * 100 / price, 4)}{item['currencyCHName']}")
+            if currency_from.lower() == item['currencyENName'].lower() or currency_from == item['currencyCHName']:
+                price_from = float(item['foreignBuy'])
+                name_from = item['currencyCHName']
+            elif currency_from.lower() in ['rmb', 'cny'] or currency_from == '人民币':
+                price_from = 100
+                name_from = '人民币'
+            if currency_to.lower() == item['currencyENName'].lower() or currency_to == item['currencyCHName']:
+                price_to = float(item['foreignSell'])
+                name_to = item['currencyCHName']
+            elif currency_to.lower() in ['rmb', 'cny'] or currency_to == '人民币':
+                price_to = 100
+                name_to = '人民币'
+        if price_from and price_to:
+            await currency_convert_to_foreign.finish(
+                f'{amount}{name_from}={round(amount * price_from / price_to, 4)}{name_to}')
         await currency_query.finish('未找到该货币')
     else:
         await currency_query.finish('查询格式有误')
