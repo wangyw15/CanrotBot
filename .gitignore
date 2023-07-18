@@ -4,3 +4,27 @@ __pycache__/
 canrot_data.db
 .env
 canrot_data/
+
+# Node.js
+lib
+dist
+data
+external
+
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+tsconfig.tsbuildinfo
+
+.eslintcache
+.DS_Store
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
