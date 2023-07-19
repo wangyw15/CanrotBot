@@ -3,6 +3,7 @@ __pycache__/
 .idea/
 canrot_data.db
 .env
+.env.*
 canrot_data/
 
 # Node.js
@@ -22,7 +23,6 @@ tsconfig.tsbuildinfo
 
 .eslintcache
 .DS_Store
-.idea
 .vscode
 *.suo
 *.ntvs*

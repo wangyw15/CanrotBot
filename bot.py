@@ -18,8 +18,8 @@ for adapter in dir(unified.adapters):
         nonebot.logger.info('Adapter registered: ' + adapter)
 
 # 基础插件
-essentianls_plugins_path = (Path(__file__).parent / 'essentials' / 'plugins').resolve()
-nonebot.load_plugins(str(essentianls_plugins_path))
+essentials_plugins_path = (Path(__file__).parent / 'essentials' / 'plugins').resolve()
+nonebot.load_plugins(str(essentials_plugins_path))
 # 普通插件
 plugins_path = (Path(__file__).parent / 'plugins').resolve()
 for i in plugins_path.iterdir():
