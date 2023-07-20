@@ -73,14 +73,7 @@ class Message(BaseMessage[MessageSegment]):
 
     async def send(self) -> None:
         from . import adapters
-        for i in dir(adapters.SupportedAdapters):
-            if i.startswith('_'):
-                continue
-            if current_bot.get().__class__ == getattr(adapters.SupportedAdapters, i).Bot:
-                module = importlib.import_module(f'.adapters.{adapters.SupportedAdapters[i]}', __package__)
-                adapter: adapters.AdapterInterface = getattr(module, i)
-                await adapter.send(self)
-                break
+        await adapters.get_current_adapter().send(self)
 
     @staticmethod
     async def send_file(content: bytes, name: str, bot: Bot, event: Event):

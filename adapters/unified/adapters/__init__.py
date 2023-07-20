@@ -1,6 +1,10 @@
-from nonebot.adapters import Message as BaseMessage
-from nonebot.matcher import current_matcher
+import importlib
+import sys
 from types import MappingProxyType
+
+from nonebot.adapters import Message as BaseMessage
+from nonebot.internal.matcher import current_bot
+from nonebot.matcher import current_matcher
 
 from .. import message
 
@@ -89,6 +93,18 @@ class AdapterInterface():
         :param msg: 消息对象
         """
         await current_matcher.get().finish(await cls.generate_message(msg))
+
+
+def get_current_adapter() -> AdapterInterface:
+    """
+    获取当前适配器
+
+    :return: 当前适配器
+    """
+    for name, key in SupportedAdapters.items():
+        if current_bot.get().__class__ == getattr(sys.modules[__name__], key + '_module').Bot:
+            module = importlib.import_module('.' + key, __package__)
+            return getattr(module, name)
 
 
 __all__ = ['SupportedAdapters',
