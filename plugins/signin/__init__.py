@@ -85,5 +85,5 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
                 f.write(img)
 
     final_msg.append(unified.MessageSegment.image(img, f'运势: {title}\n详情: {content}'))
-    await final_msg.send(bot, event)
+    await final_msg.send()
     await _signin_handler.finish()

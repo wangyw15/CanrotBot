@@ -69,7 +69,7 @@ async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
                 msg = search_image.generate_message_from_tracemoe_result(search_resp)
             else:
                 await _search_image.finish("搜索失败")
-        await msg.send(bot, event)
+        await msg.send()
         await _search_image.finish()
     else:
         await _search_image.finish("图片链接错误，停止搜图")

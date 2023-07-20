@@ -47,5 +47,5 @@ async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...]
         final_msg = unified.Message()
         final_msg.append(unified.MessageSegment.image(img_data, '视频封面图'))
         final_msg.append(msg)
-        await final_msg.send(bot, event)
+        await final_msg.send()
         await _youtube_video.finish()

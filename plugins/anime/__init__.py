@@ -100,5 +100,5 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             msg = unified.Message()
             msg.append(unified.MessageSegment.image(data['picture'], f'{name} 封面图'))
             msg.append(text_msg)
-            await msg.send(bot, event)
+            await msg.send()
             await _anime_handler.finish()

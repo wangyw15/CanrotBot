@@ -68,7 +68,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
                 msg.append('\n\n')
                 msg.append(unified.MessageSegment.image(img_url, mltd_event['name'] + ' 封面图'))
                 msg.append(text_msg)
-            await msg.send(bot, event)
+            await msg.send()
             await _mltd_handler.finish()
         else:
             await _mltd_handler.finish('现在还没有活动喵~')
@@ -87,7 +87,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         msg = unified.Message('谢谢你的25个胡萝卜片喵~')
         img, data = await mltd.gasha()
         msg.append(unified.MessageSegment.image(img))
-        await msg.send(bot, event)
+        await msg.send()
         await _mltd_handler.finish()
     elif args[0] in ['更新', 'update']:
         await _mltd_handler.send('正在更新卡片数据喵~')

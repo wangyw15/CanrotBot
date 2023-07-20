@@ -24,5 +24,5 @@ async def _(bot: Bot, event: Event):
     msg.append('谢谢你的十个胡萝卜片喵~\n')
     result = await kuji.generate_kuji()
     msg.append(unified.MessageSegment.image(result[0], result[1]))
-    await msg.send(bot, event)
+    await msg.send()
     await _kuji_handler.finish()

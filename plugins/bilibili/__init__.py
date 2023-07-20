@@ -46,7 +46,7 @@ async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...]
         final_msg = unified.Message()
         final_msg.append(unified.MessageSegment.image(data['pic'], '视频封面图'))
         final_msg.append(msg)
-        await final_msg.send(bot, event)
+        await final_msg.send()
         await _bilibili_video.finish()
 
 
@@ -61,7 +61,7 @@ async def _(bot: Bot, event: Event, reg: typing.Annotated[str, RegexStr()]):
             final_msg = unified.Message()
             final_msg.append(unified.MessageSegment.image(data['pic'], '视频封面图'))
             final_msg.append(msg)
-            await final_msg.send(bot, event)
+            await final_msg.send()
             await _bilibili_video_short_link.finish()
 
 

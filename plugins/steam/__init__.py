@@ -70,7 +70,7 @@ async def _send_steam_message(appinfo: dict, bot: Bot, event: Event):
     msg.append(unified.MessageSegment.image(header_img, '头图'))
     msg.append(unified.MessageSegment.text(text_msg))
     msg.append(unified.MessageSegment.image(bg_img, '背景图'))
-    await msg.send(bot, event)
+    await msg.send()
 
 
 _steam_command_handler = on_command('steam', aliases={'sbeam', '蒸汽', '蒸汽平台'}, block=True)

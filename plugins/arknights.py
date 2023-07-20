@@ -42,7 +42,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             operator_msg += f"{operator['rarity'] + 1}星 {operator['name']}\n"
         msg.append('明日方舟抽卡结果: \n' + operator_msg)
         msg.append(unified.MessageSegment.image(img, '十连结果'))
-        await msg.send(bot, event)
+        await msg.send()
         await _arknights_handler.finish()
 
     if args[0] in ['gachainfo', '抽卡记录', '抽卡统计', '抽卡历史', '十连历史', '十连统计', '寻访历史', '寻访统计']:
