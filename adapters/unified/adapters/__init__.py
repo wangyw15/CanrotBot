@@ -90,7 +90,7 @@ class AdapterInterface():
 
         :param msg: 消息对象
         """
-        await current_matcher.get().send(cls.generate_message(msg))
+        await current_matcher.get().send(await cls.generate_message(msg))
 
     @classmethod
     async def finish(cls, msg: message.Message) -> None:
@@ -99,7 +99,7 @@ class AdapterInterface():
 
         :param msg: 消息对象
         """
-        await current_matcher.get().finish(cls.generate_message(msg))
+        await current_matcher.get().finish(await cls.generate_message(msg))
 
 
 __all__ = ['SupportedAdapters', 'AdapterInterface', 'onebot_v11', 'onebot_v12', 'mirai2', 'qqguild', 'kook', 'console']
