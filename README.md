@@ -14,7 +14,7 @@
   - OneBot
     - v11
     - v12（实验性）
-  - mirai2（实验性）
+  - mirai2（部分功能暂时不可用）
 - QQ 频道
 - Kook
 - 纯文本消息
@@ -103,6 +103,7 @@ saucenao_api_key="你的 api key"
 
 - [x] **重构插件结构**
   - 最重要！
+- [ ] 统一的多平台适配器
 - [ ] ~~（上海）公交实时到站~~
   - 不    能做
 - [x] roll 图
@@ -126,6 +127,7 @@ saucenao_api_key="你的 api key"
 - [ ] ~~换个 ChatGPT 插件，或者自己写~~
 - [ ] ShindanMaker
 - [ ] WolframAlpha
+- [ ] WebUI
 
 # 功能或数据来源
 
@@ -140,7 +142,7 @@ saucenao_api_key="你的 api key"
 | [Princess](https://api.matsurihi.me/docs/) | MLTD API  |
 | [MinatoAquaCrews/nonebot_plugin_crazy_thursday](https://github.com/MinatoAquaCrews/nonebot_plugin_crazy_thursday) |  疯狂星期四文案  |
 
-# 特别
+# 鸣谢
 
 ![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
 ![PyCharm logo](https://resources.jetbrains.com/storage/products/company/brand/logos/PyCharm_icon.svg)
