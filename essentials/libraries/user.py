@@ -4,9 +4,7 @@
 import re
 import uuid
 
-from nonebot import Bot
 from nonebot.adapters import Bot, Event
-from nonebot.internal.adapter import Event
 
 from adapters import unified
 from adapters.unified import Detector, adapters
@@ -159,36 +157,36 @@ async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | No
     """
     # onebot v11
     if Detector.is_onebot_v11(bot):
-        if isinstance(event, adapters.onebot_v11.GroupMessageEvent):
+        if isinstance(event, adapters.onebot_v11_module.GroupMessageEvent):
             user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v11.PrivateMessageEvent):
+        elif isinstance(event, adapters.onebot_v11_module.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.user_id)
             return user_info['nickname']
     # onebot v12
     elif Detector.is_onebot_v12(bot):
-        if isinstance(event, adapters.onebot_v12.GroupMessageEvent):
+        if isinstance(event, adapters.onebot_v12_module.GroupMessageEvent):
             user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v12.PrivateMessageEvent):
+        elif isinstance(event, adapters.onebot_v12_module.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.user_id)
             return user_info['nickname']
     # mirai2
     elif Detector.is_mirai2(bot):
-        if isinstance(event, adapters.mirai2.GroupMessage):
+        if isinstance(event, adapters.mirai2_module.GroupMessage):
             resp = await bot.member_list(target=event.sender.group.id)
             if resp['code'] == 0 and 'data' in resp:
                 for member in resp['data']:
                     if member['id'] == event.sender.id:
                         return member['memberName']
-        elif isinstance(event, adapters.mirai2.FriendMessage):
+        elif isinstance(event, adapters.mirai2_module.FriendMessage):
             return event.sender.nickname
     # kook
     elif Detector.is_kook(bot):
-        if isinstance(event, adapters.kook.Event) and hasattr(event, 'extra'):
+        if isinstance(event, adapters.kook_module.Event) and hasattr(event, 'extra'):
             return event.extra.author.nickname
     return default

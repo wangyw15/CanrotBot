@@ -77,7 +77,7 @@ class Message(BaseMessage[MessageSegment]):
             if i.startswith('_'):
                 continue
             if current_bot.get().__class__ == getattr(adapters.SupportedAdapters, i).Bot:
-                module = importlib.import_module(f'.adapters.{adapters.SupportedAdaptersName[i]}', __package__)
+                module = importlib.import_module(f'.adapters.{adapters.SupportedAdapters[i]}', __package__)
                 adapter: adapters.AdapterInterface = getattr(module, i)
                 await adapter.send(self)
                 break
@@ -89,15 +89,15 @@ class Message(BaseMessage[MessageSegment]):
             with NamedTemporaryFile() as f:
                 f.write(content)
                 f.flush()
-                if isinstance(event, adapters.onebot_v11.PrivateMessageEvent) \
-                        or isinstance(event, adapters.onebot_v12.PrivateMessageEvent):
+                if isinstance(event, adapters.onebot_v11_module.PrivateMessageEvent) \
+                        or isinstance(event, adapters.onebot_v12_module.PrivateMessageEvent):
                     await bot.call_api('upload_private_file', user_id=event.get_user_id(), file=f.name, name=name)
-                elif isinstance(event, adapters.onebot_v11.GroupMessageEvent) \
-                        or isinstance(event, adapters.onebot_v12.GroupMessageEvent):
+                elif isinstance(event, adapters.onebot_v11_module.GroupMessageEvent) \
+                        or isinstance(event, adapters.onebot_v12_module.GroupMessageEvent):
                     await bot.call_api('upload_group_file', group_id=event.group_id, file=f.name, name=name)
-        elif isinstance(bot, adapters.kook.Bot):
+        elif isinstance(bot, adapters.kook_module.Bot):
             url = await bot.upload_file(content)
-            await bot.send(event, adapters.kook.MessageSegment.file(url, name))
+            await bot.send(event, adapters.kook_module.MessageSegment.file(url, name))
         else:
             await bot.send(event, f'[此处暂不支持发送文件，文件名: {name}]')
 

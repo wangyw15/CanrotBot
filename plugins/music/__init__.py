@@ -21,9 +21,9 @@ _qqmusic_id_pattern = r'(?:https?:\/\/)?(?:\S+\.)?y\.qq\.com\/\S+(?:songid=|song
 
 async def _send_music_card(bot: Bot, event: Event, music_type: typing.Literal['qq', '163'], music_id: str | int):
     if unified.Detector.is_onebot_v11(bot):
-        await bot.send(event, unified.adapters.onebot_v11.Message(f'[CQ:music,type={music_type},id={music_id}]'))
+        await bot.send(event, unified.adapters.onebot_v11_module.Message(f'[CQ:music,type={music_type},id={music_id}]'))
     elif unified.Detector.is_onebot_v12(bot):
-        await bot.send(event, unified.adapters.onebot_v12.Message(f'[CQ:music,type={music_type},id={music_id}]'))
+        await bot.send(event, unified.adapters.onebot_v12_module.Message(f'[CQ:music,type={music_type},id={music_id}]'))
     elif unified.Detector.is_mirai2(bot):
         kind = ''
         kind_name = ''
@@ -36,7 +36,7 @@ async def _send_music_card(bot: Bot, event: Event, music_type: typing.Literal['q
         if kind:
             info = await music.fetch_music_info(music_type, music_id)
             if info:
-                await bot.send(event, unified.adapters.mirai2.MessageSegment.music_share(
+                await bot.send(event, unified.adapters.mirai2_module.MessageSegment.music_share(
                               kind=kind,
                               title=info['title'],
                               summary=info['artists'],
@@ -44,7 +44,6 @@ async def _send_music_card(bot: Bot, event: Event, music_type: typing.Literal['q
                               picture_url=info['cover'],
                               music_url=f'https://music.163.com/song/media/outer/url?id={music_id}.mp3',
                               brief=f"[{kind_name}分享] {info['title']}"))
-
 
 
 _cloudmusic_handler = on_regex(r'(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+\/)?song\?\S*id=(\d+)', block=True)

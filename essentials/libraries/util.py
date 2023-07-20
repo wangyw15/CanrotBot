@@ -87,16 +87,16 @@ def get_group_id(event: Event) -> str:
 
     :return: 群 ID (platform_id)
     """
-    if adapters.onebot_v11 and isinstance(event, adapters.onebot_v11.GroupMessageEvent) \
-            or adapters.onebot_v12 and isinstance(event, adapters.onebot_v12.GroupMessageEvent):
+    if adapters.onebot_v11_module and isinstance(event, adapters.onebot_v11_module.GroupMessageEvent) \
+            or adapters.onebot_v12_module and isinstance(event, adapters.onebot_v12_module.GroupMessageEvent):
         return 'qq_' + str(event.group_id)
-    elif adapters.mirai2 and isinstance(event, adapters.mirai2.GroupMessage):
+    elif adapters.mirai2_module and isinstance(event, adapters.mirai2_module.GroupMessage):
         return 'qq_' + str(event.sender.group.id)
-    elif adapters.qqguild and isinstance(event, adapters.qqguild.MessageEvent):
+    elif adapters.qq_guild_module and isinstance(event, adapters.qq_guild_module.MessageEvent):
         return 'qqguild_' + str(event.channel_id)
-    elif adapters.kook and isinstance(event, adapters.kook.event.ChannelMessageEvent):
+    elif adapters.kook_module and isinstance(event, adapters.kook_module.event.ChannelMessageEvent):
         return 'kook_' + str(event.group_id)
-    elif adapters.console and isinstance(event, adapters.console.MessageEvent):
+    elif adapters.console_module and isinstance(event, adapters.console_module.MessageEvent):
         return 'console_0'
     return ''
 
@@ -113,35 +113,35 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
     """
     # onebot v11
     if Detector.is_onebot_v11(bot):
-        if isinstance(event, adapters.onebot_v11.GroupMessageEvent):
+        if isinstance(event, adapters.onebot_v11_module.GroupMessageEvent):
             user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v11.PrivateMessageEvent):
+        elif isinstance(event, adapters.onebot_v11_module.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.self_id)
             return user_info['nickname']
     # onebot v12
     elif Detector.is_onebot_v12(bot):
-        if isinstance(event, adapters.onebot_v12.GroupMessageEvent):
+        if isinstance(event, adapters.onebot_v12_module.GroupMessageEvent):
             user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self.user_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v12.PrivateMessageEvent):
+        elif isinstance(event, adapters.onebot_v12_module.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.self.user_id)
             return user_info['nickname']
     # mirai2
     elif Detector.is_mirai2(bot):
-        if isinstance(event, adapters.mirai2.GroupMessage):
+        if isinstance(event, adapters.mirai2_module.GroupMessage):
             user_info = await bot.member_profile(target=event.sender.group.id, member_id=bot.self_id)
             return user_info['nickname']
-        elif isinstance(event, adapters.mirai2.FriendMessage):
+        elif isinstance(event, adapters.mirai2_module.FriendMessage):
             user_info = bot.bot_pro_file()
             return user_info['nickname']
     # kook
     elif Detector.is_kook(bot):
-        if isinstance(event, adapters.kook.Event) and hasattr(event, 'group_id'):
+        if isinstance(event, adapters.kook_module.Event) and hasattr(event, 'group_id'):
             user_info = await bot.user_view(user_id=bot.self_id, group_id=event.group_id)
             return user_info.nickname
     return default
@@ -160,7 +160,7 @@ def is_url(msg: MessageSegment | str) -> bool:
     elif msg.is_text():
         msg = str(msg)
         return re.match(r'^https?://', msg) is not None
-    elif isinstance(msg, adapters.kook.MessageSegment):
+    elif isinstance(msg, adapters.kook_module.MessageSegment):
         if msg.type == 'kmarkdown':
             msg = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
             return re.match(r'^https?://', msg) is not None

@@ -9,16 +9,16 @@ from .message import Message, MessageSegment, MessageSegmentTypes
 # 动态加载支持并且已安装的适配器
 driver = nonebot.get_driver()
 
-for adapter_name in dir(adapters.SupportedAdapters):
-    if not adapter_name.startswith('__') \
-            and adapter_name not in config.canrot_config.canrot_disabled_adapters \
-            and adapters.SupportedAdaptersName[adapter_name] not in config.canrot_config.canrot_disabled_adapters \
-            and hasattr(getattr(adapters.SupportedAdapters, adapter_name), 'Adapter'):
+for name, key in adapters.SupportedAdapters.items():
+    if not name.startswith('__') \
+            and name not in config.canrot_config.canrot_disabled_adapters \
+            and key not in config.canrot_config.canrot_disabled_adapters \
+            and hasattr(getattr(adapters.SupportedAdapters, name), 'Adapter'):
         try:
-            driver.register_adapter(getattr(adapters.SupportedAdapters, adapter_name).Adapter)
-            nonebot.logger.info('加载适配器: ' + adapter_name)
+            driver.register_adapter(getattr(adapters.SupportedAdapters, name).Adapter)
+            nonebot.logger.info('加载适配器: ' + name)
         except Exception as e:
-            nonebot.logger.info(f'加载 {adapter_name} 失败: {e}')
+            nonebot.logger.info(f'加载 {name} 失败: {e}')
 
 __all__ = ['adapters',
            'Detector',

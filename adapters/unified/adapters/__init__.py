@@ -1,55 +1,44 @@
-import nonebot.adapters.console as console
 from nonebot.adapters import Message as BaseMessage
 from nonebot.matcher import current_matcher
+from types import MappingProxyType
 
 from .. import message
 
 # 不同适配器
 try:
-    import nonebot.adapters.onebot.v11 as onebot_v11
+    import nonebot.adapters.onebot.v11 as onebot_v11_module
 except ModuleNotFoundError:
-    onebot_v11 = None
+    onebot_v11_module = None
 try:
-    import nonebot.adapters.onebot.v12 as onebot_v12
+    import nonebot.adapters.onebot.v12 as onebot_v12_module
 except ModuleNotFoundError:
-    onebot_v12 = None
+    onebot_v12_module = None
 try:
-    import nonebot.adapters.mirai2 as mirai2
+    import nonebot.adapters.mirai2 as mirai2_module
 except ModuleNotFoundError:
-    mirai2 = None
+    mirai2_module = None
 try:
-    import nonebot.adapters.qqguild as qq_guild
-    import nonebot.adapters.qqguild as qqguild # 兼容性
+    import nonebot.adapters.qqguild as qq_guild_module
 except ModuleNotFoundError:
-    qq_guild = None
-    qqguild = None
+    qq_guild_module = None
 try:
-    import nonebot.adapters.kaiheila as kook
+    import nonebot.adapters.kaiheila as kook_module
 except ModuleNotFoundError:
-    kook = None
+    kook_module = None
 try:
-    import nonebot.adapters.console as console
+    import nonebot.adapters.console as console_module
 except ModuleNotFoundError:
-    console = None
+    console_module = None
 
 
-class SupportedAdapters:
-    OneBotV11 = onebot_v11
-    OneBotV12 = onebot_v12
-    Mirai2 = mirai2
-    QQGuild = qq_guild
-    Kook = kook
-    Console = console
-
-
-SupportedAdaptersName = {
+SupportedAdapters = MappingProxyType({
     'OneBotV11': 'onebot_v11',
     'OneBotV12': 'onebot_v12',
     'Mirai2': 'mirai2',
     'QQGuild': 'qq_guild',
     'Kook': 'kook',
     'Console': 'console'
-}
+})
 
 
 class AdapterInterface():
@@ -102,4 +91,12 @@ class AdapterInterface():
         await current_matcher.get().finish(await cls.generate_message(msg))
 
 
-__all__ = ['SupportedAdapters', 'AdapterInterface', 'onebot_v11', 'onebot_v12', 'mirai2', 'qqguild', 'kook', 'console']
+__all__ = ['SupportedAdapters',
+           'AdapterInterface',
+           'onebot_v11_module',
+           'onebot_v12_module',
+           'mirai2_module',
+           'kook_module',
+           'console_module',
+           'qq_guild_module'
+           ]

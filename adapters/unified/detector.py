@@ -15,9 +15,9 @@ class Detector:
 
         :return: 是否为 OneBot v11 协议
         """
-        if adapters.onebot_v11:
-            return isinstance(context, adapters.onebot_v11.Bot) \
-                or isinstance(context, adapters.onebot_v11.Event)
+        if adapters.onebot_v11_module:
+            return isinstance(context, adapters.onebot_v11_module.Bot) \
+                or isinstance(context, adapters.onebot_v11_module.Event)
         return False
 
     @staticmethod
@@ -29,9 +29,9 @@ class Detector:
 
         :return: 是否为 OneBot v12 协议
         """
-        if adapters.onebot_v12:
-            return isinstance(context, adapters.onebot_v12.Bot) \
-                or isinstance(context, adapters.onebot_v12.Event)
+        if adapters.onebot_v12_module:
+            return isinstance(context, adapters.onebot_v12_module.Bot) \
+                or isinstance(context, adapters.onebot_v12_module.Event)
         return False
 
     @staticmethod
@@ -43,9 +43,9 @@ class Detector:
 
         :return: 是否为 Mirai2 协议
         """
-        if adapters.mirai2:
-            return isinstance(context, adapters.mirai2.Bot) \
-                or isinstance(context, adapters.mirai2.Event)
+        if adapters.mirai2_module:
+            return isinstance(context, adapters.mirai2_module.Bot) \
+                or isinstance(context, adapters.mirai2_module.Event)
         return False
 
     @staticmethod
@@ -57,9 +57,9 @@ class Detector:
 
         :return: 是否为 QQGuild 协议
         """
-        if adapters.qqguild:
-            return isinstance(context, adapters.qqguild.Bot) \
-                or isinstance(context, adapters.qqguild.Event)
+        if adapters.qq_guild_module:
+            return isinstance(context, adapters.qq_guild_module.Bot) \
+                or isinstance(context, adapters.qq_guild_module.Event)
         return False
 
     @staticmethod
@@ -71,9 +71,9 @@ class Detector:
 
         :return: 是否为 Kook 协议
         """
-        if adapters.kook:
-            return isinstance(context, adapters.kook.Bot) \
-                or isinstance(context, adapters.kook.Event)
+        if adapters.kook_module:
+            return isinstance(context, adapters.kook_module.Bot) \
+                or isinstance(context, adapters.kook_module.Event)
         return False
 
     @staticmethod
@@ -85,9 +85,9 @@ class Detector:
 
         :return: 是否为 Console 协议
         """
-        if adapters.console:
-            return isinstance(context, adapters.console.Bot) \
-                or isinstance(context, adapters.console.Event)
+        if adapters.console_module:
+            return isinstance(context, adapters.console_module.Bot) \
+                or isinstance(context, adapters.console_module.Event)
         return False
 
     @staticmethod

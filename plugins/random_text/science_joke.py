@@ -6,7 +6,6 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 import essentials.libraries.user
-from essentials.libraries import util
 from . import get_data
 
 __plugin_meta__ = PluginMetadata(

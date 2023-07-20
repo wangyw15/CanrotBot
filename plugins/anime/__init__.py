@@ -56,7 +56,7 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
             img_url = msg.data['url'].strip()
         elif unified.Detector.is_kook(bot):
             img_url = msg.data['file_key'].strip()
-    elif isinstance(msg, unified.adapters.kook.MessageSegment) and msg.type == 'kmarkdown':
+    elif isinstance(msg, unified.adapters.kook_module.MessageSegment) and msg.type == 'kmarkdown':
         img_url = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
     elif util.is_url(msg):
         img_url = msg.strip()
@@ -65,7 +65,6 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
         if search_resp and not search_resp.get('error'):
             tracemoe_data = search_resp['result'][0]
             data = anime.search_anime_by_anilist_id(tracemoe_data['anilist'])
-            ret = ''
             final_msg = unified.Message()
             # 视觉图
             final_msg.append(unified.MessageSegment.image(data['picture'], '封面图'))
@@ -82,7 +81,7 @@ async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Eve
                              f'时间: {util.seconds_to_time(tracemoe_data["from"])}~'
                              f'{util.seconds_to_time(tracemoe_data["to"])}\n'
                              f'AniList 链接: https://anilist.co/anime/{tracemoe_data["anilist"]}\n')
-            await final_msg.send(bot, event)
+            await final_msg.send()
             return
     await bot.send(event, '搜索失败')
 

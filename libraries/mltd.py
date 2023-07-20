@@ -2,7 +2,6 @@ import difflib
 import json
 import random
 from datetime import datetime
-from pathlib import Path
 from typing import Literal, Tuple
 
 from essentials.libraries import asset, render_by_browser, util
