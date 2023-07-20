@@ -1,5 +1,6 @@
 import nonebot
 from nonebot.message import event_preprocessor
+from essentials.libraries import config
 
 from . import adapters
 from .detector import Detector
@@ -9,7 +10,10 @@ from .message import Message, MessageSegment, MessageSegmentTypes
 driver = nonebot.get_driver()
 
 for adapter_name in dir(adapters.SupportedAdapters):
-    if not adapter_name.startswith('__') and hasattr(getattr(adapters.SupportedAdapters, adapter_name), 'Adapter'):
+    if not adapter_name.startswith('__') \
+            and adapter_name not in config.canrot_config.canrot_disabled_adapters \
+            and adapters.SupportedAdaptersName[adapter_name] not in config.canrot_config.canrot_disabled_adapters \
+            and hasattr(getattr(adapters.SupportedAdapters, adapter_name), 'Adapter'):
         try:
             driver.register_adapter(getattr(adapters.SupportedAdapters, adapter_name).Adapter)
             nonebot.logger.info('加载适配器: ' + adapter_name)
