@@ -6,7 +6,8 @@ from . import AdapterInterface
 class OneBotV11(AdapterInterface):
     from . import message
 
-    def generate_message(self, msg: message.Message) -> onebot_v11.Message:
+    @classmethod
+    async def generate_message(cls, msg: message.Message) -> onebot_v11.Message:
         from . import message
         ret = onebot_v11.Message()
         for seg in msg:
@@ -18,7 +19,8 @@ class OneBotV11(AdapterInterface):
                 ret.append(onebot_v11.MessageSegment.at(seg.data['user_id']))
         return ret
 
-    def parse_message(self, msg: onebot_v11.Message) -> message.Message:
+    @classmethod
+    async def parse_message(cls, msg: onebot_v11.Message) -> message.Message:
         from . import message
         ret = message.Message()
         for seg in msg:

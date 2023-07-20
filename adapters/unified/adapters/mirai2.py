@@ -10,7 +10,8 @@ from . import AdapterInterface
 class Mirai2(AdapterInterface):
     from . import message
 
-    def generate_message(self, msg: message.Message) -> mirai2.MessageChain:
+    @classmethod
+    async def generate_message(cls, msg: message.Message) -> mirai2.MessageChain:
         from . import message
         ret = mirai2.MessageChain()
         for seg in msg:
@@ -31,7 +32,8 @@ class Mirai2(AdapterInterface):
                 ret.append(mirai2.MessageSegment.at(seg.data['user_id']))
         return ret
 
-    def parse_message(self, msg: mirai2.MessageChain) -> message.Message:
+    @classmethod
+    async def parse_message(cls, msg: mirai2.MessageChain) -> message.Message:
         from . import message
         ret = message.Message()
         for seg in msg:

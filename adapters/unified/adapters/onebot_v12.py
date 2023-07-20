@@ -1,4 +1,3 @@
-import asyncio
 from io import BytesIO
 from pathlib import Path
 
@@ -14,7 +13,8 @@ _client = AsyncClient()
 class OneBotV12(AdapterInterface):
     from . import message
 
-    def generate_message(self, msg: message.Message) -> onebot_v12.Message:
+    @classmethod
+    async def generate_message(cls, msg: message.Message) -> onebot_v12.Message:
         from . import message
         ret = onebot_v12.Message()
         for seg in msg:
@@ -27,7 +27,7 @@ class OneBotV12(AdapterInterface):
                 elif isinstance(seg.data['file'], BytesIO):
                     img_data = seg.data['file'].read()
                 elif isinstance(seg.data['file'], str):
-                    resp = asyncio.run(_client.get(seg.data['file']))
+                    resp = await _client.get(seg.data['file'])
                     if resp.is_success and resp.status_code == 200:
                         img_data = resp.content
                 elif isinstance(seg.data["file"], Path):
@@ -40,7 +40,8 @@ class OneBotV12(AdapterInterface):
                 ret.append(onebot_v12.MessageSegment.mention(user_id=seg.data['user_id']))
         return ret
 
-    def parse_message(self, msg: onebot_v12.Message) -> message.Message:
+    @classmethod
+    async def parse_message(cls, msg: onebot_v12.Message) -> message.Message:
         from . import message
         ret = message.Message()
         for seg in msg:

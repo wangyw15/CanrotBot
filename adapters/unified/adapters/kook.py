@@ -41,10 +41,12 @@ class Kook(AdapterInterface):
             return True
         return False
 
-    def generate_message(self, msg: message.Message) -> kook.Message:
+    @classmethod
+    async def generate_message(cls, msg: message.Message) -> kook.Message:
         raise NotImplementedError('Kook消息需要特殊处理')
 
-    def parse_message(self, msg: kook.Message) -> message.Message:
+    @classmethod
+    async def parse_message(cls, msg: kook.Message) -> message.Message:
         from . import message
         ret = message.Message()
         for seg in msg:
@@ -56,7 +58,8 @@ class Kook(AdapterInterface):
                 ret.append(str(seg))
         return ret
 
-    async def send(self, msg: message.Message) -> None:
+    @classmethod
+    async def send(cls, msg: message.Message) -> None:
         from . import message
         # KOOK 不支持图文混排，所以直接发送了
         tmp = ''
@@ -65,7 +68,7 @@ class Kook(AdapterInterface):
                 if tmp.strip():
                     await current_matcher.get().send(tmp)
                     tmp = ''
-                await self._kook_send_image(seg.data['file'], current_bot.get(), current_event.get())
+                await cls._kook_send_image(seg.data['file'], current_bot.get(), current_event.get())
             elif seg.type == message.MessageSegmentTypes.TEXT:
                 tmp += seg.data['text']
         if tmp.strip():

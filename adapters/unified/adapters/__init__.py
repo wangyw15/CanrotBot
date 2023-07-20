@@ -54,7 +54,7 @@ SupportedAdaptersName = {
 
 class AdapterInterface():
     @classmethod
-    def generate_message(cls, msg: message.Message):
+    async def generate_message(cls, msg: message.Message):
         """
         通用消息转特定平台消息
 
@@ -73,7 +73,7 @@ class AdapterInterface():
         return final_msg.strip()
 
     @classmethod
-    def parse_message(cls, msg: BaseMessage) -> message.Message:
+    async def parse_message(cls, msg: BaseMessage) -> message.Message:
         """
         特定平台的消息解析为通用消息
 
