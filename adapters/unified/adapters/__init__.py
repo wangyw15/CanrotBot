@@ -34,8 +34,8 @@ except ModuleNotFoundError:
 
 
 class SupportedAdapters:
-    OnebotV11 = onebot_v11
-    OnebotV12 = onebot_v12
+    OneBotV11 = onebot_v11
+    OneBotV12 = onebot_v12
     Mirai2 = mirai2
     QQGuild = qq_guild
     Kook = kook
@@ -43,8 +43,8 @@ class SupportedAdapters:
 
 
 SupportedAdaptersName = {
-    'OnebotV11': 'onebot_v11',
-    'OnebotV12': 'onebot_v12',
+    'OneBotV11': 'onebot_v11',
+    'OneBotV12': 'onebot_v12',
     'Mirai2': 'mirai2',
     'QQGuild': 'qq_guild',
     'Kook': 'kook',
