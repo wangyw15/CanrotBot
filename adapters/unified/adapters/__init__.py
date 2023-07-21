@@ -2,6 +2,7 @@ import importlib
 import sys
 from types import MappingProxyType
 
+from nonebot.adapters import Bot, Event
 from nonebot.adapters import Message as BaseMessage
 from nonebot.internal.matcher import current_bot
 from nonebot.matcher import current_matcher
@@ -95,16 +96,22 @@ class AdapterInterface():
         await current_matcher.get().finish(await cls.generate_message(msg))
 
 
-def get_current_adapter() -> AdapterInterface:
+def get_adapter(context: Bot | Event | None = None) -> AdapterInterface | None:
     """
-    获取当前适配器
+    获取当前适配器，如果无法获取则返回 None
+
+    :param context: 上下文对象，为空则自动获取当前上下文
 
     :return: 当前适配器
     """
+    if not context:
+        context = current_bot.get()
     for name, key in SupportedAdapters.items():
-        if current_bot.get().__class__ == getattr(sys.modules[__name__], key + '_module').Bot:
+        adapter_module = getattr(sys.modules[__name__], key + '_module')
+        if context.__class__ == adapter_module.Bot or context.__class__ == adapter_module.Event:
             module = importlib.import_module('.' + key, __package__)
             return getattr(module, name)
+    return None
 
 
 __all__ = ['SupportedAdapters',

@@ -1,4 +1,3 @@
-import importlib
 from io import BytesIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -7,7 +6,6 @@ from typing import Type, Iterable
 from nonebot.adapters import Bot, Event
 from nonebot.adapters import Message as BaseMessage
 from nonebot.adapters import MessageSegment as BaseMessageSegment
-from nonebot.matcher import current_bot
 from nonebot.typing import overrides
 
 from .detector import Detector
@@ -73,7 +71,7 @@ class Message(BaseMessage[MessageSegment]):
 
     async def send(self) -> None:
         from . import adapters
-        await adapters.get_current_adapter().send(self)
+        await adapters.get_adapter().send(self)
 
     @staticmethod
     async def send_file(content: bytes, name: str, bot: Bot, event: Event):
