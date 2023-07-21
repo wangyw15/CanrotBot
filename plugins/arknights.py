@@ -16,7 +16,10 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
+
 _arknights_handler = on_shell_command('arknights', aliases={'粥', '舟', '方舟', '明日方舟'}, block=True)
+
+
 @_arknights_handler.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if len(args) == 0:

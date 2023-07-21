@@ -39,7 +39,7 @@ class MessageSegment(BaseMessageSegment['Message']):
     def is_text(self) -> bool:
         return self.type == MessageSegmentTypes.TEXT
 
-    async def send(self, bot: Bot) -> None:
+    async def send(self) -> None:
         await Message([self]).send()
 
     @staticmethod

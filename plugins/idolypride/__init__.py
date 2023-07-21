@@ -17,6 +17,8 @@ __plugin_meta__ = PluginMetadata(
 
 
 _ip_handler = on_shell_command('idolypride', aliases={'ip', '偶像荣耀'}, block=True)
+
+
 @_ip_handler.handle()
 async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if args:

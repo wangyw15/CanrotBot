@@ -74,7 +74,10 @@ async def _search_anime_by_image(img_url: str, bot: Bot, event: Event) -> None:
             return
     await bot.send(event, '搜索失败')
 
+
 _anime_handler = on_shell_command('anime', aliases={'动漫', '番剧'}, block=True)
+
+
 @_anime_handler.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if len(args) == 2:

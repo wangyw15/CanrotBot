@@ -12,7 +12,10 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
+
 calculator = on_regex(r'^([\d()\-+*/.]+)[=＝]$', block=True)
+
+
 @calculator.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     try:

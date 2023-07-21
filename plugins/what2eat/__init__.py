@@ -15,6 +15,8 @@ __plugin_meta__ = PluginMetadata(
 
 
 _brand_handler = on_regex(r'我(?:想|要)(吃|喝)(\S+)', block=True)
+
+
 @_brand_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     if reg[0] == '喝':

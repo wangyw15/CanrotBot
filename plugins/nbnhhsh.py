@@ -22,6 +22,8 @@ async def fetch_nbnhhsh(text: str) -> list[str] | None:
     return None
 
 nbnhhsh = on_command('nbnhhsh', aliases={'能不能好好说话'}, block=True)
+
+
 @nbnhhsh.handle()
 async def _(args: Message = CommandArg()):
     if msg := args.extract_plain_text():

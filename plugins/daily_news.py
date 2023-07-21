@@ -24,10 +24,12 @@ _subscribers = storage.PersistentList[dict[str, str]]('daily_subscribers')  # [{
 
 
 daily = on_shell_command('daily', aliases={'每日新闻', '新闻'}, block=True)
+
+
 @daily.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if len(args) == 0:
-        await unified.MessageSegment.image(_img_url, '每日新闻图片').send(bot, event)
+        await unified.MessageSegment.image(_img_url, '每日新闻图片').send()
         await daily.finish()
     elif len(args) == 1:
         if args[0].lower() == 'subscribe' or args[0] == '订阅':

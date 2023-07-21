@@ -15,7 +15,10 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
+
 _hitokoto = on_shell_command('hitokoto', aliases={'一言'}, block=True)
+
+
 @_hitokoto.handle()
 async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     categories = 'abc'
@@ -33,5 +36,7 @@ async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
             categories = args[0]
     if not data:
         data = hitokoto.random_hitokoto(categories)
-    ret_msg = f'{data["hitokoto"]}\n-- {"" if not data["from_who"] else data["from_who"]}「{data["from"]}」\nhttps://hitokoto.cn/?uuid={data["uuid"]}'
+    ret_msg = f'{data["hitokoto"]}\n' \
+              f'-- {"" if not data["from_who"] else data["from_who"]}「{data["from"]}」\n' \
+              f'https://hitokoto.cn/?uuid={data["uuid"]}'
     await _hitokoto.finish(ret_msg)

@@ -18,15 +18,25 @@ __plugin_meta__ = PluginMetadata(
 
 _client = httpx.AsyncClient()
 api_url = 'https://api.waifu.pics/{type}/{category}'
-categories = ['waifu', 'neko', 'shinobu', 'megumin', 'bully', 'cuddle', 'cry', 'hug', 'awoo', 'kiss', 'lick', 'pat', 'smug', 'bonk', 'yeet', 'blush', 'smile', 'wave', 'highfive', 'handhold', 'nom', 'bite', 'glomp', 'slap', 'kill', 'kick', 'happy', 'wink', 'poke', 'dance', 'cringe']
+categories = ['waifu', 'neko', 'shinobu', 'megumin', 'bully',
+              'cuddle', 'cry', 'hug', 'awoo', 'kiss',
+              'lick', 'pat', 'smug', 'bonk', 'yeet',
+              'blush', 'smile', 'wave', 'highfive', 'handhold',
+              'nom', 'bite', 'glomp', 'slap', 'kill',
+              'kick', 'happy', 'wink', 'poke', 'dance',
+              'cringe']
 
-async def get_waifu_url(type: str, category: str) -> str | None:
-    resp = await _client.get(api_url.format(type=type, category=category))
+
+async def get_waifu_url(image_type: str, category: str) -> str | None:
+    resp = await _client.get(api_url.format(type=image_type, category=category))
     if resp.status_code == 200:
         return resp.json()['url']
     return None
 
+
 waifu = on_command('waifu', aliases={'老婆', '纸片人'}, block=True)
+
+
 @waifu.handle()
 async def _(bot: Bot, event: Event, msg: Message = CommandArg()):
     category = 'waifu'
@@ -50,7 +60,7 @@ async def _(bot: Bot, event: Event, msg: Message = CommandArg()):
     await waifu.send('谢谢你的两个胡萝卜片喵~\n正在找图哦~')
     img_url = await get_waifu_url('sfw', category)
     if img_url:
-        await unified.MessageSegment.image(img_url).send(bot, event)
+        await unified.MessageSegment.image(img_url).send()
         await waifu.finish()
     else:
         await waifu.finish('获取图片失败')

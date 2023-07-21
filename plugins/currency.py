@@ -28,6 +28,8 @@ async def fetch_currency() -> list[dict[str, str]]:
 
 # 搜索指定汇率信息
 currency_query = on_command('currency', aliases={'汇率'}, block=True)
+
+
 @currency_query.handle()
 async def _(args: Message = CommandArg()):
     if msg := args.extract_plain_text():
@@ -52,9 +54,11 @@ async def _(args: Message = CommandArg()):
 
 
 # 汇率转换
-currency_convert_to_foreign = on_regex(
-    r'^(\d+(?:.\d+)?)([a-zA-Z\u4e00-\u9fa5]+)[=＝]([a-zA-Z\u4e00-\u9fa5]+)$', flags=re.IGNORECASE, block=True)
-@currency_convert_to_foreign.handle()
+_currency_convert_handler = on_regex(r'^(\d+(?:.\d+)?)([a-zA-Z\u4e00-\u9fa5]+)[=＝]([a-zA-Z\u4e00-\u9fa5]+)$',
+                                     flags=re.IGNORECASE, block=True)
+
+
+@_currency_convert_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     amount: float | int = eval(reg[0].strip())
     currency_from: str = reg[1].strip()
@@ -62,7 +66,7 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     if amount and currency_from and currency_to:
         currency_data = await fetch_currency()
         if not currency_data:
-            await currency_convert_to_foreign.finish('获取汇率失败')
+            await _currency_convert_handler.finish('获取汇率失败')
         price_from = ''
         price_to = ''
         name_from = ''
@@ -81,7 +85,7 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
                 price_to = 100
                 name_to = '人民币'
         if price_from and price_to:
-            await currency_convert_to_foreign.finish(
+            await _currency_convert_handler.finish(
                 f'{amount}{name_from}={round(amount * price_from / price_to, 4)}{name_to}')
         await currency_query.finish('未找到该货币')
     else:

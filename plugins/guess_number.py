@@ -10,10 +10,14 @@ from essentials.libraries import user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='猜数字',
-    description='roll 一个各位都不相等的数字（默认四位），若玩家猜的数中，存在 n 个目标中的数，则给出 nA 的提示，若玩家猜的四位数中，存在 m 个数位置与目标中的相同，则给出 mB 的提示，当猜测数与目标数完全相同时游戏结束。',
+    description='roll 一个各位都不相等的数字（默认四位），'
+                '若玩家猜的数中，存在 n 个目标中的数，则给出 nA 的提示，'
+                '若玩家猜的四位数中，存在 m 个数位置与目标中的相同，则给出 mB 的提示，'
+                '当猜测数与目标数完全相同时游戏结束。',
     usage='/<guess_number|guess-number|猜数字|猜数>',
     config=None
 )
+
 
 def generate_number(num_len: int) -> str:
     if num_len > 10:
@@ -24,10 +28,13 @@ def generate_number(num_len: int) -> str:
     random.shuffle(nums)
     return ''.join(nums[:num_len])
 
+
 _GUESS_NUMBER = 'GUESS_NUMBER'
 _GUESS_NUMBER_TURNS = 'GUESS_NUMBER_TURNS'
 
 guess_number = on_command('guess_number', aliases={'guess-number', '猜数字', '猜数'}, block=True)
+
+
 @guess_number.handle()
 async def _(state: T_State, args: Message = CommandArg()):
     num_len = 4
@@ -37,6 +44,7 @@ async def _(state: T_State, args: Message = CommandArg()):
     state[_GUESS_NUMBER] = generate_number(num_len)
     state[_GUESS_NUMBER_TURNS] = 0
     await guess_number.send(f'又来挑战{len(state[_GUESS_NUMBER])}位的猜数游戏了吗~')
+
 
 @guess_number.got('guess')
 async def _(state: T_State, bot: Bot, event: Event, guess: Message = Arg()):

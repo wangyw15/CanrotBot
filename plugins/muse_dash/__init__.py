@@ -88,7 +88,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         await _muse_dash_handler.send('正在查分喵~')
         if unified.Detector.can_send_image(bot):
             img = await muse_dash.generate_muse_dash_player_image(player_id)
-            await unified.MessageSegment.image(img).send(bot, event)
+            await unified.MessageSegment.image(img).send()
         else:
             await _muse_dash_handler.send(await muse_dash.generate_muse_dash_message(player_id))
     await _muse_dash_handler.finish()

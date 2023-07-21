@@ -16,9 +16,9 @@ __plugin_meta__ = PluginMetadata(
 )
 
 _science_joke_data: list[str] = get_data('science_jokes')
-
-# message
 _science_joke_handler = on_command('science-joke', aliases={'理科笑话', 'science_joke'}, block=True)
+
+
 @_science_joke_handler.handle()
 async def _(event: Event, bot: Bot, args: Message = CommandArg()):
     name = await essentials.libraries.user.get_user_name(event, bot, 'ta')

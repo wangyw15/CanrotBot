@@ -2,7 +2,6 @@ import typing
 from datetime import datetime
 
 from nonebot import on_regex, on_fullmatch
-from nonebot.adapters import Bot, Event
 from nonebot.params import RegexGroup, RegexStr
 from nonebot.plugin import PluginMetadata
 
@@ -38,8 +37,10 @@ def _generate_bilibili_message(data: dict) -> str:
 
 
 _bilibili_video = on_regex(bilibili.bilibili_vid_pattern, block=True)
+
+
 @_bilibili_video.handle()
-async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     data = await bilibili.fetch_video_data(reg[0])
     if data:
         msg = _generate_bilibili_message(data)
@@ -51,8 +52,10 @@ async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...]
 
 
 _bilibili_video_short_link = on_regex(r'https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}', block=True)
+
+
 @_bilibili_video_short_link.handle()
-async def _(bot: Bot, event: Event, reg: typing.Annotated[str, RegexStr()]):
+async def _(reg: typing.Annotated[str, RegexStr()]):
     vid = await bilibili.get_bvid_from_short_link(reg)
     if vid:
         data = await bilibili.fetch_video_data(vid)
@@ -66,8 +69,10 @@ async def _(bot: Bot, event: Event, reg: typing.Annotated[str, RegexStr()]):
 
 
 _bilibili_projects_handlers = on_fullmatch('我要看展', block=True)
+
+
 @_bilibili_projects_handlers.handle()
-async def _(bot: Bot, event: Event):
+async def _():
     projects = await bilibili.fetch_all_projects()
     if projects:
         msg = '现在的正在进行的展览有:\n\n'

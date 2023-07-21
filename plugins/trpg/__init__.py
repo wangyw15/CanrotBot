@@ -19,6 +19,8 @@ __plugin_meta__ = PluginMetadata(
 
 
 _dice_handler = on_command('dice', aliases={'骰子', 'd'}, block=True)
+
+
 @_dice_handler.handle()
 async def _(args: Message = CommandArg()):
     if expr := args.extract_plain_text():
@@ -30,6 +32,8 @@ async def _(args: Message = CommandArg()):
 
 
 _investigator_handler = on_shell_command('investigator', aliases={'i', '调查员', '人物卡'}, block=True)
+
+
 @_investigator_handler.handle()
 async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     puid = user.get_puid(bot, event)
@@ -108,6 +112,8 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
 
 
 _check_handler = on_shell_command('check', aliases={'c', '检定'}, block=True)
+
+
 @_check_handler.handle()
 async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     puid = user.get_puid(bot, event)

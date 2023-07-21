@@ -12,9 +12,9 @@ __plugin_meta__ = PluginMetadata(
 )
 
 _vtb_story_data: list[str] = get_data('vtb_story')
-
-# message
 _vtb_story_handler = on_command('vtb-story', aliases={'vtb_story', 'vtb小作文'}, block=True)
+
+
 @_vtb_story_handler.handle()
 async def _():
     await _vtb_story_handler.finish(random.choice(_vtb_story_data))

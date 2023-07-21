@@ -12,9 +12,9 @@ __plugin_meta__ = PluginMetadata(
 )
 
 _crazy_love_data: list[str] = get_data('crazy_love')
-
-# message
 _crazy_love_handler = on_command('crazy-love', aliases={'发癫', '发电', 'crazy_love'}, block=True)
+
+
 @_crazy_love_handler.handle()
 async def _():
     await _crazy_love_handler.finish(random.choice(_crazy_love_data))

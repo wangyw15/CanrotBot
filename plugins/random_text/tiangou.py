@@ -12,9 +12,9 @@ __plugin_meta__ = PluginMetadata(
 )
 
 _tiangou_data: list[str] = get_data('tiangou')
-
-# message
 _tiangou_handler = on_command('tiangou', aliases={'舔狗'}, block=True)
+
+
 @_tiangou_handler.handle()
 async def _():
     await _tiangou_handler.finish(random.choice(_tiangou_data))

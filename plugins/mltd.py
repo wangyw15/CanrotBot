@@ -41,6 +41,8 @@ def iso8601_to_local(iso8601: str) -> str:
 
 
 _mltd_handler = on_shell_command('mltd', aliases={'百万现场'}, block=True)
+
+
 @_mltd_handler.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if args[0] in ['活动', 'event', 'events']:
@@ -77,7 +79,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             await _mltd_handler.send('正在搜索喵~')
             card_name = ' '.join(args[1:])
             card = await mltd.search_card(card_name)
-            await unified.MessageSegment.image(await mltd.generate_card_info_image(card)).send(bot, event)
+            await unified.MessageSegment.image(await mltd.generate_card_info_image(card)).send()
             await _mltd_handler.finish()
         await _mltd_handler.finish('这里不支持发送图片所以没法查卡喵~')
     elif args[0] in ['抽卡', '十连', 'gasha', 'gacha']:

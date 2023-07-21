@@ -15,16 +15,15 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-# config
+
 class YinglishConfig(BaseModel):
     yinglish_rate: float = 1.0
 
 
 _config = YinglishConfig.parse_obj(get_driver().config)
-
-
-# yinglish handler
 _yinglish_handler = on_shell_command('yinglish', aliases={'淫语'}, block=True)
+
+
 @_yinglish_handler.handle()
 async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     if len(args) == 0:

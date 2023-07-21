@@ -2,7 +2,6 @@ from httpx import AsyncClient
 
 from essentials.libraries.config import get_config
 
-youtube_id_pattern = r'(?:https?:\/\/)?(?:youtu\.be\/|(?:\w{3}\.)?youtube\.com\/watch\?.*v=)([a-zA-Z0-9-_]+)'
 
 if proxy := get_config('canrot_proxy'):
     _client = AsyncClient(proxies=proxy)

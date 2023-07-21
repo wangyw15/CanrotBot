@@ -16,8 +16,9 @@ __plugin_meta__ = PluginMetadata(
 )
 
 _cp_stories: list[dict[str, str]] = get_data('cp_story')
-
 _cp_handler = on_shell_command('cp', aliases={'cp文'}, block=True)
+
+
 @_cp_handler.handle()
 async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     data = random.choice(_cp_stories)

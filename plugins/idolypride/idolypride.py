@@ -26,7 +26,10 @@ async def get_idols() -> list[dict[str, str]]:
 
 
 async def get_full_calendar() -> list[dict]:
-    resp = await _client.get('https://wiki.biligame.com/idolypride/api.php?action=expandtemplates&format=json&text=%7B%7B%23invoke%3A%E6%97%A5%E5%8E%86%E5%87%BD%E6%95%B0%7CgetAllData%7D%7D')
+    resp = await _client.get('https://wiki.biligame.com/idolypride/api.php?'
+                             'action=expandtemplates&'
+                             'format=json&'
+                             'text=%7B%7B%23invoke%3A%E6%97%A5%E5%8E%86%E5%87%BD%E6%95%B0%7CgetAllData%7D%7D')
     if resp.is_success and resp.status_code == 200:
         data = resp.json()['expandtemplates']['*']
         # 处理csv

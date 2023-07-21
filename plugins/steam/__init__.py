@@ -1,7 +1,7 @@
 import typing
 
 from nonebot import get_driver, on_command, on_regex
-from nonebot.adapters import Message, Bot, Event
+from nonebot.adapters import Message
 from nonebot.params import CommandArg, RegexGroup
 from nonebot.plugin import PluginMetadata
 from pydantic import BaseModel
@@ -61,7 +61,7 @@ def _generate_message(app_info: dict) -> str:
     return ret
 
 
-async def _send_steam_message(appinfo: dict, bot: Bot, event: Event):
+async def _send_steam_message(appinfo: dict):
     header_img: str = appinfo['header_image']
     bg_img: str = appinfo['background_raw']
     text_msg: str = _generate_message(appinfo)
@@ -74,14 +74,16 @@ async def _send_steam_message(appinfo: dict, bot: Bot, event: Event):
 
 
 _steam_command_handler = on_command('steam', aliases={'sbeam', '蒸汽', '蒸汽平台'}, block=True)
+
+
 @_steam_command_handler.handle()
-async def _(bot: Bot, event: Event, args: Message = CommandArg()):
+async def _(args: Message = CommandArg()):
     if msg := args.extract_plain_text():
         if msg.isdigit():
             if appinfo := await steam.fetch_app_info(msg, _steam_config.steam_language, _steam_config.steam_region):
                 if appinfo.get(msg, {}).get('success', False):
                     appinfo = appinfo[msg]['data']
-                    await _send_steam_message(appinfo, bot, event)
+                    await _send_steam_message(appinfo)
                     await _steam_command_handler.finish()
                 else:
                     await _steam_command_handler.finish('未找到该游戏')
@@ -92,11 +94,13 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
 
 
 _steam_link_handler = on_regex(r'(?:https?:\/\/)?store\.steampowered\.com\/app\/(\d+)', block=True)
+
+
 @_steam_link_handler.handle()
-async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     appid = reg[0]
     if appinfo := await steam.fetch_app_info(appid, _steam_config.steam_language, _steam_config.steam_region):
         if appinfo.get(appid, {}).get('success', False):
             appinfo = appinfo[appid]['data']
-            await _send_steam_message(appinfo, bot, event)
+            await _send_steam_message(appinfo)
             await _steam_link_handler.finish()

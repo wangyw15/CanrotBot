@@ -47,6 +47,8 @@ async def _send_music_card(bot: Bot, event: Event, music_type: typing.Literal['q
 
 
 _cloudmusic_handler = on_regex(r'(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+\/)?song\?\S*id=(\d+)', block=True)
+
+
 @_cloudmusic_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
     music_id = reg[0]
@@ -56,6 +58,8 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bo
 
 
 _qqmusic_link_handler = on_regex(_qqmusic_id_pattern, block=True)
+
+
 @_qqmusic_link_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
     music_id = reg[0]
@@ -65,6 +69,8 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bo
 
 
 _qqmusic_shortlink_handler = on_regex(r'(?:https?:\/\/)?c6\.y\.qq\.com\/base\/fcgi-bin\/u\?__=(\w+)', block=True)
+
+
 @_qqmusic_shortlink_handler.handle()
 async def _(reg: typing.Annotated[str, RegexStr()], bot: Bot, event: Event):
     resolved = await music.resolve_shortlink(reg)
@@ -76,6 +82,8 @@ async def _(reg: typing.Annotated[str, RegexStr()], bot: Bot, event: Event):
 
 
 _qq_music_handler = on_command('点歌', block=True)
+
+
 @_qq_music_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     if not unified.Detector.is_qq(bot):
@@ -99,6 +107,8 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
 
 
 _netease_music_handler = on_command('网易点歌', block=True)
+
+
 @_netease_music_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     if not unified.Detector.is_qq(bot):

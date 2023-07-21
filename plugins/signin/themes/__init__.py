@@ -13,4 +13,3 @@ def load_themes() -> None:
         if not name.startswith('_'):
             importlib.import_module(f'{__name__}.{name}')
             logger.info(f'Loaded fortune theme plugin: {name}')
-

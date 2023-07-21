@@ -2,7 +2,6 @@ import datetime
 import typing
 
 from nonebot import on_regex
-from nonebot.adapters import Bot, Event
 from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
 
@@ -23,7 +22,7 @@ def _generate_youtube_message(data: dict) -> str:
     if len(desc) > 200:
         desc = desc[:200] + '...'
     # 发布时间
-    date = datetime.datetime.strptime(data['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ') + datetime.timedelta(hours=8)
+    date = datetime.datetime.strptime(data['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ')+datetime.timedelta(hours=8)
     # 生成信息
     msg = ''
     msg += f'标题: \n{data["snippet"]["title"]}\n' \
@@ -38,8 +37,10 @@ def _generate_youtube_message(data: dict) -> str:
 
 
 _youtube_video = on_regex(youtube_id_pattern, block=True)
+
+
 @_youtube_video.handle()
-async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     data = await fetch_youtube_data(reg[0])
     if data:
         msg = _generate_youtube_message(data)

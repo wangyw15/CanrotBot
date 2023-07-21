@@ -240,7 +240,8 @@ def generate_message_from_tracemoe_result(api_result: dict) -> unified.Message:
 
 
 async def search_image_from_saucenao(img_url: str) -> dict | None:
-    api_url = "https://saucenao.com/search.php?db=999&output_type=2&testmode=1&numres={numres}&api_key={api_key}&url={url}"
+    api_url = "https://saucenao.com/search.php?" \
+              "db=999&output_type=2&testmode=1&numres={numres}&api_key={api_key}&url={url}"
     resp = await _client.get(
         api_url.format(
             api_key=_config.saucenao_api_key,
