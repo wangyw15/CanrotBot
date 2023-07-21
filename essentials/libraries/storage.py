@@ -2,7 +2,7 @@ import json
 import typing
 from pathlib import Path
 
-from config import canrot_config
+from .config import canrot_config
 
 _T = typing.TypeVar('_T')
 _base_data_path = Path(canrot_config.canrot_data_path)

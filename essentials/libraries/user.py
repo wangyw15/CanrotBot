@@ -8,7 +8,7 @@ from nonebot.adapters import Bot, Event
 
 from adapters import unified
 from adapters.unified import Detector, adapters
-import storage
+from . import storage
 
 _user_data = storage.PersistentData[dict[str]]('user')
 
