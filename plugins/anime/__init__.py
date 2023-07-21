@@ -85,8 +85,14 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             img_url = ''
             if search_keyword[0].type == unified.MessageSegmentTypes.IMAGE:
                 img_url = search_keyword[0].data['file']
-            elif isinstance(args[1], unified.adapters.kook_module.MessageSegment) and args[1].type == 'kmarkdown':
-                img_url = re.search(r'\[.*]\((\S+)\)', args[1].plain_text()).groups()[0]
+            elif isinstance(args[1], unified.adapters.kook_module.MessageSegment):
+                text = ''
+                if args[1].type == 'kmarkdown':
+                    text = args[1].data['raw_content']
+                elif args[1].type == 'text':
+                    text = args[1].data['content']
+                if text:
+                    img_url = re.search(r'\[.*]\((\S+)\)', text).groups()[0]
             elif util.is_url(args[1]):
                 img_url = str(args[1])
             if img_url:
