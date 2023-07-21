@@ -2,14 +2,13 @@ import re
 from typing import Annotated
 
 from nonebot import on_shell_command
-from nonebot.adapters import MessageSegment, Bot, Event, Message
+from nonebot.adapters import MessageSegment, Bot, Event
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
-from . import anime
 from adapters import unified
 from essentials.libraries import util
-
+from . import anime
 
 __plugin_meta__ = PluginMetadata(
     name='番剧工具',
@@ -49,8 +48,8 @@ def generate_message_from_anime_data(name: str, data: dict, possibility: float) 
     return msg
 
 
-async def _search_anime_by_image(msg: str, bot: Bot, event: Event) -> None:
-    if msg:
+async def _search_anime_by_image(img_url: str, bot: Bot, event: Event) -> None:
+    if img_url:
         search_resp = await anime.search_anime_by_image(img_url)
         if search_resp and not search_resp.get('error'):
             tracemoe_data = search_resp['result'][0]
@@ -81,7 +80,8 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     if len(args) == 2:
         if args[0].lower() == 'search' or args[0] == '搜索':
             # 从不同的地方获取信息
-            search_keyword = await unified.adapters.get_adapter().parse_message(Message(args[1]))
+            search_keyword = await unified.adapters.get_adapter().parse_message(
+                unified.adapters.message.Message(args[1]))
             img_url = ''
             if search_keyword[0].type == unified.MessageSegmentTypes.IMAGE:
                 img_url = search_keyword[0].data['file']
