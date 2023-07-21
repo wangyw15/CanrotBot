@@ -52,8 +52,6 @@ class Kook(AdapterInterface):
         for seg in msg:
             if seg.type == 'image':
                 ret.append(message.MessageSegment.image(seg.data['file_key']))
-            elif seg.type == 'text' or seg.type == 'kmarkdown':
-                ret.append(seg.plain_text)
             else:
                 ret.append(str(seg))
         return ret
