@@ -13,6 +13,8 @@ __plugin_meta__ = PluginMetadata(
 )
 
 _user = on_command('user', aliases={'u', '用户', '我'}, block=True)
+
+
 @_user.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     puid = user.get_puid(bot, event)
@@ -50,4 +52,10 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             user.unbind(another_puid)
             await _user.finish('解绑成功')
     else:
-        await _user.finish('用户服务帮助:\n用法: /<user|u|用户|我> [操作]\n操作:\nregister|reg|注册: 注册一个新用户\ninfo|信息: 查看用户信息\nbind|绑定 <puid>: 绑定一个用户\nunbind|解绑|解除绑定 <puid>: 解除绑定一个用户')
+        await _user.finish('用户服务帮助:\n'
+                           '用法: /<user|u|用户|我> [操作]\n'
+                           '操作:\n'
+                           'register|reg|注册: 注册一个新用户\n'
+                           'info|信息: 查看用户信息\n'
+                           'bind|绑定 <puid>: 绑定一个用户\n'
+                           'unbind|解绑|解除绑定 <puid>: 解除绑定一个用户')

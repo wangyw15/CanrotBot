@@ -46,7 +46,7 @@ SupportedAdapters = MappingProxyType({
 })
 
 
-class AdapterInterface():
+class AdapterInterface:
     @classmethod
     async def generate_message(cls, msg: message.Message):
         """

@@ -18,9 +18,11 @@ async def load_cards(force_reload: bool = False) -> None:
     if force_reload or not _cards or not _cards_zh or not _cards_last_fetch \
             or (datetime.now() - _cards_last_fetch).total_seconds() > 3600*24:
         _cards = await util.fetch_json_data(
-            'https://api.matsurihi.me/api/mltd/v2/cards?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true')
+            'https://api.matsurihi.me/api/mltd/v2/cards'
+            '?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true')
         _cards_zh = await util.fetch_json_data(
-            'https://api.matsurihi.me/api/mltd/v2/zh/cards?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true')
+            'https://api.matsurihi.me/api/mltd/v2/zh/cards'
+            '?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true')
         _cards_last_fetch = datetime.now()
         # 生成卡池
         _cards_for_gasha = {}

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from . import storage
+import storage
 
 _economy_data = storage.PersistentData[dict[str]]('economy')
 

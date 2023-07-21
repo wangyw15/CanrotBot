@@ -14,6 +14,8 @@ __plugin_meta__ = PluginMetadata(
 )
 
 _economy = on_command('economy', aliases={'e', '钱包', '银行', '经济', 'bank'}, block=True)
+
+
 @_economy.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
     # check if registered

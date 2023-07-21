@@ -3,7 +3,9 @@ from typing import Tuple
 
 from nonebot import get_loaded_plugins
 
-from . import asset, render_by_browser, util
+import asset
+import render_by_browser
+import util
 
 _help_assets_path = asset.get_assets_path('help')
 _plugin_metadatas: list[dict[str, str]] = []
