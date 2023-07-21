@@ -2,7 +2,7 @@ import re
 from typing import Annotated
 
 from nonebot import on_shell_command
-from nonebot.adapters import MessageSegment, Bot, Event
+from nonebot.adapters import MessageSegment, Bot, Event, Message
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
@@ -49,18 +49,8 @@ def generate_message_from_anime_data(name: str, data: dict, possibility: float) 
     return msg
 
 
-async def _search_anime_by_image(msg: str | MessageSegment, bot: Bot, event: Event) -> None:
-    img_url = ''
-    if isinstance(msg, MessageSegment) and msg.type.lower() == 'image':
-        if unified.Detector.is_qq(bot):
-            img_url = msg.data['url'].strip()
-        elif unified.Detector.is_kook(bot):
-            img_url = msg.data['file_key'].strip()
-    elif isinstance(msg, unified.adapters.kook_module.MessageSegment) and msg.type == 'kmarkdown':
-        img_url = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
-    elif util.is_url(msg):
-        img_url = msg.strip()
-    if img_url:
+async def _search_anime_by_image(msg: str, bot: Bot, event: Event) -> None:
+    if msg:
         search_resp = await anime.search_anime_by_image(img_url)
         if search_resp and not search_resp.get('error'):
             tracemoe_data = search_resp['result'][0]
@@ -91,8 +81,16 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     if len(args) == 2:
         if args[0].lower() == 'search' or args[0] == '搜索':
             # 从不同的地方获取信息
-            if (isinstance(args[1], MessageSegment) and args[1].type.lower() == 'image') or util.is_url(args[1]):
-                await _search_anime_by_image(args[1], bot, event)
+            search_keyword = await unified.adapters.get_adapter().parse_message(Message(args[1]))
+            img_url = ''
+            if search_keyword[0].type == unified.MessageSegmentTypes.IMAGE:
+                img_url = search_keyword[0].data['file']
+            elif isinstance(args[1], unified.adapters.kook_module.MessageSegment) and args[1].type == 'kmarkdown':
+                img_url = re.search(r'\[.*]\((\S+)\)', args[1].plain_text()).groups()[0]
+            elif util.is_url(args[1]):
+                img_url = str(args[1])
+            if img_url:
+                await _search_anime_by_image(img_url, bot, event)
                 await _anime_handler.finish()
             name, data, possibility = anime.search_anime_by_name(' '.join(args[1:]))
             text_msg = generate_message_from_anime_data(name, data, possibility)
