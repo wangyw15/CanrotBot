@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from nonebot import on_shell_command
-from nonebot.adapters import Bot, Event, MessageSegment
+from nonebot.adapters import Bot, MessageSegment
 from nonebot.params import ShellCommandArgv, Arg, Message
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
@@ -18,6 +18,8 @@ __plugin_meta__ = PluginMetadata(
 
 
 _search_image = on_shell_command("识图", aliases={"搜图"}, block=True)
+
+
 @_search_image.handle()
 async def _(state: T_State, bot: Bot, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     api = "saucenao"
@@ -42,16 +44,13 @@ async def _(state: T_State, bot: Bot, args: Annotated[list[str | MessageSegment]
 
 
 @_search_image.got("image")
-async def _(state: T_State, bot: Bot, event: Event, image: Message = Arg()):
+async def _(state: T_State, msg: Message = Arg()):
     # get img url
-    img_url: str = ""
-    if unified.Detector.is_onebot(bot) and image[0].type == 'image' \
-            or unified.Detector.is_mirai2(bot) and image[0].type == unified.adapters.mirai2_module.MessageType.IMAGE:
-        img_url = image[0].data['url'].strip()
-    elif unified.Detector.is_kook(bot) and image[0].type == 'image':
-        img_url = image[0].data['file_key'].strip()
+    msg = await unified.adapters.get_adapter().parse_message(msg)
+    if msg[0].type == unified.MessageSegmentTypes.IMAGE:
+        img_url = msg[0].data['file'].strip()
     else:
-        img_url = image.extract_plain_text().strip()
+        img_url = msg.extract_plain_text().strip()
 
     # search
     if img_url and (img_url.startswith("https://") or img_url.startswith("http://")):

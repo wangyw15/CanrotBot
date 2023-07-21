@@ -1,7 +1,8 @@
 import nonebot
+from nonebot.adapters import Bot, Event
 from nonebot.message import event_preprocessor
-from essentials.libraries import config
 
+from essentials.libraries import config
 from . import adapters
 from .detector import Detector
 from .message import Message, MessageSegment, MessageSegmentTypes
@@ -20,6 +21,14 @@ for name, key in adapters.SupportedAdapters.items():
         except Exception as e:
             nonebot.logger.info(f'加载 {name} 失败: {e}')
 
+
+# @event_preprocessor
+# async def _(event: Event, bot: Bot):
+#     adapter = adapters.get_adapter(bot)
+#     event.message = await adapter.parse_message(event.message)
+
+
+# 导出名称
 __all__ = ['adapters',
            'Detector',
            'MessageSegmentTypes',
