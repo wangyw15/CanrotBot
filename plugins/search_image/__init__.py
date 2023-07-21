@@ -43,14 +43,14 @@ async def _(state: T_State, bot: Bot, args: Annotated[list[str | MessageSegment]
         await _search_image.send("请发送图片链接")
 
 
-@_search_image.got("image")
-async def _(state: T_State, msg: Message = Arg()):
+@_search_image.got("image_msg")
+async def _(state: T_State, image_msg: Message = Arg()):
     # get img url
-    msg = await unified.adapters.get_adapter().parse_message(msg)
-    if msg[0].type == unified.MessageSegmentTypes.IMAGE:
-        img_url = msg[0].data['file'].strip()
+    image_msg = await unified.adapters.get_adapter().parse_message(image_msg)
+    if image_msg[0].type == unified.MessageSegmentTypes.IMAGE:
+        img_url = image_msg[0].data['file'].strip()
     else:
-        img_url = msg.extract_plain_text().strip()
+        img_url = image_msg.extract_plain_text().strip()
 
     # search
     if img_url and (img_url.startswith("https://") or img_url.startswith("http://")):
