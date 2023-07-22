@@ -1,11 +1,10 @@
 import re
 import typing
 
-from essentials.libraries import asset, util
+from essentials.libraries import util
 from . import dice, data
 
-_assets = asset.Asset('trpg')
-basic_property_names = [x['name'] for x in _assets['basic_properties'].values()]
+basic_property_names = [x['name'] for x in data.trpg_assets['basic_properties'].values()]
 _investigators_key = 'investigators'
 
 
@@ -17,8 +16,8 @@ def get_property_name(key: str) -> str:
 
     :return: 属性名
     """
-    if key in _assets['basic_properties']:
-        return _assets['basic_properties'][key]['name']
+    if key in data.trpg_assets['basic_properties']:
+        return data.trpg_assets['basic_properties'][key]['name']
     return ''
 
 
@@ -30,7 +29,7 @@ def get_property_key(name: str) -> str:
 
     :return: 属性 key
     """
-    for k, v in _assets['basic_properties'].items():
+    for k, v in data.trpg_assets['basic_properties'].items():
         if v['name'] == name:
             return k
     return ''
@@ -43,7 +42,7 @@ def random_basic_properties() -> dict[str, int]:
     :return: 基础属性
     """
     ret: dict[str, int] = {}
-    for _, v in _assets['basic_properties'].items():
+    for _, v in data.trpg_assets['basic_properties'].items():
         ret[v['name']] = dice.dice_expression(v['dice'])[0]
     return ret
 
@@ -236,13 +235,45 @@ def property_check(uid: str, property_name: str, value: int | None = None) -> ty
         return check_result, value, target
 
 
+def calculate_db_physique(uid: str) -> typing.Tuple[int, int] | None:
+    """
+    计算伤害加值和体格
+    
+    :param uid: uid
+    
+    :return: 伤害加值, 体格
+    """
+    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
+        iid, card = get_selected_investigator(uid).popitem()
+        add = card['basic_properties']['str'] + card['basic_properties']['siz']
+        if add <= 64:
+            return -2, -2
+        elif add <= 84:
+            return -1, -1
+        elif add <= 124:
+            return 0, 0
+        elif add <= 164:
+            return dice.simple_dice_expression('1d4'), 1
+        elif add <= 204:
+            return dice.simple_dice_expression('1d6'), 2
+        elif add <= 284:
+            return dice.simple_dice_expression('2d6'), 3
+        elif add <= 364:
+            return dice.simple_dice_expression('3d6'), 4
+        elif add <= 444:
+            return dice.simple_dice_expression('4d6'), 5
+        elif add <= 524:
+            return dice.simple_dice_expression('5d6'), 6
+    return None
+
+
 _ = ''' investigator example
 {
     "name": "xxx",
     "gender": "xxx",
     "age": 18,
     "profession": "xxx",
-    "basic_properties": {"aaa": 20, "bbb": 30},
+    "basic_properties": {"str": 20, "con": 30, ...},
     "additional_properties": {"aaa": 20, "bbb": 30},
     "skills": {"aaa": 20, "bbb": 30},
     "status": {"hp": 15, "san": 80}
