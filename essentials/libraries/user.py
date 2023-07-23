@@ -5,6 +5,7 @@ import re
 import uuid
 
 from nonebot.adapters import Bot, Event
+from nonebot.matcher import current_bot, current_event
 
 from adapters import unified
 from adapters.unified import Detector, adapters
@@ -84,7 +85,7 @@ def register(puid: str) -> str:
     return uid
 
 
-def get_puid(bot: Bot, event: Event) -> str:
+def get_puid(bot: Bot | None = None, event: Event | None = None) -> str:
     """
     获取puid
 
@@ -93,6 +94,10 @@ def get_puid(bot: Bot, event: Event) -> str:
 
     :return: puid
     """
+    if not bot:
+        bot = current_bot.get()
+    if not event:
+        event = current_event.get()
     puid = event.get_user_id()
     if unified.Detector.is_onebot_v11(bot) or unified.Detector.is_onebot_v12(bot) or unified.Detector.is_mirai2(bot):
         puid = 'qq_' + puid
@@ -105,15 +110,17 @@ def get_puid(bot: Bot, event: Event) -> str:
     return puid
 
 
-def get_uid(puid: str) -> str:
+def get_uid(puid: str = '') -> str:
     """
     查询puid对应的uid
 
-    :param puid: 要查询的puid
+    :param puid: 要查询的puid，为空则自动获取
 
     :return: uid
     """
-    if not puid_user_exists(puid):
+    if not puid:
+        puid = get_puid()
+    elif not puid_user_exists(puid):
         return ''
     return _user_data['users'][puid]
 
@@ -145,7 +152,7 @@ def get_bind_by_puid(puid: str) -> list[str]:
     return get_bind_by_uid(get_uid(puid))
 
 
-async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | None:
+async def get_user_name(event: Event | None = None, bot: Bot | None = None, default: str = None) -> str | None:
     """
     从不同的事件中获取用户昵称
 
@@ -156,6 +163,10 @@ async def get_user_name(event: Event, bot: Bot, default: str = None) -> str | No
     :return: 用户昵称
     """
     # onebot v11
+    if not bot:
+        bot = current_bot.get()
+    if not event:
+        event = current_event.get()
     if Detector.is_onebot_v11(bot):
         if isinstance(event, adapters.onebot_v11_module.GroupMessageEvent):
             user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)

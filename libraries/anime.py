@@ -7,19 +7,35 @@ from typing import Tuple
 from nonebot import logger
 
 from essentials.libraries import asset, util
+import re
 
 _anime_offline_database_path = asset.get_assets_path('anime-offline-database')
 _animes: list[dict] = []
+# _anilist_id_name: dict[int, str] = {}
+_name_anilist_id: dict[str, int] = {}
 
 
 def _load_animes() -> None:
-    global _animes
+    global _animes, _name_anilist_id
     if not _animes:
         with open(_anime_offline_database_path / 'anime-offline-database.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
             _animes = data['data']
             logger.info(f'Anime databasee last update time: {data["lastUpdate"]}')
             logger.info(f'Loaded animes: {len(_animes)}')
+    # 提升搜索速度
+    logger.info('预加载搜索数据')
+    for i in _animes:
+        anilist_id = ''
+        for url in i['sources']:
+            if result := re.search(r'anilist\.co/anime/(\d+)', url):
+                anilist_id = result.groups()[0]
+                break
+        if not anilist_id:
+            continue
+        _name_anilist_id[i['title']] = int(anilist_id)
+        for synonym in i['synonyms']:
+            _name_anilist_id[synonym] = int(anilist_id)
 
 
 _load_animes()
@@ -68,6 +84,26 @@ async def search_anime_by_image(img_url: str) -> dict | None:
     if data := await util.fetch_json_data(api_url.format(url=urllib.parse.quote_plus(img_url))):
         return data
     return None
+
+
+def search_anilist_id_by_name(name: str) -> Tuple[str, int, float]:
+    """
+    根据名称搜索 AniList id
+
+    :params name: 番剧名称
+
+    :return: 番剧名, AniList id, 匹配度
+    """
+    best: float = 0.0
+    result = 0
+    result_name = ''
+    for k, v in _name_anilist_id.items():
+        ratio = difflib.SequenceMatcher(None, name, k).quick_ratio()
+        if ratio > best:
+            best = ratio
+            result = v
+            result_name = k
+    return result_name, result, best
 
 
 async def _test() -> None:

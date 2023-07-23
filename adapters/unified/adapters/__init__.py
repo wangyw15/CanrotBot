@@ -4,8 +4,7 @@ from types import MappingProxyType
 
 from nonebot.adapters import Bot, Event
 from nonebot.adapters import Message as BaseMessage
-from nonebot.internal.matcher import current_bot
-from nonebot.matcher import current_matcher
+from nonebot.matcher import current_matcher, current_bot
 
 from .. import message
 

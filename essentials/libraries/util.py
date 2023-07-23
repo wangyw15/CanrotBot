@@ -1,8 +1,8 @@
-import re
 import hashlib
-from typing import Any
-from datetime import datetime
 import random
+import re
+from datetime import datetime, timezone, timedelta
+from typing import Any
 
 import httpx
 from nonebot import get_driver
@@ -197,6 +197,12 @@ def random_str(length: int) -> str:
         ret.extend(hashlib.md5(str(datetime.now().timestamp()).encode(), usedforsecurity=True).hexdigest())
     random.shuffle(ret)
     return ''.join(ret[:length])
+
+
+def get_iso_time_str(t: datetime | None = None) -> str:
+    if not t:
+        t = datetime.now()
+    return datetime.now().astimezone(timezone(timedelta(hours=8))).isoformat()
 
 
 __all__ = ['fetch_bytes_data',

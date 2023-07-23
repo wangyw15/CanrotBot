@@ -8,7 +8,7 @@ from nonebot.plugin import PluginMetadata
 
 from adapters import unified
 from essentials.libraries import util
-from . import anime
+from libraries import anime
 
 __plugin_meta__ = PluginMetadata(
     name='番剧工具',
