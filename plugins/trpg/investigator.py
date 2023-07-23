@@ -1,3 +1,4 @@
+import math
 import re
 import typing
 
@@ -264,6 +265,49 @@ def calculate_db_physique(uid: str) -> typing.Tuple[int, int] | None:
             return dice.simple_dice_expression('4d6'), 5
         elif add <= 524:
             return dice.simple_dice_expression('5d6'), 6
+    return None
+
+
+def calculate_hp(uid: str) -> int | None:
+    """
+    计算耐久值
+
+    :param uid: uid
+
+    :return: 耐久值
+    """
+    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
+        iid, card = get_selected_investigator(uid).popitem()
+        return math.floor((card['basic_properties']['con']+card['basic_properties']['siz'])/10)
+    return None
+
+
+def calculate_mov(uid: str) -> int | None:
+    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
+        iid, card = get_selected_investigator(uid).popitem()
+        # 属性
+        strength = card['basic_properties']['str']
+        dex = card['basic_properties']['dex']
+        siz = card['basic_properties']['siz']
+        age = card['age']
+        # 计算移动速度
+        mov = 8
+        if strength < siz and dex < siz:
+            mov = 7
+        elif strength > siz and dex > siz:
+            mov = 9
+        # 年龄
+        if 40 <= age <= 49:
+            mov -= 1
+        elif 50 <= age <= 59:
+            mov -= 2
+        elif 60 <= age <= 69:
+            mov -= 3
+        elif 70 <= age <= 79:
+            mov -= 4
+        elif 80 <= age <= 89:
+            mov -= 5
+        return mov
     return None
 
 
