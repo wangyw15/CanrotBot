@@ -29,9 +29,9 @@ def _generate_youtube_message(data: dict) -> str:
            f'频道: \n{data["snippet"]["channelTitle"]}\n' \
            f'发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%S")}\n' \
            f'播放: {data["statistics"]["viewCount"]}\n'
-    msg += f'点赞: {data["statistics"]["likeCount"]}\n' if 'likeCount' in data["statistics"] else ''
-    msg += f'评论: {data["statistics"]["commentCount"]}\n' \
-           f'简介:\n{desc}\n' \
+    msg += f'点赞: {data["statistics"]["likeCount"]}\n' if 'likeCount' in data['statistics'] else ''
+    msg += f'评论: {data["statistics"]["commentCount"]}\n' if 'commentCount' in data['statistics'] else ''
+    msg += f'简介:\n{desc}\n' \
            f'视频链接: \nhttps://youtu.be/{data["id"]}'
     return msg
 
