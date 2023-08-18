@@ -7,3 +7,4 @@ jieba
 pypinyin
 pillow
 playwright
+tencentcloud-sdk-python

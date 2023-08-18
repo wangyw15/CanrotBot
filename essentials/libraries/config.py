@@ -16,5 +16,7 @@ _global_config = _driver.config
 canrot_config = CanrotConfig.parse_obj(_global_config)
 
 
-def get_config(name: str) -> Any:
+def get_config(name: str) -> Any | None:
+    if name not in _global_config.dict():
+        return None
     return _global_config.dict()[name]
