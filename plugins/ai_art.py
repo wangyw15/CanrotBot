@@ -1,14 +1,13 @@
 import base64
 
 from nonebot import on_command
-from nonebot.exception import FinishedException
 from nonebot.params import Message, CommandArg
 from nonebot.plugin import PluginMetadata
 from tencentcloud.aiart.v20221229 import aiart_client, models
 from tencentcloud.common import credential
 
-from essentials.libraries import config, user, economy
 from adapters import unified
+from essentials.libraries import config, user, economy
 
 __plugin_meta__ = PluginMetadata(
     name='AI 作画',
@@ -38,6 +37,7 @@ async def _(msg: Message = CommandArg()):
     if not economy.pay(uid, 100, 'AI 作画'):
         await _ai_art_handler.finish('余额不足')
         return
+    await _ai_art_handler.send('谢谢你的100个胡萝卜片喵~正在努力画画呢~')
     if args := msg.extract_plain_text():
         split = args.split('|')
         if len(split) == 3:
