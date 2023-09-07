@@ -6,7 +6,7 @@ from httpx import Response, AsyncClient
 _client = AsyncClient()
 _projects_url = 'https://show.bilibili.com/api/ticket/project/listV3' \
                 '?page={page}&pagesize=20&platform=web&area={area}&p_type={project_type}&style=1'
-bilibili_vid_pattern = r'(?:https?:\/\/)?(?:(?:www\.)?bilibili.com\/video|b23\.tv)\/((?:BV|av)[0-9A-Za-z]+)'
+bilibili_vid_pattern = r'(?:https?:\/\/)?(?:(?:www\.)?bilibili.com\/video|b23\.tv)\/((?:[AaBb][Vv])[0-9A-Za-z]+)'
 
 
 async def _fetch_json_data(url: str) -> dict | None:
