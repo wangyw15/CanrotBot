@@ -22,7 +22,7 @@ async def fetch_video_data(vid: str) -> dict | None:
     if vid.startswith(('BV', 'Bv', 'bV', 'bv')):
         resp = await _client.get(f'https://api.bilibili.com/x/web-interface/view?bvid={vid}')
     elif vid.lower().startswith('av'):
-        resp = await _client.get(f'https://api.bilibili.com/x/web-interface/view?aid={vid}')
+        resp = await _client.get(f'https://api.bilibili.com/x/web-interface/view?aid={vid[2:]}')
     if resp and resp.is_success and resp.status_code == 200:
         data = resp.json()
         if data['code'] == 0:
