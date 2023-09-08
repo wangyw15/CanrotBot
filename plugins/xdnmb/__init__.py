@@ -1,3 +1,4 @@
+import re
 import typing
 
 from nonebot import on_command, on_regex
@@ -14,17 +15,16 @@ __plugin_meta__ = PluginMetadata(
     usage='发送链接或者/xd <串号>',
     config=None
 )
-
+# TODO 设置饼干用于查看
 
 async def _generate_message(thread_number: str) -> unified.Message | None:
     if data := await xdnmb.get_thread_data(thread_number):
         msg = unified.Message()
-        msg.append(data['user_hash'] + ' ' + data['now'] + ' ' + str(data['ReplyCount']) + '条回复\n')
-        if data['title'] and data['title'] != '无标题':
-            msg.append('标题: ' + data['title'] + '\n')
-        msg.append(data['content'] + '\n')
-        if data['img']:
-            msg.append(unified.MessageSegment.image(f'https://image.nmb.best/image/{data["img"]}{data["ext"]}'))
+        msg += xdnmb.generate_message(data, True)
+        for i in range(3):
+            msg.append('--------------------\n')
+            msg += xdnmb.generate_message(data['Replies'][i])
+            msg += '\n'
         return msg
     return None
 
