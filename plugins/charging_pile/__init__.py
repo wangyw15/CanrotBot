@@ -1,6 +1,8 @@
+import json
+
 from nonebot import on_command
 from nonebot.adapters import Message
-from nonebot.params import CommandArg
+from nonebot.params import CommandArg, Arg
 from nonebot.plugin import PluginMetadata
 
 from . import charging_pile
@@ -21,13 +23,13 @@ _charging_pile_handler = on_command('charge', aliases={'充电', '充电桩'}, b
 async def _():
     if not unified.Detector.is_onebot():
         await _charging_pile_handler.finish('抱歉，目前只支持 OneBot 协议')
-    # await _charging_pile_handler.send('正在查询喵~')
-    # await _charging_pile_handler.finish(await charging_pile.generate_message('上海大学'))
 
 
 @_charging_pile_handler.got('location', prompt='请发送定位')
-async def _(location: unified.adapters.onebot_v11_module.Message):
-    if location[0].type == 'location':
+async def _(location: Message = Arg()):
+    if location[0].type == 'json':
         await _charging_pile_handler.send('正在查询喵~')
-        stations = await charging_pile.get_station_list(location[0].data['lat'], location[0].data['lon'])
+        json_data = json.loads(location[0].data['data'])
+        stations = await charging_pile.get_station_list(
+            json_data['meta']['Location.Search']['lng'], json_data['meta']['Location.Search']['lat'])
         await _charging_pile_handler.finish(await charging_pile.generate_message(stations))
