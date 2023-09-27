@@ -26,8 +26,8 @@ async def _():
 
 
 @_charging_pile_handler.got('location', prompt='请发送定位')
-async def _(loc_msg: unified.adapters.onebot_v11_module.Message):
-    if loc_msg[0].type == 'location':
+async def _(location: unified.adapters.onebot_v11_module.Message):
+    if location[0].type == 'location':
         await _charging_pile_handler.send('正在查询喵~')
-        stations = await charging_pile.get_station_list(loc_msg[0].data['lat'], loc_msg[0].data['lon'])
+        stations = await charging_pile.get_station_list(location[0].data['lat'], location[0].data['lon'])
         await _charging_pile_handler.finish(await charging_pile.generate_message(stations))
