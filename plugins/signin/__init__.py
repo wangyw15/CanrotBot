@@ -72,15 +72,18 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     else:
         final_msg += '你今天签过到了，再给你看一次哦🤗\n'
 
+        title = today_record.title
+        content = today_record.content
+
         if theme == 'random' and _signin_files(uid + '.png').exists():
             with _signin_files(uid + '.png').open(mode='rb') as f:
                 img: bytes = bytes(f.read())
         else:
             # 重新按内容生成图片
             img, _, _, _ = await fortune.generate_fortune(theme, title=today_record.title, content=today_record.content)
-            with _signin_files(uid + '.png').open(mode='rb') as f:
+            with _signin_files(uid + '.png').open(mode='wb') as f:
                 f.write(img)
 
-    final_msg.append(unified.MessageSegment.image(img, f'运势: {today_record.title}\n详情: {today_record.content}'))
+    final_msg.append(unified.MessageSegment.image(img, f'运势: {title}\n详情: {content}'))
     await final_msg.send()
     await _signin_handler.finish()
