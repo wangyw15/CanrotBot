@@ -4,7 +4,7 @@ from nonebot import require
 
 from .. import fortune
 
-require('plugins.arknights')
+require('arknights')
 from plugins.arknights import arknights
 
 

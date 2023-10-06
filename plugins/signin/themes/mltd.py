@@ -4,7 +4,7 @@ from nonebot import require
 
 from .. import fortune
 
-require('plugins.mltd')
+require('mltd')
 from plugins.mltd import mltd
 
 
