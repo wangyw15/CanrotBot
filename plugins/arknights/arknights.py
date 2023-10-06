@@ -124,7 +124,7 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
             last_six_star=current_result.last_six_star
         ))
         session.execute(insert(data.History).values(
-            uid=uid,
+            user_id=uid,
             operators=json.dumps(simple_operators, ensure_ascii=False)
         ))
         session.commit()

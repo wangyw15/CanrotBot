@@ -16,6 +16,7 @@ class Account(Base):
 
     user_id: Mapped[str] = Column(Text, primary_key=True, nullable=False, unique=True)
     balance: Mapped[float] = Column(Float, nullable=False, default=0)
+    extra: Mapped[Optional[str]] = Column(Text, nullable=True, default='')
 
 
 class Record(Base):

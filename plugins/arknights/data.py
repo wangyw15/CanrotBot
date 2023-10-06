@@ -25,8 +25,8 @@ class Statistics(Base):
 class History(Base):
     __tablename__ = 'arknights_gacha_history'
 
-    user_id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
-    uid: Mapped[str] = Column(Text, nullable=False)
+    id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+    user_id: Mapped[str] = Column(Text, nullable=False)
     time: Mapped[datetime] = Column(DateTime, nullable=False, default=datetime.now)
     operators: Mapped[str] = Column(Text, nullable=False)
 

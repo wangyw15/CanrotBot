@@ -26,7 +26,7 @@ class Investigator(Base):
     name: Mapped[str] = Column(Text, nullable=False, default='')
     age: Mapped[int] = Column(Integer, nullable=False, default='')
     gender: Mapped[str] = Column(Text, nullable=False, default='')
-    birthplace: Mapped[str] = Column(Text, nullable=True, default='')
+    birthplace: Mapped[str] = Column(Text, nullable=False, default='')
     profession: Mapped[str] = Column(Text, nullable=False, default='')
 
     strength: Mapped[int] = Column(Integer, nullable=False, default=0)

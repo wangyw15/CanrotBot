@@ -61,8 +61,7 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
                     final_msg += f'姓名: {card.name}\n'
                     final_msg += f'性别: {card.gender}\n'
                     final_msg += f'年龄: {card.age}\n'
-                    if card.birthplace:
-                        final_msg += f'出生地: {card.birthplace}\n'
+                    final_msg += f'出生地: {card.birthplace}\n'
                     final_msg += f'职业: {card.profession}\n'
                     # 基本属性
                     for k, v in data.trpg_assets['basic_properties'].items():
