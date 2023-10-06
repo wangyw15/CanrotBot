@@ -2,7 +2,7 @@ import nonebot
 from nonebot.adapters import Bot, Event
 from nonebot.message import event_preprocessor
 
-from essentials.libraries import config
+from storage import config
 from . import adapters
 from .detector import Detector
 from .message import Message, MessageSegment, MessageSegmentTypes

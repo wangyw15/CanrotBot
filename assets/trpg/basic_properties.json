@@ -1,38 +1,47 @@
 {
     "str": {
         "name": "力量",
+        "fullname": "strength",
         "dice": "3d6*5"
     },
     "con": {
         "name": "体质",
+        "fullname": "constitution",
         "dice": "3d6*5"
     },
     "siz": {
         "name": "体型",
+        "fullname": "size",
         "dice": "(2d6+6)*5"
     },
     "dex": {
         "name": "敏捷",
+        "fullname": "dexterity",
         "dice": "3d6*5"
     },
     "app": {
         "name": "外貌",
+        "fullname": "appearance",
         "dice": "3d6*5"
     },
     "int": {
         "name": "智力",
+        "fullname": "intelligence",
         "dice": "(2d6+6)*5"
     },
     "pow": {
         "name": "意志",
+        "fullname": "power",
         "dice": "3d6*5"
     },
     "edu": {
         "name": "教育",
+        "fullname": "education",
         "dice": "(2d6+6)*5"
     },
     "luck": {
         "name": "幸运",
+        "fullname": "luck",
         "dice": "3d6*5"
     }
 }

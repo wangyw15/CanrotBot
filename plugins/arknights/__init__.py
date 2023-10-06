@@ -7,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 
 from adapters import unified
 from essentials.libraries import user, economy
-from libraries import arknights
+from . import arknights
 
 __plugin_meta__ = PluginMetadata(
     name='明日方舟助手',
@@ -50,18 +50,18 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
 
     if args[0] in ['gachainfo', '抽卡记录', '抽卡统计', '抽卡历史', '十连历史', '十连统计', '寻访历史', '寻访统计']:
         gacha_result = arknights.get_gacha_data(uid)
-        if gacha_result['times'] == 0:
+        if gacha_result.times == 0:
             # 未抽过卡
             await _arknights_handler.finish('你还没有抽过卡喵~')
         else:
             msg = '明日方舟抽卡统计: \n' \
-                  f"寻访次数: {gacha_result['times']}\n" \
-                  f"消耗合成玉: {gacha_result['times'] * 600}\n" \
-                  f"= 至纯源石: {round(gacha_result['times'] * 600 / 180, 2)}\n" \
-                  f"= RMB: {round(gacha_result['times'] * 600 / 180 * 6, 2)}\n" \
-                  f"3星干员: {gacha_result['2']}\n" \
-                  f"4星干员: {gacha_result['3']}\n" \
-                  f"5星干员: {gacha_result['4']}\n" \
-                  f"6星干员: {gacha_result['5']}\n" \
-                  f"距离上次抽到6星次数: {gacha_result['last_5']}"
+                  f"寻访次数: {gacha_result.times}\n" \
+                  f"消耗合成玉: {gacha_result.times * 600}\n" \
+                  f"= 至纯源石: {round(gacha_result.times * 600 / 180, 2)}\n" \
+                  f"= RMB: {round(gacha_result.times * 600 / 180 * 6, 2)}\n" \
+                  f"3星干员: {gacha_result.three_stars}\n" \
+                  f"4星干员: {gacha_result.four_stars}\n" \
+                  f"5星干员: {gacha_result.five_stars}\n" \
+                  f"6星干员: {gacha_result.six_stars}\n" \
+                  f"距离上次抽到6星次数: {gacha_result.last_six_star}"
             await _arknights_handler.finish(msg)

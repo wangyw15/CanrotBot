@@ -8,3 +8,4 @@ pypinyin
 pillow
 playwright
 tencentcloud-sdk-python
+sqlalchemy

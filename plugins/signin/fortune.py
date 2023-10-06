@@ -4,7 +4,8 @@ from typing import Tuple, Literal, Callable
 
 from nonebot import logger
 
-from essentials.libraries import asset, render_by_browser
+from essentials.libraries import render_by_browser
+from storage import asset
 from . import themes
 
 fortune_assets_path = asset.get_assets_path('fortune')

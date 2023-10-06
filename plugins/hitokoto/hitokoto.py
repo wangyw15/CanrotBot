@@ -4,7 +4,7 @@ from datetime import datetime
 
 from nonebot import logger
 
-from essentials.libraries import asset
+from storage import asset
 
 _hitokoto_assets_path = asset.get_assets_path('hitokoto')
 _version: dict = {}

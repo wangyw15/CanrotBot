@@ -5,7 +5,8 @@ from typing import Tuple, Literal
 
 from nonebot import logger
 
-from essentials.libraries import asset, render_by_browser
+from essentials.libraries import render_by_browser
+from storage import asset
 
 _kuji_assets_path = asset.get_assets_path('kuji')
 _kuji_data: list[dict[str, str]] = []

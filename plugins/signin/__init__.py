@@ -5,10 +5,12 @@ from nonebot import on_shell_command
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
+from sqlalchemy import select, insert
 
 from adapters import unified
-from essentials.libraries import user, economy, storage
-from . import fortune
+from essentials.libraries import user, economy
+from storage import database, file
+from . import data, fortune
 
 __plugin_meta__ = PluginMetadata(
     name='签到',
@@ -17,8 +19,7 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-_signin_data = storage.PersistentData[dict[str, str]]('signin')
-
+_signin_files = file.FileStorage('signin')
 _signin_handler = on_shell_command('signin', aliases={'签到', '每日签到', '抽签'}, block=True)
 
 
@@ -34,34 +35,32 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         await _signin_handler.finish('你还没有注册')
     uid = user.get_uid(puid)
 
+    # 数据库 session
+    session = database.get_session()()
+
     # 设置主题
     theme = 'random'
     if len(args) == 1:
         theme = args[0]
 
     # 判断是否签到过
-    last_signin = _signin_data[uid]
-    can_signin = False
-    today = datetime.now().strftime('%Y-%m-%d')
-    if not last_signin or 'last_date' not in last_signin:
-        can_signin = True
-    else:
-        if not last_signin['last_date'] == today:
-            can_signin = True
+    all_record = session.execute(select(data.SigninRecord).where(data.SigninRecord.user_id == uid)).scalars().all()
+    today_record: data.SigninRecord | None = None
+    for i in all_record:
+        if i.time.date() == datetime.now().date():
+            today_record = i
+            break
 
     # 构造消息
     final_msg = unified.Message()
 
     # 签到
-    if can_signin:
+    if today_record is None:
         # 生成运势内容和对应图片
         img, title, content, rank = await fortune.generate_fortune(theme)
-        _signin_data[uid] = {
-            'last_date': today,
-            'fortune_title': title,
-            'fortune_content': content
-        }
-        with _signin_data.get_path(uid + '.png').open(mode='wb') as f:
+        session.execute(insert(data.SigninRecord).values(uid=uid, time=datetime.now(), title=title, content=content))
+        session.commit()
+        with _signin_files(uid + '.png').open(mode='wb') as f:
             f.write(img)
         # 签到获得积分
         point_amount = 20 + rank
@@ -73,17 +72,15 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
     else:
         final_msg += '你今天签过到了，再给你看一次哦🤗\n'
 
-        title = _signin_data[uid]['fortune_title']
-        content = _signin_data[uid]['fortune_content']
-        if theme == 'random' and _signin_data.exists(uid + '.png'):
-            with _signin_data.get_path(uid + '.png').open(mode='rb') as f:
+        if theme == 'random' and _signin_files(uid + '.png').exists():
+            with _signin_files(uid + '.png').open(mode='rb') as f:
                 img: bytes = bytes(f.read())
         else:
             # 重新按内容生成图片
-            img, _, _, _ = await fortune.generate_fortune(theme, title=title, content=content)
-            with _signin_data.open(uid + '.png', mode='wb') as f:
+            img, _, _, _ = await fortune.generate_fortune(theme, title=today_record.title, content=today_record.content)
+            with _signin_files(uid + '.png').open(mode='rb') as f:
                 f.write(img)
 
-    final_msg.append(unified.MessageSegment.image(img, f'运势: {title}\n详情: {content}'))
+    final_msg.append(unified.MessageSegment.image(img, f'运势: {today_record.title}\n详情: {today_record.content}'))
     await final_msg.send()
     await _signin_handler.finish()

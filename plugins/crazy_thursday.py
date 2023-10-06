@@ -3,7 +3,7 @@ import random
 from nonebot import on_regex
 from nonebot.plugin import PluginMetadata
 
-from essentials.libraries import asset
+from storage import asset
 
 __plugin_meta__ = PluginMetadata(
     name='疯狂星期四',

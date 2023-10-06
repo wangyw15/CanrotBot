@@ -7,7 +7,7 @@ driver = nonebot.get_driver()
 
 # 加载适配器
 from adapters import unified
-from essentials.libraries import config
+from storage import config
 
 # 内置插件
 nonebot.load_builtin_plugins('echo', 'single_session')

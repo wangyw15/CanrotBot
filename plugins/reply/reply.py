@@ -3,8 +3,11 @@ import re
 
 import jieba
 from nonebot.adapters import Event
+from sqlalchemy import select, update, insert
 
-from essentials.libraries import asset, util, storage
+from essentials.libraries import util
+from storage import database, asset
+from . import data
 
 UNKNOWN_RESPONSE: str = '{me}不知道怎么回答{name}喵~'
 AUTO_REPLY_RATE: float = 0.1  # 0~1
@@ -13,7 +16,6 @@ SENDER_NAME: str = '主人'
 
 # 加载数据
 _reply_data: list[dict[str, str | None]] = asset.load_json('reply.json')
-_reply_group_config = storage.PersistentData('reply')
 
 
 def is_negative(msg: str) -> bool:
@@ -103,11 +105,13 @@ def get_reply_rate(group_id: str) -> float:
 
     :return: 概率
     """
-    if group_id in _reply_group_config:  # 存在配置
-        if 'rate' in _reply_group_config[group_id]:  # 设置了概率
-            return _reply_group_config[group_id]['rate']
-        return AUTO_REPLY_RATE
-    return 0.0
+    query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)
+    with database.get_session().begin() as session:
+        # 不存在配置则插入默认配置
+        if session.execute(query).first() is None:
+            return AUTO_REPLY_RATE
+        config = session.execute(query).scalar_one()
+        return config.rate
 
 
 def set_reply_rate(group_id: str, rate: float) -> bool:
@@ -118,8 +122,15 @@ def set_reply_rate(group_id: str, rate: float) -> bool:
     :param rate: 概率
     """
     if 0 <= rate <= 1:
-        _reply_group_config[group_id]['rate'] = rate
-        _reply_group_config.save()
+        query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)
+        with database.get_session().begin() as session:
+            if session.execute(query).first() is None:
+                session.execute(insert(data.ReplyConfig).values(group_id=group_id, rate=rate))
+            else:
+                session.execute(update(data.ReplyConfig).
+                                where(data.ReplyConfig.group_id == group_id).
+                                values(rate=rate))
+            session.commit()
         return True
     return False
 
@@ -133,8 +144,13 @@ def check_reply(event: Event) -> bool:
     :return: 是否可以自动回复
     """
     if group_id := util.get_group_id(event):  # 确保是群消息
-        if group_id in _reply_group_config and _reply_group_config[group_id]['enabled']:  # 确保群开启了自动回复
-            if random.random() < get_reply_rate(group_id):
+        query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)
+        with (database.get_session().begin() as session):
+            enable = True
+            config = session.execute(query).scalar_one_or_none()
+            if config is not None:
+                enable = config.enable
+            if enable and random.random() < get_reply_rate(group_id):
                 return True
     return False
 
@@ -146,7 +162,12 @@ def set_auto_reply_enable(group_id: str, enabled: bool):
     :param group_id: 群号
     :param enabled: 是否开启
     """
-    if enabled and 'rate' not in _reply_group_config[group_id]:
-        _reply_group_config[group_id]['rate'] = AUTO_REPLY_RATE
-    _reply_group_config[group_id]['enabled'] = enabled
-    _reply_group_config.save()
+    query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)
+    with database.get_session().begin() as session:
+        if session.execute(query).first() is None:
+            session.execute(insert(data.ReplyConfig).values(group_id=group_id, enable=enabled, rate=AUTO_REPLY_RATE))
+        else:
+            session.execute(update(data.ReplyConfig).
+                            where(data.ReplyConfig.group_id == group_id).
+                            values(enable=enabled))
+        session.commit()

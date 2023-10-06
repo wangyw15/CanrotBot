@@ -7,7 +7,8 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 import essentials.libraries.user
-from essentials.libraries import asset, util
+from essentials.libraries import util
+from storage import asset
 
 __plugin_meta__ = PluginMetadata(
     name='实验性功能',

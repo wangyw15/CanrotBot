@@ -1,17 +1,16 @@
 # puid (platform user id): qq_1234567890, kook_1234567890, ...
 # uid (user id): uuid4
-# 按道理来说应该要缓存一下文件指针，但是大概提升不了多少性能（毕竟没那么多并发
 import re
 import uuid
 
 from nonebot.adapters import Bot, Event
 from nonebot.matcher import current_bot, current_event
+from sqlalchemy import select, delete, insert
 
 from adapters import unified
 from adapters.unified import Detector, adapters
-from . import storage
-
-_user_data = storage.PersistentData[dict[str]]('user')
+from storage import database
+from . import data
 
 
 def puid_user_exists(puid: str) -> bool:
@@ -22,7 +21,10 @@ def puid_user_exists(puid: str) -> bool:
 
     :return: puid是否存在
     """
-    return puid in _user_data['users']
+    with database.get_session().begin() as session:
+        query = select(data.Bind).where(data.Bind.platform_user_id == puid)
+        result = session.execute(query).first()
+        return result is not None
 
 
 def uid_user_exists(uid: str) -> bool:
@@ -33,7 +35,10 @@ def uid_user_exists(uid: str) -> bool:
 
     :return: uid是否存在
     """
-    return uid in _user_data['users'].values()
+    with database.get_session().begin() as session:
+        query = select(data.User).where(data.User.user_id == uid)
+        result = session.execute(query).first()
+        return result is not None
 
 
 def bind(puid: str, uid: str) -> bool:
@@ -49,8 +54,9 @@ def bind(puid: str, uid: str) -> bool:
         return False
     if puid_user_exists(puid):
         return False
-    _user_data['users'][puid] = uid
-    _user_data.save()
+    with database.get_session().begin() as session:
+        session.execute(insert(data.Bind).values(platform_user_id=puid, user_id=uid))
+        session.commit()
     return True
 
 
@@ -64,8 +70,10 @@ def unbind(puid: str) -> bool:
     """
     if not puid_user_exists(puid):
         return False
-    del _user_data['users'][puid]
-    _user_data.save()
+    with database.get_session().begin() as session:
+        query = delete(data.Bind).where(data.Bind.platform_user_id == puid)
+        session.execute(query)
+        session.commit()
     return True
 
 
@@ -80,8 +88,10 @@ def register(puid: str) -> str:
     if puid_user_exists(puid):
         return ''
     uid = str(uuid.uuid4())
-    _user_data['users'][puid] = uid
-    _user_data.save()
+    with database.get_session().begin() as session:
+        session.execute(insert(data.User).values(user_id=uid))
+        session.execute(insert(data.Bind).values(platform_user_id=puid, user_id=uid))
+        session.commit()
     return uid
 
 
@@ -122,7 +132,10 @@ def get_uid(puid: str = '') -> str:
         puid = get_puid()
     elif not puid_user_exists(puid):
         return ''
-    return _user_data['users'][puid]
+    with database.get_session().begin() as session:
+        query = select(data.Bind).where(data.Bind.platform_user_id == puid)
+        result = session.execute(query).scalar_one()
+        return result.user_id
 
 
 def check_puid_validation(puid: str) -> bool:
@@ -138,7 +151,10 @@ def get_bind_by_uid(uid: str) -> list[str]:
 
     :return: puid列表
     """
-    return [puid for puid, _uid in _user_data['users'].items() if _uid == uid]
+    with database.get_session().begin() as session:
+        query = select(data.Bind).where(data.Bind.user_id == uid)
+        result = session.execute(query).all()
+        return [_bind.platform_user_id for _bind in result]
 
 
 def get_bind_by_puid(puid: str) -> list[str]:

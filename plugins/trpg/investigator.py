@@ -1,8 +1,11 @@
 import math
 import re
 import typing
+from typing import Sequence
 
-from essentials.libraries import util
+from sqlalchemy import select, insert, delete, update
+
+from storage import database
 from . import dice, data
 
 basic_property_names = [x['name'] for x in data.trpg_assets['basic_properties'].values()]
@@ -19,6 +22,19 @@ def get_property_name(key: str) -> str:
     """
     if key in data.trpg_assets['basic_properties']:
         return data.trpg_assets['basic_properties'][key]['name']
+    return ''
+
+
+def get_property_fullname(key: str) -> str:
+    """
+    根据属性 key 获取属性全名
+
+    :param key: key
+
+    :return: 属性全名
+    """
+    if key in data.trpg_assets['basic_properties']:
+        return data.trpg_assets['basic_properties'][key]['fullname']
     return ''
 
 
@@ -48,150 +64,152 @@ def random_basic_properties() -> dict[str, int]:
     return ret
 
 
-def set_investigator(uid: str, investigator: dict[str], investigator_id: str = '') -> str:
+def add_investigator(uid: str, investigator: data.Investigator) -> int:
     """
-    添加或修改人物卡，如果 investigator_id 为空则随机生成
+    添加调查员
 
     不对传入的 investigator 信息做检查
 
     :param uid: uid
-    :param investigator: 人物卡
-    :param investigator_id: 人物卡 id
+    :param investigator: 调查员属性
 
-    :return: 人物卡 id
+    :return: 调查员 id
     """
-    if uid not in data.trpg_data:
-        data.trpg_data[uid] = {}
-    if _investigators_key not in data.trpg_data[uid]:
-        data.trpg_data[uid][_investigators_key] = {}
-    if not investigator_id:
-        while True:
-            investigator_id = util.random_str(8)
-            if investigator_id not in data.trpg_data[uid][_investigators_key]:
-                break
-    data.trpg_data[uid][_investigators_key][investigator_id] = investigator
-    data.trpg_data.save()
-    return investigator_id
+    with database.get_session().begin() as session:
+        investigator.owner_user_id = uid
+        session.add(investigator)
+        session.commit()
+        return investigator.investigator_id
 
 
-def get_investigator(uid: str, investigator_id: str = '') -> dict[str, dict[str]]:
+def get_investigator(uid: str, investigator_id: str = '') -> Sequence[data.Investigator]:
     """
     获取人物卡
 
     :param uid: uid
     :param investigator_id: 人物卡 id
 
-    :return: investigator_id 存在则返回对应人物卡，为空则返回所有人物卡，不存在则返回空字典
+    :return: investigator_id 存在则返回对应调查员，为空则返回所有调查员，不存在则返回空列表
     """
-    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
-        if investigator_id in data.trpg_data[uid][_investigators_key]:
-            return {investigator_id: data.trpg_data[uid][_investigators_key][investigator_id]}
-        elif not investigator_id:
-            return data.trpg_data[uid][_investigators_key]
-    return {}
+    with database.get_session().begin() as session:
+        query = select(data.Investigator).where(data.Investigator.owner_user_id == uid)
+        if investigator_id:
+            query = query.where(data.Investigator.investigator_id == investigator_id)
+        return session.execute(query).scalars().all()
 
 
-def set_selected_investigator(uid: str, investigator_id: str) -> bool:
+def set_selected_investigator(user_id: str, group_id: str, investigator_id: str) -> bool:
     """
     设置当前人物卡
 
-    :param uid: uid
+    :param user_id: uid
+    :param group_id: 群号
     :param investigator_id: 人物卡 id
 
     :return: 是否成功
     """
-    if uid not in data.trpg_data or investigator_id not in data.trpg_data[uid][_investigators_key]:
-        return False
-    data.trpg_data[uid]['selected_investigator'] = investigator_id
-    data.trpg_data.save()
-    return True
+    with database.get_session().begin() as session:
+        if session.execute(select(data.Investigator).
+                           where(data.Investigator.owner_user_id == user_id).
+                           where(data.Investigator.investigator_id == investigator_id)).first() is None:
+            return False
+        if session.execute(select(data.PlayerData).
+                           where(data.PlayerData.user_id == user_id).
+                           where(data.PlayerData.group_id == group_id)).first() is None:
+            session.execute(insert(data.PlayerData).
+                            values(user_id=user_id, group_id=group_id, selected_investigator_id=investigator_id))
+        else:
+            session.execute(update(data.PlayerData).
+                            where(data.PlayerData.user_id == user_id).
+                            where(data.PlayerData.group_id == group_id).
+                            values(selected_investigator_id=investigator_id))
+        session.commit()
+        return True
 
 
-def get_selected_investigator(uid: str) -> dict[str]:
+def get_selected_investigator(user_id: str, group_id: str) -> data.Investigator | None:
     """
     获取当前人物卡
 
-    :param uid: uid
+    :param user_id: 用户 id
+    :param group_id: 群 id
 
-    :return: 当前人物卡，未设置则返回空字典
+    :return: 当前人物卡，未设置则返回 None
     """
-    if uid in data.trpg_data and 'selected_investigator' in data.trpg_data[uid] \
-            and data.trpg_data[uid]['selected_investigator']:
-        iid = data.trpg_data[uid]['selected_investigator']
-        return {iid: data.trpg_data[uid][_investigators_key][iid]}
-    return {}
+    with (database.get_session().begin() as session):
+        selected = session.execute(select(data.PlayerData).
+                                   where(data.PlayerData.user_id == user_id).
+                                   where(data.PlayerData.group_id == group_id)).scalar_one_or_none()
+        if selected is not None:
+            return session.execute(select(data.Investigator).
+                                   where(data.Investigator.owner_user_id == user_id).
+                                   where(data.Investigator.investigator_id == selected.selected_investigator_id)
+                                   ).scalar_one_or_none()
 
 
-def delete_investigator(uid: str, investigator_id: str) -> bool:
+def delete_investigator(user_id: str, investigator_id: str) -> bool:
     """
     删除人物卡
 
-    :param uid: uid
+    :param user_id: uid
     :param investigator_id: 人物卡 id
+
+    :return: 是否成功
     """
-    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
-        if investigator_id in data.trpg_data[uid][_investigators_key]:
-            del data.trpg_data[uid][_investigators_key][investigator_id]
-            data.trpg_data.save()
-            return True
-    return False
+    with database.get_session().begin() as session:
+        if session.execute(select(data.Investigator).
+                           where(data.Investigator.owner_user_id == user_id).
+                           where(data.Investigator.investigator_id == investigator_id)).first() is None:
+            return False
+        session.execute(delete(data.Investigator).
+                        where(data.Investigator.owner_user_id == user_id).
+                        where(data.Investigator.investigator_id == investigator_id))
+        session.commit()
+        return True
 
 
-def check_investigator_id(uid: str, investigator_id: str) -> bool:
+def check_investigator_id(user_id: str, investigator_id: str) -> bool:
     """
-    检查人物卡 id 是否存在
+    检查调查员 id 是否存在
 
-    :param uid: uid
-    :param investigator_id: 人物卡 id
+    :param user_id: 用户 id
+    :param investigator_id: 调查员 id
 
     :return: 是否存在
     """
-    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
-        return investigator_id in data.trpg_data[uid][_investigators_key]
-    return False
+    with database.get_session().begin() as session:
+        return session.execute(select(data.Investigator).
+                               where(data.Investigator.owner_user_id == user_id).
+                               where(data.Investigator.investigator_id == investigator_id)).first() is not None
 
 
-def generate_investigator(raw: str) -> dict[str]:
+def generate_investigator(raw: str) -> data.Investigator:
     """
-    生成人物卡
+    生成人物卡，对传入信息不做检查
 
     :param raw: 原始信息
 
     :return: 人物卡
     """
     # 初始化人物卡
-    investigator: dict[str] = {
-        'basic_properties': {},
-        'additional_properties': {},
-        'skills': {},
-        'status': {},
-        'items': {},
-        'extra': {}
-    }
+    investigator = data.Investigator()
 
     for i in re.split('[,，]', raw):
         k, v = i.split('=')
         k: str = k.strip()
         v: str = v.strip()
         if k == '姓名':
-            investigator['name'] = v
+            investigator.name = v
         elif k == '性别':
-            investigator['gender'] = v
+            investigator.gender = v
         elif k == '年龄':
-            investigator['age'] = int(v)
+            investigator.age = int(v)
+        elif k == '出生地':
+            investigator.birthplace = v
         elif k == '职业':
-            investigator['profession'] = v
+            investigator.profession = v
         elif k in basic_property_names:
-            investigator['basic_properties'][get_property_key(k)] = int(v)
-        elif v.isdigit():
-            investigator['skills'][k] = int(v)
-        else:
-            investigator['items'][k] = v
-    if 'name' not in investigator or 'gender' not in investigator \
-            or 'age' not in investigator or 'profession' not in investigator:
-        return {}
-    if len(investigator['basic_properties']) != len(basic_property_names):
-        return {}
+            setattr(investigator, get_property_fullname(k), int(v))
     return investigator
 
 
@@ -217,36 +235,40 @@ def get_success_rank(value: int, target: int) -> typing.Tuple[int, str]:
     return 1, '失败'
 
 
-def property_check(uid: str, property_name: str, value: int | None = None) -> typing.Tuple[str, int, int]:
+def property_check(user_id: str, group_id: str, property_name: str, value: int | None = None) \
+        -> typing.Tuple[str, int, int] | None:
     """
     属性检定
 
-    :param uid: uid
+    :param user_id: 用户 id
+    :param group_id: 群 id
     :param property_name: 属性名
     :param value: 检定值，为空则随机生成
 
-    :return: 检定结果，检定值，目标值
+    :return: 检定结果，检定值，目标值，失败返回 None
     """
     if not value:
         value = dice.simple_dice_expression('d100')
-    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
-        iid, card = get_selected_investigator(uid).popitem()
-        target = card['basic_properties'][get_property_key(property_name)]
+    investigator = get_selected_investigator(user_id, group_id)
+    if investigator is not None:
+        target: int = getattr(investigator, get_property_fullname(property_name))
         _, check_result = get_success_rank(value, target)
         return check_result, value, target
+    return None
 
 
-def calculate_db_physique(uid: str) -> typing.Tuple[int, int] | None:
+def calculate_db_physique(user_id: str, group_id: str) -> typing.Tuple[int, int] | None:
     """
     计算伤害加值和体格
     
-    :param uid: uid
+    :param user_id: 用户 id
+    :param group_id: 群 id
     
-    :return: 伤害加值, 体格
+    :return: 伤害加值, 体格，失败返回 None
     """
-    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
-        iid, card = get_selected_investigator(uid).popitem()
-        add = card['basic_properties']['str'] + card['basic_properties']['siz']
+    investigator = get_selected_investigator(user_id, group_id)
+    if investigator is not None:
+        add = investigator.strength + investigator.size
         if add <= 64:
             return -2, -2
         elif add <= 84:
@@ -268,44 +290,48 @@ def calculate_db_physique(uid: str) -> typing.Tuple[int, int] | None:
     return None
 
 
-def calculate_hp(uid: str) -> int | None:
+def calculate_hp(user_id: str, group_id: str) -> int | None:
     """
     计算耐久值
 
-    :param uid: uid
+    :param user_id: 用户 id
+    :param group_id: 群 id
 
-    :return: 耐久值
+    :return: 耐久值，失败返回 None
     """
-    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
-        iid, card = get_selected_investigator(uid).popitem()
-        return math.floor((card['basic_properties']['con']+card['basic_properties']['siz'])/10)
+    investigator = get_selected_investigator(user_id, group_id)
+    if investigator is not None:
+        return math.floor((investigator.constitution + investigator.size) / 10)
     return None
 
 
-def calculate_mov(uid: str) -> int | None:
-    if uid in data.trpg_data and _investigators_key in data.trpg_data[uid]:
-        iid, card = get_selected_investigator(uid).popitem()
-        # 属性
-        strength = card['basic_properties']['str']
-        dex = card['basic_properties']['dex']
-        siz = card['basic_properties']['siz']
-        age = card['age']
+def calculate_mov(user_id: str, group_id: str) -> int | None:
+    """
+    计算移动速度
+
+    :param user_id: 用户 id
+    :param group_id: 群 id
+
+    :return: 移动速度，失败返回 None
+    """
+    investigator = get_selected_investigator(user_id, group_id)
+    if investigator is not None:
         # 计算移动速度
         mov = 8
-        if strength < siz and dex < siz:
+        if investigator.strength < investigator.size and investigator.dexterity < investigator.size:
             mov = 7
-        elif strength > siz and dex > siz:
+        elif investigator.strength > investigator.size and investigator.dexterity > investigator.size:
             mov = 9
         # 年龄
-        if 40 <= age <= 49:
+        if 40 <= investigator.age <= 49:
             mov -= 1
-        elif 50 <= age <= 59:
+        elif 50 <= investigator.age <= 59:
             mov -= 2
-        elif 60 <= age <= 69:
+        elif 60 <= investigator.age <= 69:
             mov -= 3
-        elif 70 <= age <= 79:
+        elif 70 <= investigator.age <= 79:
             mov -= 4
-        elif 80 <= age <= 89:
+        elif 80 <= investigator.age <= 89:
             mov -= 5
         return mov
     return None

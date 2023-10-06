@@ -2,7 +2,7 @@ import random
 
 from nonebot import logger
 
-from essentials.libraries import asset
+from storage import asset
 
 # 加载数据
 _what2eat_data: dict[str, list[dict]] = asset.load_json('what2eat.json')

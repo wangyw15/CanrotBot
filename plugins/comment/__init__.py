@@ -1,13 +1,16 @@
-from essentials.libraries import storage, user, util
-from nonebot.plugin import PluginMetadata
-from nonebot import on_command
-from nonebot.params import CommandArg, Arg
-from nonebot.adapters import Message, Bot, Event
-from libraries import anime
-from nonebot.typing import T_State
-import re
 from datetime import datetime, timezone, timedelta
 
+from nonebot import on_command
+from nonebot.adapters import Message
+from nonebot.params import CommandArg, Arg
+from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
+from sqlalchemy import select, insert
+
+from essentials.libraries import user
+from libraries import anime
+from storage import database
+from . import data
 
 __plugin_meta__ = PluginMetadata(
     name='锐评记录',
@@ -16,7 +19,6 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-_comment_data = storage.PersistentData('comment')
 _anime_comment_add_handler = on_command('评价番剧', aliases={'锐评番剧'}, block=True)
 
 
@@ -40,15 +42,16 @@ async def _(state: T_State, comment_msg: Message = Arg()):
     if comment := comment_msg.extract_plain_text():
         if comment.strip() == 'stop':
             await _anime_comment_add_handler.finish('未添加评价')
-        if state['anilist_id'] not in _comment_data['anime']:
-            _comment_data['anime'][state['anilist_id']] = []
-        _comment_data['anime'][state['anilist_id']].append({
-            'uid': uid,
-            'time': util.get_iso_time_str(),
-            'comment': comment,
-            'nickname': await user.get_user_name(default='anonymous')
-        })
-        _comment_data.save()
+        with database.get_session().begin() as session:
+            session.execute(insert(data.Comment).values(
+                type=data.CommentType.anime,
+                time=datetime.now(timezone(timedelta(hours=8))),
+                title=state['anilist_id'],
+                author=uid,
+                content=comment,
+                nickname=await user.get_user_name(default='anonymous')
+            ))
+            session.commit()
         await _anime_comment_add_handler.finish('锐评已保存')
 
 
@@ -61,12 +64,16 @@ async def _(args: Message = CommandArg()):
         name, anilist_id, _ = anime.search_anilist_id_by_name(anime_name)
         if anilist_id:
             anilist_id = str(anilist_id)
-            if anilist_id in _comment_data['anime']:
+            with database.get_session().begin() as session:
+                _comment_data = session.execute(select(data.Comment).where(
+                    data.Comment.type == data.CommentType.anime,
+                    data.Comment.title == anilist_id
+                )).scalars().all()
                 all_comments = ''
-                for i in _comment_data['anime'][anilist_id]:
-                    all_comments += f"{datetime.fromisoformat(i['time']).strftime('%Y/%m/%d %H:%M:%S')} - " \
-                                    f"{i['nickname']}\n" \
-                                    f"{i['comment']}\n\n"
+                for i in _comment_data:
+                    all_comments += f"{datetime.fromisoformat(i.time).strftime('%Y/%m/%d %H:%M:%S')} - " \
+                                    f"{i.nickname}\n" \
+                                    f"{i.content}\n\n"
                 await _anime_comment_view_handler.finish(all_comments.strip())
         else:
             await _anime_comment_add_handler.finish('AniList 中不存在这部番剧')

@@ -4,7 +4,8 @@ import random
 from datetime import datetime
 from typing import Literal, Tuple
 
-from essentials.libraries import asset, render_by_browser, util
+from essentials.libraries import render_by_browser, util
+from storage import asset
 
 _mltd_assets_path = asset.get_assets_path('mltd')
 _cards: list[dict] = []

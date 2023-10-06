@@ -202,7 +202,7 @@ def random_str(length: int) -> str:
 def get_iso_time_str(t: datetime | None = None) -> str:
     if not t:
         t = datetime.now()
-    return datetime.now().astimezone(timezone(timedelta(hours=8))).isoformat()
+    return t.astimezone(timezone(timedelta(hours=8))).isoformat()
 
 
 __all__ = ['fetch_bytes_data',

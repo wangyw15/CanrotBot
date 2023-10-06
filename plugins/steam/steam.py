@@ -1,9 +1,9 @@
 from httpx import AsyncClient
 
-from essentials.libraries.config import get_config
+from storage import config
 
 
-if proxy := get_config('canrot_proxy'):
+if proxy := config.get_config('canrot_proxy'):
     _client = AsyncClient(proxies=proxy)
 else:
     _client = AsyncClient()

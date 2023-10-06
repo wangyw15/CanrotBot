@@ -6,8 +6,11 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
 from adapters import unified
-from essentials.libraries import storage, user
-from . import muse_dash
+from essentials.libraries import user
+from . import muse_dash, data
+from storage import database
+from sqlalchemy import select, insert, update, delete
+
 
 __plugin_meta__ = PluginMetadata(
     name='MuseDash查分',
@@ -23,15 +26,16 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
-_md_data = storage.PersistentData[dict[str, str]]('muse_dash')
 _muse_dash_handler = on_shell_command('muse-dash', aliases={'md', 'muse_dash', '喵斯', '喵斯快跑'}, block=True)
 
 
+# TODO 改用 on_shell_command
 @_muse_dash_handler.handle()
 async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     puid = user.get_puid(bot, event)
     uid = user.get_uid(puid)
     player_id = ''
+    query = select(data.MuseDashAccount).where(data.MuseDashAccount.user_id == uid)
     if args:
         # 帮助信息
         if len(args) == 1 and args[0].lower() in ['help', '帮助']:
@@ -49,7 +53,15 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             else:
                 player_id = await muse_dash.search_muse_dash_player_id(player_name)
             if player_id and player_name:
-                _md_data[uid] = {'name': player_name, 'id': player_id}
+                with database.get_session().begin() as session:
+                    if session.execute(query).first() is not None:
+                        session.execute(update(data.MuseDashAccount).
+                                        where(data.MuseDashAccount.user_id == uid).
+                                        values(player_name=player_name, player_id=player_id))
+                    else:
+                        session.execute(insert(data.MuseDashAccount).
+                                        values(user_id=uid, player_name=player_name, player_id=player_id))
+                    session.commit()
                 await _muse_dash_handler.send(f'绑定成功\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}')
             else:
                 await _muse_dash_handler.finish('绑定失败')
@@ -57,16 +69,20 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             # 解绑账号
             if not uid:
                 await _muse_dash_handler.finish('你还未注册账号')
-            _md_data[uid] = {'name': '', 'id': ''}
+            with database.get_session().begin() as session:
+                session.execute(delete(data.MuseDashAccount).
+                                where(data.MuseDashAccount.user_id == uid))
+                session.commit()
             await _muse_dash_handler.finish('解绑成功')
         elif args[0].lower() in ['me', '我', '我的', 'info', '信息']:
             # 检查绑定信息
             if not uid:
                 await _muse_dash_handler.finish('你还未注册账号')
-            player_name = _md_data[uid]['name']
-            player_id = _md_data[uid]['id']
-            if player_id and player_name:
-                await _muse_dash_handler.finish(f'已绑定账号信息:\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}')
+            with database.get_session().begin() as session:
+                account = session.execute(query).scalar_one_or_none()
+            if account is not None:
+                await _muse_dash_handler.finish(
+                    f'已绑定账号信息:\n玩家名: {account.player_name}\nMuseDash.moe ID: {account.player_id}')
             else:
                 await _muse_dash_handler.finish('您还没有绑定 MuseDash.moe 账号，请使用 /muse-dash help 查看帮助信息')
         elif len(args) == 1:
@@ -81,8 +97,10 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         # 检查绑定信息
         if not uid:
             await _muse_dash_handler.finish('你还未注册账号')
-        if 'id' in _md_data[uid]:
-            player_id = _md_data[uid]['id']
+        with database.get_session().begin() as session:
+            account = session.execute(query).scalar_one_or_none()
+        if account is not None:
+            player_id = account.player_id
     # 查分
     if player_id:
         await _muse_dash_handler.send('正在查分喵~')

@@ -7,7 +7,8 @@ from tencentcloud.aiart.v20221229 import aiart_client, models
 from tencentcloud.common import credential
 
 from adapters import unified
-from essentials.libraries import config, user, economy
+from essentials.libraries import user, economy
+from storage import config
 
 __plugin_meta__ = PluginMetadata(
     name='AI 作画',

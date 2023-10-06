@@ -7,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from pydantic import BaseModel
 
-from essentials.libraries import asset
+from storage import asset
 
 __plugin_meta__ = PluginMetadata(
     name='Wordle',

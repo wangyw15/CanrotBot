@@ -5,8 +5,8 @@ from nonebot.adapters import Message, MessageSegment, Bot, Event
 from nonebot.params import CommandArg, ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
-from essentials.libraries import user
-from . import dice, investigator
+from essentials.libraries import user, util
+from . import dice, investigator, data
 
 __plugin_meta__ = PluginMetadata(
     name='跑团工具',
@@ -38,51 +38,56 @@ _investigator_handler = on_shell_command('investigator', aliases={'i', '调查�
 async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     puid = user.get_puid(bot, event)
     uid = user.get_uid(puid)
+    gid = util.get_group_id(event)
     if not uid:
         await _investigator_handler.finish('还未注册或绑定账号')
+    if not gid:
+        await _investigator_handler.finish('请在群聊中使用')
     if len(args) == 1:
         if args[0].lower() in ['r', 'random', '随机', '随机生成']:
             card = investigator.random_basic_properties()
             await _investigator_handler.finish('，'.join([f'{k}={v}' for k, v in card.items()]))
         elif args[0].lower() in ['l', 'list', '卡片列表']:
             cards = investigator.get_investigator(uid)
-            selected_card = investigator.get_selected_investigator(uid)
-            if cards:
+            selected_card = investigator.get_selected_investigator(uid, gid)
+            if len(cards) != 0:
                 final_msg = '调查员列表: (*表示当前选定的调查员)\n\n'
-                for iid, card in cards.items():
-                    if selected_card:
-                        selected_iid, _ = selected_card.popitem()
-                        if iid == selected_iid:
+                for card in cards:
+                    if selected_card is not None:
+                        if card.investigator_id == selected_card.investigator_id:
                             final_msg += '*'
-                    final_msg += f'调查员 id: {iid}\n'
+                    final_msg += f'调查员 id: {card.investigator_id}\n'
                     # 基本信息
-                    final_msg += f'姓名: {card["name"]}\n'
-                    final_msg += f'性别: {card["gender"]}\n'
-                    final_msg += f'年龄: {card["age"]}\n'
-                    final_msg += f'职业: {card["profession"]}\n'
+                    final_msg += f'姓名: {card.name}\n'
+                    final_msg += f'性别: {card.gender}\n'
+                    final_msg += f'年龄: {card.age}\n'
+                    if card.birthplace:
+                        final_msg += f'出生地: {card.birthplace}\n'
+                    final_msg += f'职业: {card.profession}\n'
                     # 基本属性
-                    for k, v in card['basic_properties'].items():
-                        final_msg += f'{investigator.get_property_name(k)}: {v}\n'
-                    # 技能
-                    if card['skills']:
-                        final_msg += '技能:\n'
-                        for k, v in card['skills'].items():
-                            final_msg += f'{k}: {v}\n'
-                    # 额外属性
-                    if card['additional_properties']:
-                        final_msg += '额外属性:\n'
-                        for k, v in card['additional_properties'].items():
-                            final_msg += f'{k}: {v}\n'
-                    # 背包
-                    if card['items']:
-                        final_msg += '背包:\n'
-                        for k, v in card['items'].items():
-                            final_msg += f'{k}: {v}\n'
-                    # 额外信息
-                    if card['extra']:
-                        final_msg += '额外信息:\n'
-                        for k, v in card['extra'].items():
-                            final_msg += f'{k}: {v}\n'
+                    for k, v in data.trpg_assets['basic_properties'].items():
+                        final_msg += (f'{investigator.get_property_name(k)}: '
+                                      f'{getattr(card, investigator.get_property_fullname(v))}\n')
+                    # # 技能
+                    # if card['skills']:
+                    #     final_msg += '技能:\n'
+                    #     for k, v in card['skills'].items():
+                    #         final_msg += f'{k}: {v}\n'
+                    # # 额外属性
+                    # if card['additional_properties']:
+                    #     final_msg += '额外属性:\n'
+                    #     for k, v in card['additional_properties'].items():
+                    #         final_msg += f'{k}: {v}\n'
+                    # # 背包
+                    # if card['items']:
+                    #     final_msg += '背包:\n'
+                    #     for k, v in card['items'].items():
+                    #         final_msg += f'{k}: {v}\n'
+                    # # 额外信息
+                    # if card['extra']:
+                    #     final_msg += '额外信息:\n'
+                    #     for k, v in card['extra'].items():
+                    #         final_msg += f'{k}: {v}\n'
                     final_msg += '\n\n'
                 await _investigator_handler.finish(final_msg.strip())
             else:
@@ -93,20 +98,20 @@ async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSeg
             if investigator.check_investigator_id(uid, iid):
                 card = investigator.get_investigator(uid, iid)
                 if investigator.delete_investigator(uid, iid):
-                    await _investigator_handler.finish(f'调查员 {card[iid]["name"]}({iid}) 删除成功')
+                    await _investigator_handler.finish(f'调查员 {card[0].name}({iid}) 删除成功')
             await _investigator_handler.finish(f'删除失败')
         elif args[0].lower() in ['s', 'select', 'set', '选择', '设置']:
             iid = args[1]
             if investigator.check_investigator_id(uid, iid):
-                investigator.set_selected_investigator(uid, iid)
+                investigator.set_selected_investigator(uid, gid, iid)
                 card = investigator.get_investigator(uid, iid)
-                await _investigator_handler.finish(f'已选择调查员 {card[iid]["name"]}({iid})')
+                await _investigator_handler.finish(f'已选择调查员 {card[0].name}({iid})')
     elif len(args) > 0 and args[0].lower() in ['a', 'add', '导入', '添加']:
         card = investigator.generate_investigator(' '.join(args[1:]))
         if not card:
             await _investigator_handler.finish('数据不完整或格式错误')
         else:
-            iid = investigator.set_investigator(uid, card)
+            iid = investigator.add_investigator(uid, card)
             await _investigator_handler.finish(f'添加成功，人物卡 id 为 {iid}')
     await _investigator_handler.finish(__plugin_meta__.usage)
 
@@ -118,15 +123,18 @@ _check_handler = on_shell_command('check', aliases={'c', '检定'}, block=True)
 async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
     puid = user.get_puid(bot, event)
     uid = user.get_uid(puid)
+    gid = util.get_group_id(event)
     if not uid:
         await _investigator_handler.finish('还未注册或绑定账号')
-    if not investigator.get_selected_investigator(uid):
+    if not gid:
+        await _investigator_handler.finish('请在群聊中使用')
+    if not investigator.get_selected_investigator(uid, gid):
         await _investigator_handler.finish('还未选择调查员')
-    iid, card = investigator.get_selected_investigator(uid).popitem()
+    card = investigator.get_selected_investigator(uid, gid)
     if len(args) == 1:
         if args[0] in investigator.basic_property_names:
-            check_result, dice_result, target = investigator.property_check(uid, args[0])
-            await _check_handler.finish(f'调查员 {card["name"]}\n'
+            check_result, dice_result, target = investigator.property_check(uid, gid, args[0])
+            await _check_handler.finish(f'调查员 {card.name}\n'
                                         f'{args[0]}: {target}\n'
                                         f'd100 = {dice_result}\n'
                                         f'{check_result}')
