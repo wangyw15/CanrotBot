@@ -1,6 +1,10 @@
 import random
 
+from nonebot import require
+
 from .. import fortune
+
+require('plugins.arknights')
 from plugins.arknights import arknights
 
 

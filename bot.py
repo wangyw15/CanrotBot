@@ -7,7 +7,6 @@ driver = nonebot.get_driver()
 
 # 加载适配器
 from adapters import unified
-from storage import config
 
 # 内置插件
 nonebot.load_builtin_plugins('echo', 'single_session')
@@ -21,9 +20,7 @@ nonebot.load_plugins(str(essentials_plugins_path))
 
 # 普通插件
 plugins_path = (Path(__file__).parent / 'plugins').resolve()
-for i in plugins_path.iterdir():
-    if not i.stem.startswith('_') and i.stem not in config.canrot_config.canrot_disabled_plugins:
-        nonebot.load_plugin('plugins.' + i.stem)
+nonebot.load_plugins(str(plugins_path))
 
 if __name__ == '__main__':
     nonebot.run()

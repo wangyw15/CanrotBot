@@ -8,7 +8,7 @@ from nonebot.plugin import PluginMetadata
 
 from adapters import unified
 from essentials.libraries import user, economy
-from libraries import mltd
+from . import mltd
 
 __plugin_meta__ = PluginMetadata(
     name='MLTD',

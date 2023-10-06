@@ -1,7 +1,11 @@
 import random
 
+from nonebot import require
+
 from .. import fortune
-from libraries import mltd
+
+require('plugins.mltd')
+from plugins.mltd import mltd
 
 
 async def _generate_mltd_html() -> str:
