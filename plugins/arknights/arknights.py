@@ -9,6 +9,7 @@ from essentials.libraries import render_by_browser
 
 from storage import database, asset
 from sqlalchemy import select, update, insert
+from sqlalchemy.orm import sessionmaker
 from . import data
 
 _arknights_all_characters: dict[str, dict] = {}
@@ -45,24 +46,6 @@ def _init() -> None:
 _init()
 
 
-def get_gacha_data(uid: str) -> data.Statistics:
-    """
-    获取抽卡统计
-
-    :param uid: uid
-
-    :return: 统计数据
-    """
-    with database.get_session().begin() as session:
-        query = select(data.Statistics).where(data.Statistics.user_id == uid)
-        if session.execute(query).first() is None:
-            session.execute(insert(data.Statistics).values(user_id=uid))
-            session.commit()
-        ret = session.execute(query).scalar_one()
-        session.expunge(ret)
-        return ret
-
-
 async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
     """
     明日方舟十连抽卡，并自动更新统计数据
@@ -71,12 +54,25 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
 
     :return: 图片, 干员列表
     """
+    maker = sessionmaker(bind=database.get_engine(), expire_on_commit=False)
+    session = maker()
+
+    # 获取当前统计数据
+    query = select(data.Statistics).where(data.Statistics.user_id == uid)
+    current_statistics = session.execute(query).scalar_one_or_none()
+    if current_statistics is None:
+        session.execute(insert(data.Statistics).values(user_id=uid))
+        session.commit()
+        current_statistics = session.execute(query).scalar_one()
+
     # 寻访干员列表
     operators: list[dict] = []
+
     # 六星概率提升
     possibility_offset: float = 0
-    if get_gacha_data(uid).last_six_star > 50:
-        possibility_offset = (get_gacha_data(uid).last_six_star - 50) * 0.02
+    if current_statistics.last_six_star > 50:
+        possibility_offset = (current_statistics.last_six_star - 50) * 0.02
+
     # 抽卡
     while len(operators) != 10:
         magic_number = random.random()
@@ -93,22 +89,25 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
         operators.append(random.choice(arknights_gacha_operators[rarity]))
 
     # 更新统计数据
-    current_result = get_gacha_data(uid)
     # 是否抽到六星
     got_ssr = False
+
     # 抽卡次数+10
-    current_result.times += 10
+    current_statistics.times += 10
+
     # 统计寻访结果
     for operator in operators:
         if operator['rarity'] == 5:
             got_ssr = True
-        setattr(current_result, _number_to_rarity[operator['rarity']],
-                getattr(current_result, _number_to_rarity[operator['rarity']]) + 1)
+        setattr(current_statistics, _number_to_rarity[operator['rarity']],
+                getattr(current_statistics, _number_to_rarity[operator['rarity']]) + 1)
+
     # 上次抽到六星
     if got_ssr:
-        current_result.last_six_star = 0
+        current_statistics.last_six_star = 0
     else:
-        current_result.last_six_star += 10
+        current_statistics.last_six_star += 10
+
     # 寻访历史
     simple_operators: list[dict[str]] = []
     for i in operators:
@@ -116,21 +115,14 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
             'name': i['name'],
             'rarity': i['rarity']
         })
+
     # 保存数据
-    with database.get_session().begin() as session:
-        session.execute(update(data.Statistics).where(data.Statistics.user_id == uid).values(
-            three_stars=current_result.three_stars,
-            four_stars=current_result.four_stars,
-            five_stars=current_result.five_stars,
-            six_stars=current_result.six_stars,
-            times=current_result.times,
-            last_six_star=current_result.last_six_star
-        ))
-        session.execute(insert(data.History).values(
-            user_id=uid,
-            operators=json.dumps(simple_operators, ensure_ascii=False)
-        ))
-        session.commit()
+    session.execute(insert(data.History).values(
+        user_id=uid,
+        operators=json.dumps(simple_operators, ensure_ascii=False)
+    ))
+    session.commit()
+    session.close()
 
     # 生成 html
     with _arknights_assets('gacha.html').open('r', encoding='utf-8') as f:
