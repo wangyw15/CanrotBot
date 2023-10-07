@@ -56,8 +56,11 @@ def get_gacha_data(uid: str) -> data.Statistics:
     with database.get_session().begin() as session:
         query = select(data.Statistics).where(data.Statistics.user_id == uid)
         if session.execute(query).first() is None:
-            session.add(data.Statistics(uid=uid))
-        return session.execute(query).scalar_one()
+            session.execute(insert(data.Statistics).values(user_id=uid))
+            session.commit()
+        ret = session.execute(query).scalar_one()
+        session.expunge(ret)
+        return ret
 
 
 async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
