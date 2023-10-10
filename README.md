@@ -21,7 +21,7 @@
 
 # 使用方法
 
-这可以作为独立的机器人运行，也可以作为一个 [NoneBot v2](https://v2.nonebot.dev/) 的插件使用。
+这可以作为独立的机器人运行
 
 使用方法请参考[快速上手](https://v2.nonebot.dev/docs/quick-start)教程。
 
