@@ -153,7 +153,7 @@ def get_bind_by_uid(uid: str) -> list[str]:
     """
     with database.get_session().begin() as session:
         query = select(data.Bind).where(data.Bind.user_id == uid)
-        result = session.execute(query).all()
+        result = session.execute(query).scalars().all()
         return [_bind.platform_user_id for _bind in result]
 
 

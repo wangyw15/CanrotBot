@@ -5,7 +5,7 @@ from sqlalchemy import select, insert, update
 
 from storage import database
 from . import data
-from .data import Account
+from .data import Account, Record
 
 
 def _add_history(uid: str, amount: float, balance: float, description: str = '', time: datetime | None = None) -> None:
@@ -107,15 +107,3 @@ def transfer(from_uid: str, to_uid: str, amount: float, description: str = '') -
         return False
     earn(to_uid, amount, description)
     return True
-
-
-def get_history(uid: str) -> Sequence[Account]:
-    """
-    查询交易记录
-
-    :param uid: uid
-
-    :return: 交易记录
-    """
-    with database.get_session().begin() as session:
-        return session.execute(select(data.Account).where(data.Account.user_id == uid)).scalars().all()
