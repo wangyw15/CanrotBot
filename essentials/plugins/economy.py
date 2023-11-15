@@ -2,10 +2,10 @@ from nonebot import on_command
 from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
+from sqlalchemy import select
 
 from essentials.libraries import user, economy, util
 from storage import database
-from sqlalchemy import select
 
 __plugin_meta__ = PluginMetadata(
     name='经济服务',
