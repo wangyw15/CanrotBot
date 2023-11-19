@@ -47,13 +47,30 @@ async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
                         if ratio > best_match:
                             best_match = ratio
                             comic_id = _comic_id
-            if comic_id not in comics:
+            if comic_id is not None and comic_id not in comics:
                 await _bangdream_handler.finish('没有找到这个漫画喵')
         # 发送漫画
-        title, _ = bestdori.comic.get_content_by_language(comics[comic_id]['title'])
+        title, _ = bestdori.util.get_content_by_language(comics[comic_id]['title'])
         if unified.Detector.can_send_image():
             content, _ = await bestdori.comic.get_comic(comic_id)
             await _bangdream_handler.finish(unified.MessageSegment.text(title) +
                                             unified.MessageSegment.image(content))
         else:
             await _bangdream_handler.finish(f'{title}\nhttps://bestdori.com/info/comics/{comic_id}')
+    elif args[0].lower() in ['song', 'songs', '歌曲', '点歌']:
+        songs = await bestdori.song.get_song_list()
+        keyword = ' '.join(args[1:]).strip()
+        song_id = None
+        if keyword.isdigit():
+            song_id = keyword
+        if song_id is not None and song_id in songs:
+            info = await bestdori.song.get_song_info(song_id)
+            await _bangdream_handler.send(f'{bestdori.util.get_content_by_language(info["musicTitle"])[0]}\n'
+                                          f'作词：{bestdori.util.get_content_by_language(info["lyricist"])[0]}\n'
+                                          f'作曲：{bestdori.util.get_content_by_language(info["composer"])[0]}\n'
+                                          f'编曲：{bestdori.util.get_content_by_language(info["arranger"])[0]}')
+            if unified.Detector.is_onebot_v11():
+                await _bangdream_handler.finish(unified.adapters.onebot_v11_module.MessageSegment.record(
+                    await bestdori.song.get_song_url(song_id)))
+            else:
+                await _bangdream_handler.finish()
