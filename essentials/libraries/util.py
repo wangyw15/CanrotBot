@@ -7,7 +7,7 @@ from typing import Any
 import httpx
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event, MessageSegment
-from nonebot_plugin_alconna.uniseg import UniMessage, Image, SerializeFailed, Voice
+from nonebot_plugin_alconna import UniMessage, SerializeFailed
 
 from adapters.unified import Detector, adapters
 

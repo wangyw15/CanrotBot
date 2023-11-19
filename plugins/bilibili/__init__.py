@@ -4,8 +4,9 @@ from datetime import datetime
 from nonebot import on_regex, on_fullmatch
 from nonebot.params import RegexGroup, RegexStr
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import UniMsg, Image
 
-from adapters import unified
+from essentials.libraries import util
 from . import bilibili
 
 __plugin_meta__ = PluginMetadata(
@@ -36,6 +37,7 @@ def _generate_bilibili_message(data: dict) -> str:
     return msg
 
 
+# TODO 改为Alconna
 _bilibili_video = on_regex(bilibili.bilibili_vid_pattern, block=True)
 
 
@@ -43,12 +45,11 @@ _bilibili_video = on_regex(bilibili.bilibili_vid_pattern, block=True)
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     data = await bilibili.fetch_video_data(reg[0])
     if data:
-        msg = _generate_bilibili_message(data)
-        final_msg = unified.Message()
-        final_msg.append(unified.MessageSegment.image(data['pic'], '视频封面图'))
-        final_msg.append(msg)
-        await final_msg.send()
-        await _bilibili_video.finish()
+        final_msg = UniMsg()
+        if await util.can_send_segment(Image):
+            final_msg.append(Image(url=data['pic']))
+        final_msg.append(_generate_bilibili_message(data))
+        await _bilibili_video.finish(await final_msg.export())
 
 
 _bilibili_video_short_link = on_regex(r'https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}', block=True)
@@ -60,14 +61,14 @@ async def _(reg: typing.Annotated[str, RegexStr()]):
     if vid:
         data = await bilibili.fetch_video_data(vid)
         if data:
-            msg = _generate_bilibili_message(data)
-            final_msg = unified.Message()
-            final_msg.append(unified.MessageSegment.image(data['pic'], '视频封面图'))
-            final_msg.append(msg)
-            await final_msg.send()
-            await _bilibili_video_short_link.finish()
+            final_msg = UniMsg()
+            if await util.can_send_segment(Image):
+                final_msg.append(Image(url=data['pic']))
+            final_msg.append(_generate_bilibili_message(data))
+            await _bilibili_video_short_link.finish(await final_msg.export())
 
 
+# TODO 改为Alconna
 _bilibili_projects_handlers = on_fullmatch('我要看展', block=True)
 
 

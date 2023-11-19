@@ -7,6 +7,7 @@ _client = AsyncClient()
 _projects_url = 'https://show.bilibili.com/api/ticket/project/listV3' \
                 '?page={page}&pagesize=20&platform=web&area={area}&p_type={project_type}&style=1'
 bilibili_vid_pattern = r'(?:https?:\/\/)?(?:(?:www\.)?bilibili.com\/video|b23\.tv)\/((?:[AaBb][Vv])[0-9A-Za-z]+)'
+short_link_pattern = r'https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}'
 
 
 async def _fetch_json_data(url: str) -> dict | None:

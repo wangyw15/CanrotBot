@@ -3,8 +3,7 @@ import random
 
 from arclet.alconna import Option, Args
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import on_alconna, Alconna, AlconnaQuery, Query
-from nonebot_plugin_alconna.uniseg import UniMsg, Text, Image, Voice
+from nonebot_plugin_alconna import on_alconna, Alconna, AlconnaQuery, Query, UniMsg, Text, Image, Voice
 
 from essentials.libraries import util
 from . import bestdori
