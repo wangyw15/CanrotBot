@@ -53,8 +53,11 @@ async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
         title, _ = bestdori.util.get_content_by_language(comics[comic_id]['title'])
         if unified.Detector.can_send_image():
             content, _ = await bestdori.comic.get_comic(comic_id)
-            await _bangdream_handler.finish(unified.MessageSegment.text(title) +
-                                            unified.MessageSegment.image(content))
+            msg = unified.Message()
+            msg.append(unified.MessageSegment.text(title))
+            msg.append(unified.MessageSegment.image(content, alt=title))
+            await msg.send()
+            await _bangdream_handler.finish()
         else:
             await _bangdream_handler.finish(f'{title}\nhttps://bestdori.com/info/comics/{comic_id}')
     elif args[0].lower() in ['song', 'songs', '歌曲', '点歌']:
@@ -63,12 +66,15 @@ async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
         song_id = None
         if keyword.isdigit():
             song_id = keyword
+            # TODO 搜索
         if song_id is not None and song_id in songs:
             info = await bestdori.song.get_song_info(song_id)
+            # TODO 封面
             await _bangdream_handler.send(f'{bestdori.util.get_content_by_language(info["musicTitle"])[0]}\n'
                                           f'作词：{bestdori.util.get_content_by_language(info["lyricist"])[0]}\n'
                                           f'作曲：{bestdori.util.get_content_by_language(info["composer"])[0]}\n'
-                                          f'编曲：{bestdori.util.get_content_by_language(info["arranger"])[0]}')
+                                          f'编曲：{bestdori.util.get_content_by_language(info["arranger"])[0]}\n'
+                                          f'链接：https://bestdori.com/info/songs/{song_id}')
             if unified.Detector.is_onebot_v11():
                 await _bangdream_handler.finish(unified.adapters.onebot_v11_module.MessageSegment.record(
                     await bestdori.song.get_song_url(song_id)))
