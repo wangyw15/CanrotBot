@@ -1,4 +1,5 @@
 import random
+import difflib
 from typing import Annotated
 
 from nonebot import on_shell_command
@@ -33,16 +34,19 @@ async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
             comic_id = random.choice([i for i in comics if len(i) == 4 and i.startswith('1')])
         elif len(args) == 2 and args[1] in ['单格']:  # 随机单格
             comic_id = random.choice([i for i in comics if len(i) == 3])
-        else:  # 指定漫画
-            keyword = ' '.join(args[1:])
+        else:  # 搜素漫画
+            keyword = ' '.join(args[1:]).strip()
             comic_id = None
-            if keyword.isdigit():
+            if keyword.isdigit():  # 指定id
                 comic_id = keyword
-            else:
+            else:  # 搜索名字
+                best_match = 0.0
                 for _comic_id, comic in comics.items():
-                    if keyword in comic['title'].values():
-                        comic_id = _comic_id
-                        break
+                    for _title in comic['title']:
+                        ratio = difflib.SequenceMatcher(None, keyword, str(_title)).quick_ratio()
+                        if ratio > best_match:
+                            best_match = ratio
+                            comic_id = _comic_id
             if comic_id not in comics:
                 await _bangdream_handler.finish('没有找到这个漫画喵')
         # 发送漫画
