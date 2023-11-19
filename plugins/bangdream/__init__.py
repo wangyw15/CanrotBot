@@ -52,9 +52,9 @@ async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
         # 发送漫画
         title, _ = bangdream.get_content_by_language(comics[comic_id]['title'])
         if unified.Detector.can_send_image():
-            comic_url, _ = await bangdream.get_comic_url(comic_id)
+            content, _ = await bangdream.get_comic(comic_id)
             await _bangdream_handler.finish(unified.MessageSegment.text(title) +
-                                            unified.MessageSegment.image(comic_url))
+                                            unified.MessageSegment.image(content))
         else:
             await _bangdream_handler.finish(f'{title}\nhttps://bestdori.com/info/comics/{comic_id}')
 
