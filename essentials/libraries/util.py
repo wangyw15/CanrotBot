@@ -7,6 +7,7 @@ from typing import Any
 import httpx
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event, MessageSegment
+from nonebot_plugin_alconna.uniseg import UniMessage, Image, SerializeFailed, Voice
 
 from adapters.unified import Detector, adapters
 
@@ -203,6 +204,23 @@ def get_iso_time_str(t: datetime | None = None) -> str:
     if not t:
         t = datetime.now()
     return t.astimezone(timezone(timedelta(hours=8))).isoformat()
+
+
+async def can_send_segment(segment_type: type) -> bool:
+    """
+    是否可以发送指定类型的消息段
+
+    :param segment_type: 消息段类型
+
+    :return: 是否可以发送
+    """
+    try:
+        await UniMessage(segment_type('')).export(fallback=False)
+        return True
+    except SerializeFailed:
+        return False
+    except Exception:
+        raise
 
 
 __all__ = ['fetch_bytes_data',

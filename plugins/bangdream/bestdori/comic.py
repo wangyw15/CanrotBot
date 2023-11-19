@@ -47,6 +47,7 @@ async def get_comic_url(comic_id: str, language: str = '') -> Tuple[str, str] | 
     if len(comic_id) == 4 and comic_id.startswith('1'):
         return ((f'https://bestdori.com/assets/{language}/comic/comic_fourframe/'
                 f'comic_fourframe_{comic_id[1:]}_rip/comic_fourframe_{comic_id[1:]}.png'), language)
+    comic_id = comic_id.zfill(3)
     return ((f'https://bestdori.com/assets/{language}/comic/comic_singleframe/'
             f'comic_{comic_id}_rip/comic_{comic_id}.png'), language)
 
