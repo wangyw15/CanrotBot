@@ -13,7 +13,7 @@ class CanrotConfig(BaseModel):
 
 _driver = get_driver()
 _global_config = _driver.config
-canrot_config = CanrotConfig.parse_obj(_global_config)
+canrot_config: CanrotConfig = CanrotConfig.parse_obj(_global_config)
 
 
 def get_config(name: str) -> Any | None:
