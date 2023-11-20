@@ -1,12 +1,13 @@
 import json
 
+import nonebot.adapters.onebot.v11 as ob11
+import nonebot.adapters.onebot.v12 as ob12
 from nonebot import on_command
-from nonebot.adapters import Message
-from nonebot.params import CommandArg, Arg
+from nonebot.adapters import Message, Bot
+from nonebot.params import Arg
 from nonebot.plugin import PluginMetadata
 
 from . import charging_pile
-from adapters import unified
 
 __plugin_meta__ = PluginMetadata(
     name='找充电桩',
@@ -20,8 +21,8 @@ _charging_pile_handler = on_command('charge', aliases={'充电', '充电桩'}, b
 
 
 @_charging_pile_handler.handle()
-async def _():
-    if not unified.Detector.is_onebot():
+async def _(bot: Bot):
+    if not (isinstance(bot, ob11.Bot) or isinstance(bot, ob12.Bot)):
         await _charging_pile_handler.finish('抱歉，目前只支持 OneBot 协议')
 
 
