@@ -30,7 +30,7 @@ _command = on_alconna(Alconna(
         alias=['歌曲', '查歌', '查曲'],
         help_text='查游戏内歌曲'
     ),
-), block=True)
+), aliases={'bangdream'}, block=True)
 
 
 @_command.assign('comic')
