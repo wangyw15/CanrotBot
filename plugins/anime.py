@@ -8,7 +8,7 @@ from libraries import anime
 __plugin_meta__ = PluginMetadata(
     name='番剧工具',
     description='是个提供番剧相关的插件，但是现在只提供番剧搜索功能',
-    usage='/<番剧> <关键词>',
+    usage='/<anime|番剧|动漫> <搜索> <关键词>',
     config=None
 )
 
@@ -44,13 +44,13 @@ def generate_message_from_anime_data(name: str, data: dict, possibility: float) 
 
 
 _command = on_alconna(Alconna(
-    '番剧',
+    'anime',
     Option(
         'search',
         Args['anime_query', str],
         alias=['搜索', '查番', '番剧', '动漫'],
     ),
-), block=True)
+), aliases={'动漫', '番剧'}, block=True)
 
 
 @_command.assign('search')
