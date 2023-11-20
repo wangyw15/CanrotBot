@@ -25,5 +25,5 @@ async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...]
         await _line_sticker_handler.finish()
     sticker_id = reg[0].strip()
     name, content = await line_sticker.get_line_sticker(sticker_id)
-    await unified.Message.send_file(content, name + '.zip', bot, event)
+    await line_sticker.send_file(content, name + '.zip', bot, event)
     await _line_sticker_handler.finish()
