@@ -47,7 +47,7 @@ async def _(state: T_State, args: Message = CommandArg()):
 
 
 @guess_number.got('guess')
-async def _(state: T_State, bot: Bot, event: Event, guess: Message = Arg()):
+async def _(state: T_State, guess: Message = Arg()):
     answer: str = state[_GUESS_NUMBER]
     guess = guess.extract_plain_text()
     if guess == 'stop' or guess == '停止' or guess == '停止游戏' or guess == '结束' or guess == '结束游戏':
@@ -55,7 +55,7 @@ async def _(state: T_State, bot: Bot, event: Event, guess: Message = Arg()):
     elif guess == answer:
         state[_GUESS_NUMBER_TURNS] += 1
         point_amounts = len(answer) * 10 - 2 * (int(state[_GUESS_NUMBER_TURNS]) - 8)
-        economy.earn(user.get_uid(user.get_puid(bot, event)), point_amounts)
+        economy.earn(await user.get_uid(), point_amounts)
         await guess_number.finish(f'居然{state[_GUESS_NUMBER_TURNS]}轮就让你猜出来了。哼，{point_amounts}个胡萝卜片拿去')
     elif not guess.isdigit():
         await guess_number.reject('你输入的不是数字喵~')

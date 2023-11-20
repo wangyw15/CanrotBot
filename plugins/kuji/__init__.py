@@ -20,7 +20,7 @@ _command = on_alconna(Alconna(
 
 @_command.handle()
 async def _():
-    if not economy.pay(user.get_uid(), 10, "赛博浅草寺求签"):
+    if not economy.pay(await user.get_uid(), 10, "赛博浅草寺求签"):
         await _command.finish('你的余额不足哦')
     await _command.send('谢谢你的十个胡萝卜片喵~')
 

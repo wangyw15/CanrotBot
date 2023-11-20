@@ -100,7 +100,7 @@ def register(puid: str) -> str:
     return uid
 
 
-def get_puid(bot: Bot | None = None, event: Event | None = None) -> str:
+async def get_puid(bot: Bot | None = None, event: Event | None = None) -> str:
     """
     获取puid
 
@@ -114,7 +114,7 @@ def get_puid(bot: Bot | None = None, event: Event | None = None) -> str:
     if not event:
         event = current_event.get()
     puid = event.get_user_id()
-    if util.is_qq(bot):
+    if await util.is_qq(bot):
         puid = 'qq_' + puid
     elif isinstance(bot, kook.Bot):
         puid = 'kook_' + puid
@@ -125,7 +125,7 @@ def get_puid(bot: Bot | None = None, event: Event | None = None) -> str:
     return puid
 
 
-def get_uid(puid: str = '') -> str:
+async def get_uid(puid: str = '') -> str:
     """
     查询puid对应的uid
 
@@ -134,7 +134,7 @@ def get_uid(puid: str = '') -> str:
     :return: uid
     """
     if not puid:
-        puid = get_puid()
+        puid = await get_puid()
     elif not puid_user_exists(puid):
         return ''
     with database.get_session().begin() as session:
@@ -162,7 +162,7 @@ def get_bind_by_uid(uid: str) -> list[str]:
         return [_bind.platform_user_id for _bind in result]
 
 
-def get_bind_by_puid(puid: str) -> list[str]:
+async def get_bind_by_puid(puid: str) -> list[str]:
     """
     查询puid对应的uid所绑定的puid
 
@@ -170,7 +170,7 @@ def get_bind_by_puid(puid: str) -> list[str]:
 
     :return: puid列表
     """
-    return get_bind_by_uid(get_uid(puid))
+    return get_bind_by_uid(await get_uid(puid))
 
 
 async def get_user_name(event: Event | None = None, bot: Bot | None = None, default: str = None) -> str | None:

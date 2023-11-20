@@ -34,7 +34,7 @@ async def _(msg: Message = CommandArg()):
     if not await util.can_send_segment(Image):
         await _ai_art_handler.finish('无法发送图片喵')
 
-    uid = user.get_uid()
+    uid = await user.get_uid()
     if not uid:
         await _ai_art_handler.finish('未注册用户无法使用 AI 作画')
         return

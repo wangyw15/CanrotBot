@@ -85,7 +85,7 @@ async def _(query: Query[str] = AlconnaQuery('card', 'query')):
 
 @_command.assign('gasha')
 async def _():
-    uid = user.get_uid()
+    uid = await user.get_uid()
     if not economy.pay(uid, 25, "mltd 十连"):
         await _command.finish('你没有足够的胡萝卜片喵~')
     await _command.send('谢谢你的25个胡萝卜片喵~')

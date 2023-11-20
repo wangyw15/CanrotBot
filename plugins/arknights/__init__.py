@@ -33,7 +33,7 @@ _command = on_alconna(Alconna(
 
 @_command.assign('十连')
 async def _():
-    uid = user.get_uid(user.get_puid())
+    uid = await user.get_uid()
     if not uid:
         await _command.finish('你还没有账号喵~')
 
@@ -64,7 +64,7 @@ async def _():
 
 @_command.assign('抽卡记录')
 async def _():
-    uid = user.get_uid(user.get_puid())
+    uid = await user.get_uid()
     if not uid:
         await _command.finish('你还没有账号喵~')
 

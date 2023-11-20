@@ -35,9 +35,8 @@ _investigator_handler = on_shell_command('investigator', aliases={'i', '调查�
 
 
 @_investigator_handler.handle()
-async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
-    puid = user.get_puid(bot, event)
-    uid = user.get_uid(puid)
+async def _(event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
+    uid = await user.get_uid()
     gid = util.get_group_id(event)
     if not uid:
         await _investigator_handler.finish('还未注册或绑定账号')
@@ -119,9 +118,8 @@ _check_handler = on_shell_command('check', aliases={'c', '检定'}, block=True)
 
 
 @_check_handler.handle()
-async def _(bot: Bot, event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
-    puid = user.get_puid(bot, event)
-    uid = user.get_uid(puid)
+async def _(event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]):
+    uid = await user.get_uid()
     gid = util.get_group_id(event)
     if not uid:
         await _investigator_handler.finish('还未注册或绑定账号')

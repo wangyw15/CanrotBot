@@ -17,7 +17,7 @@ _user = on_command('user', aliases={'u', '用户', '我'}, block=True)
 
 @_user.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    puid = user.get_puid(bot, event)
+    puid = await user.get_puid(bot, event)
     if msg := args.extract_plain_text():
         splitted_args = [x.strip() for x in msg.split()]
         if msg == 'register' or msg == 'reg' or msg == '注册':
@@ -30,7 +30,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             if not user.puid_user_exists(puid):
                 await _user.finish(f'puid: {puid}\n你还没有注册')
             else:
-                uid = user.get_uid(puid)
+                uid = await user.get_uid(puid)
                 msg = f'puid: {puid}\nuid: {uid}\n已绑定的 puid:\n'
                 linked_accounts = user.get_bind_by_uid(uid)
                 for i in linked_accounts:
@@ -42,7 +42,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
                 await _user.finish('该用户已经绑定或注册过了')
             if not user.check_puid_validation(another_puid):
                 await _user.finish('PUID 不合法')
-            uid = user.get_uid(puid)
+            uid = await user.get_uid(puid)
             user.bind(another_puid, uid)
             await _user.finish('绑定成功')
         elif splitted_args[0] == 'unbind' or splitted_args[0] == '解绑' or splitted_args[0] == '解除绑定':

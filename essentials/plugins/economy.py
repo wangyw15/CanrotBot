@@ -19,12 +19,12 @@ _economy = on_command('economy', aliases={'e', '钱包', '银行', '经济', 'ba
 
 @_economy.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    # check if registered
-    puid = user.get_puid(bot, event)
+    # 检查是否注册过
+    puid = await user.get_puid(bot, event)
     if not user.puid_user_exists(puid):
         await _economy.finish(f'puid: {puid}\n你还没有注册')
     
-    uid = user.get_uid(puid)
+    uid = await user.get_uid(puid)
     if msg := args.extract_plain_text():
         splitted_args = [x.strip().lower() for x in msg.split()]
         if msg == 'info' or msg == '信息' or msg == 'balance' or msg == '余额':
