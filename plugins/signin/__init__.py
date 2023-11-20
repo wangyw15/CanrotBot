@@ -1,14 +1,11 @@
 from datetime import datetime
-from typing import Annotated
 
-from nonebot import on_shell_command
-from nonebot.adapters import Bot, Event, MessageSegment
-from nonebot.params import ShellCommandArgv
+from arclet.alconna import Option, Args
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import on_alconna, Alconna, AlconnaQuery, Query, UniMsg, Text, Image
 from sqlalchemy import select, insert
 
-from adapters import unified
-from essentials.libraries import user, economy
+from essentials.libraries import user, economy, util
 from storage import database, file
 from . import data, fortune
 
@@ -20,28 +17,33 @@ __plugin_meta__ = PluginMetadata(
 )
 
 _signin_files = file.FileStorage('signin')
-_signin_handler = on_shell_command('signin', aliases={'签到', '每日签到', '抽签'}, block=True)
+_command = on_alconna(Alconna(
+    '签到',
+    Option(
+        'themes',
+        alias=['查看主题', 'listtheme', 'listthemes', 'list_theme', 'list_themes', 'themes'],
+    ),
+    Args['theme', str, 'random'],
+), block=True)
 
 
-@_signin_handler.handle()
-async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
-    # 查看所有主题
-    if len(args) == 1 and args[0] in ['查看主题', 'listtheme', 'listthemes', 'list_theme', 'list_themes', 'themes']:
-        await _signin_handler.finish('所有主题：\n\n' + '\n'.join(fortune.get_themes()))
+@_command.assign('themes')
+async def _():
+    await _command.finish('所有主题：\n\n' + '\n'.join(fortune.get_themes()))
+
+
+@_command.handle()
+async def _(theme: Query[str] = AlconnaQuery('theme', 'random')):
+    theme = theme.result.strip().lower()
 
     # 获取 uid
-    puid = user.get_puid(bot, event)
+    puid = user.get_puid()
     if not user.puid_user_exists(puid):
-        await _signin_handler.finish('你还没有注册')
+        await _command.finish('你还没有注册')
     uid = user.get_uid(puid)
 
     # 数据库 session
     session = database.get_session()()
-
-    # 设置主题
-    theme = 'random'
-    if len(args) == 1:
-        theme = args[0]
 
     # 判断是否签到过
     all_record = session.execute(select(data.SigninRecord).where(data.SigninRecord.user_id == uid)).scalars().all()
@@ -52,7 +54,7 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
             break
 
     # 构造消息
-    final_msg = unified.Message()
+    final_msg = UniMsg()
 
     # 签到
     if today_record is None:
@@ -66,11 +68,11 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
         point_amount = 20 + rank
         economy.earn(uid, point_amount, "每日签到")
 
-        final_msg += '签到成功！\n'
-        final_msg += f'获得 {point_amount} 胡萝卜片\n'
-        final_msg += '✨今日运势✨\n'
+        final_msg += Text('签到成功！\n'
+                          f'获得 {point_amount} 胡萝卜片\n'
+                          '✨今日运势✨\n')
     else:
-        final_msg += '你今天签过到了，再给你看一次哦🤗\n'
+        final_msg += Text('你今天签过到了，再给你看一次哦🤗\n')
 
         title = today_record.title
         content = today_record.content
@@ -80,10 +82,13 @@ async def _(bot: Bot, event: Event, args: Annotated[list[str | MessageSegment], 
                 img: bytes = bytes(f.read())
         else:
             # 重新按内容生成图片
-            img, _, _, _ = await fortune.generate_fortune(theme, title=today_record.title, content=today_record.content)
+            img, _, _, _ = await fortune.generate_fortune(theme,
+                                                          title=today_record.title,
+                                                          content=today_record.content)
             with _signin_files(uid + '.png').open(mode='wb') as f:
                 f.write(img)
-
-    final_msg.append(unified.MessageSegment.image(img, f'运势: {title}\n详情: {content}'))
-    await final_msg.send()
-    await _signin_handler.finish()
+    if await util.can_send_segment(Image):
+        final_msg.append(Image(raw=img))
+    else:
+        final_msg += Text(f'运势: {title}\n详情: {content}')
+    await _command.finish(final_msg)
