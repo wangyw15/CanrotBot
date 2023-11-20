@@ -1,9 +1,9 @@
-from nonebot import on_command
-from nonebot.adapters import Bot, Event
+from arclet.alconna import Alconna
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import on_alconna, Image
 
-from adapters import unified
 from essentials.libraries import user, economy
+from essentials.libraries import util
 from . import kuji
 
 __plugin_meta__ = PluginMetadata(
@@ -13,18 +13,23 @@ __plugin_meta__ = PluginMetadata(
     config=None
 )
 
+_command = on_alconna(Alconna(
+    'kuji',
+), block=True)
 
-_kuji_handler = on_command('kuji', aliases={'浅草寺'}, block=True)
 
+@_command.handle()
+async def _():
+    if not economy.pay(user.get_uid(), 10, "赛博浅草寺求签"):
+        await _command.finish('你的余额不足哦')
+    await _command.send('谢谢你的十个胡萝卜片喵~')
 
-@_kuji_handler.handle()
-async def _(bot: Bot, event: Event):
-    if not economy.pay(user.get_uid(user.get_puid(bot, event)), 10, "赛博浅草寺求签"):
-        await _kuji_handler.finish('你的余额不足哦')
-
-    msg = unified.Message()
-    msg.append('谢谢你的十个胡萝卜片喵~\n')
-    result = await kuji.generate_kuji()
-    msg.append(unified.MessageSegment.image(result[0], result[1]))
-    await msg.send()
-    await _kuji_handler.finish()
+    if await util.can_send_segment(Image):
+        img, _ = await kuji.generate_kuji()
+        await _command.finish(Image(raw=img))
+    else:
+        _, data = await kuji.generate_kuji('')
+        await _command.finish(f"{data['count']} - {data['type']}\n\n" +
+                              '\n'.join(data['content']) + '\n\n' +
+                              f"{data['straight']}\n\n" +
+                              '\n'.join(data['mean']))
