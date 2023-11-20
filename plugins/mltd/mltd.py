@@ -7,6 +7,24 @@ from typing import Literal, Tuple
 from essentials.libraries import render_by_browser, util
 from storage import asset
 
+event_type = ['Showtime',
+              'Millicolle!',
+              'Theater',
+              'Tour',
+              'Anniversary',
+              'Working',
+              'April Fool',
+              'Game Corner',
+              'Millicolle! (Box Gasha)',
+              'Twin Stage (High Score by Song)',
+              'Tune',
+              'Twin Stage (Total High Score)',
+              'Tale / Time',
+              'Talk Party',
+              'Treasure']
+
+appeal_type = ['None', 'Vocal', 'Dance', 'Visual']
+
 _mltd_assets_path = asset.get_assets_path('mltd')
 _cards: list[dict] = []
 _cards_zh: list[dict] = []
