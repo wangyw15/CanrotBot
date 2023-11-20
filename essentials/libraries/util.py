@@ -5,14 +5,15 @@ from datetime import datetime, timezone, timedelta
 from typing import Any
 
 import httpx
+import nonebot.adapters.console as console
+import nonebot.adapters.kaiheila as kook
 import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
+import nonebot.adapters.qqguild as qqguild
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot_plugin_alconna import UniMessage, SerializeFailed
-
-from adapters.unified import Detector, adapters
 
 _driver = get_driver()
 _global_config = _driver.config
@@ -91,16 +92,15 @@ def get_group_id(event: Event) -> str:
 
     :return: 群 ID (platform_id)
     """
-    if adapters.onebot_v11_module and isinstance(event, adapters.onebot_v11_module.GroupMessageEvent) \
-            or adapters.onebot_v12_module and isinstance(event, adapters.onebot_v12_module.GroupMessageEvent):
+    if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
         return 'qq_' + str(event.group_id)
-    elif adapters.mirai2_module and isinstance(event, adapters.mirai2_module.GroupMessage):
+    elif isinstance(event, mirai2.GroupMessage):
         return 'qq_' + str(event.sender.group.id)
-    elif adapters.qq_guild_module and isinstance(event, adapters.qq_guild_module.MessageEvent):
+    elif isinstance(event, qqguild.MessageEvent):
         return 'qqguild_' + str(event.channel_id)
-    elif adapters.kook_module and isinstance(event, adapters.kook_module.event.ChannelMessageEvent):
+    elif isinstance(event, kook.event.ChannelMessageEvent):
         return 'kook_' + str(event.group_id)
-    elif adapters.console_module and isinstance(event, adapters.console_module.MessageEvent):
+    elif isinstance(event, console.MessageEvent):
         return 'console_0'
     return ''
 
@@ -116,36 +116,36 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
     :return: 机器人昵称
     """
     # onebot v11
-    if Detector.is_onebot_v11(bot):
-        if isinstance(event, adapters.onebot_v11_module.GroupMessageEvent):
+    if isinstance(bot, ob11.Bot):
+        if isinstance(event, ob11.GroupMessageEvent):
             user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v11_module.PrivateMessageEvent):
+        elif isinstance(event, ob11.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.self_id)
             return user_info['nickname']
     # onebot v12
-    elif Detector.is_onebot_v12(bot):
-        if isinstance(event, adapters.onebot_v12_module.GroupMessageEvent):
+    elif isinstance(bot, ob12.Bot):
+        if isinstance(event, ob12.GroupMessageEvent):
             user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self.user_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v12_module.PrivateMessageEvent):
+        elif isinstance(event, ob12.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.self.user_id)
             return user_info['nickname']
     # mirai2
-    elif Detector.is_mirai2(bot):
-        if isinstance(event, adapters.mirai2_module.GroupMessage):
+    elif isinstance(bot, mirai2.Bot):
+        if isinstance(event, mirai2.GroupMessage):
             user_info = await bot.member_profile(target=event.sender.group.id, member_id=bot.self_id)
             return user_info['nickname']
-        elif isinstance(event, adapters.mirai2_module.FriendMessage):
+        elif isinstance(event, mirai2.FriendMessage):
             user_info = bot.bot_pro_file()
             return user_info['nickname']
     # kook
-    elif Detector.is_kook(bot):
-        if isinstance(event, adapters.kook_module.Event) and hasattr(event, 'group_id'):
+    elif isinstance(bot, kook.Bot):
+        if isinstance(event, kook.Event) and hasattr(event, 'group_id'):
             user_info = await bot.user_view(user_id=bot.self_id, group_id=event.group_id)
             return user_info.nickname
     return default
@@ -164,7 +164,7 @@ def is_url(msg: MessageSegment | str) -> bool:
     elif msg.is_text():
         msg = str(msg)
         return re.match(r'^https?://', msg) is not None
-    elif isinstance(msg, adapters.kook_module.MessageSegment):
+    elif isinstance(msg, kook.MessageSegment):
         if msg.type == 'kmarkdown':
             msg = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
             return re.match(r'^https?://', msg) is not None
