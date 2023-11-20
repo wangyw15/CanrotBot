@@ -4,8 +4,9 @@ from nonebot import on_regex
 from nonebot.adapters import Bot, Event
 from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import File, UniMsg
 
-from adapters import unified
+from essentials.libraries import util
 from . import line_sticker
 
 __plugin_meta__ = PluginMetadata(
@@ -21,9 +22,9 @@ _line_sticker_handler = on_regex(r'(?:https?:\/\/)?store\.line\.me\/stickershop\
 
 @_line_sticker_handler.handle()
 async def _(bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
-    if not unified.Detector.can_send_file(bot):
+    if not await util.can_send_segment(File):
         await _line_sticker_handler.finish()
     sticker_id = reg[0].strip()
     name, content = await line_sticker.get_line_sticker(sticker_id)
     await line_sticker.send_file(content, name + '.zip', bot, event)
-    await _line_sticker_handler.finish()
+    await _line_sticker_handler.finish(await UniMsg(File(raw=content, name=name + '.zip')).export())
