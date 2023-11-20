@@ -1,12 +1,14 @@
 import re
 import typing
 
+import nonebot.adapters.mirai2 as mirai2
+import nonebot.adapters.onebot.v11 as ob11
+import nonebot.adapters.onebot.v12 as ob12
 from nonebot import on_regex, on_command
 from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg, RegexGroup, RegexStr
 from nonebot.plugin import PluginMetadata
 
-from adapters import unified
 from . import music
 
 __plugin_meta__ = PluginMetadata(
@@ -20,11 +22,11 @@ _qqmusic_id_pattern = r'(?:https?:\/\/)?(?:\S+\.)?y\.qq\.com\/\S+(?:songid=|song
 
 
 async def _send_music_card(bot: Bot, event: Event, music_type: typing.Literal['qq', '163'], music_id: str | int):
-    if unified.Detector.is_onebot_v11(bot):
-        await bot.send(event, unified.adapters.onebot_v11_module.Message(f'[CQ:music,type={music_type},id={music_id}]'))
-    elif unified.Detector.is_onebot_v12(bot):
-        await bot.send(event, unified.adapters.onebot_v12_module.Message(f'[CQ:music,type={music_type},id={music_id}]'))
-    elif unified.Detector.is_mirai2(bot):
+    if isinstance(bot, ob11.Bot):
+        await bot.send(event, ob11.Message(ob11.MessageSegment.music(music_type, music_id)))
+    elif isinstance(bot, ob12.Bot):
+        await bot.send(event, ob12.Message(f'[CQ:music,type={music_type},id={music_id}]'))
+    elif isinstance(bot, mirai2.Bot):
         kind = ''
         kind_name = ''
         if music_type == 'qq':
@@ -36,7 +38,7 @@ async def _send_music_card(bot: Bot, event: Event, music_type: typing.Literal['q
         if kind:
             info = await music.fetch_music_info(music_type, music_id)
             if info:
-                await bot.send(event, unified.adapters.mirai2_module.MessageSegment.music_share(
+                await bot.send(event, mirai2.MessageSegment.music_share(
                               kind=kind,
                               title=info['title'],
                               summary=info['artists'],
@@ -52,7 +54,7 @@ _cloudmusic_handler = on_regex(r'(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+
 @_cloudmusic_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
     music_id = reg[0]
-    if unified.Detector.is_qq(bot):
+    if music.is_qq(bot):
         await _send_music_card(bot, event, '163', music_id)
     await _cloudmusic_handler.finish()
 
@@ -63,7 +65,7 @@ _qqmusic_link_handler = on_regex(_qqmusic_id_pattern, block=True)
 @_qqmusic_link_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
     music_id = reg[0]
-    if unified.Detector.is_qq(bot):
+    if music.is_qq(bot):
         await _send_music_card(bot, event, 'qq', music_id)
     await _qqmusic_link_handler.finish()
 
@@ -76,7 +78,7 @@ async def _(reg: typing.Annotated[str, RegexStr()], bot: Bot, event: Event):
     resolved = await music.resolve_shortlink(reg)
     if resolved:
         music_id = re.search(_qqmusic_id_pattern, resolved).groups()[0]
-        if unified.Detector.is_qq(bot):
+        if music.is_qq(bot):
             await _send_music_card(bot, event, 'qq', music_id)
         await _qqmusic_shortlink_handler.finish()
 
@@ -86,7 +88,7 @@ _qq_music_handler = on_command('点歌', block=True)
 
 @_qq_music_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    if not unified.Detector.is_qq(bot):
+    if not music.is_qq(bot):
         await _qq_music_handler.finish('只有 QQ 才支持点歌')
 
     if keyword := args.extract_plain_text():
@@ -111,7 +113,7 @@ _netease_music_handler = on_command('网易点歌', block=True)
 
 @_netease_music_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    if not unified.Detector.is_qq(bot):
+    if not music.is_qq(bot):
         await _netease_music_handler.finish('只有 QQ 才支持点歌')
 
     if keyword := args.extract_plain_text():
