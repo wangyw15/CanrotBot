@@ -3,12 +3,17 @@
 import re
 import uuid
 
+import nonebot.adapters.console as console
+import nonebot.adapters.kaiheila as kook
+import nonebot.adapters.mirai2 as mirai2
+import nonebot.adapters.onebot.v11 as ob11
+import nonebot.adapters.onebot.v12 as ob12
+import nonebot.adapters.qqguild as qqguild
 from nonebot.adapters import Bot, Event
 from nonebot.matcher import current_bot, current_event
 from sqlalchemy import select, delete, insert
 
-from adapters import unified
-from adapters.unified import Detector, adapters
+from essentials.libraries import util
 from storage import database
 from . import data
 
@@ -109,13 +114,13 @@ def get_puid(bot: Bot | None = None, event: Event | None = None) -> str:
     if not event:
         event = current_event.get()
     puid = event.get_user_id()
-    if unified.Detector.is_onebot_v11(bot) or unified.Detector.is_onebot_v12(bot) or unified.Detector.is_mirai2(bot):
+    if util.is_qq(bot):
         puid = 'qq_' + puid
-    elif unified.Detector.is_kook(bot):
+    elif isinstance(bot, kook.Bot):
         puid = 'kook_' + puid
-    elif unified.Detector.is_console(bot):
+    elif isinstance(bot, console.Bot):
         puid = 'console_0'
-    elif unified.Detector.is_qqguild(bot):
+    elif isinstance(bot, qqguild.Bot):
         puid = 'qqguild_' + puid
     return puid
 
@@ -183,37 +188,37 @@ async def get_user_name(event: Event | None = None, bot: Bot | None = None, defa
         bot = current_bot.get()
     if not event:
         event = current_event.get()
-    if Detector.is_onebot_v11(bot):
-        if isinstance(event, adapters.onebot_v11_module.GroupMessageEvent):
+    if isinstance(bot, ob11.Bot):
+        if isinstance(event, ob11.GroupMessageEvent):
             user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v11_module.PrivateMessageEvent):
+        elif isinstance(event, ob11.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.user_id)
             return user_info['nickname']
     # onebot v12
-    elif Detector.is_onebot_v12(bot):
-        if isinstance(event, adapters.onebot_v12_module.GroupMessageEvent):
+    elif isinstance(bot, ob12.Bot):
+        if isinstance(event, ob12.GroupMessageEvent):
             user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
             if user_info['card']:
                 return user_info['card']
             return user_info['nickname']
-        elif isinstance(event, adapters.onebot_v12_module.PrivateMessageEvent):
+        elif isinstance(event, ob12.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.user_id)
             return user_info['nickname']
     # mirai2
-    elif Detector.is_mirai2(bot):
-        if isinstance(event, adapters.mirai2_module.GroupMessage):
+    elif isinstance(bot, mirai2.Bot):
+        if isinstance(event, mirai2.GroupMessage):
             resp = await bot.member_list(target=event.sender.group.id)
             if resp['code'] == 0 and 'data' in resp:
                 for member in resp['data']:
                     if member['id'] == event.sender.id:
                         return member['memberName']
-        elif isinstance(event, adapters.mirai2_module.FriendMessage):
+        elif isinstance(event, mirai2.FriendMessage):
             return event.sender.nickname
     # kook
-    elif Detector.is_kook(bot):
-        if isinstance(event, adapters.kook_module.Event) and hasattr(event, 'extra'):
+    elif isinstance(bot, kook.Bot):
+        if isinstance(event, kook.Event) and hasattr(event, 'extra'):
             return event.extra.author.nickname
     return default
