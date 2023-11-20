@@ -1,11 +1,7 @@
-from typing import Annotated
-
-from nonebot import on_shell_command
-from nonebot.adapters import MessageSegment
-from nonebot.params import ShellCommandArgv
+from arclet.alconna import Args
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import on_alconna, Alconna, AlconnaQuery, Query, Image
 
-from adapters import unified
 from essentials.libraries import util
 
 __plugin_meta__ = PluginMetadata(
@@ -23,23 +19,31 @@ _pixiv_headers = {
 }
 
 
-_pixiv_handler = on_shell_command('pixiv', aliases={'Pixiv', '蓝p', '蓝P'})
+_command = on_alconna(Alconna(
+    'pixiv',
+    Args['picture_id', str],
+), block=True)
 
 
-@_pixiv_handler.handle()
-async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
-    if len(args) == 1 and args[0].isdigit():
-        data = await util.fetch_json_data(f'https://px2.rainchan.win/json/{args[0]}')
+@_command.handle()
+async def _(picture_id: Query[str] = AlconnaQuery('picture_id')):
+    if await util.can_send_segment(Image):
+        await _command.finish('这里发不了图哦')
+    picture_id = picture_id.result.strip()
+    if picture_id.isdigit():
+        data = await util.fetch_json_data(f'https://px2.rainchan.win/json/{picture_id}')
         if data:
             if not data['error']:
                 imgurl = data['body'][0]['urls']['original']
+                # TODO 缓存图片
                 imgdata = await util.fetch_bytes_data(imgurl, headers=_pixiv_headers)
                 if imgdata:
-                    await unified.MessageSegment.image(imgdata).send()
-                    await _pixiv_handler.finish()
+                    await _command.finish(Image(raw=imgdata))
                 else:
-                    await _pixiv_handler.finish('图片下载失败')
+                    await _command.finish('图片下载失败')
             else:
-                await _pixiv_handler.finish(data['message'])
+                await _command.finish(data['message'])
         else:
-            await _pixiv_handler.finish('图片查找失败')
+            await _command.finish('图片查找失败')
+    else:
+        await _command.finish('图片id无效')
