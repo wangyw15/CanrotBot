@@ -4,8 +4,9 @@ import typing
 from nonebot import on_regex
 from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import UniMsg, Image
 
-from adapters import unified
+from essentials.libraries import util
 from .youtube import youtube_id_pattern, fetch_youtube_data, fetch_youtube_thumbnail
 
 __plugin_meta__ = PluginMetadata(
@@ -44,9 +45,10 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     data = await fetch_youtube_data(reg[0])
     if data:
         msg = _generate_youtube_message(data)
-        img_data = await fetch_youtube_thumbnail(data)
-        final_msg = unified.Message()
-        final_msg.append(unified.MessageSegment.image(img_data, '视频封面图'))
+        final_msg = UniMsg()
+        if await util.can_send_segment(Image):
+            img_data = await fetch_youtube_thumbnail(data)
+            if img_data:
+                final_msg.append(Image(raw=img_data))
         final_msg.append(msg)
-        await final_msg.send()
-        await _youtube_video.finish()
+        await _youtube_video.finish(await final_msg.export())
