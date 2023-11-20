@@ -1,10 +1,6 @@
 import typing
 
 import httpx
-import nonebot.adapters.mirai2 as mirai2
-import nonebot.adapters.onebot.v11 as ob11
-import nonebot.adapters.onebot.v12 as ob12
-from nonebot.adapters import Bot
 
 _client = httpx.AsyncClient()
 
@@ -47,10 +43,6 @@ async def fetch_music_info(music_type: typing.Literal['qq', '163'], music_id: st
     elif music_type == 'qq':
         pass
     return ret
-
-
-async def is_qq(bot: Bot) -> bool:
-    return isinstance(bot, ob11.Bot) or isinstance(bot, ob12.Bot) or isinstance(bot, mirai2.Bot)
 
 
 async def main():

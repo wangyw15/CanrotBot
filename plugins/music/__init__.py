@@ -8,6 +8,7 @@ from nonebot import on_regex, on_command
 from nonebot.adapters import Bot, Event, Message
 from nonebot.params import CommandArg, RegexGroup, RegexStr
 from nonebot.plugin import PluginMetadata
+from essentials.libraries import util
 
 from . import music
 
@@ -54,7 +55,7 @@ _cloudmusic_handler = on_regex(r'(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+
 @_cloudmusic_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
     music_id = reg[0]
-    if music.is_qq(bot):
+    if util.is_qq(bot):
         await _send_music_card(bot, event, '163', music_id)
     await _cloudmusic_handler.finish()
 
@@ -65,7 +66,7 @@ _qqmusic_link_handler = on_regex(_qqmusic_id_pattern, block=True)
 @_qqmusic_link_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()], bot: Bot, event: Event):
     music_id = reg[0]
-    if music.is_qq(bot):
+    if util.is_qq(bot):
         await _send_music_card(bot, event, 'qq', music_id)
     await _qqmusic_link_handler.finish()
 
@@ -78,7 +79,7 @@ async def _(reg: typing.Annotated[str, RegexStr()], bot: Bot, event: Event):
     resolved = await music.resolve_shortlink(reg)
     if resolved:
         music_id = re.search(_qqmusic_id_pattern, resolved).groups()[0]
-        if music.is_qq(bot):
+        if util.is_qq(bot):
             await _send_music_card(bot, event, 'qq', music_id)
         await _qqmusic_shortlink_handler.finish()
 
@@ -88,7 +89,7 @@ _qq_music_handler = on_command('点歌', block=True)
 
 @_qq_music_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    if not music.is_qq(bot):
+    if not util.is_qq(bot):
         await _qq_music_handler.finish('只有 QQ 才支持点歌')
 
     if keyword := args.extract_plain_text():
@@ -113,7 +114,7 @@ _netease_music_handler = on_command('网易点歌', block=True)
 
 @_netease_music_handler.handle()
 async def _(bot: Bot, event: Event, args: Message = CommandArg()):
-    if not music.is_qq(bot):
+    if not util.is_qq(bot):
         await _netease_music_handler.finish('只有 QQ 才支持点歌')
 
     if keyword := args.extract_plain_text():

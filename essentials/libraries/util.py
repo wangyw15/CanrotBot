@@ -5,6 +5,9 @@ from datetime import datetime, timezone, timedelta
 from typing import Any
 
 import httpx
+import nonebot.adapters.mirai2 as mirai2
+import nonebot.adapters.onebot.v11 as ob11
+import nonebot.adapters.onebot.v12 as ob12
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot_plugin_alconna import UniMessage, SerializeFailed
@@ -221,6 +224,10 @@ async def can_send_segment(segment_type: type) -> bool:
         return False
     except Exception:
         raise
+
+
+async def is_qq(bot: Bot) -> bool:
+    return isinstance(bot, ob11.Bot) or isinstance(bot, ob12.Bot) or isinstance(bot, mirai2.Bot)
 
 
 __all__ = ['fetch_bytes_data',
