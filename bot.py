@@ -1,9 +1,30 @@
-import nonebot
 from pathlib import Path
+
+import nonebot
+import nonebot.adapters.console as console
+import nonebot.adapters.kaiheila as kook
+import nonebot.adapters.mirai2 as mirai2
+import nonebot.adapters.onebot.v11 as onebot_v11
+import nonebot.adapters.onebot.v12 as onebot_v12
+import nonebot.adapters.qqguild as qqguild
 
 # 初始化
 nonebot.init(alconna_use_command_start=True)
 driver = nonebot.get_driver()
+
+# 注册适配器
+if 'console' not in driver.config.canrot_disabled_adapters:
+    driver.register_adapter(console.Adapter)
+if 'kook' not in driver.config.canrot_disabled_adapters:
+    driver.register_adapter(kook.Adapter)
+if 'mirai2' not in driver.config.canrot_disabled_adapters:
+    driver.register_adapter(mirai2.Adapter)
+if 'onebot_v11' not in driver.config.canrot_disabled_adapters:
+    driver.register_adapter(onebot_v11.Adapter)
+if 'onebot_v12' not in driver.config.canrot_disabled_adapters:
+    driver.register_adapter(onebot_v12.Adapter)
+if 'qqguild' not in driver.config.canrot_disabled_adapters:
+    driver.register_adapter(qqguild.Adapter)
 
 # 内置插件
 nonebot.load_builtin_plugins('echo', 'single_session')
