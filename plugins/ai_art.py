@@ -3,11 +3,11 @@ import base64
 from nonebot import on_command
 from nonebot.params import Message, CommandArg
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import UniMsg, Image
 from tencentcloud.aiart.v20221229 import aiart_client, models
 from tencentcloud.common import credential
 
-from adapters import unified
-from essentials.libraries import user, economy
+from essentials.libraries import user, economy, util
 from storage import config
 
 __plugin_meta__ = PluginMetadata(
@@ -31,6 +31,9 @@ _ai_art_handler = on_command('ai', aliases={'AI'}, block=True)
 
 @_ai_art_handler.handle()
 async def _(msg: Message = CommandArg()):
+    if not await util.can_send_segment(Image):
+        await _ai_art_handler.finish('无法发送图片喵')
+
     uid = user.get_uid()
     if not uid:
         await _ai_art_handler.finish('未注册用户无法使用 AI 作画')
@@ -68,6 +71,4 @@ async def _(msg: Message = CommandArg()):
         req.RspImgType = 'base64'
         # 发送请求
         resp = _client.TextToImage(req)
-        await unified.MessageSegment.image(base64.b64decode(resp.ResultImage)).send()
-        await _ai_art_handler.finish()
-
+        await _ai_art_handler.finish(await UniMsg(Image(raw=base64.b64decode(resp.ResultImage))).export())
