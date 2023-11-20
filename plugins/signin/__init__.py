@@ -60,7 +60,10 @@ async def _(theme: Query[str] = AlconnaQuery('theme', 'random')):
     if today_record is None:
         # 生成运势内容和对应图片
         img, title, content, rank = await fortune.generate_fortune(theme)
-        session.execute(insert(data.SigninRecord).values(user_id=uid, time=datetime.now(), title=title, content=content))
+        session.execute(insert(data.SigninRecord).values(user_id=uid,
+                                                         time=datetime.now(),
+                                                         title=title,
+                                                         content=content))
         session.commit()
         with _signin_files(uid + '.png').open(mode='wb') as f:
             f.write(img)

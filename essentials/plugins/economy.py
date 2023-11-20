@@ -42,7 +42,6 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
         elif splitted_args[0] == 'transfer' or splitted_args[0] == '转账':
             another = splitted_args[1]
             amount = float(splitted_args[2])
-            another_uid = ''
             if '_' in another:
                 another_uid = user.get_uid(another)
             else:

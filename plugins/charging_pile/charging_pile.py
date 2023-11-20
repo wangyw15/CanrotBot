@@ -31,7 +31,7 @@ async def generate_message(stations: list[dict[str, typing.Any]], keyword: str =
 
 
 async def main() -> None:
-    print(await generate_message('上海大学'))
+    pass
 
 if __name__ == '__main__':
     import asyncio

@@ -29,7 +29,6 @@ def markov_chain(data: list[list[str]], n=1) -> dict[str, dict[str, float]]:
         combined = []
         for i in range(0, len(words), n):
             combined.append(''.join(words[i:i+n]))
-        name = ''
         for i in range(len(words) - 1):
             current = words[i]
             if current not in transitions:

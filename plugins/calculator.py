@@ -23,5 +23,5 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
         await calculator.finish(f'{reg[0]}={str(result)}')
     except FinishedException:
         pass
-    except:
-        await calculator.finish('计算错误')
+    except Exception as e:
+        await calculator.finish(f'计算错误\n{str(e)}')

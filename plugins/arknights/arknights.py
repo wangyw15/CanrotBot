@@ -1,15 +1,13 @@
 import json
 import random
-from datetime import datetime
 from typing import Tuple
 
 from nonebot import logger
+from sqlalchemy import select, insert
+from sqlalchemy.orm import sessionmaker
 
 from essentials.libraries import render_by_browser
-
 from storage import database, asset
-from sqlalchemy import select, update, insert
-from sqlalchemy.orm import sessionmaker
 from . import data
 
 _arknights_all_characters: dict[str, dict] = {}

@@ -18,10 +18,11 @@ __plugin_meta__ = PluginMetadata(
 
 _command = on_alconna(Alconna(
     '邦邦',
-    Option('comic',
-           Args['comic_query', str, 'random'],
-           alias=['漫画', '小漫画', '四格', '单格'],
-           help_text='随机小漫画'
+    Option(
+        'comic',
+        Args['comic_query', str, 'random'],
+        alias=['漫画', '小漫画', '四格', '单格'],
+        help_text='随机小漫画'
     ),
     Option(
         'song',

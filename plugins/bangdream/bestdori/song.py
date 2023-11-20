@@ -1,8 +1,6 @@
-import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from . import util
-from pathlib import Path
 
 _song_path = util.cache_path / 'song'
 
@@ -27,7 +25,7 @@ async def get_song_info(song_id: str) -> dict[str]:
     return await util.bestdori_api_with_cache(f'songs/{song_id}.json')
 
 
-async def get_song_url(song_id: str) -> str:
+async def get_song_url(song_id: str) -> str | None:
     """
     获取歌曲音频链接
 
