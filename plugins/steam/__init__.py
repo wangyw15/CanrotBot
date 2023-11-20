@@ -1,12 +1,13 @@
 import typing
 
-from nonebot import get_driver, on_command, on_regex
-from nonebot.adapters import Message
-from nonebot.params import CommandArg, RegexGroup
+from arclet.alconna import Args
+from nonebot import get_driver, on_regex
+from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import on_alconna, Alconna, AlconnaQuery, Query, UniMsg, Text, Image
 from pydantic import BaseModel
 
-from adapters import unified
+from essentials.libraries import util
 from . import steam
 
 __plugin_meta__ = PluginMetadata(
@@ -28,7 +29,10 @@ class SteamConfig(BaseModel):
 _steam_config = SteamConfig.parse_obj(get_driver().config)
 
 
-def _generate_message(app_info: dict) -> str:
+async def _generate_message(app_info: dict) -> UniMsg:
+    header_img: str = app_info['header_image']
+    bg_img: str = app_info['background_raw']
+
     name: str = app_info['name']
     appid: int = app_info['steam_appid']
     desc: str = app_info['short_description']
@@ -42,7 +46,7 @@ def _generate_message(app_info: dict) -> str:
     final_price: str = app_info['price_overview']['final_formatted']
     discount_percentage: int = app_info['price_overview']['discount_percent']
 
-    ret = f"""
+    txt_msg = f"""
 名称: {name}
 发布时间: {'待发售' if coming_soon else release_date}
 开发商: {', '.join(developers)}
@@ -53,44 +57,41 @@ def _generate_message(app_info: dict) -> str:
     """.strip()
 
     if discount_percentage != 0:
-        ret += f'\n原价: {initial_price}\n现价: {final_price}\n折扣: {discount_percentage}%'
+        txt_msg += f'\n原价: {initial_price}\n现价: {final_price}\n折扣: {discount_percentage}%'
     else:
-        ret += f'\n价格: {final_price}'
+        txt_msg += f'\n价格: {final_price}'
 
-    ret += f'\n链接: https://store.steampowered.com/app/{appid}'
+    txt_msg += f'\n链接: https://store.steampowered.com/app/{appid}'
+
+    ret = UniMsg()
+    if await util.can_send_segment(Image):
+        ret.append(Image(header_img))
+    ret.append(Text(txt_msg))
+    if await util.can_send_segment(Image):
+        ret.append(Image(bg_img))
     return ret
 
 
-async def _send_steam_message(appinfo: dict):
-    header_img: str = appinfo['header_image']
-    bg_img: str = appinfo['background_raw']
-    text_msg: str = _generate_message(appinfo)
-
-    msg = unified.Message()
-    msg.append(unified.MessageSegment.image(header_img, '头图'))
-    msg.append(unified.MessageSegment.text(text_msg))
-    msg.append(unified.MessageSegment.image(bg_img, '背景图'))
-    await msg.send()
-
-
-_steam_command_handler = on_command('steam', aliases={'sbeam', '蒸汽', '蒸汽平台'}, block=True)
+_steam_command_handler = on_alconna(Alconna(
+    'steam',
+    Args['appid', str],
+), block=True)
 
 
 @_steam_command_handler.handle()
-async def _(args: Message = CommandArg()):
-    if msg := args.extract_plain_text():
-        if msg.isdigit():
-            if appinfo := await steam.fetch_app_info(msg, _steam_config.steam_language, _steam_config.steam_region):
-                if appinfo.get(msg, {}).get('success', False):
-                    appinfo = appinfo[msg]['data']
-                    await _send_steam_message(appinfo)
-                    await _steam_command_handler.finish()
-                else:
-                    await _steam_command_handler.finish('未找到该游戏')
+async def _(appid: Query[str] = AlconnaQuery('appid')):
+    appid = appid.result.strip()
+    if appid.isdigit():
+        if appinfo := await steam.fetch_app_info(appid, _steam_config.steam_language, _steam_config.steam_region):
+            if appinfo.get(appid, {}).get('success', False):
+                appinfo = appinfo[appid]['data']
+                await _steam_command_handler.finish(await _generate_message(appinfo))
             else:
-                await _steam_command_handler.finish('请求失败')
+                await _steam_command_handler.finish('未找到该游戏')
         else:
-            await _steam_command_handler.finish('请输入正确的游戏ID')
+            await _steam_command_handler.finish('请求失败')
+    else:
+        await _steam_command_handler.finish('请输入正确的游戏ID')
 
 
 _steam_link_handler = on_regex(r'(?:https?:\/\/)?store\.steampowered\.com\/app\/(\d+)', block=True)
@@ -102,5 +103,4 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     if appinfo := await steam.fetch_app_info(appid, _steam_config.steam_language, _steam_config.steam_region):
         if appinfo.get(appid, {}).get('success', False):
             appinfo = appinfo[appid]['data']
-            await _send_steam_message(appinfo)
-            await _steam_link_handler.finish()
+            await _steam_link_handler.finish(await _generate_message(appinfo).export())
