@@ -1,6 +1,7 @@
+import random
+
 from nonebot import on_command
 from nonebot.plugin import PluginMetadata
-import random
 
 from . import get_data
 

@@ -1,10 +1,8 @@
 import random
-from typing import Annotated
 
-from nonebot import on_shell_command
-from nonebot.adapters import MessageSegment
-from nonebot.params import ShellCommandArgv
+from arclet.alconna import Alconna, Args
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import on_alconna, Query, AlconnaQuery
 
 from . import get_data
 
@@ -16,13 +14,16 @@ __plugin_meta__ = PluginMetadata(
 )
 
 _cp_stories: list[dict[str, str]] = get_data('cp_story')
-_cp_handler = on_shell_command('cp', aliases={'cp文'}, block=True)
+_cp_handler = on_alconna(Alconna(
+    'cp',
+    Args['s', str, '']['m', str, '']
+), block=True)
 
 
 @_cp_handler.handle()
-async def _(args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
+async def _(s: Query[str] = AlconnaQuery('s', ''), m: Query[str] = AlconnaQuery('m', '')):
+    s = s.result.strip()
+    m = m.result.strip()
     data = random.choice(_cp_stories)
-    if len(args) == 2:
-        await _cp_handler.finish(data['story'].format(s=args[0], m=args[1]))
     await _cp_handler.finish(
-        data['story'].format(s=data['s'] if data['s'] else '小攻', m=data['m'] if data['m'] else '小受'))
+        data['story'].format(s=s if s else '小攻', m=m if m else '小受'))
