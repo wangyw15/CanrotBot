@@ -18,13 +18,13 @@ __plugin_meta__ = PluginMetadata(
 
 _signin_files = file.FileStorage('signin')
 _command = on_alconna(Alconna(
-    '签到',
+    'signin',
     Option(
         'themes',
         alias=['查看主题', 'listtheme', 'listthemes', 'list_theme', 'list_themes', 'themes'],
     ),
     Args['theme', str, 'random'],
-), block=True)
+), aliases={'签到'}, block=True)
 
 
 @_command.assign('themes')
