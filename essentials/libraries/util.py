@@ -13,7 +13,7 @@ import nonebot.adapters.onebot.v12 as ob12
 import nonebot.adapters.qqguild as qqguild
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event, MessageSegment
-from nonebot_plugin_alconna import UniMessage, SerializeFailed
+from nonebot_plugin_alconna import UniMsg, SerializeFailed
 
 _driver = get_driver()
 _global_config = _driver.config
@@ -218,7 +218,7 @@ async def can_send_segment(segment_type: type) -> bool:
     :return: 是否可以发送
     """
     try:
-        await UniMessage(segment_type('')).export(fallback=False)
+        await UniMsg(segment_type(raw=b'placeholder')).export(fallback=False)
         return True
     except SerializeFailed:
         return False
