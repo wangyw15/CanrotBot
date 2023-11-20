@@ -1,13 +1,11 @@
 import random
 
 import httpx
-from nonebot import on_command
-from nonebot.adapters import Message, Bot, Event
-from nonebot.params import CommandArg
+from arclet.alconna import Option, Args
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import on_alconna, Alconna, AlconnaQuery, Query, Image
 
-from adapters import unified
-from essentials.libraries import user, economy
+from essentials.libraries import user, economy, util
 
 __plugin_meta__ = PluginMetadata(
     name='waifu',
@@ -34,33 +32,38 @@ async def get_waifu_url(image_type: str, category: str) -> str | None:
     return None
 
 
-waifu = on_command('waifu', aliases={'老婆', '纸片人'}, block=True)
+_command = on_alconna(Alconna(
+    'waifu',
+    Option(
+        'list_category',
+        alias=['分类', '分类列表', '查看分类', 'list'],
+    ),
+    Args['category', str, 'random'],
+), aliases={'老婆', '纸片人'}, block=True)
 
 
-@waifu.handle()
-async def _(bot: Bot, event: Event, msg: Message = CommandArg()):
-    category = 'waifu'
-    if args := msg.extract_plain_text():
-        args = args.lower()
-        if args == 'help' or args == '帮助':
-            await waifu.finish(f'直接 /waifu\n类型默认waifu，选择random就是随机一个分类\n可选类型：\n{", ".join(categories)}')
-        elif args == 'random':
-            category = random.choice(categories)
-        elif args in categories:
-            category = args
-        else:
-            await waifu.finish('没有这个类型哦')
+@_command.assign('list_category')
+async def _():
+    await _command.finish(f'可选类型：\n{", ".join(categories)}')
 
-    if not unified.Detector.can_send_image(bot):
-        await waifu.finish('这里不能发送图片喵~')
 
-    if not economy.pay(user.get_uid(user.get_puid(bot, event)), 2, "随机 waifu"):
-        await waifu.finish('你的余额不足哦')
+@_command.handle()
+async def _(category: Query[str] = AlconnaQuery('category', 'random')):
+    if await util.can_send_segment(Image):
+        await _command.finish('这里不能发送图片喵~')
 
-    await waifu.send('谢谢你的两个胡萝卜片喵~\n正在找图哦~')
+    category = category.result.strip().lower()
+    if category == 'random':
+        category = random.choice(categories)
+    if category not in categories:
+        await _command.finish('没有这个类型哦')
+
+    if not economy.pay(user.get_uid(), 2, "随机 waifu"):
+        await _command.finish('你的余额不足哦')
+
+    await _command.send('谢谢你的两个胡萝卜片喵~\n正在找图哦~')
     img_url = await get_waifu_url('sfw', category)
     if img_url:
-        await unified.MessageSegment.image(img_url).send()
-        await waifu.finish()
+        await _command.finish(Image(url=img_url))
     else:
-        await waifu.finish('获取图片失败')
+        await _command.finish('获取图片失败')
