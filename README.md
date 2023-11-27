@@ -19,6 +19,12 @@ pip install -r requirements.txt
 python bot.py
 ```
 
+## 配置数据库
+
+如果不做更改，默认使用SQLite
+
+需要使用其他数据库，可以修改`canrot_database`配置，具体内容请参考[SQLAlchemy文档](canrot_database)
+
 # 功能列表
 
 对机器人发送`/help`查看

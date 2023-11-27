@@ -11,3 +11,4 @@ tencentcloud-sdk-python
 sqlalchemy
 nonebot_plugin_alconna
 pymysql
+cryptography
