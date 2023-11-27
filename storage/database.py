@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from . import config
 
-# TODO: 可配置的数据库
 _engine = create_engine(config.canrot_config.canrot_database)
 _session = sessionmaker(bind=_engine)
 
