@@ -55,7 +55,7 @@ async def _(event: Event, bot: Bot):
     user_name = await essentials.libraries.user.get_user_name(event, bot, reply.SENDER_NAME)
     if msg := event.get_plaintext():
         resp = reply.generate_response(msg, False).format(me=my_name, name=user_name)
-        if resp != reply.UNKNOWN_RESPONSE:
+        if resp:
             for i in resp.split('\n'):
                 await _reply_handler.send(i)
     await _reply_handler.finish()

@@ -81,7 +81,7 @@ def generate_response(msg: str, fallback_keyword: bool = True) -> str:
         return random.choice(responses)
 
     if not fallback_keyword:
-        return UNKNOWN_RESPONSE
+        return ''
 
     # 关键词回复
     for reply_item in _reply_data:
