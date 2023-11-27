@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from . import util
 
-_song_path = util.cache_path / 'song'
+_song_path = util.cache_path / "song"
 
 
 async def get_song_list() -> dict[str]:
@@ -11,7 +11,7 @@ async def get_song_list() -> dict[str]:
 
     :return: 漫画列表
     """
-    return await util.bestdori_api_with_cache('songs/all.5.json', timedelta(days=7))
+    return await util.bestdori_api_with_cache("songs/all.5.json", timedelta(days=7))
 
 
 async def get_song_info(song_id: str) -> dict[str]:
@@ -22,7 +22,7 @@ async def get_song_info(song_id: str) -> dict[str]:
 
     :return: 歌曲信息
     """
-    return await util.bestdori_api_with_cache(f'songs/{song_id}.json')
+    return await util.bestdori_api_with_cache(f"songs/{song_id}.json")
 
 
 async def get_song_url(song_id: str) -> str | None:
@@ -37,4 +37,4 @@ async def get_song_url(song_id: str) -> str | None:
     if song_id not in songs:
         return None
     song_id = song_id.zfill(3)
-    return f'https://bestdori.com/assets/jp/sound/bgm{song_id}_rip/bgm{song_id}.mp3'
+    return f"https://bestdori.com/assets/jp/sound/bgm{song_id}_rip/bgm{song_id}.mp3"

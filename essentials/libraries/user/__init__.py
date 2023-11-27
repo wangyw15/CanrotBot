@@ -91,7 +91,7 @@ def register(puid: str) -> str:
     :return: uid
     """
     if puid_user_exists(puid):
-        return ''
+        return ""
     uid = str(uuid.uuid4())
     with database.get_session().begin() as session:
         session.execute(insert(data.User).values(user_id=uid))
@@ -115,17 +115,17 @@ async def get_puid(bot: Bot | None = None, event: Event | None = None) -> str:
         event = current_event.get()
     puid = event.get_user_id()
     if await util.is_qq(bot):
-        puid = 'qq_' + puid
+        puid = "qq_" + puid
     elif isinstance(bot, kook.Bot):
-        puid = 'kook_' + puid
+        puid = "kook_" + puid
     elif isinstance(bot, console.Bot):
-        puid = 'console_0'
+        puid = "console_0"
     elif isinstance(bot, qqguild.Bot):
-        puid = 'qqguild_' + puid
+        puid = "qqguild_" + puid
     return puid
 
 
-async def get_uid(puid: str = '') -> str:
+async def get_uid(puid: str = "") -> str:
     """
     查询puid对应的uid
 
@@ -136,7 +136,7 @@ async def get_uid(puid: str = '') -> str:
     if not puid:
         puid = await get_puid()
     elif not puid_user_exists(puid):
-        return ''
+        return ""
     with database.get_session().begin() as session:
         query = select(data.Bind).where(data.Bind.platform_user_id == puid)
         result = session.execute(query).scalar_one()
@@ -145,7 +145,7 @@ async def get_uid(puid: str = '') -> str:
 
 def check_puid_validation(puid: str) -> bool:
     """检查puid是否有效"""
-    return re.match('^[a-z]+_[0-9]+$', puid) is not None
+    return re.match("^[a-z]+_[0-9]+$", puid) is not None
 
 
 def get_bind_by_uid(uid: str) -> list[str]:
@@ -173,7 +173,9 @@ async def get_bind_by_puid(puid: str) -> list[str]:
     return get_bind_by_uid(await get_uid(puid))
 
 
-async def get_user_name(event: Event | None = None, bot: Bot | None = None, default: str = None) -> str | None:
+async def get_user_name(
+    event: Event | None = None, bot: Bot | None = None, default: str = None
+) -> str | None:
     """
     从不同的事件中获取用户昵称
 
@@ -190,35 +192,39 @@ async def get_user_name(event: Event | None = None, bot: Bot | None = None, defa
         event = current_event.get()
     if isinstance(bot, ob11.Bot):
         if isinstance(event, ob11.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
+            user_info = await bot.get_group_member_info(
+                group_id=event.group_id, user_id=event.user_id
+            )
+            if user_info["card"]:
+                return user_info["card"]
+            return user_info["nickname"]
         elif isinstance(event, ob11.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.user_id)
-            return user_info['nickname']
+            return user_info["nickname"]
     # onebot v12
     elif isinstance(bot, ob12.Bot):
         if isinstance(event, ob12.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
+            user_info = await bot.get_group_member_info(
+                group_id=event.group_id, user_id=event.user_id
+            )
+            if user_info["card"]:
+                return user_info["card"]
+            return user_info["nickname"]
         elif isinstance(event, ob12.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.user_id)
-            return user_info['nickname']
+            return user_info["nickname"]
     # mirai2
     elif isinstance(bot, mirai2.Bot):
         if isinstance(event, mirai2.GroupMessage):
             resp = await bot.member_list(target=event.sender.group.id)
-            if resp['code'] == 0 and 'data' in resp:
-                for member in resp['data']:
-                    if member['id'] == event.sender.id:
-                        return member['memberName']
+            if resp["code"] == 0 and "data" in resp:
+                for member in resp["data"]:
+                    if member["id"] == event.sender.id:
+                        return member["memberName"]
         elif isinstance(event, mirai2.FriendMessage):
             return event.sender.nickname
     # kook
     elif isinstance(bot, kook.Bot):
-        if isinstance(event, kook.Event) and hasattr(event, 'extra'):
+        if isinstance(event, kook.Event) and hasattr(event, "extra"):
             return event.extra.author.nickname
     return default

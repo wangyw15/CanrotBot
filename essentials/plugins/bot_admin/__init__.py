@@ -13,23 +13,22 @@ from storage import database
 from . import data
 
 __plugin_meta__ = PluginMetadata(
-    name='机器人管理工具',
-    description='可以在群内禁用机器人',
-    usage='待定',
-    config=None
+    name="机器人管理工具", description="可以在群内禁用机器人", usage="待定", config=None
 )
 
 
-_bot_admin_handler = on_shell_command('admin', aliases={'管理'}, block=True)
+_bot_admin_handler = on_shell_command("admin", aliases={"管理"}, block=True)
 
 
 @_bot_admin_handler.handle()
-async def _(event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]):
+async def _(
+    event: Event, args: Annotated[list[str | MessageSegment], ShellCommandArgv()]
+):
     if gid := util.get_group_id(event):
         enable = True
-        if len(args) == 1 and args[0].lower() in ['enable', '启用']:
+        if len(args) == 1 and args[0].lower() in ["enable", "启用"]:
             enable = True
-        elif len(args) == 1 and args[0].lower() in ['disable', '禁用']:
+        elif len(args) == 1 and args[0].lower() in ["disable", "禁用"]:
             enable = False
 
         query = select(data.GroupConfig).where(data.GroupConfig.group_id == gid)
@@ -39,17 +38,21 @@ async def _(event: Event, args: Annotated[list[str | MessageSegment], ShellComma
                 session.execute(insert(data.GroupConfig).values(group_id=gid))
             # 设置启用状态
             if enable:
-                session.execute(update(data.GroupConfig).
-                                where(data.GroupConfig.group_id == gid).
-                                values(enable_bot=True))
+                session.execute(
+                    update(data.GroupConfig)
+                    .where(data.GroupConfig.group_id == gid)
+                    .values(enable_bot=True)
+                )
             else:
-                session.execute(update(data.GroupConfig).
-                                where(data.GroupConfig.group_id == gid).
-                                values(enable_bot=False))
+                session.execute(
+                    update(data.GroupConfig)
+                    .where(data.GroupConfig.group_id == gid)
+                    .values(enable_bot=False)
+                )
             session.commit()
         await _bot_admin_handler.finish(f'已{"启" if enable else "禁"}用')
     else:
-        await _bot_admin_handler.finish('仅限在群聊使用')
+        await _bot_admin_handler.finish("仅限在群聊使用")
 
 
 @run_preprocessor

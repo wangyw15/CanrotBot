@@ -10,7 +10,7 @@ from nonebot import logger
 from essentials.libraries import util
 from storage import asset
 
-_anime_offline_database_path = asset.get_assets_path('anime-offline-database')
+_anime_offline_database_path = asset.get_assets_path("anime-offline-database")
 _animes: list[dict] = []
 # _anilist_id_name: dict[int, str] = {}
 _name_anilist_id: dict[str, int] = {}
@@ -19,23 +19,27 @@ _name_anilist_id: dict[str, int] = {}
 def _load_animes() -> None:
     global _animes, _name_anilist_id
     if not _animes:
-        with open(_anime_offline_database_path / 'anime-offline-database.json', 'r', encoding='utf-8') as f:
+        with open(
+            _anime_offline_database_path / "anime-offline-database.json",
+            "r",
+            encoding="utf-8",
+        ) as f:
             data = json.load(f)
-            _animes = data['data']
+            _animes = data["data"]
             logger.info(f'Anime databasee last update time: {data["lastUpdate"]}')
-            logger.info(f'Loaded animes: {len(_animes)}')
+            logger.info(f"Loaded animes: {len(_animes)}")
     # 提升搜索速度
-    logger.info('预加载搜索数据')
+    logger.info("预加载搜索数据")
     for i in _animes:
-        anilist_id = ''
-        for url in i['sources']:
-            if result := re.search(r'anilist\.co/anime/(\d+)', url):
+        anilist_id = ""
+        for url in i["sources"]:
+            if result := re.search(r"anilist\.co/anime/(\d+)", url):
                 anilist_id = result.groups()[0]
                 break
         if not anilist_id:
             continue
-        _name_anilist_id[i['title']] = int(anilist_id)
-        for synonym in i['synonyms']:
+        _name_anilist_id[i["title"]] = int(anilist_id)
+        for synonym in i["synonyms"]:
             _name_anilist_id[synonym] = int(anilist_id)
 
 
@@ -50,15 +54,15 @@ def search_anime_by_name(name: str) -> Tuple[str, dict, float]:
     """
     best: float = 0.0
     result = {}
-    result_name = ''
+    result_name = ""
     for anime in _animes:
-        ratio = difflib.SequenceMatcher(None, name, anime['title']).quick_ratio()
+        ratio = difflib.SequenceMatcher(None, name, anime["title"]).quick_ratio()
         if ratio > best:
             best = ratio
             result = anime
-            result_name = anime['title']
+            result_name = anime["title"]
         else:
-            for synonym in anime['synonyms']:
+            for synonym in anime["synonyms"]:
                 ratio = difflib.SequenceMatcher(None, name, synonym).quick_ratio()
                 if ratio > best:
                     best = ratio
@@ -68,9 +72,9 @@ def search_anime_by_name(name: str) -> Tuple[str, dict, float]:
 
 
 def search_anime_by_anilist_id(anilist_id: str | int) -> dict | None:
-    url = f'https://anilist.co/anime/{anilist_id}'
+    url = f"https://anilist.co/anime/{anilist_id}"
     for anime in _animes:
-        if url in anime['sources']:
+        if url in anime["sources"]:
             return anime
     return None
 
@@ -82,7 +86,9 @@ async def search_anime_by_image(img_url: str) -> dict | None:
     :return: 番剧信息
     """
     api_url = "https://api.trace.moe/search?url={url}"
-    if data := await util.fetch_json_data(api_url.format(url=urllib.parse.quote_plus(img_url))):
+    if data := await util.fetch_json_data(
+        api_url.format(url=urllib.parse.quote_plus(img_url))
+    ):
         return data
     return None
 
@@ -97,7 +103,7 @@ def search_anilist_id_by_name(name: str) -> Tuple[str, int, float]:
     """
     best: float = 0.0
     result = 0
-    result_name = ''
+    result_name = ""
     for k, v in _name_anilist_id.items():
         ratio = difflib.SequenceMatcher(None, name, k).quick_ratio()
         if ratio > best:
@@ -110,11 +116,12 @@ def search_anilist_id_by_name(name: str) -> Tuple[str, int, float]:
 async def _test() -> None:
     print(search_anime_by_anilist_id(101905))
     while True:
-        name = input('Name: ')
+        name = input("Name: ")
         result_name, anime, possibility = search_anime_by_name(name)
         print(result_name)
-        print(anime['title'])
+        print(anime["title"])
         print(possibility)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(_test())

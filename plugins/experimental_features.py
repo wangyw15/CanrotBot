@@ -11,15 +11,14 @@ from essentials.libraries import util
 from storage import asset
 
 __plugin_meta__ = PluginMetadata(
-    name='实验性功能',
-    description='还在测试中的奇妙功能',
-    usage='快速开发懒得写',
-    config=None
+    name="实验性功能", description="还在测试中的奇妙功能", usage="快速开发懒得写", config=None
 )
 
-jieba.add_word('{name}')
-jieba.add_word('{me}')
-_reply_data: list[list[str]] = [list(jieba.lcut(x['response'])) for x in asset.load_json('reply.json')]
+jieba.add_word("{name}")
+jieba.add_word("{me}")
+_reply_data: list[list[str]] = [
+    list(jieba.lcut(x["response"])) for x in asset.load_json("reply.json")
+]
 
 
 # generate markov chain
@@ -28,7 +27,7 @@ def markov_chain(data: list[list[str]], n=1) -> dict[str, dict[str, float]]:
     for words in data:
         combined = []
         for i in range(0, len(words), n):
-            combined.append(''.join(words[i:i+n]))
+            combined.append("".join(words[i : i + n]))
         for i in range(len(words) - 1):
             current = words[i]
             if current not in transitions:
@@ -46,24 +45,29 @@ def generate_response(transitions: dict[str, dict[str, float]], max_len=50) -> s
     for i in range(max_len):
         if current not in transitions:
             break
-        next = random.choices(list(transitions[current].keys()), list(transitions[current].values()))[0]
+        next = random.choices(
+            list(transitions[current].keys()), list(transitions[current].values())
+        )[0]
         response.append(next)
         current = next
-    return ''.join(response)
+    return "".join(response)
 
 
 transitions = markov_chain(_reply_data, 3)
 
-_generative_response_handler = on_command('generative_reponse', aliases={'gr', '生成回复'}, block=True)
+_generative_response_handler = on_command(
+    "generative_reponse", aliases={"gr", "生成回复"}, block=True
+)
 
 
 @_generative_response_handler.handle()
 async def _(bot, event, msg: Message = CommandArg()):
-    my_name = await util.get_bot_name(event, bot, '我')
-    user_name = await essentials.libraries.user.get_user_name(event, bot, '主人')
+    my_name = await util.get_bot_name(event, bot, "我")
+    user_name = await essentials.libraries.user.get_user_name(event, bot, "主人")
     length = 50
     if msg := msg.extract_plain_text().strip():
         length = int(msg)
-    await _generative_response_handler.finish(generate_response(transitions, length).format(
-        name=user_name, me=my_name) + '\n--------------------\n实验性功能，不保证语句合理性')
-    
+    await _generative_response_handler.finish(
+        generate_response(transitions, length).format(name=user_name, me=my_name)
+        + "\n--------------------\n实验性功能，不保证语句合理性"
+    )

@@ -9,7 +9,7 @@ class Base(DeclarativeBase):
 
 
 class MuseDashAccount(Base):
-    __tablename__ = 'muse_dash_accounts'
+    __tablename__ = "muse_dash_accounts"
 
     user_id: Mapped[str] = Column(Text, nullable=False, primary_key=True, unique=True)
     player_name: Mapped[str] = Column(Text, nullable=False)

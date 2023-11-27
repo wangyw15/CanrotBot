@@ -23,7 +23,7 @@ def _get_config(name: str) -> Any:
     return _global_config.dict()[name]
 
 
-if proxy := _get_config('canrot_proxy'):
+if proxy := _get_config("canrot_proxy"):
     _client = httpx.AsyncClient(proxies=proxy)
 else:
     _client = httpx.AsyncClient()
@@ -92,17 +92,19 @@ def get_group_id(event: Event) -> str:
 
     :return: 群 ID (platform_id)
     """
-    if isinstance(event, ob11.GroupMessageEvent) or isinstance(event, ob12.GroupMessageEvent):
-        return 'qq_' + str(event.group_id)
+    if isinstance(event, ob11.GroupMessageEvent) or isinstance(
+        event, ob12.GroupMessageEvent
+    ):
+        return "qq_" + str(event.group_id)
     elif isinstance(event, mirai2.GroupMessage):
-        return 'qq_' + str(event.sender.group.id)
+        return "qq_" + str(event.sender.group.id)
     elif isinstance(event, qqguild.MessageEvent):
-        return 'qqguild_' + str(event.channel_id)
+        return "qqguild_" + str(event.channel_id)
     elif isinstance(event, kook.event.ChannelMessageEvent):
-        return 'kook_' + str(event.group_id)
+        return "kook_" + str(event.group_id)
     elif isinstance(event, console.MessageEvent):
-        return 'console_0'
-    return ''
+        return "console_0"
+    return ""
 
 
 async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | None:
@@ -118,35 +120,43 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
     # onebot v11
     if isinstance(bot, ob11.Bot):
         if isinstance(event, ob11.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
+            user_info = await bot.get_group_member_info(
+                group_id=event.group_id, user_id=event.self_id
+            )
+            if user_info["card"]:
+                return user_info["card"]
+            return user_info["nickname"]
         elif isinstance(event, ob11.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.self_id)
-            return user_info['nickname']
+            return user_info["nickname"]
     # onebot v12
     elif isinstance(bot, ob12.Bot):
         if isinstance(event, ob12.GroupMessageEvent):
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=event.self.user_id)
-            if user_info['card']:
-                return user_info['card']
-            return user_info['nickname']
+            user_info = await bot.get_group_member_info(
+                group_id=event.group_id, user_id=event.self.user_id
+            )
+            if user_info["card"]:
+                return user_info["card"]
+            return user_info["nickname"]
         elif isinstance(event, ob12.PrivateMessageEvent):
             user_info = await bot.get_stranger_info(user_id=event.self.user_id)
-            return user_info['nickname']
+            return user_info["nickname"]
     # mirai2
     elif isinstance(bot, mirai2.Bot):
         if isinstance(event, mirai2.GroupMessage):
-            user_info = await bot.member_profile(target=event.sender.group.id, member_id=bot.self_id)
-            return user_info['nickname']
+            user_info = await bot.member_profile(
+                target=event.sender.group.id, member_id=bot.self_id
+            )
+            return user_info["nickname"]
         elif isinstance(event, mirai2.FriendMessage):
             user_info = bot.bot_pro_file()
-            return user_info['nickname']
+            return user_info["nickname"]
     # kook
     elif isinstance(bot, kook.Bot):
-        if isinstance(event, kook.Event) and hasattr(event, 'group_id'):
-            user_info = await bot.user_view(user_id=bot.self_id, group_id=event.group_id)
+        if isinstance(event, kook.Event) and hasattr(event, "group_id"):
+            user_info = await bot.user_view(
+                user_id=bot.self_id, group_id=event.group_id
+            )
             return user_info.nickname
     return default
 
@@ -160,16 +170,16 @@ def is_url(msg: MessageSegment | str) -> bool:
     :return: 是否为 URL
     """
     if isinstance(msg, str):
-        return re.match(r'^https?://', msg) is not None
+        return re.match(r"^https?://", msg) is not None
     elif msg.is_text():
         msg = str(msg)
-        return re.match(r'^https?://', msg) is not None
+        return re.match(r"^https?://", msg) is not None
     elif isinstance(msg, kook.MessageSegment):
-        if msg.type == 'kmarkdown':
-            msg = re.search(r'\[.*]\((\S+)\)', msg.plain_text()).groups()[0]
-            return re.match(r'^https?://', msg) is not None
-        elif msg.type == 'text':
-            return re.match(r'^https?://', msg.plain_text()) is not None
+        if msg.type == "kmarkdown":
+            msg = re.search(r"\[.*]\((\S+)\)", msg.plain_text()).groups()[0]
+            return re.match(r"^https?://", msg) is not None
+        elif msg.type == "text":
+            return re.match(r"^https?://", msg.plain_text()) is not None
     return False
 
 
@@ -198,9 +208,13 @@ def random_str(length: int) -> str:
     """
     ret: list[str] = []
     while len(ret) < length:
-        ret.extend(hashlib.md5(str(datetime.now().timestamp()).encode(), usedforsecurity=True).hexdigest())
+        ret.extend(
+            hashlib.md5(
+                str(datetime.now().timestamp()).encode(), usedforsecurity=True
+            ).hexdigest()
+        )
     random.shuffle(ret)
-    return ''.join(ret[:length])
+    return "".join(ret[:length])
 
 
 def get_iso_time_str(t: datetime | None = None) -> str:
@@ -218,7 +232,7 @@ async def can_send_segment(segment_type: type) -> bool:
     :return: 是否可以发送
     """
     try:
-        await UniMsg(segment_type(raw=b'placeholder')).export(fallback=False)
+        await UniMsg(segment_type(raw=b"placeholder")).export(fallback=False)
         return True
     except SerializeFailed:
         return False
@@ -227,13 +241,19 @@ async def can_send_segment(segment_type: type) -> bool:
 
 
 async def is_qq(bot: Bot) -> bool:
-    return isinstance(bot, ob11.Bot) or isinstance(bot, ob12.Bot) or isinstance(bot, mirai2.Bot)
+    return (
+        isinstance(bot, ob11.Bot)
+        or isinstance(bot, ob12.Bot)
+        or isinstance(bot, mirai2.Bot)
+    )
 
 
-__all__ = ['fetch_bytes_data',
-           'fetch_json_data',
-           'fetch_text_data',
-           'get_group_id',
-           'get_bot_name',
-           'random_str',
-           'MESSAGE_SPLIT_LINE']
+__all__ = [
+    "fetch_bytes_data",
+    "fetch_json_data",
+    "fetch_text_data",
+    "get_group_id",
+    "get_bot_name",
+    "random_str",
+    "MESSAGE_SPLIT_LINE",
+]

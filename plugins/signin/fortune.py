@@ -8,8 +8,8 @@ from essentials.libraries import render_by_browser
 from storage import asset
 from . import themes
 
-fortune_assets_path = asset.get_assets_path('fortune')
-_fortune_assets_version: str = ''
+fortune_assets_path = asset.get_assets_path("fortune")
+_fortune_assets_version: str = ""
 _copywriting: list[dict] = []
 _themes: dict[str, dict] = {}
 
@@ -19,17 +19,21 @@ def _load_fortune_assets() -> None:
     global _copywriting
 
     if not _fortune_assets_version or not _copywriting:
-        with open(fortune_assets_path / "fortune_data.json", "r", encoding="utf-8") as f:
+        with open(
+            fortune_assets_path / "fortune_data.json", "r", encoding="utf-8"
+        ) as f:
             data = json.load(f)
-            _fortune_assets_version = str(data['version'])
+            _fortune_assets_version = str(data["version"])
             logger.info(f"Fortune version: {_fortune_assets_version}")
-            _copywriting = data['copywriting']
+            _copywriting = data["copywriting"]
             logger.info(f"Fortune copywriting: {len(_copywriting)}")
 
     themes.load_themes()
 
 
-def register_theme(name: str, html_generator: Callable, aliases: list[str] | None = None) -> None:
+def register_theme(
+    name: str, html_generator: Callable, aliases: list[str] | None = None
+) -> None:
     """
     注册主题
 
@@ -38,10 +42,7 @@ def register_theme(name: str, html_generator: Callable, aliases: list[str] | Non
     :param aliases: 主题别名
     """
     global _themes
-    _themes[name] = {
-        'generator': html_generator,
-        'aliases': aliases or []
-    }
+    _themes[name] = {"generator": html_generator, "aliases": aliases or []}
 
 
 def get_theme_by_name(name: str) -> str:
@@ -53,13 +54,18 @@ def get_theme_by_name(name: str) -> str:
     """
     name = name.lower()
     for k, v in _themes.items():
-        if name == k or name in v['aliases']:
+        if name == k or name in v["aliases"]:
             return k
-    return ''
+    return ""
 
 
-async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jpeg'] = 'png',
-                           title: str = '', content: str = '', rank: int = 0) -> Tuple[bytes, str, str, int]:
+async def generate_fortune(
+    theme: str = "random",
+    image_type: Literal["png", "jpeg"] = "png",
+    title: str = "",
+    content: str = "",
+    rank: int = 0,
+) -> Tuple[bytes, str, str, int]:
     """
     生成给定主题的运势图片，如果不给定运势内容则随机选择
 
@@ -74,20 +80,24 @@ async def generate_fortune(theme: str = 'random', image_type: Literal['png', 'jp
 
     # 选择运势内容
     copywriting = random.choice(_copywriting)
-    title = title if title else copywriting['good-luck']
-    rank = rank if rank else copywriting['rank']
-    text = content if content else random.choice(copywriting['content'])
+    title = title if title else copywriting["good-luck"]
+    rank = rank if rank else copywriting["rank"]
+    text = content if content else random.choice(copywriting["content"])
 
     # 新版主题
     if t := get_theme_by_name(theme):
-        raw_content: str = await _themes[t]['generator']()
+        raw_content: str = await _themes[t]["generator"]()
     else:
-        raw_content: str = await random.choice(list(_themes.values()))['generator']()
+        raw_content: str = await random.choice(list(_themes.values()))["generator"]()
 
     # 生成图片
-    raw_content = raw_content.replace('{{title}}', title).replace('{{content}}', text)
-    bytes_data = await render_by_browser.render_html(raw_content, str(fortune_assets_path / 'template'), image_type,
-                                                     viewport={'width': 480, 'height': 480})
+    raw_content = raw_content.replace("{{title}}", title).replace("{{content}}", text)
+    bytes_data = await render_by_browser.render_html(
+        raw_content,
+        str(fortune_assets_path / "template"),
+        image_type,
+        viewport={"width": 480, "height": 480},
+    )
     return bytes_data, title, text, rank
 
 
@@ -99,10 +109,11 @@ _load_fortune_assets()
 
 
 async def main():
-    with open('test.png', 'wb') as f:
+    with open("test.png", "wb") as f:
         f.write((await generate_fortune())[0])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import asyncio
+
     asyncio.run(main())

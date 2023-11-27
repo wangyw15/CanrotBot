@@ -9,25 +9,27 @@ class Base(DeclarativeBase):
 
 
 class PlayerData(Base):
-    __tablename__ = 'trpg_player_data'
+    __tablename__ = "trpg_player_data"
 
     user_id: Mapped[str] = Column(Text, primary_key=True, nullable=False)
     group_id: Mapped[str] = Column(Text, primary_key=True, nullable=False)
     selected_investigator_id: Mapped[int] = Column(Integer, nullable=True)
-    extra: Mapped[str] = Column(Text, nullable=True, default='')
+    extra: Mapped[str] = Column(Text, nullable=True, default="")
 
 
 class Investigator(Base):
-    __tablename__ = 'trpg_investigators'
+    __tablename__ = "trpg_investigators"
 
-    investigator_id: Mapped[int] = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    investigator_id: Mapped[int] = Column(
+        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    )
     owner_user_id: Mapped[str] = Column(Text, nullable=False)
 
-    name: Mapped[str] = Column(Text, nullable=False, default='')
-    age: Mapped[int] = Column(Integer, nullable=False, default='')
-    gender: Mapped[str] = Column(Text, nullable=False, default='')
-    birthplace: Mapped[str] = Column(Text, nullable=False, default='')
-    profession: Mapped[str] = Column(Text, nullable=False, default='')
+    name: Mapped[str] = Column(Text, nullable=False, default="")
+    age: Mapped[int] = Column(Integer, nullable=False, default="")
+    gender: Mapped[str] = Column(Text, nullable=False, default="")
+    birthplace: Mapped[str] = Column(Text, nullable=False, default="")
+    profession: Mapped[str] = Column(Text, nullable=False, default="")
 
     strength: Mapped[int] = Column(Integer, nullable=False, default=0)
     constitution: Mapped[int] = Column(Integer, nullable=False, default=0)
@@ -39,49 +41,57 @@ class Investigator(Base):
     education: Mapped[int] = Column(Integer, nullable=False, default=0)
     luck: Mapped[int] = Column(Integer, nullable=False, default=0)
 
-    extra: Mapped[str] = Column(Text, nullable=True, default='')
+    extra: Mapped[str] = Column(Text, nullable=True, default="")
 
 
 class AdditionalProperty(Base):
-    __tablename__ = 'trpg_additional_properties'
+    __tablename__ = "trpg_additional_properties"
 
-    investigator_id: Mapped[int] = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    investigator_id: Mapped[int] = Column(
+        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    )
 
-    name: Mapped[str] = Column(Text, nullable=False, default='')
+    name: Mapped[str] = Column(Text, nullable=False, default="")
     value: Mapped[int] = Column(Integer, nullable=False, default=0)
-    description: Mapped[str] = Column(Text, nullable=True, default='')
+    description: Mapped[str] = Column(Text, nullable=True, default="")
 
 
 class Skill(Base):
-    __tablename__ = 'trpg_skills'
+    __tablename__ = "trpg_skills"
 
-    investigator_id: Mapped[int] = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    investigator_id: Mapped[int] = Column(
+        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    )
 
-    name: Mapped[str] = Column(Text, nullable=False, default='')
+    name: Mapped[str] = Column(Text, nullable=False, default="")
     value: Mapped[int] = Column(Integer, nullable=False, default=0)
-    description: Mapped[str] = Column(Text, nullable=True, default='')
+    description: Mapped[str] = Column(Text, nullable=True, default="")
 
 
 class Status(Base):
-    __tablename__ = 'trpg_status'
+    __tablename__ = "trpg_status"
 
-    investigator_id: Mapped[int] = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    investigator_id: Mapped[int] = Column(
+        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    )
 
-    name: Mapped[str] = Column(Text, nullable=False, default='')
+    name: Mapped[str] = Column(Text, nullable=False, default="")
     value: Mapped[int] = Column(Integer, nullable=False, default=0)
-    description: Mapped[str] = Column(Text, nullable=True, default='')
+    description: Mapped[str] = Column(Text, nullable=True, default="")
 
 
 class Item(Base):
-    __tablename__ = 'trpg_items'
+    __tablename__ = "trpg_items"
 
-    investigator_id: Mapped[int] = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    investigator_id: Mapped[int] = Column(
+        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    )
 
-    name: Mapped[str] = Column(Text, nullable=False, default='')
-    description: Mapped[str] = Column(Text, nullable=True, default='')
-    effect: Mapped[str] = Column(Text, nullable=True, default='')
+    name: Mapped[str] = Column(Text, nullable=False, default="")
+    description: Mapped[str] = Column(Text, nullable=True, default="")
+    effect: Mapped[str] = Column(Text, nullable=True, default="")
 
 
 Base.metadata.create_all(database.get_engine())
 
-trpg_assets = asset.Asset('trpg')
+trpg_assets = asset.Asset("trpg")

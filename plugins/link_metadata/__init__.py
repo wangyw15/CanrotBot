@@ -10,30 +10,44 @@ from essentials.libraries import util
 from .youtube import youtube_id_pattern, fetch_youtube_data, fetch_youtube_thumbnail
 
 __plugin_meta__ = PluginMetadata(
-    name='链接元数据',
-    description='获取链接指向的内容',
-    usage='发送支持解析的链接会自动触发',
-    config=None
+    name="链接元数据", description="获取链接指向的内容", usage="发送支持解析的链接会自动触发", config=None
 )
 
 
 def _generate_youtube_message(data: dict) -> str:
     # 选择第一行或者前200个字符
-    desc = '\n'.join([x.strip() for x in data['snippet']['description'].split('\n') if x.strip() != ''])
+    desc = "\n".join(
+        [
+            x.strip()
+            for x in data["snippet"]["description"].split("\n")
+            if x.strip() != ""
+        ]
+    )
     if len(desc) > 200:
-        desc = desc[:200] + '...'
+        desc = desc[:200] + "..."
     # 发布时间
-    date = datetime.datetime.strptime(data['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ')+datetime.timedelta(hours=8)
+    date = datetime.datetime.strptime(
+        data["snippet"]["publishedAt"], "%Y-%m-%dT%H:%M:%SZ"
+    ) + datetime.timedelta(hours=8)
     # 生成信息
-    msg = ''
-    msg += f'标题: \n{data["snippet"]["title"]}\n' \
-           f'频道: \n{data["snippet"]["channelTitle"]}\n' \
-           f'发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%S")}\n' \
-           f'播放: {data["statistics"]["viewCount"]}\n'
-    msg += f'点赞: {data["statistics"]["likeCount"]}\n' if 'likeCount' in data['statistics'] else ''
-    msg += f'评论: {data["statistics"]["commentCount"]}\n' if 'commentCount' in data['statistics'] else ''
-    msg += f'简介:\n{desc}\n' \
-           f'视频链接: \nhttps://youtu.be/{data["id"]}'
+    msg = ""
+    msg += (
+        f'标题: \n{data["snippet"]["title"]}\n'
+        f'频道: \n{data["snippet"]["channelTitle"]}\n'
+        f'发布时间: {date.strftime("%Y年%m月%d日 %H:%M:%S")}\n'
+        f'播放: {data["statistics"]["viewCount"]}\n'
+    )
+    msg += (
+        f'点赞: {data["statistics"]["likeCount"]}\n'
+        if "likeCount" in data["statistics"]
+        else ""
+    )
+    msg += (
+        f'评论: {data["statistics"]["commentCount"]}\n'
+        if "commentCount" in data["statistics"]
+        else ""
+    )
+    msg += f"简介:\n{desc}\n" f'视频链接: \nhttps://youtu.be/{data["id"]}'
     return msg
 
 

@@ -2,6 +2,8 @@
 
 # CanrotBot
 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 </div>
 
 > 以方舟里面的神秘商人坎诺特Cannot和胡萝卜carrot命名

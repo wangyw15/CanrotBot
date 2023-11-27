@@ -103,10 +103,14 @@ async def generate_message_from_saucenao_result(api_result: dict) -> UniMsg:
                 msg += Text(f'作者: {data["member_name"]}\n')
             # artwork id
             if "pixiv_id" in data:
-                msg += Text(f'图片链接: \nhttps://www.pixiv.net/artworks/{data["pixiv_id"]}\n')
+                msg += Text(
+                    f'图片链接: \nhttps://www.pixiv.net/artworks/{data["pixiv_id"]}\n'
+                )
             # author id
             if "member_id" in data:
-                msg += Text(f'作者链接: \nhttps://www.pixiv.net/users/{data["member_id"]}\n')
+                msg += Text(
+                    f'作者链接: \nhttps://www.pixiv.net/users/{data["member_id"]}\n'
+                )
             continue
 
         # patreon
@@ -165,7 +169,9 @@ async def generate_message_from_saucenao_result(api_result: dict) -> UniMsg:
             if "author_name" in data:
                 msg += Text(f'作者: {data["author_name"]}\n')
             # artwork page
-            msg += Text(f'图片链接: https://www.artstation.com/artwork/{data["as_project"]}\n')
+            msg += Text(
+                f'图片链接: https://www.artstation.com/artwork/{data["as_project"]}\n'
+            )
             # author home page
             if "author_url" in data:
                 msg += Text(f'作者链接: {data["author_url"]}\n')
@@ -226,7 +232,7 @@ async def generate_message_from_tracemoe_result(api_result: dict) -> UniMsg:
     if api_result["error"]:
         return UniMsg(Text("搜索失败: " + api_result["error"]))
     msg += Text(f'已搜索 {api_result["frameCount"]} 帧\n')
-    for result in api_result["result"][0: _config.search_result_count]:
+    for result in api_result["result"][0 : _config.search_result_count]:
         msg += Text(util.MESSAGE_SPLIT_LINE + "\n")
         if await util.can_send_segment(Image):
             msg += Image(url=result["image"])
@@ -241,8 +247,10 @@ async def generate_message_from_tracemoe_result(api_result: dict) -> UniMsg:
 
 
 async def search_image_from_saucenao(img_url: str) -> dict | None:
-    api_url = "https://saucenao.com/search.php?" \
-              "db=999&output_type=2&testmode=1&numres={numres}&api_key={api_key}&url={url}"
+    api_url = (
+        "https://saucenao.com/search.php?"
+        "db=999&output_type=2&testmode=1&numres={numres}&api_key={api_key}&url={url}"
+    )
     resp = await _client.get(
         api_url.format(
             api_key=_config.saucenao_api_key,

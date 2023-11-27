@@ -9,7 +9,7 @@ class Base(DeclarativeBase):
 
 
 class Subscribers(Base):
-    __tablename__ = 'daily_news_subscribers'
+    __tablename__ = "daily_news_subscribers"
 
     group_id: Mapped[str] = Column(Text, primary_key=True, nullable=False)
     bot: Mapped[str] = Column(Text, nullable=False)

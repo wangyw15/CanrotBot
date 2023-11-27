@@ -8,8 +8,10 @@ from sqlalchemy import select, insert, delete, update
 from storage import database
 from . import dice, data
 
-basic_property_names = [x['name'] for x in data.trpg_assets['basic_properties'].values()]
-_investigators_key = 'investigators'
+basic_property_names = [
+    x["name"] for x in data.trpg_assets["basic_properties"].values()
+]
+_investigators_key = "investigators"
 
 
 def get_property_name(key: str) -> str:
@@ -20,9 +22,9 @@ def get_property_name(key: str) -> str:
 
     :return: 属性名
     """
-    if key in data.trpg_assets['basic_properties']:
-        return data.trpg_assets['basic_properties'][key]['name']
-    return ''
+    if key in data.trpg_assets["basic_properties"]:
+        return data.trpg_assets["basic_properties"][key]["name"]
+    return ""
 
 
 def get_property_fullname(key: str) -> str:
@@ -33,9 +35,9 @@ def get_property_fullname(key: str) -> str:
 
     :return: 属性全名
     """
-    if key in data.trpg_assets['basic_properties']:
-        return data.trpg_assets['basic_properties'][key]['fullname']
-    return ''
+    if key in data.trpg_assets["basic_properties"]:
+        return data.trpg_assets["basic_properties"][key]["fullname"]
+    return ""
 
 
 def get_property_key(name: str) -> str:
@@ -46,10 +48,10 @@ def get_property_key(name: str) -> str:
 
     :return: 属性 key
     """
-    for k, v in data.trpg_assets['basic_properties'].items():
-        if v['name'] == name:
+    for k, v in data.trpg_assets["basic_properties"].items():
+        if v["name"] == name:
             return k
-    return ''
+    return ""
 
 
 def random_basic_properties() -> dict[str, int]:
@@ -59,8 +61,8 @@ def random_basic_properties() -> dict[str, int]:
     :return: 基础属性
     """
     ret: dict[str, int] = {}
-    for _, v in data.trpg_assets['basic_properties'].items():
-        ret[v['name']] = dice.dice_expression(v['dice'])[0]
+    for _, v in data.trpg_assets["basic_properties"].items():
+        ret[v["name"]] = dice.dice_expression(v["dice"])[0]
     return ret
 
 
@@ -82,7 +84,9 @@ def add_investigator(uid: str, investigator: data.Investigator) -> int:
         return investigator.investigator_id
 
 
-def get_investigator(uid: str, investigator_id: str = '') -> Sequence[data.Investigator]:
+def get_investigator(
+    uid: str, investigator_id: str = ""
+) -> Sequence[data.Investigator]:
     """
     获取人物卡
 
@@ -98,7 +102,9 @@ def get_investigator(uid: str, investigator_id: str = '') -> Sequence[data.Inves
         return session.execute(query).scalars().all()
 
 
-def set_selected_investigator(user_id: str, group_id: str, investigator_id: str) -> bool:
+def set_selected_investigator(
+    user_id: str, group_id: str, investigator_id: str
+) -> bool:
     """
     设置当前人物卡
 
@@ -109,20 +115,37 @@ def set_selected_investigator(user_id: str, group_id: str, investigator_id: str)
     :return: 是否成功
     """
     with database.get_session().begin() as session:
-        if session.execute(select(data.Investigator).
-                           where(data.Investigator.owner_user_id == user_id).
-                           where(data.Investigator.investigator_id == investigator_id)).first() is None:
+        if (
+            session.execute(
+                select(data.Investigator)
+                .where(data.Investigator.owner_user_id == user_id)
+                .where(data.Investigator.investigator_id == investigator_id)
+            ).first()
+            is None
+        ):
             return False
-        if session.execute(select(data.PlayerData).
-                           where(data.PlayerData.user_id == user_id).
-                           where(data.PlayerData.group_id == group_id)).first() is None:
-            session.execute(insert(data.PlayerData).
-                            values(user_id=user_id, group_id=group_id, selected_investigator_id=investigator_id))
+        if (
+            session.execute(
+                select(data.PlayerData)
+                .where(data.PlayerData.user_id == user_id)
+                .where(data.PlayerData.group_id == group_id)
+            ).first()
+            is None
+        ):
+            session.execute(
+                insert(data.PlayerData).values(
+                    user_id=user_id,
+                    group_id=group_id,
+                    selected_investigator_id=investigator_id,
+                )
+            )
         else:
-            session.execute(update(data.PlayerData).
-                            where(data.PlayerData.user_id == user_id).
-                            where(data.PlayerData.group_id == group_id).
-                            values(selected_investigator_id=investigator_id))
+            session.execute(
+                update(data.PlayerData)
+                .where(data.PlayerData.user_id == user_id)
+                .where(data.PlayerData.group_id == group_id)
+                .values(selected_investigator_id=investigator_id)
+            )
         session.commit()
         return True
 
@@ -136,15 +159,21 @@ def get_selected_investigator(user_id: str, group_id: str) -> data.Investigator 
 
     :return: 当前人物卡，未设置则返回 None
     """
-    with (database.get_session().begin() as session):
-        selected = session.execute(select(data.PlayerData).
-                                   where(data.PlayerData.user_id == user_id).
-                                   where(data.PlayerData.group_id == group_id)).scalar_one_or_none()
+    with database.get_session().begin() as session:
+        selected = session.execute(
+            select(data.PlayerData)
+            .where(data.PlayerData.user_id == user_id)
+            .where(data.PlayerData.group_id == group_id)
+        ).scalar_one_or_none()
         if selected is not None:
-            return session.execute(select(data.Investigator).
-                                   where(data.Investigator.owner_user_id == user_id).
-                                   where(data.Investigator.investigator_id == selected.selected_investigator_id)
-                                   ).scalar_one_or_none()
+            return session.execute(
+                select(data.Investigator)
+                .where(data.Investigator.owner_user_id == user_id)
+                .where(
+                    data.Investigator.investigator_id
+                    == selected.selected_investigator_id
+                )
+            ).scalar_one_or_none()
 
 
 def delete_investigator(user_id: str, investigator_id: str) -> bool:
@@ -157,13 +186,20 @@ def delete_investigator(user_id: str, investigator_id: str) -> bool:
     :return: 是否成功
     """
     with database.get_session().begin() as session:
-        if session.execute(select(data.Investigator).
-                           where(data.Investigator.owner_user_id == user_id).
-                           where(data.Investigator.investigator_id == investigator_id)).first() is None:
+        if (
+            session.execute(
+                select(data.Investigator)
+                .where(data.Investigator.owner_user_id == user_id)
+                .where(data.Investigator.investigator_id == investigator_id)
+            ).first()
+            is None
+        ):
             return False
-        session.execute(delete(data.Investigator).
-                        where(data.Investigator.owner_user_id == user_id).
-                        where(data.Investigator.investigator_id == investigator_id))
+        session.execute(
+            delete(data.Investigator)
+            .where(data.Investigator.owner_user_id == user_id)
+            .where(data.Investigator.investigator_id == investigator_id)
+        )
         session.commit()
         return True
 
@@ -178,9 +214,14 @@ def check_investigator_id(user_id: str, investigator_id: str) -> bool:
     :return: 是否存在
     """
     with database.get_session().begin() as session:
-        return session.execute(select(data.Investigator).
-                               where(data.Investigator.owner_user_id == user_id).
-                               where(data.Investigator.investigator_id == investigator_id)).first() is not None
+        return (
+            session.execute(
+                select(data.Investigator)
+                .where(data.Investigator.owner_user_id == user_id)
+                .where(data.Investigator.investigator_id == investigator_id)
+            ).first()
+            is not None
+        )
 
 
 def generate_investigator(raw: str) -> data.Investigator:
@@ -194,19 +235,19 @@ def generate_investigator(raw: str) -> data.Investigator:
     # 初始化人物卡
     investigator = data.Investigator()
 
-    for i in re.split('[,，]', raw):
-        k, v = i.split('=')
+    for i in re.split("[,，]", raw):
+        k, v = i.split("=")
         k: str = k.strip()
         v: str = v.strip()
-        if k == '姓名':
+        if k == "姓名":
             investigator.name = v
-        elif k == '性别':
+        elif k == "性别":
             investigator.gender = v
-        elif k == '年龄':
+        elif k == "年龄":
             investigator.age = int(v)
-        elif k == '出生地':
+        elif k == "出生地":
             investigator.birthplace = v
-        elif k == '职业':
+        elif k == "职业":
             investigator.profession = v
         elif k in basic_property_names:
             setattr(investigator, get_property_fullname(k), int(v))
@@ -223,20 +264,21 @@ def get_success_rank(value: int, target: int) -> typing.Tuple[int, str]:
     :return: 成功等级，成功等级描述
     """
     if value == 1:
-        return 5, '大成功'
+        return 5, "大成功"
     elif value <= target / 5:
-        return 4, '极难成功'
+        return 4, "极难成功"
     elif value <= target / 2:
-        return 3, '困难成功'
+        return 3, "困难成功"
     elif value <= target:
-        return 2, '成功'
+        return 2, "成功"
     elif target >= 50 and value == 100 or target < 50 and value >= 96:
-        return 0, '大失败'
-    return 1, '失败'
+        return 0, "大失败"
+    return 1, "失败"
 
 
-def property_check(user_id: str, group_id: str, property_name: str, value: int | None = None) \
-        -> typing.Tuple[str, int, int] | None:
+def property_check(
+    user_id: str, group_id: str, property_name: str, value: int | None = None
+) -> typing.Tuple[str, int, int] | None:
     """
     属性检定
 
@@ -248,7 +290,7 @@ def property_check(user_id: str, group_id: str, property_name: str, value: int |
     :return: 检定结果，检定值，目标值，失败返回 None
     """
     if not value:
-        value = dice.simple_dice_expression('d100')
+        value = dice.simple_dice_expression("d100")
     investigator = get_selected_investigator(user_id, group_id)
     if investigator is not None:
         target: int = getattr(investigator, get_property_fullname(property_name))
@@ -260,10 +302,10 @@ def property_check(user_id: str, group_id: str, property_name: str, value: int |
 def calculate_db_physique(user_id: str, group_id: str) -> typing.Tuple[int, int] | None:
     """
     计算伤害加值和体格
-    
+
     :param user_id: 用户 id
     :param group_id: 群 id
-    
+
     :return: 伤害加值, 体格，失败返回 None
     """
     investigator = get_selected_investigator(user_id, group_id)
@@ -276,17 +318,17 @@ def calculate_db_physique(user_id: str, group_id: str) -> typing.Tuple[int, int]
         elif add <= 124:
             return 0, 0
         elif add <= 164:
-            return dice.simple_dice_expression('1d4'), 1
+            return dice.simple_dice_expression("1d4"), 1
         elif add <= 204:
-            return dice.simple_dice_expression('1d6'), 2
+            return dice.simple_dice_expression("1d6"), 2
         elif add <= 284:
-            return dice.simple_dice_expression('2d6'), 3
+            return dice.simple_dice_expression("2d6"), 3
         elif add <= 364:
-            return dice.simple_dice_expression('3d6'), 4
+            return dice.simple_dice_expression("3d6"), 4
         elif add <= 444:
-            return dice.simple_dice_expression('4d6'), 5
+            return dice.simple_dice_expression("4d6"), 5
         elif add <= 524:
-            return dice.simple_dice_expression('5d6'), 6
+            return dice.simple_dice_expression("5d6"), 6
     return None
 
 
@@ -318,9 +360,15 @@ def calculate_mov(user_id: str, group_id: str) -> int | None:
     if investigator is not None:
         # 计算移动速度
         mov = 8
-        if investigator.strength < investigator.size and investigator.dexterity < investigator.size:
+        if (
+            investigator.strength < investigator.size
+            and investigator.dexterity < investigator.size
+        ):
             mov = 7
-        elif investigator.strength > investigator.size and investigator.dexterity > investigator.size:
+        elif (
+            investigator.strength > investigator.size
+            and investigator.dexterity > investigator.size
+        ):
             mov = 9
         # 年龄
         if 40 <= investigator.age <= 49:
@@ -337,7 +385,7 @@ def calculate_mov(user_id: str, group_id: str) -> int | None:
     return None
 
 
-_ = ''' investigator example
+_ = """ investigator example
 {
     "name": "xxx",
     "gender": "xxx",
@@ -350,4 +398,4 @@ _ = ''' investigator example
     "items": {"aaa": ...},
     "extra": {"xxx": ...}
 }
-'''
+"""

@@ -12,33 +12,54 @@ from . import data
 
 _arknights_all_characters: dict[str, dict] = {}
 arknights_gacha_operators: dict[int, list[dict]] = {}
-_arknights_operator_professions = ['PIONEER', 'WARRIOR', 'SNIPER', 'CASTER', 'SUPPORT', 'MEDIC', 'SPECIAL', 'TANK']
-_arknights_assets = asset.Asset('arknights')
-_number_to_rarity = ['one_star', 'two_stars', 'three_stars', 'four_stars', 'five_stars', 'six_stars']
+_arknights_operator_professions = [
+    "PIONEER",
+    "WARRIOR",
+    "SNIPER",
+    "CASTER",
+    "SUPPORT",
+    "MEDIC",
+    "SPECIAL",
+    "TANK",
+]
+_arknights_assets = asset.Asset("arknights")
+_number_to_rarity = [
+    "one_star",
+    "two_stars",
+    "three_stars",
+    "four_stars",
+    "five_stars",
+    "six_stars",
+]
 
 
 def _init() -> None:
     global _arknights_all_characters
     # data version
-    with (_arknights_assets() / 'ArknightsGameResource' / 'version').open('r') as f:
-        logger.info(f'ArknightsGameResource version: {f.read()}')
+    with (_arknights_assets() / "ArknightsGameResource" / "version").open("r") as f:
+        logger.info(f"ArknightsGameResource version: {f.read()}")
 
     # load characters
-    with (_arknights_assets() / 'ArknightsGameResource' / 'gamedata' / 'excel' / 'character_table.json')\
-            .open('r', encoding='utf-8') as f:
+    with (
+        _arknights_assets()
+        / "ArknightsGameResource"
+        / "gamedata"
+        / "excel"
+        / "character_table.json"
+    ).open("r", encoding="utf-8") as f:
         _arknights_all_characters = json.load(f)
-        logger.info(f'arknights characters: {len(_arknights_all_characters)}')
+        logger.info(f"arknights characters: {len(_arknights_all_characters)}")
 
     # generate gacha operators
     for k, v in _arknights_all_characters.items():
-        if v['rarity'] not in arknights_gacha_operators:
-            arknights_gacha_operators[v['rarity']] = []
-        if v['profession'] not in _arknights_operator_professions:
+        if v["rarity"] not in arknights_gacha_operators:
+            arknights_gacha_operators[v["rarity"]] = []
+        if v["profession"] not in _arknights_operator_professions:
             continue
-        if not v['itemObtainApproach'] == '招募寻访':
+        if not v["itemObtainApproach"] == "招募寻访":
             continue
-        arknights_gacha_operators[v['rarity']].append(v)
-    logger.info(f'arknights gacha operators: {len(arknights_gacha_operators)}')
+        arknights_gacha_operators[v["rarity"]].append(v)
+    logger.info(f"arknights gacha operators: {len(arknights_gacha_operators)}")
 
 
 _init()
@@ -95,10 +116,13 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
 
     # 统计寻访结果
     for operator in operators:
-        if operator['rarity'] == 5:
+        if operator["rarity"] == 5:
             got_ssr = True
-        setattr(current_statistics, _number_to_rarity[operator['rarity']],
-                getattr(current_statistics, _number_to_rarity[operator['rarity']]) + 1)
+        setattr(
+            current_statistics,
+            _number_to_rarity[operator["rarity"]],
+            getattr(current_statistics, _number_to_rarity[operator["rarity"]]) + 1,
+        )
 
     # 上次抽到六星
     if got_ssr:
@@ -109,35 +133,37 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
     # 寻访历史
     simple_operators: list[dict[str]] = []
     for i in operators:
-        simple_operators.append({
-            'name': i['name'],
-            'rarity': i['rarity']
-        })
+        simple_operators.append({"name": i["name"], "rarity": i["rarity"]})
 
     # 保存数据
-    session.execute(insert(data.History).values(
-        user_id=uid,
-        operators=json.dumps(simple_operators, ensure_ascii=False)
-    ))
+    session.execute(
+        insert(data.History).values(
+            user_id=uid, operators=json.dumps(simple_operators, ensure_ascii=False)
+        )
+    )
     session.commit()
     session.close()
 
     # 生成 html
-    with _arknights_assets('gacha.html').open('r', encoding='utf-8') as f:
-        generated_html = f.read().replace("'{{DATA_HERE}}'", json.dumps(operators, ensure_ascii=False))
+    with _arknights_assets("gacha.html").open("r", encoding="utf-8") as f:
+        generated_html = f.read().replace(
+            "'{{DATA_HERE}}'", json.dumps(operators, ensure_ascii=False)
+        )
 
     # 生成图片
-    img = await render_by_browser.render_html(generated_html, _arknights_assets(),
-                                              viewport={'width': 1000, 'height': 500})
+    img = await render_by_browser.render_html(
+        generated_html, _arknights_assets(), viewport={"width": 1000, "height": 500}
+    )
     return img, operators
 
 
 async def main() -> None:
-    img, _ = await generate_gacha('console_0')
-    with open('out.png', 'wb') as f:
+    img, _ = await generate_gacha("console_0")
+    with open("out.png", "wb") as f:
         f.write(img)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import asyncio
+
     asyncio.run(main())

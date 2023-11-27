@@ -4,15 +4,10 @@ from nonebot_plugin_alconna import on_alconna, Alconna, Image
 from essentials.libraries import help, util
 
 __plugin_meta__ = PluginMetadata(
-    name='Help',
-    description='帮助手册',
-    usage='/help',
-    config=None
+    name="Help", description="帮助手册", usage="/help", config=None
 )
 
-_command = on_alconna(Alconna(
-    'help'
-), aliases={'帮助'}, block=True)
+_command = on_alconna(Alconna("help"), aliases={"帮助"}, block=True)
 
 
 @_command.handle()

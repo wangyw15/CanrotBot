@@ -4,7 +4,14 @@ from nonebot.adapters import Bot
 from nonebot.params import Arg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
-from nonebot_plugin_alconna import on_alconna, Alconna, AlconnaQuery, Query, UniMsg, Image
+from nonebot_plugin_alconna import (
+    on_alconna,
+    Alconna,
+    AlconnaQuery,
+    Query,
+    UniMsg,
+    Image,
+)
 
 from essentials.libraries import util
 from . import search_image
@@ -17,16 +24,15 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-_search_image = on_alconna(Alconna(
-    '搜图',
-    Args['api', str, 'saucenao']
-), block=True)
+_search_image = on_alconna(Alconna("搜图", Args["api", str, "saucenao"]), block=True)
 
 
 @_search_image.handle()
-async def _(state: T_State, bot: Bot, api: Query[str] = AlconnaQuery('api', 'saucenao')):
+async def _(
+    state: T_State, bot: Bot, api: Query[str] = AlconnaQuery("api", "saucenao")
+):
     api = api.result.strip().lower()
-    if api not in ['saucenao', 'tracemoe']:
+    if api not in ["saucenao", "tracemoe"]:
         await _search_image.finish("无效的搜图网站选项")
     state["SEARCH_IMAGE_API"] = api
 
@@ -40,7 +46,7 @@ async def _(state: T_State, bot: Bot, api: Query[str] = AlconnaQuery('api', 'sau
 async def _(state: T_State, image_msg: UniMsg = Arg()):
     # get img url
     if image_msg[0].type == Image.__name__:
-        img_url = image_msg[0].data['url'].strip()
+        img_url = image_msg[0].data["url"].strip()
     else:
         img_url = image_msg.extract_plain_text().strip()
 
@@ -51,13 +57,17 @@ async def _(state: T_State, image_msg: UniMsg = Arg()):
         if api == "saucenao":
             search_resp = await search_image.search_image_from_saucenao(img_url)
             if search_resp:
-                msg = await search_image.generate_message_from_saucenao_result(search_resp)
+                msg = await search_image.generate_message_from_saucenao_result(
+                    search_resp
+                )
             else:
                 await _search_image.finish("搜索失败")
         elif api == "tracemoe":
             search_resp = await search_image.search_image_from_tracemoe(img_url)
             if search_resp:
-                msg = await search_image.generate_message_from_tracemoe_result(search_resp)
+                msg = await search_image.generate_message_from_tracemoe_result(
+                    search_resp
+                )
             else:
                 await _search_image.finish("搜索失败")
         await _search_image.finish(msg)

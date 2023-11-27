@@ -9,7 +9,7 @@ class Base(DeclarativeBase):
 
 
 class ReplyConfig(Base):
-    __tablename__ = 'reply'
+    __tablename__ = "reply"
 
     group_id: Mapped[str] = Column(Text, nullable=False, primary_key=True, unique=True)
     enable: Mapped[bool] = Column(Boolean, nullable=False, default=True)

@@ -14,15 +14,17 @@ def _load_legacy_themes() -> None:
     global _legacy_themes
 
     if not _legacy_themes:
-        with open(fortune.fortune_assets_path / "themes.json", "r", encoding="utf-8") as f:
+        with open(
+            fortune.fortune_assets_path / "themes.json", "r", encoding="utf-8"
+        ) as f:
             _legacy_themes = json.load(f)
             logger.info(f"Fortune legacy themes: {len(_legacy_themes)}")
 
 
-def _get_random_base_image(theme: str = 'random') -> Path:
-    if theme == 'random' or theme not in _legacy_themes:
+def _get_random_base_image(theme: str = "random") -> Path:
+    if theme == "random" or theme not in _legacy_themes:
         theme = random.choice(list(_legacy_themes.keys()))
-    theme_path = fortune.fortune_assets_path / 'image' / theme
+    theme_path = fortune.fortune_assets_path / "image" / theme
     return random.choice(list(theme_path.iterdir()))
 
 
@@ -31,18 +33,20 @@ def _get_legacy_theme_key_from_name(name: str) -> str:
     for _k, _v in _legacy_themes.items():
         if name == _k or name in _v:
             return _k
-    return 'random'
+    return "random"
 
 
 def _html_generator(theme: str) -> Callable:
     async def _generate_html() -> str:
         # 选择背景图
         image_full_path = _get_random_base_image(theme)
-        base_image_path = image_full_path.parent.name + '/' + image_full_path.name
+        base_image_path = image_full_path.parent.name + "/" + image_full_path.name
 
         # 生成 html
-        with open(fortune.fortune_assets_path / 'template' / 'legacy.html', 'r') as f:
-            return f.read().replace('{{image_path}}', str(base_image_path).replace('\\', '/'))
+        with open(fortune.fortune_assets_path / "template" / "legacy.html", "r") as f:
+            return f.read().replace(
+                "{{image_path}}", str(base_image_path).replace("\\", "/")
+            )
 
     return _generate_html
 
@@ -52,4 +56,4 @@ _load_legacy_themes()
 # 注册主题
 for k, v in _legacy_themes.items():
     fortune.register_theme(k, _html_generator(k), v)
-    logger.info(f'Loaded fortune legacy theme: {k}')
+    logger.info(f"Loaded fortune legacy theme: {k}")

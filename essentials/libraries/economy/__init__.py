@@ -7,19 +7,32 @@ from . import data
 from .data import Account, Record
 
 
-def _add_history(uid: str, amount: float, balance: float, description: str = '', time: datetime | None = None) -> None:
+def _add_history(
+    uid: str,
+    amount: float,
+    balance: float,
+    description: str = "",
+    time: datetime | None = None,
+) -> None:
     if not time:
         time = datetime.now()
     with database.get_session().begin() as session:
-        if session.execute(select(data.Account).where(data.Account.user_id == uid)).first() is None:
+        if (
+            session.execute(
+                select(data.Account).where(data.Account.user_id == uid)
+            ).first()
+            is None
+        ):
             session.execute(insert(data.Account).values(user_id=uid))
-        session.execute(insert(data.Record).values(
-            user_id=uid,
-            time=time,
-            amount=amount,
-            balance=balance,
-            description=description
-        ))
+        session.execute(
+            insert(data.Record).values(
+                user_id=uid,
+                time=time,
+                amount=amount,
+                balance=balance,
+                description=description,
+            )
+        )
         session.commit()
 
 
@@ -32,7 +45,9 @@ def get_balance(uid: str) -> float:
     :return: 余额
     """
     with database.get_session().begin() as session:
-        result = session.execute(select(data.Account).where(data.Account.user_id == uid)).scalar_one_or_none()
+        result = session.execute(
+            select(data.Account).where(data.Account.user_id == uid)
+        ).scalar_one_or_none()
         if result is None:
             return 0.0
         return result.balance
@@ -46,15 +61,21 @@ def set_balance(uid: str, balance: float) -> None:
     :param balance: 余额
     """
     with database.get_session().begin() as session:
-        result = session.execute(select(data.Account).where(data.Account.user_id == uid)).scalar_one_or_none()
+        result = session.execute(
+            select(data.Account).where(data.Account.user_id == uid)
+        ).scalar_one_or_none()
         if result is None:
             session.execute(insert(data.Account).values(user_id=uid, balance=balance))
         else:
-            session.execute(update(data.Account).where(data.Account.user_id == uid).values(balance=balance))
+            session.execute(
+                update(data.Account)
+                .where(data.Account.user_id == uid)
+                .values(balance=balance)
+            )
         session.commit()
 
 
-def pay(uid: str, amount: float, description: str = 'pay') -> bool:
+def pay(uid: str, amount: float, description: str = "pay") -> bool:
     """
     出账
 
@@ -73,7 +94,7 @@ def pay(uid: str, amount: float, description: str = 'pay') -> bool:
     return True
 
 
-def earn(uid: str, amount: float, description: str = 'earn'):
+def earn(uid: str, amount: float, description: str = "earn"):
     """
     入账
 
@@ -87,7 +108,7 @@ def earn(uid: str, amount: float, description: str = 'earn'):
     set_balance(uid, get_balance(uid) + amount)
 
 
-def transfer(from_uid: str, to_uid: str, amount: float, description: str = '') -> bool:
+def transfer(from_uid: str, to_uid: str, amount: float, description: str = "") -> bool:
     """
     转账
 
@@ -99,7 +120,7 @@ def transfer(from_uid: str, to_uid: str, amount: float, description: str = '') -
     :return: 是否成功转账
     """
     if not description:
-        description = f'{from_uid} transfer to {to_uid}'
+        description = f"{from_uid} transfer to {to_uid}"
     if amount < 0:
         return False
     if not pay(from_uid, amount, description):

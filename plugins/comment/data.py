@@ -13,15 +13,19 @@ class Base(DeclarativeBase):
 
 
 class CommentType(enum.Enum):
-    anime = 'anime'
+    anime = "anime"
 
 
 class Comment(Base):
-    __tablename__ = 'comments'
+    __tablename__ = "comments"
 
-    id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+    id: Mapped[int] = Column(
+        Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
+    )
     type: Mapped[CommentType] = Column(Enum(CommentType), nullable=False)
-    time: Mapped[Optional[datetime]] = Column(DateTime, nullable=True, default=datetime.now)
+    time: Mapped[Optional[datetime]] = Column(
+        DateTime, nullable=True, default=datetime.now
+    )
     title: Mapped[str] = Column(Text, nullable=False)
     author: Mapped[Optional[str]] = Column(Text, nullable=True)
     content: Mapped[str] = Column(Text, nullable=False)

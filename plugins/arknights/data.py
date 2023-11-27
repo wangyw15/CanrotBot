@@ -11,7 +11,7 @@ class Base(DeclarativeBase):
 
 
 class Statistics(Base):
-    __tablename__ = 'arknights_gacha_statistics'
+    __tablename__ = "arknights_gacha_statistics"
 
     user_id: Mapped[str] = Column(Text, primary_key=True, nullable=False, unique=True)
     three_stars: Mapped[int] = Column(Integer, nullable=False, default=0)
@@ -23,9 +23,11 @@ class Statistics(Base):
 
 
 class History(Base):
-    __tablename__ = 'arknights_gacha_history'
+    __tablename__ = "arknights_gacha_history"
 
-    id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+    id: Mapped[int] = Column(
+        Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
+    )
     user_id: Mapped[str] = Column(Text, nullable=False)
     time: Mapped[datetime] = Column(DateTime, nullable=False, default=datetime.now)
     operators: Mapped[str] = Column(Text, nullable=False)

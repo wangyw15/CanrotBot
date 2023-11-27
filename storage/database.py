@@ -22,4 +22,4 @@ async def _():
     _engine.dispose()
 
 
-__all__ = ['get_engine']
+__all__ = ["get_engine"]

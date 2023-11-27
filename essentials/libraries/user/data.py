@@ -9,13 +9,15 @@ class Base(DeclarativeBase):
 
 
 class Bind(Base):
-    __tablename__ = 'user_binds'
-    platform_user_id: Mapped[str] = Column(Text, primary_key=True, nullable=False, unique=True)
+    __tablename__ = "user_binds"
+    platform_user_id: Mapped[str] = Column(
+        Text, primary_key=True, nullable=False, unique=True
+    )
     user_id: Mapped[str] = Column(Text, nullable=False)
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     user_id: Mapped[str] = Column(Text, primary_key=True, nullable=False, unique=True)
     extra: Mapped[str] = Column(Text, nullable=True)

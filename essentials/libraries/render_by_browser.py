@@ -14,7 +14,7 @@ async def initialize() -> None:
     if not _playwright:
         _playwright = await async_playwright().start()
         _browser = await _playwright.chromium.launch()
-        logger.info('Initialized browser renderer')
+        logger.info("Initialized browser renderer")
 
 
 async def get_new_page(**kwargs) -> Page:
@@ -24,10 +24,15 @@ async def get_new_page(**kwargs) -> Page:
     return page
 
 
-async def render_html(html: str, base_path: str | Path, image_type: Literal['png', 'jpeg'] = 'png',
-                      full_page: bool = True, **kwargs) -> bytes:
+async def render_html(
+    html: str,
+    base_path: str | Path,
+    image_type: Literal["png", "jpeg"] = "png",
+    full_page: bool = True,
+    **kwargs,
+) -> bytes:
     page = await get_new_page(**kwargs)
-    await page.goto(f'file://{base_path}', wait_until='networkidle')
+    await page.goto(f"file://{base_path}", wait_until="networkidle")
     await page.set_content(html)
     result = await page.screenshot(type=image_type, full_page=full_page)
     await page.close()
@@ -44,6 +49,7 @@ async def close_browser():
     if _playwright:
         await _playwright.stop()
         _playwright = None
-    logger.info('Closed browser renderer')
+    logger.info("Closed browser renderer")
 
-__all__ = ['get_new_page', 'render_html']
+
+__all__ = ["get_new_page", "render_html"]

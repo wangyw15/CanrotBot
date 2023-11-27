@@ -9,7 +9,7 @@ class Base(DeclarativeBase):
 
 
 class CommercialPerformance(Base):
-    __tablename__ = 'commercial_performances'
+    __tablename__ = "commercial_performances"
 
     id: Mapped[str] = Column(String, primary_key=True, nullable=False, unique=True)
     acceptance_id: Mapped[str] = Column(String, nullable=True)
@@ -29,7 +29,7 @@ class CommercialPerformance(Base):
 
 
 class PerformanceActors(Base):
-    __tablename__ = 'commercial_performance_actors'
+    __tablename__ = "commercial_performance_actors"
 
     performance_id: Mapped[str] = Column(String, primary_key=True, nullable=False)
     id: Mapped[int] = Column(Integer, primary_key=True, nullable=False)

@@ -12,17 +12,19 @@ class Base(DeclarativeBase):
 
 
 class Account(Base):
-    __tablename__ = 'economy_accounts'
+    __tablename__ = "economy_accounts"
 
     user_id: Mapped[str] = Column(Text, primary_key=True, nullable=False, unique=True)
     balance: Mapped[float] = Column(Float, nullable=False, default=0)
-    extra: Mapped[Optional[str]] = Column(Text, nullable=True, default='')
+    extra: Mapped[Optional[str]] = Column(Text, nullable=True, default="")
 
 
 class Record(Base):
-    __tablename__ = 'economy_records'
+    __tablename__ = "economy_records"
 
-    transaction_id: Mapped[int] = Column(Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
+    transaction_id: Mapped[int] = Column(
+        Integer, primary_key=True, nullable=False, autoincrement=True, unique=True
+    )
     user_id: Mapped[str] = Column(Text, nullable=False)
     time: Mapped[datetime] = Column(DateTime, nullable=False, default=datetime.now)
     amount: Mapped[float] = Column(Float, nullable=False)
