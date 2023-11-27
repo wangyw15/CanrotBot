@@ -7,6 +7,7 @@ from pydantic import BaseModel
 class CanrotConfig(BaseModel):
     canrot_proxy: str = ''  # 代理连接
     canrot_data_path: str = './canrot_data'
+    canrot_database: str = f'sqlite:///{canrot_data_path}/data.db?check_same_thread=False'
     canrot_disabled_plugins: list[str] = []  # TODO 实现禁用插件
     canrot_disabled_adapters: list[str] = []  # 禁用的适配器
 
