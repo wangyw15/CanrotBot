@@ -139,8 +139,8 @@ async def _(gacha_id: Query[str] = AlconnaQuery("gacha_id")):
     data, language = await gacha_helper.gacha10(gacha_id.result.strip())
     img = await gacha_helper.generate_image(data)
     msg = UniMsg()
-    # TODO 文字说明
-    if util.can_send_segment(Image):
+    # TODO 文字说明、抽卡记录、卡池列表
+    if await util.can_send_segment(Image):
         msg.append(Image(raw=img))
     await _command.finish(msg)
 
