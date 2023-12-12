@@ -14,8 +14,9 @@ from nonebot_plugin_alconna import (
     Voice,
 )
 
+from essentials.libraries import economy, user
 from essentials.libraries import util
-from . import bestdori
+from . import bestdori, gacha_helper
 
 # TODO 记得改；模拟抽卡、查卡、点歌、签到主题、活动助手等
 __plugin_meta__ = PluginMetadata(
@@ -36,6 +37,12 @@ _command = on_alconna(
             Args["song_query", str, "random"],
             alias=["歌曲", "查歌", "查曲"],
             help_text="查游戏内歌曲",
+        ),
+        Option(
+            "gacha",
+            Args["gacha_id", str],
+            alias=["抽卡", "十连"],
+            help_text="模拟十连",
         ),
     ),
     aliases={"bangdream"},
@@ -115,6 +122,27 @@ async def _(song_query: Query[str] = AlconnaQuery("song_query", "random")):
     if await util.can_send_segment(Voice):
         await _command.send(Voice(url=await bestdori.song.get_song_url(song_id)))
     await _command.finish()
+
+
+@_command.assign("gacha")
+async def _(gacha_id: Query[str] = AlconnaQuery("gacha_id")):
+    uid = await user.get_uid()
+    if not uid:
+        await _command.finish("你还没有账号喵~")
+
+    # 付钱
+    if not economy.pay(uid, 25, "邦邦十连"):
+        await _command.finish("你的余额不足喵~")
+    await _command.send("你的二十五个胡萝卜片我就收下了~\n一緒にキラキラドキドキしましょう！")
+
+    # 抽卡
+    data, language = await gacha_helper.gacha10(gacha_id.result.strip())
+    img = await gacha_helper.generate_image(data)
+    msg = UniMsg()
+    # TODO 文字说明
+    if util.can_send_segment(Image):
+        msg.append(Image(raw=img))
+    await _command.finish(msg)
 
 
 @_command.handle()
