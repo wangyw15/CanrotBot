@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Text, DateTime
+from sqlalchemy import Column, Text, DateTime, Integer
 from sqlalchemy.orm import Mapped, DeclarativeBase
 
 from storage import database
@@ -13,7 +13,10 @@ class Base(DeclarativeBase):
 class RemoteAssetCache(Base):
     __tablename__ = "remote_asset_cache"
 
-    key: Mapped[str] = Column(Text, primary_key=True, nullable=False, unique=True)
+    id: Mapped[int] = Column(
+        Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
+    )
+    key: Mapped[str] = Column(Text, nullable=False)
     fetch_time: Mapped[datetime] = Column(
         DateTime, nullable=False, default=datetime.now
     )
