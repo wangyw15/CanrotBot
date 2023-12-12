@@ -1,6 +1,5 @@
 import asyncio
 import difflib
-import json
 import re
 import urllib.parse
 from typing import Tuple
@@ -10,7 +9,7 @@ from nonebot import logger
 from essentials.libraries import util
 from storage import asset
 
-_anime_offline_database_path = asset.get_assets_path("anime-offline-database")
+_anime_offline_database = asset.AssetManager("anime-offline-database")
 _animes: list[dict] = []
 # _anilist_id_name: dict[int, str] = {}
 _name_anilist_id: dict[str, int] = {}
@@ -19,15 +18,10 @@ _name_anilist_id: dict[str, int] = {}
 def _load_animes() -> None:
     global _animes, _name_anilist_id
     if not _animes:
-        with open(
-            _anime_offline_database_path / "anime-offline-database.json",
-            "r",
-            encoding="utf-8",
-        ) as f:
-            data = json.load(f)
-            _animes = data["data"]
-            logger.info(f'Anime databasee last update time: {data["lastUpdate"]}')
-            logger.info(f"Loaded animes: {len(_animes)}")
+        data = _anime_offline_database["anime-offline-database"]
+        _animes = data["data"]
+        logger.info(f'Anime databasee last update time: {data["lastUpdate"]}')
+        logger.info(f"Loaded animes: {len(_animes)}")
     # 提升搜索速度
     logger.info("预加载搜索数据")
     for i in _animes:

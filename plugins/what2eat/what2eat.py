@@ -5,7 +5,7 @@ from nonebot import logger
 from storage import asset
 
 # 加载数据
-_what2eat_data: dict[str, list[dict]] = asset.load_json("what2eat.json")
+_what2eat_data: dict[str, list[dict]] = asset.LocalAsset("what2eat.json").json()
 logger.info(f'What2eat drink: {len(_what2eat_data["drink"])}')
 logger.info(f'What2eat food: {len(_what2eat_data["food"])}')
 

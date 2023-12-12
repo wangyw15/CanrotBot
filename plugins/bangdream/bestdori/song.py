@@ -2,8 +2,6 @@ from datetime import timedelta
 
 from . import util
 
-_song_path = util.cache_path / "song"
-
 
 async def get_song_list() -> dict[str]:
     """

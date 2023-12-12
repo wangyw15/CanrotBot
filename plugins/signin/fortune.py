@@ -1,4 +1,3 @@
-import json
 import random
 from typing import Tuple, Literal, Callable
 
@@ -8,7 +7,7 @@ from essentials.libraries import render_by_browser
 from storage import asset
 from . import themes
 
-fortune_assets_path = asset.get_assets_path("fortune")
+fortune_assets = asset.AssetManager("fortune")
 _fortune_assets_version: str = ""
 _copywriting: list[dict] = []
 _themes: dict[str, dict] = {}
@@ -19,14 +18,11 @@ def _load_fortune_assets() -> None:
     global _copywriting
 
     if not _fortune_assets_version or not _copywriting:
-        with open(
-            fortune_assets_path / "fortune_data.json", "r", encoding="utf-8"
-        ) as f:
-            data = json.load(f)
-            _fortune_assets_version = str(data["version"])
-            logger.info(f"Fortune version: {_fortune_assets_version}")
-            _copywriting = data["copywriting"]
-            logger.info(f"Fortune copywriting: {len(_copywriting)}")
+        data = fortune_assets["fortune_data"]
+        _fortune_assets_version = str(data["version"])
+        logger.info(f"Fortune version: {_fortune_assets_version}")
+        _copywriting = data["copywriting"]
+        logger.info(f"Fortune copywriting: {len(_copywriting)}")
 
     themes.load_themes()
 
@@ -94,7 +90,7 @@ async def generate_fortune(
     raw_content = raw_content.replace("{{title}}", title).replace("{{content}}", text)
     bytes_data = await render_by_browser.render_html(
         raw_content,
-        str(fortune_assets_path / "template"),
+        str(fortune_assets / "template"),
         image_type,
         viewport={"width": 480, "height": 480},
     )

@@ -22,7 +22,7 @@ _arknights_operator_professions = [
     "SPECIAL",
     "TANK",
 ]
-_arknights_assets = asset.Asset("arknights")
+_arknights_assets = asset.AssetManager("arknights")
 _number_to_rarity = [
     "one_star",
     "two_stars",

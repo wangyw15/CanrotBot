@@ -8,16 +8,15 @@ from nonebot import logger
 from essentials.libraries import render_by_browser
 from storage import asset
 
-_kuji_assets_path = asset.get_assets_path("kuji")
+_kuji_assets = asset.AssetManager("kuji")
 _kuji_data: list[dict[str, str]] = []
 
 
 def _load_kuji_assets() -> None:
     global _kuji_data
     if not _kuji_data:
-        with open(_kuji_assets_path / "kuji.json", "r", encoding="utf-8") as f:
-            _kuji_data = json.load(f)
-            logger.info(f"kuji data: {len(_kuji_data)}")
+        _kuji_data = _kuji_assets["kuji"]
+        logger.info(f"kuji data: {len(_kuji_data)}")
 
 
 async def generate_kuji(
@@ -31,13 +30,14 @@ async def generate_kuji(
         return None, selected_kuji
 
     # generate html
-    with open(_kuji_assets_path / "template.html", "r", encoding="utf-8") as f:
-        generated_html = f.read().replace(
-            "'{DATA_HERE}'", json.dumps(selected_kuji, ensure_ascii=False)
-        )
+    generated_html = (
+        _kuji_assets("template.html")
+        .read_text(encoding="utf-8")
+        .replace("'{DATA_HERE}'", json.dumps(selected_kuji, ensure_ascii=False))
+    )
     img = await render_by_browser.render_html(
         generated_html,
-        _kuji_assets_path,
+        _kuji_assets.base_path(),
         image_type=image_type,
         viewport={"width": 520, "height": 820},
     )

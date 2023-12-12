@@ -24,7 +24,7 @@ class WordleConfig(BaseModel):
 config = WordleConfig.parse_obj(get_driver().config)
 
 # load wordle data
-words = asset.load_json("reply.json")
+words = asset.LocalAsset("reply.json").json()
 
 
 def get_wordle_result(answer: str, guess: str) -> str:

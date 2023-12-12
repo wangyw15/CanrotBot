@@ -6,7 +6,7 @@ from nonebot import get_loaded_plugins
 from storage import asset
 from . import render_by_browser, util
 
-_help_assets_path = asset.get_assets_path("help")
+_help_assets = asset.AssetManager("help")
 _plugin_metadatas: list[dict[str, str]] = []
 _help_text: str | None = None
 _help_image: bytes | None = None
@@ -37,13 +37,13 @@ async def generate_help_message(with_image: bool = True) -> Tuple[str, bytes | N
         _help_text = _help_text.strip()
     # 图片帮助信息
     if with_image and _help_image is None:
-        with (_help_assets_path / "template.html").open(encoding="utf-8") as f:
+        with _help_assets("template.html").open(encoding="utf-8") as f:
             html = f.read()
         _help_image = await render_by_browser.render_html(
             html.replace(
                 "'{{DATA_HERE}}'", json.dumps(_plugin_metadatas, ensure_ascii=False)
             ),
-            _help_assets_path,
+            _help_assets.base_path(),
             viewport={"width": 1000, "height": 1000},
         )
     # 按需返回

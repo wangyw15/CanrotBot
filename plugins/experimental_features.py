@@ -17,7 +17,7 @@ __plugin_meta__ = PluginMetadata(
 jieba.add_word("{name}")
 jieba.add_word("{me}")
 _reply_data: list[list[str]] = [
-    list(jieba.lcut(x["response"])) for x in asset.load_json("reply.json")
+    list(jieba.lcut(x["response"])) for x in asset.LocalAsset("reply.json")
 ]
 
 

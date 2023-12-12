@@ -13,3 +13,4 @@ nonebot_plugin_alconna
 pymysql
 cryptography
 black
+anyio

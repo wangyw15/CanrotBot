@@ -2,7 +2,8 @@ import pypinyin
 
 from storage import asset
 
-_bnhhsh_data: dict[int, dict[str, dict[str, float]]] = asset.load_json("bnhhsh.json")
+_asset = asset.LocalAsset("bnhhsh.json")
+_bnhhsh_data: dict[int, dict[str, dict[str, float]]] = _asset.json()
 _bnhhsh_data: dict[int, dict[str, dict[str, float]]] = {
     int(k): v for k, v in _bnhhsh_data.items()
 }

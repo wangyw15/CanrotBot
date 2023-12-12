@@ -94,4 +94,4 @@ class Item(Base):
 
 Base.metadata.create_all(database.get_engine())
 
-trpg_assets = asset.Asset("trpg")
+trpg_assets = asset.AssetManager("trpg")

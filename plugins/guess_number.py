@@ -1,7 +1,7 @@
 import random
 
 from nonebot import on_command
-from nonebot.adapters import Message, Bot, Event
+from nonebot.adapters import Message
 from nonebot.params import CommandArg, Arg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State

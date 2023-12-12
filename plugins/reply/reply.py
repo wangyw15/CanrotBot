@@ -15,7 +15,7 @@ BOT_NAME: str = "我"
 SENDER_NAME: str = "主人"
 
 # 加载数据
-_reply_data: list[dict[str, str | None]] = asset.load_json("reply.json")
+_reply_data: list[dict[str, str | None]] = asset.LocalAsset("reply.json").json()
 
 
 def is_negative(msg: str) -> bool:

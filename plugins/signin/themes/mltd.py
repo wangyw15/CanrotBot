@@ -10,7 +10,7 @@ from plugins.mltd import mltd
 
 async def _generate_mltd_html() -> str:
     card = random.choice(await mltd.get_cards())
-    with (fortune.fortune_assets_path / "template" / "mltd.html").open(
+    with (fortune.fortune_assets / "template" / "mltd.html").open(
         "r", encoding="utf-8"
     ) as f:
         return f.read().replace("{{resource_key}}", card["resourceId"])

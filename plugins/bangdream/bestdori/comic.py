@@ -1,14 +1,8 @@
 from datetime import timedelta
 from typing import Tuple
 
+from storage import asset
 from . import util
-
-_comic_path = util.cache_path / "comic"
-
-
-# 自动创建文件夹
-if not _comic_path.exists():
-    _comic_path.mkdir(parents=True)
 
 
 async def get_comic_list() -> dict[str]:
@@ -81,25 +75,6 @@ async def get_comic(comic_id: str, language: str = "") -> Tuple[bytes, str] | No
     if comic_id not in comic_list:
         return None
 
-    # 按优先级选择语言
-    title, language = util.get_content_by_language(
-        comic_list[comic_id]["title"], language
-    )
-
-    # 自动创建文件夹
-    language_path = _comic_path / language
-    if not language_path.exists():
-        language_path.mkdir(parents=True)
-
-    # 查找本地缓存
-    comic_path = language_path / f"{comic_id}.png"
-    if comic_path.exists():
-        return comic_path.read_bytes(), language
-
-    # 从服务器获取
-    url, _ = await get_comic_url(comic_id)
-    resp = await util.client.get(url)
-    if resp.is_success and resp.status_code == 200:
-        comic_path.write_bytes(resp.content)
-        return resp.content, language
-    return None
+    url, language = await get_comic_url(comic_id, language)
+    file = asset.RemoteAsset(url)
+    return await file.raw(), language

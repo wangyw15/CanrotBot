@@ -1,4 +1,3 @@
-import json
 import random
 from datetime import datetime
 
@@ -6,7 +5,7 @@ from nonebot import logger
 
 from storage import asset
 
-_hitokoto_assets_path = asset.get_assets_path("hitokoto")
+_hitokoto_asset = asset.AssetManager("hitokoto")
 _version: dict = {}
 _categories: list[dict] = []
 _sentences: dict[str, list[dict]] = {}
@@ -22,35 +21,28 @@ def _load_hitokoto_assets():
     global _categories
     global _sentences
     global _all_category_keys
-    # load version.json
+
+    # 加载 version.json
     if not _version:
-        with open(_hitokoto_assets_path / "version.json", "r", encoding="utf-8") as f:
-            _version = json.load(f)
-            logger.info(
-                f'hitokoto sentences_bundle version: {_version["bundle_version"]}'
-            )
-    # load categories.json
+        _version = _hitokoto_asset["version"]
+        logger.info(f'hitokoto sentences_bundle version: {_version["bundle_version"]}')
+
+    # 加载 categories.json
     if not _categories:
-        with open(
-            _hitokoto_assets_path / _version["categories"]["path"],
-            "r",
-            encoding="utf-8",
-        ) as f:
-            _categories = json.load(f)
-            logger.info(
-                f"hitokoto sentences_bundle categories count: {len(_categories)}"
-            )
-    # load sentences
+        _categories = _hitokoto_asset["categories"]
+        logger.info(f"hitokoto sentences_bundle categories count: {len(_categories)}")
+
+    # 加载 sentences
     if not _sentences:
         for category in _categories:
             _all_category_keys += category["key"]
-            with open(
-                _hitokoto_assets_path / category["path"], "r", encoding="utf-8"
-            ) as f:
-                _sentences[category["key"]] = json.load(f)
-                logger.info(
-                    f'hitokoto sentences_bundle {category["name"]} sentences count: {len(_sentences[category["key"]])}'
-                )
+            _sentences[category["key"]] = _hitokoto_asset[category["path"][2:-5]]
+            logger.info(
+                f'hitokoto sentences_bundle {category["name"]} sentences count: {len(_sentences[category["key"]])}'
+            )
+
+
+_load_hitokoto_assets()
 
 
 def get_categories() -> list[dict[str, str]]:
@@ -67,7 +59,13 @@ def get_name_by_key(key: str) -> str:
 
 
 def random_hitokoto(categories: str = "") -> dict:
-    """randomly choose a hitokoto"""
+    """
+    随机一言
+
+    :param categories: 选择的分类，不填则随机选择
+
+    :return: 一言信息
+    """
     if not categories:
         categories = _all_category_keys
     sentences = []
@@ -78,12 +76,15 @@ def random_hitokoto(categories: str = "") -> dict:
 
 
 def get_hitokoto_by_uuid(uuid: str) -> dict:
-    """get hitokoto by uuid"""
+    """
+    根据uuid获取一言信息
+
+    :param uuid: 一言的uuid
+
+    :return: 一言信息
+    """
     for category in _categories:
         for sentence in _sentences[category["key"]]:
             if sentence["uuid"] == uuid:
                 return sentence
     return {}
-
-
-_load_hitokoto_assets()

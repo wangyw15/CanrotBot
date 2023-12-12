@@ -1,7 +1,7 @@
 import typing
 
 from nonebot import on_command, on_shell_command
-from nonebot.adapters import Message, MessageSegment, Bot, Event
+from nonebot.adapters import Message, MessageSegment, Event
 from nonebot.params import CommandArg, ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 
