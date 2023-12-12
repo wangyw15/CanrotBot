@@ -47,7 +47,7 @@ async def gacha10(gacha_id: str, language: str = "cn") -> Tuple[dict[str], str]:
         # 随机权重
         weight = random.randint(1, total_weight)
         # 计算稀有度
-        rarity = 0
+        rarity = "0"
         for k, v in rates.items():
             if weight <= v["weightTotal"]:
                 rarity = k
@@ -55,9 +55,9 @@ async def gacha10(gacha_id: str, language: str = "cn") -> Tuple[dict[str], str]:
             weight -= v["weightTotal"]
 
         # 保底三星及以上
-        three_star_appeared = rarity >= 3 or three_star_appeared
+        three_star_appeared = int(rarity) >= 3 or three_star_appeared
         if i == 9 and not three_star_appeared:
-            rarity = 3
+            rarity = "3"
             weight = random.randint(1, better_than_three_star_weight)
             for j in ["3", "4", "5"]:
                 if weight <= rates[j]["weightTotal"]:
