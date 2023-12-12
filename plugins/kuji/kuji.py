@@ -37,7 +37,7 @@ async def generate_kuji(
     )
     img = await render_by_browser.render_html(
         generated_html,
-        _kuji_assets.base_path(),
+        _kuji_assets(),
         image_type=image_type,
         viewport={"width": 520, "height": 820},
     )

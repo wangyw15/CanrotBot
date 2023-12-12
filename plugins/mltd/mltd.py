@@ -90,7 +90,7 @@ async def generate_card_info_image(card: dict) -> bytes:
         html = f.read()
     html = html.replace("'{DATA_HERE}'", json.dumps(card))
     return await render_by_browser.render_html(
-        html, _mltd_assets.base_path(), viewport={"width": 1280, "height": 1000}
+        html, _mltd_assets(), viewport={"width": 1280, "height": 1000}
     )
 
 
@@ -130,7 +130,7 @@ async def gasha() -> Tuple[bytes, list[dict]]:
         html = f.read()
     html = html.replace("'{DATA_HERE}'", json.dumps(cards))
     img = await render_by_browser.render_html(
-        html, _mltd_assets.base_path(), viewport={"width": 1920, "height": 1080}
+        html, _mltd_assets(), viewport={"width": 1920, "height": 1080}
     )
     return img, cards
 

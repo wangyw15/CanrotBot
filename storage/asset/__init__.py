@@ -184,8 +184,5 @@ class AssetManager:
     def __str__(self):
         return str(self.__base_path)
 
-    def base_path(self) -> Path:
-        return self.__base_path
-
     def exists(self, file_name: str) -> bool:
         return self(file_name).exists()

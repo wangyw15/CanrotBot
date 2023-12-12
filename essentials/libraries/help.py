@@ -43,7 +43,7 @@ async def generate_help_message(with_image: bool = True) -> Tuple[str, bytes | N
             html.replace(
                 "'{{DATA_HERE}}'", json.dumps(_plugin_metadatas, ensure_ascii=False)
             ),
-            _help_assets.base_path(),
+            _help_assets(),
             viewport={"width": 1000, "height": 1000},
         )
     # 按需返回
