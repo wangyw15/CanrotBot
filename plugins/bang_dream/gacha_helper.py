@@ -44,7 +44,7 @@ async def gacha10(gacha_id: str, language: str = "cn") -> dict[str]:
 
     for i in range(10):
         # 随机概率
-        rate = random.randint(1, total_rate * 10) / 10
+        rate = random.randint(1, int(total_rate * 10)) / 10
         # 计算稀有度
         rarity = "1"
         for k, v in rates.items():
