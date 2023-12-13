@@ -1,5 +1,10 @@
 nb-cli
 nonebot2
+nonebot-plugin-apscheduler
+nonebot-adapter-onebot
+nonebot-adapter-kaiheila
+nonebot-adapter-mirai2
+nonebot-adapter-qq
 pydantic
 beautifulsoup4
 httpx
@@ -9,7 +14,7 @@ pillow
 playwright
 tencentcloud-sdk-python
 sqlalchemy
-nonebot_plugin_alconna
+nonebot-plugin-alconna
 pymysql
 cryptography
 black

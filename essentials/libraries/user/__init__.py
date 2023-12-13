@@ -8,7 +8,7 @@ import nonebot.adapters.kaiheila as kook
 import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
-import nonebot.adapters.qqguild as qqguild
+import nonebot.adapters.qq as qq
 from nonebot.adapters import Bot, Event
 from nonebot.matcher import current_bot, current_event
 from sqlalchemy import select, delete, insert
@@ -120,7 +120,9 @@ async def get_puid(bot: Bot | None = None, event: Event | None = None) -> str:
         puid = "kook_" + puid
     elif isinstance(bot, console.Bot):
         puid = "console_0"
-    elif isinstance(bot, qqguild.Bot):
+    elif isinstance(event, qq.GroupRobotEvent):
+        puid = "qqbot_" + puid  # TODO 确认是否为QQ号，是则改为qq_
+    elif isinstance(event, qq.ChannelEvent):
         puid = "qqguild_" + puid
     return puid
 

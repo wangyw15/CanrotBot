@@ -7,7 +7,7 @@ import nonebot.adapters.kaiheila as kook
 import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as onebot_v11
 import nonebot.adapters.onebot.v12 as onebot_v12
-import nonebot.adapters.qqguild as qqguild
+import nonebot.adapters.qq as qq
 from nonebot import logger
 from nonebot.log import default_format
 
@@ -39,8 +39,8 @@ if "onebot_v11" not in config.canrot_config.canrot_disabled_adapters:
     driver.register_adapter(onebot_v11.Adapter)
 if "onebot_v12" not in config.canrot_config.canrot_disabled_adapters:
     driver.register_adapter(onebot_v12.Adapter)
-if "qqguild" not in config.canrot_config.canrot_disabled_adapters:
-    driver.register_adapter(qqguild.Adapter)
+if "qq" not in config.canrot_config.canrot_disabled_adapters:
+    driver.register_adapter(qq.Adapter)
 
 # 内置插件
 nonebot.load_builtin_plugins("echo", "single_session")

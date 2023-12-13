@@ -10,7 +10,7 @@ import nonebot.adapters.kaiheila as kook
 import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
-import nonebot.adapters.qqguild as qqguild
+import nonebot.adapters.qq as qq
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot_plugin_alconna import UniMsg, SerializeFailed
@@ -98,8 +98,10 @@ def get_group_id(event: Event) -> str:
         return "qq_" + str(event.group_id)
     elif isinstance(event, mirai2.GroupMessage):
         return "qq_" + str(event.sender.group.id)
-    elif isinstance(event, qqguild.MessageEvent):
-        return "qqguild_" + str(event.channel_id)
+    elif isinstance(event, qq.GroupRobotEvent):
+        return "qqbot_" + str(event.group_openid)  # TODO 确认是否为QQ号，是则改为qq_
+    elif isinstance(event, qq.GuildMessageEvent):
+        return "qqguild_" + str(event)
     elif isinstance(event, kook.event.ChannelMessageEvent):
         return "kook_" + str(event.group_id)
     elif isinstance(event, console.MessageEvent):
