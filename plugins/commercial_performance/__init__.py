@@ -1,12 +1,13 @@
 from typing import Annotated
 
+from nonebot import on_shell_command
+from nonebot.adapters import MessageSegment
 from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 from sqlalchemy import select, insert, cast, Integer
-from . import data, scraper
-from nonebot import on_shell_command
-from nonebot.adapters import MessageSegment
+
 from storage import database
+from . import data, scraper
 
 __plugin_meta__ = PluginMetadata(
     name="演出", description="从上海市文化和旅游局网站获取演出信息", usage="懒得写", config=None  # TODO 帮助信息

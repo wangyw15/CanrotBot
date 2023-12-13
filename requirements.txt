@@ -1,5 +1,5 @@
 nb-cli
-nonebot2
+nonebot2[fastapi]
 nonebot-plugin-apscheduler
 nonebot-adapter-onebot
 nonebot-adapter-kaiheila

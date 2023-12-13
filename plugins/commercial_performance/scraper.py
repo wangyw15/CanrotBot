@@ -1,4 +1,4 @@
-import regex
+import re
 from bs4 import BeautifulSoup
 from httpx import AsyncClient
 
@@ -12,7 +12,7 @@ async def get_ids_by_page(page: int) -> set[str]:
         soup = BeautifulSoup(response.text, features="html.parser")
         ret = set()
         for i in soup.select("#div_md tr>td:nth-of-type(2)>a"):
-            result = regex.search(r"id=(\S+)", i["href"]).group(1)
+            result = re.search(r"id=(\S+)", i["href"]).group(1)
             if result not in ret:
                 ret.add(result)
         return ret
