@@ -118,3 +118,21 @@ async def generate_image(gacha_data: dict[str]) -> bytes:
     return await render_by_browser.render_html(
         generated_html, _assets(), viewport={"width": 1920, "height": 1080}
     )
+
+
+def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
+    """
+    生成抽卡文字
+
+    :params gacha_data: 抽卡数据
+    :params language: 语言
+
+    :return: 文字
+    """
+    result = ""
+    for card_id, card_data in gacha_data.items():
+        card_name, language = util.get_content_by_language(
+            card_data["prefix"], language
+        )
+        result += f'{card_data["rarity"]}★ {card_name}\n'
+    return result.strip()
