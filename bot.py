@@ -22,7 +22,7 @@ logger_path = Path(config.canrot_config.canrot_data_path) / "log"
 if not logger_path.exists():
     logger_path.mkdir(parents=True)
 logger.add(
-    logger_path / (datetime.now().strftime("%Y%m%d_%H%M%S") + ".log"),
+    logger_path / (datetime.now().strftime("%Y-%m-%dT%H%M%S") + ".log"),
     level="WARNING",
     format=default_format,
     rotation="1 week",
