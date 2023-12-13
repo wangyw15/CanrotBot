@@ -25,13 +25,13 @@ async def gacha10(gacha_id: str, language: str = "cn") -> Tuple[dict[str], str]:
     rates: dict[str]
     rates, language = util.get_content_by_language(data["rates"], language)
 
-    # 总权重和给保底用的权重
-    total_weight = 0
-    better_than_three_star_weight = 0
+    # 计算总概率和三星及以上概率
+    total_rate = 0
+    better_than_three_star_rate = 0
     for k, v in rates.items():
-        total_weight += v["weightTotal"]
-        if k in ["3", "4", "5"]:
-            better_than_three_star_weight += v["weightTotal"]
+        total_rate += v["rate"]
+        if int(k) >= 3:
+            better_than_three_star_rate += v["rate"]
 
     # 卡池内的卡片信息
     cards: dict[str]
@@ -44,29 +44,30 @@ async def gacha10(gacha_id: str, language: str = "cn") -> Tuple[dict[str], str]:
     three_star_appeared = False
 
     for i in range(10):
-        # 随机权重
-        weight = random.randint(1, total_weight)
+        # 随机概率
+        rate = random.randint(1, total_rate * 10) / 10
         # 计算稀有度
-        rarity = "0"
+        rarity = "1"
         for k, v in rates.items():
-            if weight <= v["weightTotal"]:
+            if rate <= v["rate"]:
                 rarity = k
                 break
-            weight -= v["weightTotal"]
+            rate -= v["rate"]
 
         # 保底三星及以上
         three_star_appeared = int(rarity) >= 3 or three_star_appeared
         if i == 9 and not three_star_appeared:
             rarity = "3"
-            weight = random.randint(1, better_than_three_star_weight)
+            rate = random.randint(1, better_than_three_star_rate * 10) / 10
             for j in ["3", "4", "5"]:
-                if weight <= rates[j]["weightTotal"]:
+                if rate <= rates[j]["rate"]:
                     rarity = j
                     break
-                weight -= rates[j]["weightTotal"]
+                rate -= rates[j]["rate"]
 
         # 随机卡片
-        card_id = "0"
+        weight = random.randint(1, rates[rarity]["weightTotal"])
+        card_id = "1"
         for k, v in cards.items():
             if str(v["rarityIndex"]) != rarity:
                 continue
