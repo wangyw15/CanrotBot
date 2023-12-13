@@ -16,7 +16,10 @@ from nonebot_plugin_alconna import (
 
 from essentials.libraries import economy, user
 from essentials.libraries import util
-from . import bestdori, gacha_helper
+from . import bestdori, data, gacha_helper
+from storage import database
+import json
+from sqlalchemy import insert
 
 # TODO 记得改；模拟抽卡、查卡、点歌、签到主题、活动助手等
 __plugin_meta__ = PluginMetadata(
@@ -133,15 +136,30 @@ async def _(gacha_id: Query[str] = AlconnaQuery("gacha_id")):
     # 付钱
     if not economy.pay(uid, 25, "邦邦十连"):
         await _command.finish("你的余额不足喵~")
-    await _command.send("你的二十五个胡萝卜片我就收下了~\n一緒にキラキラドキドキしましょう！")
+    await _command.send("你的二十五个胡萝卜片我就收下了~\n一緒にキラキラドキドキしまう！")
 
     # 抽卡
-    data, language = await gacha_helper.gacha10(gacha_id.result.strip())
+    gacha_data, language = await gacha_helper.gacha10(gacha_id.result.strip())
+
+    # 保存结果
+    with database.get_session().begin() as session:
+        session.execute(
+            insert(data.History).values(
+                user_id=uid,
+                gacha=gacha_id.result.strip(),
+                cards=json.dumps(list(gacha_data.keys())),
+            )
+        )
+
+    # 发送信息
     msg = UniMsg()
-    msg.append(Text(gacha_helper.generate_text(data, language)))
-    # TODO 抽卡记录、卡池列表
+    # 卡池信息
+    msg.append(Text(await gacha_helper.get_gacha_name(gacha_id.result.strip())))
+    # 抽卡结果
+    msg.append(Text(gacha_helper.generate_text(gacha_data, language)))
+    # TODO 卡池列表
     if await util.can_send_segment(Image):
-        msg.append(Image(raw=await gacha_helper.generate_image(data)))
+        msg.append(Image(raw=await gacha_helper.generate_image(gacha_data)))
     await _command.finish(msg)
 
 

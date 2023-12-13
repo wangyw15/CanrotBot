@@ -136,3 +136,17 @@ def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
         )
         result += f'{card_data["rarity"]}★ {card_name}\n'
     return result.strip()
+
+
+async def get_gacha_name(gacha_id: str, language: str = "cn") -> str:
+    """
+    获取卡池名称
+
+    :params gacha_id: 卡池ID
+    :params language: 语言
+
+    :return: 卡池名称
+    """
+    data = await gacha.get_gacha_info(gacha_id)
+    title, language = util.get_content_by_language(data["gachaName"], language)
+    return title
