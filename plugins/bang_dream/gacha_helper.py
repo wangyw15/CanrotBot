@@ -133,7 +133,7 @@ async def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
     for card_id, card_data in gacha_data.items():
         card_name, _ = util.get_content_by_language(card_data["prefix"], language)
         character_name, _ = util.get_content_by_language(
-            characters[str(card_data["rarity"])]["characterName"], language
+            characters[str(card_data["characterId"])]["characterName"], language
         )
         result += f'{card_data["rarity"]}★ {character_name} - {card_name}\n'
     return result.strip()
