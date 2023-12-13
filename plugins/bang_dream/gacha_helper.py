@@ -1,6 +1,5 @@
 import json
 import random
-from typing import Tuple
 
 from essentials.libraries import render_by_browser
 from storage import asset
@@ -9,7 +8,7 @@ from .bestdori import band_character, card, gacha, util
 _assets = asset.AssetManager("bang_dream")
 
 
-async def gacha10(gacha_id: str, language: str = "cn") -> Tuple[dict[str], str]:
+async def gacha10(gacha_id: str, language: str = "cn") -> dict[str]:
     """
     一发十连
 
@@ -23,7 +22,7 @@ async def gacha10(gacha_id: str, language: str = "cn") -> Tuple[dict[str], str]:
 
     # 获取权重
     rates: dict[str]
-    rates, language = util.get_content_by_language(data["rates"], language)
+    rates, _ = util.get_content_by_language(data["rates"], language)
 
     # 计算总概率和三星及以上概率
     total_rate = 0
@@ -35,7 +34,7 @@ async def gacha10(gacha_id: str, language: str = "cn") -> Tuple[dict[str], str]:
 
     # 卡池内的卡片信息
     cards: dict[str]
-    cards, language = util.get_content_by_language(data["details"], language)
+    cards, _ = util.get_content_by_language(data["details"], language)
 
     # 抽卡结果
     result_card_ids = []
@@ -81,7 +80,7 @@ async def gacha10(gacha_id: str, language: str = "cn") -> Tuple[dict[str], str]:
     for card_id in result_card_ids:
         result_cards[card_id] = await card.get_card_info(card_id)
 
-    return result_cards, language
+    return result_cards
 
 
 async def generate_data_for_image(gacha_data: dict[str]) -> list[dict[str]]:
@@ -111,7 +110,7 @@ async def generate_image(gacha_data: dict[str]) -> bytes:
     data = await generate_data_for_image(gacha_data)
     generated_html = (
         _assets("gacha.html")
-        .read_text()
+        .read_text(encoding="utf-8")
         .replace("'{{DATA_HERE}}'", json.dumps(data, ensure_ascii=False))
     )
 
@@ -120,7 +119,7 @@ async def generate_image(gacha_data: dict[str]) -> bytes:
     )
 
 
-def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
+async def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
     """
     生成抽卡文字
 
@@ -130,11 +129,13 @@ def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
     :return: 文字
     """
     result = ""
+    characters: dict[str] = await band_character.get_character_list()
     for card_id, card_data in gacha_data.items():
-        card_name, language = util.get_content_by_language(
-            card_data["prefix"], language
+        card_name, _ = util.get_content_by_language(card_data["prefix"], language)
+        character_name, _ = util.get_content_by_language(
+            characters[str(card_data["rarity"])]["characterName"], language
         )
-        result += f'{card_data["rarity"]}★ {card_name}\n'
+        result += f'{card_data["rarity"]}★ {character_name} - {card_name}\n'
     return result.strip()
 
 
@@ -148,5 +149,5 @@ async def get_gacha_name(gacha_id: str, language: str = "cn") -> str:
     :return: 卡池名称
     """
     data = await gacha.get_gacha_info(gacha_id)
-    title, language = util.get_content_by_language(data["gachaName"], language)
+    title, _ = util.get_content_by_language(data["gachaName"], language)
     return title
