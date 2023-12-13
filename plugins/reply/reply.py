@@ -1,3 +1,4 @@
+import logging
 import random
 import re
 
@@ -16,6 +17,9 @@ SENDER_NAME: str = "主人"
 
 # 加载数据
 _reply_data: list[dict[str, str | None]] = asset.LocalAsset("reply.json").json()
+
+# 关闭jieba日志
+jieba.setLogLevel(logging.WARNING)
 
 
 def is_negative(msg: str) -> bool:
