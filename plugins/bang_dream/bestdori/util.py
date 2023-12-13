@@ -1,10 +1,9 @@
 from datetime import timedelta
-from pathlib import Path
 from typing import Tuple, TypeVar
 
 from httpx import AsyncClient
 
-from storage import asset, config
+from storage import asset
 
 client = AsyncClient()
 available_languages = ["jp", "en", "tw", "cn", "kr"]  # [日服, 国际服, 台服, 国服, 韩服]
