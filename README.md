@@ -18,6 +18,7 @@
 
 ```bash
 pip install -r requirements.txt
+playwright install # 如果是第一次启动，则安装 playwright
 python bot.py
 ```
 
