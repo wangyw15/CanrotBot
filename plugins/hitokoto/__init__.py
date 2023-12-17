@@ -23,6 +23,7 @@ _command = on_alconna(
             alias=["分类", "categories"],
         ),
     ),
+    aliases={"hitokoto"},
     block=True,
 )
 
