@@ -1,11 +1,11 @@
 # from https://github.com/RimoChan/yinglish
+import logging
 import random
 
 import jieba
 import jieba.posseg as pseg
 
-
-jieba.setLogLevel(20)
+jieba.setLogLevel(logging.WARNING)
 
 
 def _词转换(x, y, 淫乱度: float):

@@ -1,3 +1,4 @@
+import logging
 import random
 
 import jieba
@@ -14,6 +15,7 @@ __plugin_meta__ = PluginMetadata(
     name="实验性功能", description="还在测试中的奇妙功能", usage="快速开发懒得写", config=None
 )
 
+jieba.setLogLevel(logging.WARNING)
 jieba.add_word("{name}")
 jieba.add_word("{me}")
 _reply_data: list[list[str]] = [
