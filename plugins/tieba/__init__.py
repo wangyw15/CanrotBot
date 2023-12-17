@@ -201,7 +201,7 @@ async def _(bot: Bot, account_id_query: Query[int] = AlconnaQuery("account_id", 
             session.execute(
                 insert(data.TiebaSignResultSubscriber).values(
                     account_id=account.id,
-                    puid=uid,
+                    puid=puid,
                     bot=bot.self_id,
                 )
             )
