@@ -8,19 +8,24 @@ from nonebot import logger
 
 from essentials.libraries import util
 from storage import asset
+from datetime import timedelta
 
-_anime_offline_database = asset.AssetManager("anime-offline-database")
+# TODO 改为Anilist API
+_anime_offline_database = asset.RemoteAsset(
+    "https://raw.githubusercontent.com/manami-project/anime-offline-database/master/anime-offline-database-minified.json",
+    expire=timedelta(days=7),
+)
 _animes: list[dict] = []
 # _anilist_id_name: dict[int, str] = {}
 _name_anilist_id: dict[str, int] = {}
 
 
-def _load_animes() -> None:
+async def _load_animes() -> None:
     global _animes, _name_anilist_id
     if not _animes:
-        data = _anime_offline_database["anime-offline-database"]
+        data = await _anime_offline_database.json()
         _animes = data["data"]
-        logger.info(f'Anime databasee last update time: {data["lastUpdate"]}')
+        logger.info(f'Anime database last update time: {data["lastUpdate"]}')
         logger.info(f"Loaded animes: {len(_animes)}")
     # 提升搜索速度
     logger.info("预加载搜索数据")
@@ -37,7 +42,7 @@ def _load_animes() -> None:
             _name_anilist_id[synonym] = int(anilist_id)
 
 
-_load_animes()
+asyncio.get_event_loop().run_until_complete(_load_animes())
 
 
 def search_anime_by_name(name: str) -> Tuple[str, dict, float]:
@@ -66,6 +71,13 @@ def search_anime_by_name(name: str) -> Tuple[str, dict, float]:
 
 
 def search_anime_by_anilist_id(anilist_id: str | int) -> dict | None:
+    """
+    通过 AniList id 搜索番剧
+
+    :param anilist_id: AniList id
+
+    :return: 番剧信息
+    """
     url = f"https://anilist.co/anime/{anilist_id}"
     for anime in _animes:
         if url in anime["sources"]:

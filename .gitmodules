@@ -1,9 +1,6 @@
 [submodule "assets/hitokoto"]
 	path = assets/hitokoto
 	url = https://github.com/hitokoto-osc/sentences-bundle
-[submodule "assets/anime-offline-database"]
-	path = assets/anime-offline-database
-	url = https://github.com/manami-project/anime-offline-database
 [submodule "assets/arknights/ArknightsGameResource"]
 	path = assets/arknights/ArknightsGameResource
 	url = https://github.com/yuanyan3060/ArknightsGameResource
