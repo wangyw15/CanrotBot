@@ -126,9 +126,13 @@ def generate_text_result(results: list[ForumSigninResult]) -> str:
         elif result.code == ForumSigninResultType.ERROR:
             failed.append(result.name)
     return (
-        f"共{len(results)}个吧\n"
-        f"已签到{signed_count}个\n"
-        f"签到成功{success_count}个\n"
-        f"签到失败{len(failed)}个\n\n"
-        f"签到失败的吧：{'，'.join(failed)}"
+        (
+            f"共{len(results)}个吧\n"
+            f"已签到{signed_count}个\n"
+            f"签到成功{success_count}个\n"
+            f"签到失败{len(failed)}个\n\n"
+        )
+        + f"签到失败的吧：{'，'.join(failed)}"
+        if failed
+        else ""
     )
