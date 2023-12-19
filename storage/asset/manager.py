@@ -1,8 +1,10 @@
 import json
 from pathlib import Path
 from typing import Any
+from .model import RemoteAsset
 
 
+# TODO 使用`LocalAsset`
 class AssetManager:
     _asset_base_path = Path(__file__).parent.parent.parent / "assets"
 
@@ -39,6 +41,21 @@ class AssetManager:
 
 
 class GithubAssetManager:
-    # TODO 实现
-    def __init__(self):
-        pass
+    def __init__(self, repo: str, branch: str = "master"):
+        """
+        :param repo: 仓库名，格式为 owner/repo
+        """
+        assert repo.count("/") == 1
+        self.__repo = repo
+        self.__branch = branch
+
+    def __str__(self) -> str:
+        return f"https://github.com/{self.__repo}"
+
+    def __truediv__(self, path: str) -> RemoteAsset:
+        return RemoteAsset(
+            f"https://raw.githubusercontent.com/{self.__repo}/{self.__branch}/{path}"
+        )
+
+    def __call__(self, path: str) -> str:
+        return f"https://raw.githubusercontent.com/{self.__repo}/{self.__branch}/{path}"
