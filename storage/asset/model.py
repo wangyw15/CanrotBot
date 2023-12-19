@@ -69,6 +69,7 @@ class RemoteAsset(Asset):
                     result.expire_time is not None
                     and result.expire_time < datetime.now()
                 )
+                or (result.expire_time is None and self.__expire is not None)
                 or (not (self._cache_path / self.__key).exists())
             )
 
@@ -102,7 +103,7 @@ class RemoteAsset(Asset):
             else:
                 self.__data = (self._cache_path / self.__key).read_bytes()
 
-    async def json(self) -> dict:
+    async def json(self) -> dict | list:
         await self.fetch()
         if self.__data:
             return json.loads(self.__data.decode("utf-8"))

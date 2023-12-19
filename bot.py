@@ -1,3 +1,5 @@
+import asyncio
+import platform
 from datetime import datetime
 from pathlib import Path
 
@@ -10,6 +12,9 @@ import nonebot.adapters.onebot.v12 as onebot_v12
 import nonebot.adapters.qq as qq
 from nonebot import logger
 from nonebot.log import default_format
+
+if platform.system() == "Windows":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 # 初始化
 nonebot.init(alconna_use_command_start=True)

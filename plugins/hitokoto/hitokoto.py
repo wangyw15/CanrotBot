@@ -1,11 +1,14 @@
+import asyncio
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from nonebot import logger
 
 from storage import asset
 
-_hitokoto_asset = asset.AssetManager("hitokoto")
+_hitokoto_asset = asset.GithubAssetManager(
+    "hitokoto-osc/sentences-bundle", expire=timedelta(days=31)
+)
 _version: dict = {}
 _categories: list[dict] = []
 _sentences: dict[str, list[dict]] = {}
@@ -16,7 +19,7 @@ def _timestamp_to_datetime(timestamp: str) -> datetime:
     return datetime.fromtimestamp(float(timestamp) / 1000)
 
 
-def _load_hitokoto_assets():
+async def _load_hitokoto_assets():
     global _version
     global _categories
     global _sentences
@@ -24,25 +27,27 @@ def _load_hitokoto_assets():
 
     # 加载 version.json
     if not _version:
-        _version = _hitokoto_asset["version"]
+        _version = await _hitokoto_asset("version.json").json()
         logger.info(f'hitokoto sentences_bundle version: {_version["bundle_version"]}')
 
     # 加载 categories.json
     if not _categories:
-        _categories = _hitokoto_asset["categories"]
+        _categories = await _hitokoto_asset("categories.json").json()
         logger.info(f"hitokoto sentences_bundle categories count: {len(_categories)}")
 
     # 加载 sentences
     if not _sentences:
         for category in _categories:
             _all_category_keys += category["key"]
-            _sentences[category["key"]] = _hitokoto_asset[category["path"][2:-5]]
+            _sentences[category["key"]] = await _hitokoto_asset(
+                category["path"][2:]
+            ).json()
             logger.info(
                 f'hitokoto sentences_bundle {category["name"]} sentences count: {len(_sentences[category["key"]])}'
             )
 
 
-_load_hitokoto_assets()
+asyncio.run(_load_hitokoto_assets())
 
 
 def get_categories() -> list[dict[str, str]]:

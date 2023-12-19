@@ -2,7 +2,6 @@ import asyncio
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any
 
 from .model import RemoteAsset
 
@@ -19,7 +18,7 @@ class AssetManager:
     def __call__(self, file_name: str = "") -> Path:
         return self.__base_path / file_name
 
-    def __getitem__(self, file_name: str) -> Any | None:
+    def __getitem__(self, file_name: str) -> dict | list | None:
         """
         读取对应路径的json文件
 
@@ -71,5 +70,5 @@ class GithubAssetManager:
             expire=self.__expire,
         )
 
-    def __getitem__(self, path: str) -> dict:
+    def __getitem__(self, path: str) -> dict | list:
         return asyncio.run(self(path).json())
