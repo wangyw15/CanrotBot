@@ -57,7 +57,7 @@ async def gacha10(gacha_id: str, language: str = "cn") -> dict[str]:
         three_star_appeared = int(rarity) >= 3 or three_star_appeared
         if i == 9 and not three_star_appeared:
             rarity = "3"
-            rate = random.randint(1, better_than_three_star_rate * 10) / 10
+            rate = random.randint(1, int(better_than_three_star_rate * 10)) / 10
             for j in ["3", "4", "5"]:
                 if rate <= rates[j]["rate"]:
                     rarity = j
