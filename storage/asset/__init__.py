@@ -1,2 +1,2 @@
-from .asset import *
+from .model import *
 from .manager import *
