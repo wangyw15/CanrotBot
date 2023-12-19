@@ -71,4 +71,5 @@ class GithubAssetManager:
         )
 
     def __getitem__(self, path: str) -> dict | list:
-        return asyncio.run(self(path).json())
+        with asyncio.Runner() as runner:
+            return runner.run(self(path).json())

@@ -65,7 +65,8 @@ async def _init() -> None:
     logger.info(f"arknights gacha operators: {len(arknights_gacha_operators)}")
 
 
-asyncio.run(_init())
+with asyncio.Runner() as runner:
+    runner.run(_init())
 
 
 async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:

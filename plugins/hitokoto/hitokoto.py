@@ -47,7 +47,8 @@ async def _load_hitokoto_assets():
             )
 
 
-asyncio.run(_load_hitokoto_assets())
+with asyncio.Runner() as runner:
+    runner.run(_load_hitokoto_assets())
 
 
 def get_categories() -> list[dict[str, str]]:

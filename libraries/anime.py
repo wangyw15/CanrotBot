@@ -42,7 +42,8 @@ async def _load_animes() -> None:
             _name_anilist_id[synonym] = int(anilist_id)
 
 
-asyncio.run(_load_animes())
+with asyncio.Runner() as runner:
+    runner.run(_load_animes())
 
 
 def search_anime_by_name(name: str) -> Tuple[str, dict, float]:
