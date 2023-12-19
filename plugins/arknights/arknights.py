@@ -38,7 +38,7 @@ _number_to_rarity = [
 ]
 
 
-# TODO 改为在线获取资源
+# TODO 自动更新资源
 async def _init() -> None:
     global _arknights_all_characters
 

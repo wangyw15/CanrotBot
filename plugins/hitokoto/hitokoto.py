@@ -19,6 +19,7 @@ def _timestamp_to_datetime(timestamp: str) -> datetime:
     return datetime.fromtimestamp(float(timestamp) / 1000)
 
 
+# TODO 自动更新资源
 async def _load_hitokoto_assets():
     global _version
     global _categories
