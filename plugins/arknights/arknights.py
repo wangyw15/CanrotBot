@@ -1,5 +1,7 @@
+import asyncio
 import json
 import random
+from datetime import timedelta
 from typing import Tuple
 
 from nonebot import logger
@@ -22,7 +24,10 @@ _arknights_operator_professions = [
     "SPECIAL",
     "TANK",
 ]
-_arknights_assets = asset.AssetManager("arknights")
+_arknights_local_assets = asset.AssetManager("arknights")
+_arknights_remote_assets = asset.GithubAssetManager(
+    "yuanyan3060/ArknightsGameResource", "main", expire=timedelta(days=7)
+)
 _number_to_rarity = [
     "one_star",
     "two_stars",
@@ -33,22 +38,20 @@ _number_to_rarity = [
 ]
 
 
-def _init() -> None:
+# TODO 改为在线获取资源
+async def _init() -> None:
     global _arknights_all_characters
-    # data version
-    with (_arknights_assets() / "ArknightsGameResource" / "version").open("r") as f:
-        logger.info(f"ArknightsGameResource version: {f.read()}")
 
-    # load characters
-    with (
-        _arknights_assets()
-        / "ArknightsGameResource"
-        / "gamedata"
-        / "excel"
-        / "character_table.json"
-    ).open("r", encoding="utf-8") as f:
-        _arknights_all_characters = json.load(f)
-        logger.info(f"arknights characters: {len(_arknights_all_characters)}")
+    # 数据版本
+    logger.info(
+        f"ArknightsGameResource version: {await _arknights_remote_assets('version').text()}"
+    )
+
+    # 加载角色数据
+    _arknights_all_characters = await _arknights_remote_assets(
+        "gamedata/excel/character_table.json"
+    ).json()
+    logger.info(f"Arknights characters: {len(_arknights_all_characters)}")
 
     # generate gacha operators
     for k, v in _arknights_all_characters.items():
@@ -62,7 +65,7 @@ def _init() -> None:
     logger.info(f"arknights gacha operators: {len(arknights_gacha_operators)}")
 
 
-_init()
+asyncio.run(_init())
 
 
 async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
@@ -73,6 +76,8 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
 
     :return: 图片, 干员列表
     """
+    # TODO 分离图片生成
+    # TODO 分离数据库操作
     maker = sessionmaker(bind=database.get_engine(), expire_on_commit=False)
     session = maker()
 
@@ -145,14 +150,16 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
     session.close()
 
     # 生成 html
-    with _arknights_assets("gacha.html").open("r", encoding="utf-8") as f:
+    with _arknights_local_assets("gacha.html").open("r", encoding="utf-8") as f:
         generated_html = f.read().replace(
             "'{{DATA_HERE}}'", json.dumps(operators, ensure_ascii=False)
         )
 
     # 生成图片
     img = await render_by_browser.render_html(
-        generated_html, _arknights_assets(), viewport={"width": 1000, "height": 500}
+        generated_html,
+        _arknights_local_assets(),
+        viewport={"width": 1000, "height": 500},
     )
     return img, operators
 

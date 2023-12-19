@@ -1,6 +1,9 @@
+import asyncio
 import json
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
+
 from .model import RemoteAsset
 
 
@@ -30,7 +33,7 @@ class AssetManager:
                 return json.load(f)
         return None
 
-    def __truediv__(self, other):
+    def __truediv__(self, other) -> Path:
         return self.__base_path / other
 
     def __str__(self):
@@ -41,21 +44,32 @@ class AssetManager:
 
 
 class GithubAssetManager:
-    def __init__(self, repo: str, branch: str = "master"):
+    # TODO 增加镜像
+    def __init__(
+        self,
+        repo: str,
+        branch: str = "master",
+        expire: datetime | timedelta | None = None,
+    ):
         """
         :param repo: 仓库名，格式为 owner/repo
         """
         assert repo.count("/") == 1
         self.__repo = repo
         self.__branch = branch
+        self.__expire = expire
 
     def __str__(self) -> str:
         return f"https://github.com/{self.__repo}"
 
-    def __truediv__(self, path: str) -> RemoteAsset:
+    def __truediv__(self, path: str) -> str:
+        return f"https://raw.githubusercontent.com/{self.__repo}/{self.__branch}/{path}"
+
+    def __call__(self, path: str) -> RemoteAsset:
         return RemoteAsset(
-            f"https://raw.githubusercontent.com/{self.__repo}/{self.__branch}/{path}"
+            f"https://raw.githubusercontent.com/{self.__repo}/{self.__branch}/{path}",
+            expire=self.__expire,
         )
 
-    def __call__(self, path: str) -> str:
-        return f"https://raw.githubusercontent.com/{self.__repo}/{self.__branch}/{path}"
+    def __getitem__(self, path: str) -> dict:
+        return asyncio.run(self(path).json())
