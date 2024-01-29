@@ -21,10 +21,10 @@ _animes: list[dict] = []
 _name_anilist_id: dict[str, int] = {}
 
 
-async def _load_animes() -> None:
+def _load_animes() -> None:
     global _animes, _name_anilist_id
     if not _animes:
-        data = await _anime_offline_database.json()
+        data = _anime_offline_database.json()
         _animes = data["data"]
         logger.info(f'Anime database last update time: {data["lastUpdate"]}')
         logger.info(f"Loaded animes: {len(_animes)}")
@@ -43,8 +43,7 @@ async def _load_animes() -> None:
             _name_anilist_id[synonym] = int(anilist_id)
 
 
-with asyncio.Runner() as runner:
-    runner.run(_load_animes())
+_load_animes()
 
 
 def search_anime_by_name(name: str) -> Tuple[str, dict, float]:

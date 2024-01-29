@@ -1,4 +1,3 @@
-import asyncio
 import random
 from datetime import datetime, timedelta
 
@@ -20,7 +19,7 @@ def _timestamp_to_datetime(timestamp: str) -> datetime:
 
 
 # TODO 自动更新资源
-async def _load_hitokoto_assets():
+def _load_hitokoto_assets():
     global _version
     global _categories
     global _sentences
@@ -28,28 +27,25 @@ async def _load_hitokoto_assets():
 
     # 加载 version.json
     if not _version:
-        _version = await _hitokoto_asset("version.json").json()
+        _version = _hitokoto_asset("version.json").json()
         logger.info(f'hitokoto sentences_bundle version: {_version["bundle_version"]}')
 
     # 加载 categories.json
     if not _categories:
-        _categories = await _hitokoto_asset("categories.json").json()
+        _categories = _hitokoto_asset("categories.json").json()
         logger.info(f"hitokoto sentences_bundle categories count: {len(_categories)}")
 
     # 加载 sentences
     if not _sentences:
         for category in _categories:
             _all_category_keys += category["key"]
-            _sentences[category["key"]] = await _hitokoto_asset(
-                category["path"][2:]
-            ).json()
+            _sentences[category["key"]] = _hitokoto_asset(category["path"][2:]).json()
             logger.info(
                 f'hitokoto sentences_bundle {category["name"]} sentences count: {len(_sentences[category["key"]])}'
             )
 
 
-with asyncio.Runner() as runner:
-    runner.run(_load_hitokoto_assets())
+_load_hitokoto_assets()
 
 
 def get_categories() -> list[dict[str, str]]:

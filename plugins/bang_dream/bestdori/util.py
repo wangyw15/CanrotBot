@@ -36,9 +36,7 @@ def get_content_by_language(arr: list[T], language: str = "") -> Tuple[T, str]:
     return arr[available_languages.index(language)], language
 
 
-async def bestdori_api_with_cache(
-    path: str, valid_duration: timedelta = None
-) -> dict[str]:
+def bestdori_api_with_cache(path: str, valid_duration: timedelta = None) -> dict[str]:
     """
     获取数据并缓存，默认缓存永久有效
 
@@ -49,4 +47,4 @@ async def bestdori_api_with_cache(
     """
     url = "https://bestdori.com/api/" + path
     file = asset.RemoteAsset(url, expire=valid_duration)
-    return await file.json()
+    return file.json()

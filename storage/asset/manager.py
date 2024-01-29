@@ -1,4 +1,3 @@
-import asyncio
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -71,5 +70,4 @@ class GithubAssetManager:
         )
 
     def __getitem__(self, path: str) -> dict | list:
-        with asyncio.Runner() as runner:
-            return runner.run(self(path).json())
+        return self(path).json()

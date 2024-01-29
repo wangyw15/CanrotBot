@@ -8,8 +8,8 @@ require("mltd")
 from plugins.mltd import mltd
 
 
-async def _generate_mltd_html() -> str:
-    card = random.choice(await mltd.get_cards())
+def _generate_mltd_html() -> str:
+    card = random.choice(mltd.get_cards())
     with (fortune.fortune_assets / "template" / "mltd.html").open(
         "r", encoding="utf-8"
     ) as f:

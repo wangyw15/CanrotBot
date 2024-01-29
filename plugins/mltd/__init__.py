@@ -93,7 +93,7 @@ async def _():
 async def _(query: Query[str] = AlconnaQuery("card", "query")):
     if await util.can_send_segment(Image):
         await _command.send("正在搜索喵~")
-        card = await mltd.search_card(query.result.strip())
+        card = mltd.search_card(query.result.strip())
         await _command.finish(Image(raw=await mltd.generate_card_info_image(card)))
     await _command.finish("这里不支持发送图片所以没法查卡喵~")
 
@@ -117,7 +117,7 @@ async def _():
 @_command.assign("update")
 async def _():
     await _command.send("正在更新卡片数据喵~")
-    await mltd.load_cards(True)
+    mltd.load_cards(True)
     await _command.finish("更新完毕喵~")
 
 

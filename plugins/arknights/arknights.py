@@ -1,4 +1,3 @@
-import asyncio
 import json
 import random
 from datetime import timedelta
@@ -39,16 +38,16 @@ _number_to_rarity = [
 
 
 # TODO 自动更新资源
-async def _init() -> None:
+def _init() -> None:
     global _arknights_all_characters
 
     # 数据版本
     logger.info(
-        f"ArknightsGameResource version: {await _arknights_remote_assets('version').text()}"
+        f"ArknightsGameResource version: {_arknights_remote_assets('version').text()}"
     )
 
     # 加载角色数据
-    _arknights_all_characters = await _arknights_remote_assets(
+    _arknights_all_characters = _arknights_remote_assets(
         "gamedata/excel/character_table.json"
     ).json()
     logger.info(f"Arknights characters: {len(_arknights_all_characters)}")
@@ -65,8 +64,7 @@ async def _init() -> None:
     logger.info(f"arknights gacha operators: {len(arknights_gacha_operators)}")
 
 
-with asyncio.Runner() as runner:
-    runner.run(_init())
+_init()
 
 
 async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:

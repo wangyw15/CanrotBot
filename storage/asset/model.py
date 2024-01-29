@@ -5,13 +5,13 @@ from hashlib import md5
 from pathlib import Path
 from typing import Any
 
-from httpx import AsyncClient
+from httpx import Client
 from sqlalchemy import select, update, insert
 
 from storage import config, database
 from . import data
 
-_client = AsyncClient(proxies=config.canrot_config.canrot_proxy)
+_client = Client(proxies=config.canrot_config.canrot_proxy)
 
 
 class Asset(metaclass=abc.ABCMeta):
@@ -55,7 +55,7 @@ class RemoteAsset(Asset):
     def generate_key(url: str) -> str:
         return md5(url.encode("utf8")).hexdigest()
 
-    async def fetch(self, force: bool = False) -> None:
+    def fetch(self, force: bool = False) -> None:
         # TODO 记得修改shit code
         query = select(data.RemoteAssetCache).where(
             data.RemoteAssetCache.key == self.__key
@@ -81,7 +81,7 @@ class RemoteAsset(Asset):
                 expire = self.__expire
 
             if need_fetch:
-                resp = await _client.get(self.__url)
+                resp = _client.get(self.__url)
                 if resp.is_success:
                     with (self._cache_path / self.__key).open("wb") as f:
                         f.write(resp.content)
@@ -103,20 +103,20 @@ class RemoteAsset(Asset):
             else:
                 self.__data = (self._cache_path / self.__key).read_bytes()
 
-    async def json(self) -> dict | list:
-        await self.fetch()
+    def json(self) -> dict | list:
+        self.fetch()
         if self.__data:
             return json.loads(self.__data.decode("utf-8"))
         return {}
 
-    async def text(self) -> str:
-        await self.fetch()
+    def text(self) -> str:
+        self.fetch()
         if self.__data:
             return self.__data.decode("utf-8")
         return ""
 
-    async def raw(self) -> bytes | None:
-        await self.fetch()
+    def raw(self) -> bytes | None:
+        self.fetch()
         if self.__data:
             return self.__data
         return None

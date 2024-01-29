@@ -5,7 +5,7 @@ from storage import asset
 from . import util
 
 
-async def get_comic_list() -> dict[str]:
+def get_comic_list() -> dict[str]:
     """
     获取漫画列表
 
@@ -15,10 +15,10 @@ async def get_comic_list() -> dict[str]:
 
     :return: 漫画列表
     """
-    return await util.bestdori_api_with_cache("comics/all.5.json", timedelta(days=7))
+    return util.bestdori_api_with_cache("comics/all.5.json", timedelta(days=7))
 
 
-async def get_comic_url(comic_id: str, language: str = "") -> Tuple[str, str] | None:
+def get_comic_url(comic_id: str, language: str = "") -> Tuple[str, str] | None:
     """
     获取漫画链接
 
@@ -29,7 +29,7 @@ async def get_comic_url(comic_id: str, language: str = "") -> Tuple[str, str] | 
 
     :return: (漫画链接, 语言)
     """
-    comic_list = await get_comic_list()
+    comic_list = get_comic_list()
 
     # 确保漫画id存在
     if comic_id not in comic_list:
@@ -58,7 +58,7 @@ async def get_comic_url(comic_id: str, language: str = "") -> Tuple[str, str] | 
     )
 
 
-async def get_comic(comic_id: str, language: str = "") -> Tuple[bytes, str] | None:
+def get_comic(comic_id: str, language: str = "") -> Tuple[bytes, str] | None:
     """
     获取漫画
 
@@ -69,12 +69,12 @@ async def get_comic(comic_id: str, language: str = "") -> Tuple[bytes, str] | No
 
     :return: (图片, 语言)
     """
-    comic_list = await get_comic_list()
+    comic_list = get_comic_list()
 
     # 确保漫画id存在
     if comic_id not in comic_list:
         return None
 
-    url, language = await get_comic_url(comic_id, language)
+    url, language = get_comic_url(comic_id, language)
     file = asset.RemoteAsset(url)
-    return await file.raw(), language
+    return file.raw(), language

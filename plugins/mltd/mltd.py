@@ -33,7 +33,7 @@ _cards_zh: list[dict] = []
 _cards_for_gasha: dict[int, list[dict]] = {}
 
 
-async def load_cards(force_reload: bool = False) -> None:
+def load_cards(force_reload: bool = False) -> None:
     global _cards, _cards_zh, _cards_for_gasha
     if force_reload or not _cards or not _cards_zh:
         cards_asset = asset.RemoteAsset(
@@ -45,8 +45,8 @@ async def load_cards(force_reload: bool = False) -> None:
             "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true"
         )
 
-        _cards = await cards_asset.json()
-        _cards_zh = await cards_zh_asset.json()
+        _cards = cards_asset.json()
+        _cards_zh = cards_zh_asset.json()
         _cards_last_fetch = datetime.now()
         # 生成卡池
         _cards_for_gasha = {}
@@ -58,13 +58,13 @@ async def load_cards(force_reload: bool = False) -> None:
             _cards_for_gasha[card["rarity"]].append(card)
 
 
-async def get_cards() -> list[dict]:
-    await load_cards()
+def get_cards() -> list[dict]:
+    load_cards()
     return _cards
 
 
-async def search_card(keyword: str, force_jp: bool = False) -> dict:
-    await load_cards()
+def search_card(keyword: str, force_jp: bool = False) -> dict:
+    load_cards()
     best = 0.0
     ret = {}
     # 优先搜索中文内容
@@ -107,7 +107,7 @@ async def get_events(time: Literal["now"] | datetime = "now") -> list[dict] | No
 
 
 async def gasha() -> Tuple[bytes, list[dict]]:
-    await load_cards()
+    load_cards()
     cards: list[dict] = []
     # SR保底
     got_sr_or_better = False

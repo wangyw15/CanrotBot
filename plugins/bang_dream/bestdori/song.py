@@ -3,16 +3,16 @@ from datetime import timedelta
 from . import util
 
 
-async def get_song_list() -> dict[str]:
+def get_song_list() -> dict[str]:
     """
     获取歌曲列表
 
     :return: 漫画列表
     """
-    return await util.bestdori_api_with_cache("songs/all.5.json", timedelta(days=7))
+    return util.bestdori_api_with_cache("songs/all.5.json", timedelta(days=7))
 
 
-async def get_song_info(song_id: str) -> dict[str]:
+def get_song_info(song_id: str) -> dict[str]:
     """
     获取歌曲信息
 
@@ -20,10 +20,10 @@ async def get_song_info(song_id: str) -> dict[str]:
 
     :return: 歌曲信息
     """
-    return await util.bestdori_api_with_cache(f"songs/{song_id}.json")
+    return util.bestdori_api_with_cache(f"songs/{song_id}.json")
 
 
-async def get_song_url(song_id: str) -> str | None:
+def get_song_url(song_id: str) -> str | None:
     """
     获取歌曲音频链接
 
@@ -31,7 +31,7 @@ async def get_song_url(song_id: str) -> str | None:
 
     :return: 歌曲音频链接
     """
-    songs = await get_song_list()
+    songs = get_song_list()
     if song_id not in songs:
         return None
     song_id = song_id.zfill(3)
