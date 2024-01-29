@@ -18,7 +18,7 @@ _client = httpx.AsyncClient()
 
 
 async def fetch_currency() -> list[dict[str, str]]:
-    resp = await _client.get("https://papi.icbc.com.cn/exchanges/ns/getLatest")
+    resp = await _client.get("http://papi.icbc.com.cn/exchanges/ns/getLatest")
     if resp.status_code == 200:
         data = resp.json()
         if data["message"] == "success" and data["code"] == 0:
