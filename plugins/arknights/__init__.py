@@ -42,8 +42,6 @@ async def _():
         await _command.finish("你的余额不足喵~")
     # 抽卡
     img, operators = await arknights.generate_gacha(uid)
-    with open("a.png", "wb") as f:
-        f.write(img)
     # 付款提示
     await _command.send("你的二十五个胡萝卜片我就收下了喵~")
     # 生成消息
