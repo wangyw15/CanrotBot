@@ -52,6 +52,7 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
             final_msg.append(Image(url=data["pic"]))
         final_msg.append(_generate_bilibili_message(data))
         await _bilibili_video.finish(await final_msg.export())
+    await _bilibili_video.finish()
 
 
 _bilibili_video_short_link = on_regex(
@@ -63,6 +64,9 @@ _bilibili_video_short_link = on_regex(
 async def _(reg: typing.Annotated[str, RegexStr()]):
     vid = await bilibili.get_bvid_from_short_link(reg)
     if vid:
+        from nonebot import logger
+
+        logger.error(vid)
         data = await bilibili.fetch_video_data(vid)
         if data:
             final_msg = UniMsg()
@@ -70,6 +74,7 @@ async def _(reg: typing.Annotated[str, RegexStr()]):
                 final_msg.append(Image(url=data["pic"]))
             final_msg.append(_generate_bilibili_message(data))
             await _bilibili_video_short_link.finish(await final_msg.export())
+    await _bilibili_video_short_link.finish()
 
 
 # TODO 改为Alconna
