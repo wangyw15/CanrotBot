@@ -5,6 +5,7 @@ canrot_data.db
 .env
 .env.*
 canrot_data/
+.pytest_cache
 
 # Node.js
 lib
