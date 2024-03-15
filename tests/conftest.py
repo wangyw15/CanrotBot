@@ -10,7 +10,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 def pytest_addoption(parser: pytest.Parser):
     parser.addoption(
-        "--test_network",
+        "--test-network",
         action="store_true",
         default=False,
         help="Run tests that need network connection"
@@ -22,9 +22,9 @@ def pytest_configure(config):
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]):
-    if config.getoption("--test_network"):
+    if config.getoption("--test-network"):
         return
-    skip_network = pytest.mark.skip(reason="need --test_network option to run")
+    skip_network = pytest.mark.skip(reason="need --test-network option to run")
     for item in items:
         if "network" in item.keywords:
             item.add_marker(skip_network)
