@@ -13,10 +13,12 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-_crazy_thursday_posts: list[str] = asset.LocalAsset("crazy_thursday.json")["post"]
-_crazy_thursday_handler = on_regex(r"疯狂星期[一二三四五六日天]|狂乱[月火水木金土日]曜日", block=True)
+crazy_thursday_posts: list[str] = asset.LocalAsset("crazy_thursday.json")["post"]
+crazy_thursday_matcher = on_regex(
+    r"疯狂星期[一二三四五六日天]|狂乱[月火水木金土日]曜日", block=True
+)
 
 
-@_crazy_thursday_handler.handle()
+@crazy_thursday_matcher.handle()
 async def _():
-    await _crazy_thursday_handler.finish(random.choice(_crazy_thursday_posts))
+    await crazy_thursday_matcher.finish(random.choice(crazy_thursday_posts))
