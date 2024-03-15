@@ -13,8 +13,8 @@ async def test_calculator_matched(app: App):
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
-        ctx.should_call_send(event, "2*(6+9)/3=10", result=None)
-        ctx.should_finished(calculator_matcher)
+        ctx.should_call_send(event, "2*(6+9)/3=10")
+        ctx.should_finished()
 
 
 @pytest.mark.asyncio
