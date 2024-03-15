@@ -16,7 +16,7 @@ bilibili_vid_pattern = r"(?:https?:\/\/)?(?:(?:www\.)?bilibili.com\/video|b23\.t
 short_link_pattern = r"https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}"
 
 
-async def _fetch_json_data(url: str) -> dict | None:
+async def fetch_json_data(url: str) -> dict | None:
     """
     从URL获取json数据
 
@@ -24,10 +24,12 @@ async def _fetch_json_data(url: str) -> dict | None:
 
     :return: JSON 内容
     """
-    resp = await _client.get(url, headers=_header)
-    if resp.is_success and resp.status_code == 200:
-        return resp.json()
-    return None
+    try:
+        resp = await _client.get(url, headers=_header)
+        if resp.is_success and resp.status_code == 200:
+            return resp.json()
+    finally:
+        return None
 
 
 async def fetch_video_data(vid: str) -> dict | None:
@@ -45,7 +47,7 @@ async def fetch_video_data(vid: str) -> dict | None:
         url = f"https://api.bilibili.com/x/web-interface/view?aid={vid[2:]}"
     if not url:
         return None
-    raw_data = await _fetch_json_data(url)
+    raw_data = await fetch_json_data(url)
     if raw_data and raw_data["code"] == 0:
         return raw_data["data"]
     return None
@@ -77,14 +79,14 @@ async def fetch_all_projects(
 
     :return: 活动列表
     """
-    first_page = await _fetch_json_data(
+    first_page = await fetch_json_data(
         _projects_url.format(page=1, area=area, project_type=project_type)
     )
     if first_page and first_page["errno"] == 0:
         total_pages = first_page["data"]["numPages"]
         result: list[dict] = first_page["data"]["result"]
         for page in range(2, total_pages + 1):
-            page_data = await _fetch_json_data(
+            page_data = await fetch_json_data(
                 _projects_url.format(page=page, area=area, project_type=project_type)
             )
             if page_data and page_data["errno"] == 0:
