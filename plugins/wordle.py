@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from storage import asset
 
 __plugin_meta__ = PluginMetadata(
-    name="Wordle", description="Wordle小游戏", usage="/wordle 开始游戏", config=None
+    name="Wordle", description="Wordle小游戏", usage="/wordle", config=None
 )
 
 
@@ -24,7 +24,7 @@ class WordleConfig(BaseModel):
 config = WordleConfig.parse_obj(get_driver().config)
 
 # load wordle data
-words = asset.LocalAsset("reply.json").json()
+words = asset.LocalAsset("wordle.json").json()
 
 
 def get_wordle_result(answer: str, guess: str) -> str:
@@ -39,26 +39,33 @@ def get_wordle_result(answer: str, guess: str) -> str:
     return result
 
 
-wordle = on_command("wordle", block=True)
+wordle_matcher = on_command("wordle", block=True)
 WORDLE_ANSWER = "wordle_answer"
 WORDLE_GUESSES = "wordle_guesses"
 
 
-@wordle.handle()
+@wordle_matcher.handle()
 async def _(state: T_State):
     state[WORDLE_ANSWER] = random.choice(words)
     state[WORDLE_GUESSES] = []
-    await wordle.send("新一轮wordle游戏开始，请输入单词")
+    await wordle_matcher.send("新一轮wordle游戏开始，请输入单词")
 
 
-@wordle.got("guess")
+@wordle_matcher.got("guess")
 async def _(state: T_State, guess: Message = Arg()):
+    # current guess
     guess = guess.extract_plain_text()
+    # previous answers
     answer: str = state[WORDLE_ANSWER]
+    # success
     if guess == answer:
-        await wordle.finish(f"恭喜你猜对了！\n共用了{len(state[WORDLE_ANSWER])}次机会")
+        # don't forget to add current guess
+        await wordle_matcher.finish(
+            f"恭喜你猜对了！\n共用了{len(state[WORDLE_GUESSES]) + 1}次机会"
+        )
+    # invalid word
     elif guess not in words:
-        await wordle.reject("你输入的单词不在词库中")
+        await wordle_matcher.reject("你输入的单词不在词库中")
     else:
         state[WORDLE_GUESSES].append(guess)
         msg = ""
@@ -66,5 +73,7 @@ async def _(state: T_State, guess: Message = Arg()):
             msg += f"{i}\n{get_wordle_result(answer, i)}\n"
         msg += f"第{len(state[WORDLE_GUESSES])}次"
         if len(state[WORDLE_GUESSES]) == 6:
-            await wordle.finish(f"{msg}\n你已经用完了6次机会\n答案是{state[WORDLE_ANSWER]}")
-        await wordle.reject(msg)
+            await wordle_matcher.finish(
+                f"{msg}\n你已经用完了6次机会\n答案是{state[WORDLE_ANSWER]}"
+            )
+        await wordle_matcher.reject(msg)
