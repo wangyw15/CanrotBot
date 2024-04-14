@@ -20,7 +20,8 @@ _command = on_alconna(
     Alconna(
         "random",
         Args["items", str],
-    )
+    ),
+    aliases={"r", "随机"},
 )
 
 Item = namedtuple("Item", ["name", "weight"])
