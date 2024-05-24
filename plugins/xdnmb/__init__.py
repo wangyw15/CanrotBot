@@ -27,10 +27,10 @@ __plugin_meta__ = PluginMetadata(
 async def _generate_message(thread_number: str) -> UniMessage | None:
     if data := await xdnmb.get_thread_data(thread_number):
         msg = UniMessage()
-        msg.append(xdnmb.generate_message(data, True))
+        msg += xdnmb.generate_message(data, True)
         for i in range(3):
             msg.append(Text("--------------------\n"))
-            msg.append(Text(xdnmb.generate_message(data["Replies"][i])))
+            msg += xdnmb.generate_message(data["Replies"][i])
             msg.append(Text("\n"))
         return msg
     return None
