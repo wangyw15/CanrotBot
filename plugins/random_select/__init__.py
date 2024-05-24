@@ -7,7 +7,7 @@ from nonebot_plugin_alconna import (
 )
 from sqlalchemy import select, insert, delete
 
-from storage import database
+from storage import asset, database
 from . import data, random_selector
 
 __plugin_meta__ = PluginMetadata(
@@ -17,6 +17,7 @@ __plugin_meta__ = PluginMetadata(
     config=None,
 )
 
+EMPTY_PROMPT = "{EMPTY_PROMPT}"
 
 _command = on_alconna(
     Alconna(
@@ -40,9 +41,15 @@ _command = on_alconna(
             Args["name", str],
             alias=["删除预设"],
         ),
-        Args["items", str, ""],
+        Args["items", str, ""]["prompt", str, ""],
     ),
     aliases={"r", "随机", "随机选择"},
+)
+
+# 抛硬币
+_command.shortcut(
+    "coin",
+    {"args": ["正面,反面", EMPTY_PROMPT], "prefix": True},
 )
 
 
@@ -111,8 +118,12 @@ async def _(name: Query[str] = AlconnaQuery("name")):
 
 
 @_command.handle()
-async def _(items: Query[str] = AlconnaQuery("items", "")):
+async def _(
+    items: Query[str] = AlconnaQuery("items", ""),
+    prompt: Query[str] = AlconnaQuery("prompt", ""),
+):
     raw_items = items.result.strip()
+    custom_prompt = prompt.result
 
     if not raw_items:
         await _command.finish(__plugin_meta__.usage)
@@ -128,13 +139,16 @@ async def _(items: Query[str] = AlconnaQuery("items", "")):
                 )
             ).scalar_one_or_none()
             if result:
-                preset_prompt = "使用预设项目：" + raw_items
+                preset_prompt = "使用预设项目：" + raw_items + "\n"
                 parsed_items = random_selector.parse_items(result)
 
+    prompt = preset_prompt + "选择了："
+
+    if custom_prompt == EMPTY_PROMPT:
+        prompt = ""
+    elif custom_prompt:
+        prompt = custom_prompt
+
     await _command.finish(
-        (
-            preset_prompt
-            + "\n选择了："
-            + random_selector.random_select_from_list(parsed_items)
-        ).strip()
+        (prompt + random_selector.random_select_from_list(parsed_items)).strip()
     )
