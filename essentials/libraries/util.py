@@ -24,7 +24,7 @@ def _get_config(name: str) -> Any:
 
 
 if proxy := _get_config("canrot_proxy"):
-    _client = httpx.AsyncClient(proxies=proxy)
+    _client = httpx.AsyncClient(proxy=proxy)
 else:
     _client = httpx.AsyncClient()
 _client.timeout = 10

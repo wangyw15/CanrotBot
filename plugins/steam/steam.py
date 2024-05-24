@@ -4,7 +4,7 @@ from storage import config
 
 
 if proxy := config.get_config("canrot_proxy"):
-    _client = AsyncClient(proxies=proxy)
+    _client = AsyncClient(proxy=proxy)
 else:
     _client = AsyncClient()
 

@@ -11,7 +11,7 @@ from sqlalchemy import select, update, insert
 from storage import config, database
 from . import data
 
-_client = Client(proxies=config.canrot_config.canrot_proxy)
+_client = Client(proxy=config.canrot_config.canrot_proxy)
 
 
 class Asset(metaclass=abc.ABCMeta):

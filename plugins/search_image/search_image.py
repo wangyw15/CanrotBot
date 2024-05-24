@@ -18,7 +18,7 @@ _config = SearchImageConfig.parse_obj(get_driver().config)
 
 
 if _config.canrot_proxy:
-    _client = httpx.AsyncClient(proxies=_config.canrot_proxy)
+    _client = httpx.AsyncClient(proxy=_config.canrot_proxy)
 else:
     _client = httpx.AsyncClient()
 _client.timeout = 10
@@ -124,7 +124,9 @@ async def generate_message_from_saucenao_result(api_result: dict) -> UniMsg:
             if "id" in data:
                 msg += Text(f'作品链接: https://www.patreon.com/posts/{data["id"]}\n')
             if "user_id" in data:
-                msg += Text(f'作者链接: https://www.patreon.com/user?u={data["user_id"]}\n')
+                msg += Text(
+                    f'作者链接: https://www.patreon.com/user?u={data["user_id"]}\n'
+                )
             continue
 
         # deviant art

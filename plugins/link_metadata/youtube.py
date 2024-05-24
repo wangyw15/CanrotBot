@@ -5,7 +5,7 @@ from storage import config
 youtube_id_pattern = r"(?:https?:\/\/)?(?:youtu\.be\/|(?:\w{3}\.)?youtube\.com\/watch\?.*v=)([a-zA-Z0-9-_]+)"
 
 if proxy := config.get_config("canrot_proxy"):
-    _client = AsyncClient(proxies=proxy)
+    _client = AsyncClient(proxy=proxy)
 else:
     _client = AsyncClient()
 
