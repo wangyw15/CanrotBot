@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+
 import pytest
 from httpx import Response
 from pytest_mock import MockerFixture
@@ -14,8 +16,8 @@ async def test_fetch_json_data_fail(mocker: MockerFixture):
             content=b"<html><body>example</body></html>",
         ),
     )
-
-    assert await bilibili.fetch_json_data("https://example.com") is None
+    with pytest.raises(JSONDecodeError):
+        assert await bilibili.fetch_json_data("https://example.com") is None
 
 
 @pytest.mark.asyncio(scope="session")
