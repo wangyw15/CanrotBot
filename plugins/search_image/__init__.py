@@ -9,6 +9,7 @@ from nonebot_plugin_alconna import (
     Alconna,
     AlconnaQuery,
     Query,
+    UniMessage,
     UniMsg,
     Image,
 )
@@ -52,7 +53,7 @@ async def _(state: T_State, image_msg: UniMsg = Arg()):
 
     # search
     if img_url and (img_url.startswith("https://") or img_url.startswith("http://")):
-        msg = UniMsg()
+        msg = UniMessage()
         api: str = state["SEARCH_IMAGE_API"]
         if api == "saucenao":
             search_resp = await search_image.search_image_from_saucenao(img_url)

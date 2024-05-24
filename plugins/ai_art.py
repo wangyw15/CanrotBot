@@ -3,7 +3,7 @@ import base64
 from nonebot import on_command
 from nonebot.params import Message, CommandArg
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import UniMsg, Image
+from nonebot_plugin_alconna import UniMessage, Image
 from tencentcloud.aiart.v20221229 import aiart_client, models
 from tencentcloud.common import credential
 
@@ -72,5 +72,5 @@ async def _(msg: Message = CommandArg()):
         # 发送请求
         resp = _client.TextToImage(req)
         await _ai_art_handler.finish(
-            await UniMsg(Image(raw=base64.b64decode(resp.ResultImage))).export()
+            await UniMessage(Image(raw=base64.b64decode(resp.ResultImage))).export()
         )

@@ -9,7 +9,7 @@ from nonebot_plugin_alconna import (
     Alconna,
     AlconnaQuery,
     Query,
-    UniMsg,
+    UniMessage,
     Text,
     Image,
 )
@@ -38,7 +38,7 @@ class SteamConfig(BaseModel):
 _steam_config = SteamConfig.parse_obj(get_driver().config)
 
 
-async def _generate_message(app_info: dict) -> UniMsg:
+async def _generate_message(app_info: dict) -> UniMessage:
     header_img: str = app_info["header_image"]
     bg_img: str = app_info["background_raw"]
 
@@ -66,15 +66,13 @@ async def _generate_message(app_info: dict) -> UniMsg:
     """.strip()
 
     if discount_percentage != 0:
-        txt_msg += (
-            f"\n原价: {initial_price}\n现价: {final_price}\n折扣: {discount_percentage}%"
-        )
+        txt_msg += f"\n原价: {initial_price}\n现价: {final_price}\n折扣: {discount_percentage}%"
     else:
         txt_msg += f"\n价格: {final_price}"
 
     txt_msg += f"\n链接: https://store.steampowered.com/app/{appid}"
 
-    ret = UniMsg()
+    ret = UniMessage()
     if await util.can_send_segment(Image):
         ret.append(Image(header_img))
     ret.append(Text(txt_msg))

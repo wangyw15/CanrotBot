@@ -9,21 +9,24 @@ from nonebot_plugin_alconna import (
     Alconna,
     AlconnaQuery,
     Query,
-    UniMsg,
+    UniMessage,
     Text,
 )
 
 from . import xdnmb
 
 __plugin_meta__ = PluginMetadata(
-    name="xdnmb", description="自动获取串号内容", usage="发送链接或者/xd <串号>", config=None
+    name="xdnmb",
+    description="自动获取串号内容",
+    usage="发送链接或者/xd <串号>",
+    config=None,
 )
 # TODO 设置饼干用于查看
 
 
-async def _generate_message(thread_number: str) -> UniMsg | None:
+async def _generate_message(thread_number: str) -> UniMessage | None:
     if data := await xdnmb.get_thread_data(thread_number):
-        msg = UniMsg()
+        msg = UniMessage()
         msg.append(xdnmb.generate_message(data, True))
         for i in range(3):
             msg.append(Text("--------------------\n"))

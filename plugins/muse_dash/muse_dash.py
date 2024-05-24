@@ -5,7 +5,7 @@ from typing import Literal
 from bs4 import BeautifulSoup
 
 from essentials.libraries import render_by_browser, util
-from nonebot_plugin_alconna import UniMsg, Image, Text
+from nonebot_plugin_alconna import UniMessage, Image, Text
 
 
 async def search_muse_dash_player_id(player_name: str) -> str | None:
@@ -91,7 +91,7 @@ async def generate_muse_dash_player_image(
     return ret
 
 
-async def generate_muse_dash_message(player_id: str) -> UniMsg | None:
+async def generate_muse_dash_message(player_id: str) -> UniMessage | None:
     """
     生成消息
 
@@ -101,7 +101,7 @@ async def generate_muse_dash_message(player_id: str) -> UniMsg | None:
     """
     if player_id:
         if data := await fetch_muse_dash_player_data(player_id):
-            ret_msg = UniMsg()
+            ret_msg = UniMessage()
             ret_msg.append(
                 Text(
                     f'玩家名：{data["name"]}\n'
@@ -130,14 +130,6 @@ async def generate_muse_dash_message(player_id: str) -> UniMsg | None:
             return ret_msg
     return None
 
-
-async def _test():
-    with open("test.png", "wb") as f:
-        f.write(await generate_muse_dash_player_image("test your player id", "png"))
-
-
-if __name__ == "__main__":
-    asyncio.run(_test())
 
 __all__ = [
     "search_muse_dash_player_id",

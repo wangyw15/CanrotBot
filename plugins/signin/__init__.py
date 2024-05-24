@@ -7,7 +7,7 @@ from nonebot_plugin_alconna import (
     Alconna,
     AlconnaQuery,
     Query,
-    UniMsg,
+    UniMessage,
     Text,
     Image,
 )
@@ -18,7 +18,10 @@ from storage import database, file
 from . import data, fortune
 
 __plugin_meta__ = PluginMetadata(
-    name="签到", description="每日签到，能够抽签和获得积分", usage="/<signin|签到|每日签到|抽签>", config=None
+    name="签到",
+    description="每日签到，能够抽签和获得积分",
+    usage="/<signin|签到|每日签到|抽签>",
+    config=None,
 )
 
 _signin_files = file.FileStorage("signin")
@@ -76,7 +79,7 @@ async def _(theme: Query[str] = AlconnaQuery("theme", "random")):
             break
 
     # 构造消息
-    final_msg = UniMsg()
+    final_msg = UniMessage()
 
     # 签到
     if today_record is None:
@@ -94,7 +97,9 @@ async def _(theme: Query[str] = AlconnaQuery("theme", "random")):
         point_amount = 20 + rank
         economy.earn(uid, point_amount, "每日签到")
 
-        final_msg += Text("签到成功！\n" f"获得 {point_amount} 胡萝卜片\n" "✨今日运势✨\n")
+        final_msg += Text(
+            "签到成功！\n" f"获得 {point_amount} 胡萝卜片\n" "✨今日运势✨\n"
+        )
     else:
         final_msg += Text("你今天签过到了，再给你看一次哦🤗\n")
 

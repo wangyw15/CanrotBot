@@ -2,7 +2,14 @@ from datetime import datetime
 
 from arclet.alconna import Alconna, Option, Args
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import on_alconna, Query, AlconnaQuery, UniMsg, Image, Text
+from nonebot_plugin_alconna import (
+    on_alconna,
+    Query,
+    AlconnaQuery,
+    UniMessage,
+    Image,
+    Text,
+)
 
 from essentials.libraries import user, economy, util
 from . import mltd
@@ -16,7 +23,9 @@ __plugin_meta__ = PluginMetadata(
 
 
 def iso8601_to_local(iso8601: str) -> str:
-    return datetime.fromisoformat(iso8601).astimezone().strftime("%Y年%m月%d日 %H:%M:%S")
+    return (
+        datetime.fromisoformat(iso8601).astimezone().strftime("%Y年%m月%d日 %H:%M:%S")
+    )
 
 
 _command = on_alconna(
@@ -48,7 +57,7 @@ _command = on_alconna(
 async def _():
     data = await mltd.get_events()
     if data:
-        msg = UniMsg()
+        msg = UniMessage()
         msg.append(Text("现在正在进行的活动:"))
         for mltd_event in data:
             # 活动信息

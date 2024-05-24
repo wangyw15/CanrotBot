@@ -2,7 +2,7 @@ import re
 import typing
 
 import httpx
-from nonebot_plugin_alconna import UniMsg, Text, Image
+from nonebot_plugin_alconna import UniMessage, Text, Image
 
 _client = httpx.AsyncClient()
 
@@ -30,8 +30,8 @@ def translate_time(t: str) -> str:
     return ""
 
 
-def generate_message(thread_data, head: bool = False) -> UniMsg:
-    msg = UniMsg()
+def generate_message(thread_data, head: bool = False) -> UniMessage:
+    msg = UniMessage()
     if thread_data["id"] == 9999999:
         msg.append(Text(f'Tips:\n{thread_data["content"]}\n'))
         return msg

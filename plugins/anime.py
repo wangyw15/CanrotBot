@@ -5,7 +5,7 @@ from nonebot_plugin_alconna import (
     Alconna,
     AlconnaQuery,
     Query,
-    UniMsg,
+    UniMessage,
     Text,
     Image,
 )
@@ -71,7 +71,7 @@ _command = on_alconna(
 async def _(anime_query: Query[str] = AlconnaQuery("anime_query")):
     name, data, possibility = anime.search_anime_by_name(anime_query.result.strip())
     text_msg = generate_message_from_anime_data(name, data, possibility)
-    msg = UniMsg()
+    msg = UniMessage()
     if await util.can_send_segment(Image):
         msg.append(Image(url=data["picture"]))
     msg.append(Text(text_msg))

@@ -9,7 +9,7 @@ from nonebot_plugin_alconna import (
     Alconna,
     AlconnaQuery,
     Query,
-    UniMsg,
+    UniMessage,
     Text,
     Image,
     Voice,
@@ -81,7 +81,7 @@ async def _(comic_query: Query[str] = AlconnaQuery("comic_query", "random")):
     if comic_id is None or comic_id not in comics:
         await _command.finish("没有找到这个漫画喵")
     title, _ = bestdori.util.get_content_by_language(comics[comic_id]["title"])
-    msg = UniMsg()
+    msg = UniMessage()
     msg.append(Text(title))
     if await util.can_send_segment(Image):
         result = bestdori.comic.get_comic(comic_id)
@@ -136,7 +136,9 @@ async def _(gacha_id: Query[str] = AlconnaQuery("gacha_id")):
     # 付钱
     if not economy.pay(uid, 25, "邦邦十连"):
         await _command.finish("你的余额不足喵~")
-    await _command.send("你的二十五个胡萝卜片我就收下了~\n一緒にキラキラドキドキしまう！")
+    await _command.send(
+        "你的二十五个胡萝卜片我就收下了~\n一緒にキラキラドキドキしまう！"
+    )
 
     # 抽卡
     gacha_data = gacha_helper.gacha10(gacha_id.result.strip())
@@ -152,7 +154,7 @@ async def _(gacha_id: Query[str] = AlconnaQuery("gacha_id")):
         )
 
     # 发送信息
-    msg = UniMsg()
+    msg = UniMessage()
     # 卡池信息
     msg.append(Text(gacha_helper.get_gacha_name(gacha_id.result.strip()) + "\n"))
     # 抽卡结果
@@ -160,7 +162,7 @@ async def _(gacha_id: Query[str] = AlconnaQuery("gacha_id")):
     await _command.send(msg)
     # TODO 卡池列表
     if await util.can_send_segment(Image):
-        msg = UniMsg()
+        msg = UniMessage()
         msg.append(Image(raw=await gacha_helper.generate_image(gacha_data)))
         await _command.send(msg)
     await _command.finish()

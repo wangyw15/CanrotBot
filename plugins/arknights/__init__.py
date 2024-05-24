@@ -1,7 +1,7 @@
 from arclet.alconna import Alconna, Option
 from nonebot.exception import FinishedException
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import on_alconna, UniMsg, Image, Text, SerializeFailed
+from nonebot_plugin_alconna import on_alconna, UniMessage, Image, Text, SerializeFailed
 from sqlalchemy import select
 
 from essentials.libraries import user, economy
@@ -22,7 +22,15 @@ _command = on_alconna(
         Option("十连", alias=["gacha", "抽卡"], help_text="来一发十连！"),
         Option(
             "抽卡记录",
-            alias=["gachainfo", "抽卡统计", "抽卡历史", "十连历史", "十连统计", "寻访历史", "寻访统计"],
+            alias=[
+                "gachainfo",
+                "抽卡统计",
+                "抽卡历史",
+                "十连历史",
+                "十连统计",
+                "寻访历史",
+                "寻访统计",
+            ],
             help_text="查看抽卡记录",
         ),
     ),
@@ -45,7 +53,7 @@ async def _():
     # 付款提示
     await _command.send("你的二十五个胡萝卜片我就收下了喵~")
     # 生成消息
-    msg = UniMsg()
+    msg = UniMessage()
     # 列出抽到的干员
     msg.append(Text("明日方舟抽卡结果: \n"))
     for operator in operators:
@@ -94,5 +102,7 @@ async def _():
 @_command.handle()
 async def _():
     await _command.finish(
-        "用法: " + __plugin_meta__.usage + "\n命令列表:\n十连: 一发十连！\n抽卡记录: 查看抽卡记录"
+        "用法: "
+        + __plugin_meta__.usage
+        + "\n命令列表:\n十连: 一发十连！\n抽卡记录: 查看抽卡记录"
     )
