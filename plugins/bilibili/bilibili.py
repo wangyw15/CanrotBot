@@ -24,12 +24,9 @@ async def fetch_json_data(url: str) -> dict | None:
 
     :return: JSON 内容
     """
-    try:
-        resp = await _client.get(url, headers=_header)
-        if resp.is_success and resp.status_code == 200:
-            return resp.json()
-    finally:
-        return None
+    resp = await _client.get(url, headers=_header)
+    if resp.is_success and resp.status_code == 200:
+        return resp.json()
 
 
 async def fetch_video_data(vid: str) -> dict | None:

@@ -4,7 +4,7 @@ from datetime import datetime
 from nonebot import on_regex, on_fullmatch
 from nonebot.params import RegexGroup, RegexStr
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import UniMsg, Image
+from nonebot_plugin_alconna import UniMessage, Image, Text
 
 from essentials.libraries import util
 from . import bilibili
@@ -47,10 +47,10 @@ _bilibili_video = on_regex(bilibili.bilibili_vid_pattern, block=True)
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     data = await bilibili.fetch_video_data(reg[0])
     if data:
-        final_msg = UniMsg()
+        final_msg = UniMessage()
         if await util.can_send_segment(Image):
             final_msg.append(Image(url=data["pic"]))
-        final_msg.append(_generate_bilibili_message(data))
+        final_msg.append(Text(_generate_bilibili_message(data)))
         await _bilibili_video.finish(await final_msg.export())
     await _bilibili_video.finish()
 
@@ -64,15 +64,12 @@ _bilibili_video_short_link = on_regex(
 async def _(reg: typing.Annotated[str, RegexStr()]):
     vid = await bilibili.get_bvid_from_short_link(reg)
     if vid:
-        from nonebot import logger
-
-        logger.error(vid)
         data = await bilibili.fetch_video_data(vid)
         if data:
-            final_msg = UniMsg()
+            final_msg = UniMessage()
             if await util.can_send_segment(Image):
                 final_msg.append(Image(url=data["pic"]))
-            final_msg.append(_generate_bilibili_message(data))
+            final_msg.append(Text(_generate_bilibili_message(data)))
             await _bilibili_video_short_link.finish(await final_msg.export())
     await _bilibili_video_short_link.finish()
 
