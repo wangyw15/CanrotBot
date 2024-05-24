@@ -18,7 +18,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-_dice_handler = on_command("dice", aliases={"骰子", "d"}, block=True)
+_dice_handler = on_command("dice", aliases={"骰子"}, block=True)
 
 
 @_dice_handler.handle()
@@ -34,7 +34,7 @@ async def _(args: Message = CommandArg()):
 
 
 _investigator_handler = on_shell_command(
-    "investigator", aliases={"i", "调查员", "人物卡"}, block=True
+    "investigator", aliases={"调查员", "人物卡"}, block=True
 )
 
 
@@ -115,7 +115,9 @@ async def _(
             if investigator.check_investigator_id(uid, iid):
                 investigator.set_selected_investigator(uid, gid, iid)
                 card = investigator.get_investigator(uid, iid)
-                await _investigator_handler.finish(f"已选择调查员 {card[0].name}({iid})")
+                await _investigator_handler.finish(
+                    f"已选择调查员 {card[0].name}({iid})"
+                )
     elif len(args) > 0 and args[0].lower() in ["a", "add", "导入", "添加"]:
         card = investigator.generate_investigator(" ".join(args[1:]))
         if not card:
@@ -126,7 +128,7 @@ async def _(
     await _investigator_handler.finish(__plugin_meta__.usage)
 
 
-_check_handler = on_shell_command("check", aliases={"c", "检定"}, block=True)
+_check_handler = on_shell_command("check", aliases={"检定"}, block=True)
 
 
 @_check_handler.handle()
