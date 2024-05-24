@@ -35,3 +35,5 @@ def load_bot():
     # 加载适配器
     driver = nonebot.get_driver()
     driver.register_adapter(ConsoleAdapter)
+
+    nonebot.load_plugin("nonebot_plugin_alconna")
