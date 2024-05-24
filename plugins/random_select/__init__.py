@@ -51,24 +51,28 @@ async def _(
     name: Query[str] = AlconnaQuery("name"),
     preset_items: Query[str] = AlconnaQuery("preset_items"),
 ):
+    preset_name = name.result.strip()
     raw_items = preset_items.result.strip()
-
-    from nonebot.log import logger
-
-    logger.info(f"name: {name.result}")
-    logger.info(f"raw_items: {preset_items.result}")
 
     if not raw_items:
         await _command.finish("请提供项目")
 
     items = random_selector.parse_items(raw_items)
     with database.get_session().begin() as session:
+        result = session.execute(
+            select(data.RandomSelectPreset).where(
+                data.RandomSelectPreset.name == preset_name
+            )
+        ).scalar_one_or_none()
+        if result:
+            await _command.finish(f"预设 {preset_name} 已存在")
+
         session.execute(
             insert(data.RandomSelectPreset).values(
-                name=name.result.strip(), items=random_selector.dump_items(items)
+                name=preset_name, items=random_selector.dump_items(items)
             )
         )
-    await _command.finish(f"添加预设 {name.result.strip()} 成功")
+    await _command.finish(f"添加预设 {preset_name} 成功")
 
 
 @_command.assign("list-preset")

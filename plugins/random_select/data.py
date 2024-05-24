@@ -14,7 +14,7 @@ class RandomSelectPreset(Base):
     id: Mapped[int] = Column(
         Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
     )
-    name: Mapped[str] = Column(Text, nullable=False, unique=True)
+    name: Mapped[str] = Column(Text, nullable=False)
     items: Mapped[str] = Column(Text, nullable=False)
 
 
