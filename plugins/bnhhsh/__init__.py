@@ -13,11 +13,11 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-_bnhhsh_handler = on_command("bnhhsh", aliases={"不能好好说话"}, block=True)
+bnhhsh_handler = on_command("bnhhsh", aliases={"不能好好说话"}, block=True)
 
 
-@_bnhhsh_handler.handle()
+@bnhhsh_handler.handle()
 async def _(args: Message = CommandArg()):
     if msg := args.extract_plain_text():
-        await _bnhhsh_handler.finish(bnhhsh.generate(msg))
-    await _bnhhsh_handler.finish("用法: " + __plugin_meta__.usage)
+        await bnhhsh_handler.finish(bnhhsh.generate(msg))
+    await bnhhsh_handler.finish("用法: " + __plugin_meta__.usage)
