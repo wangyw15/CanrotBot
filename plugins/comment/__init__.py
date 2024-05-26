@@ -13,7 +13,10 @@ from storage import database
 from . import data
 
 __plugin_meta__ = PluginMetadata(
-    name="锐评记录", description="记录各种锐评", usage="懒得写", config=None  # TODO 帮助信息
+    name="锐评记录",
+    description="记录各种锐评",
+    usage="懒得写",
+    config=None,  # TODO 帮助信息
 )
 
 _anime_comment_add_handler = on_command("评价番剧", aliases={"锐评番剧"}, block=True)
@@ -26,7 +29,9 @@ async def _(state: T_State, args: Message = CommandArg()):
         if anilist_id:
             anilist_id = str(anilist_id)
             state["anilist_id"] = anilist_id
-            await _anime_comment_add_handler.send(f'对"{name}"开始一段锐评，stop则不添加评价')
+            await _anime_comment_add_handler.send(
+                f'对"{name}"开始一段锐评，stop则不添加评价'
+            )
         else:
             await _anime_comment_add_handler.finish("AniList 中不存在这部番剧")
     else:
@@ -54,7 +59,9 @@ async def _(state: T_State, comment_msg: Message = Arg()):
         await _anime_comment_add_handler.finish("锐评已保存")
 
 
-_anime_comment_view_handler = on_command("查看番剧锐评", aliases={"查看番剧评价"}, block=True)
+_anime_comment_view_handler = on_command(
+    "查看番剧锐评", aliases={"查看番剧评价"}, block=True
+)
 
 
 @_anime_comment_view_handler.handle()
@@ -67,8 +74,8 @@ async def _(args: Message = CommandArg()):
                 _comment_data = (
                     session.execute(
                         select(data.Comment).where(
-                            data.Comment.type == data.CommentType.anime,
-                            data.Comment.title == anilist_id,
+                            data.Comment.type == data.CommentType.anime,  # type: ignore
+                            data.Comment.title == anilist_id,  # type: ignore
                         )
                     )
                     .scalars()
