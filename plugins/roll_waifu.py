@@ -79,7 +79,7 @@ async def _():
 
 @_command.handle()
 async def _(category: Query[str] = AlconnaQuery("category", "random")):
-    if await util.can_send_segment(Image):
+    if not await util.can_send_segment(Image):
         await _command.finish("这里不能发送图片喵~")
 
     category = category.result.strip().lower()
