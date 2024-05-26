@@ -1,11 +1,10 @@
-import asyncio
 import re
 from typing import Literal
 
 from bs4 import BeautifulSoup
+from nonebot_plugin_alconna import UniMessage, Image, Text
 
 from essentials.libraries import render_by_browser, util
-from nonebot_plugin_alconna import UniMessage, Image, Text
 
 
 async def search_muse_dash_player_id(player_name: str) -> str | None:
