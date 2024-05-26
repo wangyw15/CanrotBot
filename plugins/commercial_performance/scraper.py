@@ -19,7 +19,7 @@ async def get_ids_by_page(page: int) -> set[str]:
     return set()
 
 
-async def get_data_by_id(performance_id: str) -> dict[str]:
+async def get_data_by_id(performance_id: str) -> dict:
     """
     获取演出内容
 
@@ -86,9 +86,8 @@ async def get_data_by_id(performance_id: str) -> dict[str]:
                         "id": int(i.select_one("td:nth-of-type(1)").text.strip()),
                         "name": i.select_one("td:nth-of-type(2)").text.strip(),
                         "gender": i.select_one("td:nth-of-type(3)").text.strip(),
-                        "region": i.select_one("td:nth-of-type(4)").text.strip(),
                         "license_number": i.select_one(
-                            "td:nth-of-type(5)"
+                            "td:nth-of-type(4)"
                         ).text.strip(),
                     }
                 )
@@ -105,13 +104,3 @@ async def get_data_by_id(performance_id: str) -> dict[str]:
                 "content": soup.select_one("p:nth-of-type(2)").text.strip(),
             }
     return {}
-
-
-async def main():
-    pass
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())
