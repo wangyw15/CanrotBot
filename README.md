@@ -32,7 +32,6 @@ python bot.py
 
 ```bash
 pytest tests # 普通测试
-pytest tests --test-network # 启用需要联网的功能测试
 pytest tests --cov --cov-report=html # 覆盖率测试
 ```
 
