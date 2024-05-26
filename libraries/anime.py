@@ -11,7 +11,6 @@ from storage import asset
 from datetime import timedelta
 
 # TODO 改为Anilist API
-# TODO 自动更新资源
 _anime_offline_database = asset.RemoteAsset(
     "https://raw.githubusercontent.com/manami-project/anime-offline-database/master/anime-offline-database-minified.json",
     expire=timedelta(days=7),
