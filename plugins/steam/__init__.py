@@ -121,4 +121,6 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     ):
         if appinfo.get(appid, {}).get("success", False):
             appinfo = appinfo[appid]["data"]
-            await _steam_link_handler.finish(await _generate_message(appinfo).export())
+            await _steam_link_handler.finish(
+                await (await _generate_message(appinfo)).export()
+            )
