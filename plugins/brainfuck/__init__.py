@@ -1,4 +1,4 @@
-from arclet.alconna import Alconna, Args, Option
+from arclet.alconna import Alconna, Args
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
     on_alconna,
