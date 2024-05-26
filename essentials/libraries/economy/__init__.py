@@ -4,7 +4,7 @@ from sqlalchemy import select, insert, update
 
 from storage import database
 from . import data
-from .data import Account, Record
+from .data import Account, Transaction
 
 
 def _add_history(
@@ -25,7 +25,7 @@ def _add_history(
         ):
             session.execute(insert(data.Account).values(user_id=uid))
         session.execute(
-            insert(data.Record).values(
+            insert(data.Transaction).values(
                 user_id=uid,
                 time=time,
                 amount=amount,

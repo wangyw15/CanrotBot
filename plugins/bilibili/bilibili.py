@@ -1,7 +1,7 @@
 import re
 from typing import Literal
 
-from httpx import Response, AsyncClient
+from httpx import AsyncClient
 
 _client = AsyncClient()
 _projects_url = (

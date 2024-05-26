@@ -78,7 +78,7 @@ async def _():
 
     with database.get_session().begin() as session:
         gacha_result = session.execute(
-            select(data.Statistics).where(data.Statistics.user_id == uid)  # type: ignore
+            select(data.Statistics).where(data.Statistics.user_id == uid)
         ).scalar_one_or_none()
         if gacha_result.times == 0:
             # 未抽过卡

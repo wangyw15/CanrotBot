@@ -87,7 +87,7 @@ async def _():
                 else ""
             )
             # 构建信息
-            msg.append("\n\n")
+            msg.append(Text("\n\n"))
             if await util.can_send_segment(Image):
                 # 活动封面
                 img_url = f"https://storage.matsurihi.me/mltd/event_bg/{str(mltd_event['id']).zfill(4)}.png"

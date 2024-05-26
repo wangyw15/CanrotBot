@@ -14,7 +14,9 @@ __plugin_meta__ = PluginMetadata(
     config=None,
 )
 
-_economy = on_command("economy", aliases={"e", "钱包", "银行", "经济", "bank"}, block=True)
+_economy = on_command(
+    "economy", aliases={"e", "钱包", "银行", "经济", "bank"}, block=True
+)
 
 
 @_economy.handle()
@@ -30,8 +32,8 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
         if msg == "info" or msg == "信息" or msg == "balance" or msg == "余额":
             final = f"puid: {puid}\nuid: {uid}\n当前余额: {economy.get_balance(uid)} 胡萝卜片\n\n最近五条交易记录:"
             with database.get_session().begin() as session:
-                query = select(economy.data.Record).where(
-                    economy.data.Record.user_id == uid
+                query = select(economy.data.Transaction).where(
+                    economy.data.Transaction.user_id == uid
                 )
                 history = session.execute(query).scalars().all()
                 for i in history[:5]:
@@ -53,8 +55,12 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             if not user.uid_user_exists(another_uid):
                 await _economy.finish("不存在此用户")
             if economy.transfer(uid, another_uid, amount):
-                await _economy.finish(f"向 uid {another_uid} 转账 {amount} 个胡萝卜片成功")
+                await _economy.finish(
+                    f"向 uid {another_uid} 转账 {amount} 个胡萝卜片成功"
+                )
             else:
-                await _economy.finish(f"向 uid {another_uid} 转账 {amount} 个胡萝卜片失败")
+                await _economy.finish(
+                    f"向 uid {another_uid} 转账 {amount} 个胡萝卜片失败"
+                )
     else:
         await _economy.finish(__plugin_meta__.usage)

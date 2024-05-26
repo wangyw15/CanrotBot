@@ -8,7 +8,7 @@ from .bestdori import band_character, card, gacha, util
 _assets = asset.AssetManager("bang_dream")
 
 
-def gacha10(gacha_id: str, language: str = "cn") -> dict[str]:
+def gacha10(gacha_id: str, language: str = "cn") -> dict:
     """
     一发十连
 
@@ -83,7 +83,7 @@ def gacha10(gacha_id: str, language: str = "cn") -> dict[str]:
     return result_cards
 
 
-def generate_data_for_image(gacha_data: dict[str]) -> list[dict[str]]:
+def generate_data_for_image(gacha_data: dict[str]) -> list[dict]:
     result = []
     characters: dict[str] = band_character.get_character_list()
     for card_id, card_data in gacha_data.items():

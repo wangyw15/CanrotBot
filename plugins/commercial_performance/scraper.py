@@ -83,7 +83,7 @@ async def get_data_by_id(performance_id: str) -> dict:
                 actors.append(
                     {
                         "performance_id": performance_id,
-                        "id": int(i.select_one("td:nth-of-type(1)").text.strip()),
+                        "actor_id": int(i.select_one("td:nth-of-type(1)").text.strip()),
                         "name": i.select_one("td:nth-of-type(2)").text.strip(),
                         "gender": i.select_one("td:nth-of-type(3)").text.strip(),
                         "license_number": i.select_one(
@@ -97,7 +97,7 @@ async def get_data_by_id(performance_id: str) -> dict:
             }
         else:
             return {
-                "id": performance_id,
+                "performance_id": performance_id,
                 "approval_id": soup.select_one("h3").text.strip(),
                 "organizer": soup.select_one("p:nth-of-type(1)").text.strip(),
                 "name": soup.select_one("h2:nth-of-type(1)").text.strip(),

@@ -27,17 +27,33 @@ _command = on_alconna(
             alias=["绑定"],
             help_text="绑定贴吧账号",
         ),
-        Option("unbind", Args["account_id", int, 0], alias=["解绑"], help_text="解绑贴吧账号"),
+        Option(
+            "unbind",
+            Args["account_id", int, 0],
+            alias=["解绑"],
+            help_text="解绑贴吧账号",
+        ),
         Option("list", alias=["绑定列表"], help_text="查看绑定列表"),
         Option(
-            "subscribe", Args["account_id", int, 0], alias=["订阅"], help_text="订阅签到结果"
+            "subscribe",
+            Args["account_id", int, 0],
+            alias=["订阅"],
+            help_text="订阅签到结果",
         ),
         Option(
-            "unsubscribe", Args["account_id", int, 0], alias=["退订"], help_text="退订签到结果"
+            "unsubscribe",
+            Args["account_id", int, 0],
+            alias=["退订"],
+            help_text="退订签到结果",
         ),
-        Option("sign", Args["account_id", int, 0], alias=["签到"], help_text="手动一键签到"),
         Option(
-            "signinfo", Args["account_id", int, 0], alias=["签到信息"], help_text="查看签到信息"
+            "sign", Args["account_id", int, 0], alias=["签到"], help_text="手动一键签到"
+        ),
+        Option(
+            "signinfo",
+            Args["account_id", int, 0],
+            alias=["签到信息"],
+            help_text="查看签到信息",
         ),
     ),
     aliases={"贴吧"},
@@ -63,14 +79,14 @@ async def _(
         if alias:
             if session.execute(
                 select(data.BaiduAccount).where(
-                    data.BaiduAccount.owner == uid,
+                    data.BaiduAccount.owner_user_id == uid,
                     data.BaiduAccount.alias == alias,
                 )
             ).scalar_one_or_none():
                 await _command.finish("该别名已被使用")
         session.execute(
             insert(data.BaiduAccount).values(
-                owner=uid,
+                owner_user_id=uid,
                 bduss=bduss,
                 stoken=stoken,
                 alias=alias,
@@ -98,7 +114,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             # 删除账号
             session.execute(
                 delete(data.BaiduAccount).where(
-                    data.BaiduAccount.owner == uid,
+                    data.BaiduAccount.owner_user_id == uid,
                     data.BaiduAccount.id == account_id,
                 )
             )
@@ -106,7 +122,9 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             # 删除订阅
             accounts = (
                 session.execute(
-                    select(data.BaiduAccount).where(data.BaiduAccount.owner == uid)
+                    select(data.BaiduAccount).where(
+                        data.BaiduAccount.owner_user_id == uid
+                    )
                 )
                 .scalars()
                 .all()
@@ -119,7 +137,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
                 )
             # 删除账号
             session.execute(
-                delete(data.BaiduAccount).where(data.BaiduAccount.owner == uid)
+                delete(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)
             )
 
     if account_id:
@@ -139,7 +157,7 @@ async def _():
     with database.get_session().begin() as session:
         accounts = (
             session.execute(
-                select(data.BaiduAccount).where(data.BaiduAccount.owner == uid)
+                select(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)
             )
             .scalars()
             .all()
@@ -170,7 +188,7 @@ async def _(bot: Bot, account_id_query: Query[int] = AlconnaQuery("account_id", 
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner == uid,
+                        data.BaiduAccount.owner_user_id == uid,
                         data.BaiduAccount.id == account_id,
                     )
                 )
@@ -181,7 +199,7 @@ async def _(bot: Bot, account_id_query: Query[int] = AlconnaQuery("account_id", 
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner == uid,
+                        data.BaiduAccount.owner_user_id == uid,
                     )
                 )
                 .scalars()
@@ -252,7 +270,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner == uid,
+                        data.BaiduAccount.owner_user_id == uid,
                         data.BaiduAccount.id == account_id,
                     )
                 )
@@ -263,7 +281,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner == uid,
+                        data.BaiduAccount.owner_user_id == uid,
                     )
                 )
                 .scalars()

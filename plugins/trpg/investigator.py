@@ -81,7 +81,7 @@ def add_investigator(uid: str, investigator: data.Investigator) -> int:
         investigator.owner_user_id = uid
         session.add(investigator)
         session.commit()
-        return investigator.investigator_id
+        return investigator.id
 
 
 def get_investigator(
@@ -98,7 +98,7 @@ def get_investigator(
     with database.get_session().begin() as session:
         query = select(data.Investigator).where(data.Investigator.owner_user_id == uid)
         if investigator_id:
-            query = query.where(data.Investigator.investigator_id == investigator_id)
+            query = query.where(data.Investigator.id == investigator_id)
         return session.execute(query).scalars().all()
 
 
@@ -119,7 +119,7 @@ def set_selected_investigator(
             session.execute(
                 select(data.Investigator)
                 .where(data.Investigator.owner_user_id == user_id)
-                .where(data.Investigator.investigator_id == investigator_id)
+                .where(data.Investigator.id == investigator_id)
             ).first()
             is None
         ):
@@ -169,10 +169,7 @@ def get_selected_investigator(user_id: str, group_id: str) -> data.Investigator 
             return session.execute(
                 select(data.Investigator)
                 .where(data.Investigator.owner_user_id == user_id)
-                .where(
-                    data.Investigator.investigator_id
-                    == selected.selected_investigator_id
-                )
+                .where(data.Investigator.id == selected.selected_investigator_id)
             ).scalar_one_or_none()
 
 
@@ -190,7 +187,7 @@ def delete_investigator(user_id: str, investigator_id: str) -> bool:
             session.execute(
                 select(data.Investigator)
                 .where(data.Investigator.owner_user_id == user_id)
-                .where(data.Investigator.investigator_id == investigator_id)
+                .where(data.Investigator.id == investigator_id)
             ).first()
             is None
         ):
@@ -198,7 +195,7 @@ def delete_investigator(user_id: str, investigator_id: str) -> bool:
         session.execute(
             delete(data.Investigator)
             .where(data.Investigator.owner_user_id == user_id)
-            .where(data.Investigator.investigator_id == investigator_id)
+            .where(data.Investigator.id == investigator_id)
         )
         session.commit()
         return True
@@ -218,7 +215,7 @@ def check_investigator_id(user_id: str, investigator_id: str) -> bool:
             session.execute(
                 select(data.Investigator)
                 .where(data.Investigator.owner_user_id == user_id)
-                .where(data.Investigator.investigator_id == investigator_id)
+                .where(data.Investigator.id == investigator_id)
             ).first()
             is not None
         )

@@ -61,9 +61,9 @@ async def _(
                 final_msg = "调查员列表: (*表示当前选定的调查员)\n\n"
                 for card in cards:
                     if selected_card is not None:
-                        if card.investigator_id == selected_card.investigator_id:
+                        if card.id == selected_card.id:
                             final_msg += "*"
-                    final_msg += f"调查员 id: {card.investigator_id}\n"
+                    final_msg += f"调查员 id: {card.id}\n"
                     # 基本信息
                     final_msg += f"姓名: {card.name}\n"
                     final_msg += f"性别: {card.gender}\n"

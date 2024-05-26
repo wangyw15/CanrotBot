@@ -47,10 +47,10 @@ async def _(state: T_State, comment_msg: Message = Arg()):
         with database.get_session().begin() as session:
             session.execute(
                 insert(data.Comment).values(
+                    user_id=uid,
                     type=data.CommentType.anime,
                     time=datetime.now(timezone(timedelta(hours=8))),
                     title=state["anilist_id"],
-                    author=uid,
                     content=comment,
                     nickname=await user.get_user_name(default="anonymous"),
                 )
@@ -74,8 +74,8 @@ async def _(args: Message = CommandArg()):
                 _comment_data = (
                     session.execute(
                         select(data.Comment).where(
-                            data.Comment.type == data.CommentType.anime,  # type: ignore
-                            data.Comment.title == anilist_id,  # type: ignore
+                            data.Comment.type == data.CommentType.anime,
+                            data.Comment.title == anilist_id,
                         )
                     )
                     .scalars()

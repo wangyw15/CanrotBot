@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Text
-from sqlalchemy.orm import Mapped, DeclarativeBase
+from sqlalchemy import Text, Integer
+from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
 
 from storage import database
 
@@ -11,9 +11,12 @@ class Base(DeclarativeBase):
 class MuseDashAccount(Base):
     __tablename__ = "muse_dash_accounts"
 
-    user_id: Mapped[str] = Column(Text, nullable=False, primary_key=True, unique=True)
-    player_name: Mapped[str] = Column(Text, nullable=False)
-    player_id: Mapped[str] = Column(Text, nullable=False)
+    id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    )
+    user_id: Mapped[str] = mapped_column(Text, nullable=False)
+    player_name: Mapped[str] = mapped_column(Text, nullable=False)
+    player_id: Mapped[str] = mapped_column(Text, nullable=False)
 
 
 Base.metadata.create_all(database.get_engine())

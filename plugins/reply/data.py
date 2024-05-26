@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Text, Boolean, Float
-from sqlalchemy.orm import Mapped, DeclarativeBase
+from sqlalchemy import Text, Boolean, Float, Integer
+from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
 
 from storage import database
 
@@ -11,9 +11,12 @@ class Base(DeclarativeBase):
 class ReplyConfig(Base):
     __tablename__ = "reply"
 
-    group_id: Mapped[str] = Column(Text, nullable=False, primary_key=True, unique=True)
-    enable: Mapped[bool] = Column(Boolean, nullable=False, default=True)
-    rate: Mapped[float] = Column(Float, nullable=False, default=0)
+    id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    )
+    group_id: Mapped[str] = mapped_column(Text, nullable=False)
+    enable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    rate: Mapped[float] = mapped_column(Float, nullable=False, default=0)
 
 
 Base.metadata.create_all(database.get_engine())
