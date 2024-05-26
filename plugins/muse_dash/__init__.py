@@ -73,7 +73,9 @@ async def _(target: Query[str] = AlconnaQuery("target")):
                     )
                 )
             session.commit()
-        await _command.send(f"绑定成功\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}")
+        await _command.send(
+            f"绑定成功\n玩家名: {player_name}\nMuseDash.moe ID: {player_id}"
+        )
     else:
         await _command.finish("绑定失败")
 
@@ -107,7 +109,9 @@ async def _():
             f"已绑定账号信息:\n玩家名: {account.player_name}\nMuseDash.moe ID: {account.player_id}"
         )
     else:
-        await _command.finish("您还没有绑定 MuseDash.moe 账号，请使用 /muse-dash help 查看帮助信息")
+        await _command.finish(
+            "您还没有绑定 MuseDash.moe 账号，请使用 /muse-dash help 查看帮助信息"
+        )
 
 
 @_command.handle()
