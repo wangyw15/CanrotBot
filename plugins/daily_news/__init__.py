@@ -76,7 +76,7 @@ async def _(bot: Bot, event: Event):
 @_command.handle()
 async def _():
     if await util.can_send_segment(Image):
-        await _command.finish(UniMessage(Image(_img_url)))
+        await _command.finish(UniMessage(Image(url=_img_url)))
     else:
         await _command.finish("这里发不了图片哦")
 
