@@ -5,7 +5,7 @@ from httpx import Response
 from pytest_mock import MockerFixture
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_fetch_json_data_fail(mocker: MockerFixture):
     from plugins.bilibili import bilibili
 
@@ -20,7 +20,7 @@ async def test_fetch_json_data_fail(mocker: MockerFixture):
         assert await bilibili.fetch_json_data("https://example.com") is None
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_fetch_video_data_bv(mocker: MockerFixture):
     from plugins.bilibili import bilibili
 
@@ -40,7 +40,7 @@ async def test_fetch_video_data_bv(mocker: MockerFixture):
     assert data["bvid"] == "BV1PN4y187YT"
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_fetch_video_data_av(mocker: MockerFixture):
     from plugins.bilibili import bilibili
 
@@ -60,7 +60,7 @@ async def test_fetch_video_data_av(mocker: MockerFixture):
     assert data["bvid"] == "BV1PN4y187YT"
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_fetch_video_data_invalid_bv(mocker: MockerFixture):
     from plugins.bilibili import bilibili
 
@@ -73,7 +73,7 @@ async def test_fetch_video_data_invalid_bv(mocker: MockerFixture):
     assert data is None
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_fetch_video_data_invalid_av(mocker: MockerFixture):
     from plugins.bilibili import bilibili
 
@@ -86,7 +86,7 @@ async def test_fetch_video_data_invalid_av(mocker: MockerFixture):
     assert data is None
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_fetch_video_data_invalid_vid():
     from plugins.bilibili import bilibili
 
@@ -94,7 +94,7 @@ async def test_fetch_video_data_invalid_vid():
     assert data is None
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_get_bvid_from_short_link_valid(mocker: MockerFixture):
     from plugins.bilibili import bilibili
 
@@ -114,7 +114,7 @@ async def test_get_bvid_from_short_link_valid(mocker: MockerFixture):
     )
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_get_bvid_from_short_link_invalid(mocker: MockerFixture):
     from plugins.bilibili import bilibili
 
@@ -129,7 +129,7 @@ async def test_get_bvid_from_short_link_invalid(mocker: MockerFixture):
     assert await bilibili.get_bvid_from_short_link("https://b23.tv/invalid_url") is None
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_fetch_all_projects(mocker: MockerFixture):
     from plugins.bilibili import bilibili
 
@@ -153,7 +153,7 @@ async def test_fetch_all_projects(mocker: MockerFixture):
     assert data
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio
 async def test_fetch_all_projects_invalid_area(mocker: MockerFixture):
     from plugins.bilibili import bilibili
 
