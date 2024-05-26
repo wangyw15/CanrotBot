@@ -1,7 +1,7 @@
 import json
 import random
 from datetime import timedelta
-from typing import Tuple
+from typing import Tuple, Any
 
 from nonebot import logger
 from sqlalchemy import select, insert
@@ -37,7 +37,6 @@ _number_to_rarity = [
 ]
 
 
-# TODO 自动更新资源
 def _init() -> None:
     global _arknights_all_characters
 
@@ -81,7 +80,7 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
     session = maker()
 
     # 获取当前统计数据
-    query = select(data.Statistics).where(data.Statistics.user_id == uid)
+    query = select(data.Statistics).where(data.Statistics.user_id == uid)  # type: ignore
     current_statistics = session.execute(query).scalar_one_or_none()
     if current_statistics is None:
         session.execute(insert(data.Statistics).values(user_id=uid))
@@ -135,7 +134,7 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
         current_statistics.last_six_star += 10
 
     # 寻访历史
-    simple_operators: list[dict[str]] = []
+    simple_operators: list[dict[str, Any]] = []
     for i in operators:
         simple_operators.append({"name": i["name"], "rarity": i["rarity"]})
 
@@ -161,15 +160,3 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
         viewport={"width": 1000, "height": 500},
     )
     return img, operators
-
-
-async def main() -> None:
-    img, _ = await generate_gacha("console_0")
-    with open("out.png", "wb") as f:
-        f.write(img)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())
