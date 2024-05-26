@@ -60,7 +60,8 @@ async def _(bot: Bot, event: Event):
             with database.get_session().begin() as session:
                 session.execute(
                     delete(data.Subscribers).where(
-                        data.Subscribers.group_id == gid, data.Subscribers.bot == bot_id
+                        data.Subscribers.group_id == gid,  # type:ignore
+                        data.Subscribers.bot == bot_id,  # type:ignore
                     )
                 )
                 session.commit()
