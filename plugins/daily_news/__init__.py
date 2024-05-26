@@ -3,7 +3,7 @@ from arclet.alconna import Alconna
 from nonebot import get_bot
 from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import on_alconna, Image, Option
+from nonebot_plugin_alconna import on_alconna, Image, Option, UniMessage
 from nonebot_plugin_apscheduler import scheduler
 from sqlalchemy import select, delete, insert
 
@@ -35,6 +35,7 @@ _command = on_alconna(
         ),
     ),
     block=True,
+    aliases={"daily"},
 )
 
 
@@ -75,7 +76,7 @@ async def _(bot: Bot, event: Event):
 @_command.handle()
 async def _():
     if await util.can_send_segment(Image):
-        await _command.finish(Image(url=_img_url))
+        await _command.finish(UniMessage(Image(_img_url)))
     else:
         await _command.finish("这里发不了图片哦")
 
