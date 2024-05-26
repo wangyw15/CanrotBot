@@ -64,7 +64,7 @@ async def _send_music_card(
 _cloudmusic_handler = on_regex(
     r"(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+\/)?song\?\S*id=(\d+)",
     block=True,
-    rule=False,
+    rule=lambda: False,
 )
 
 
@@ -78,7 +78,11 @@ async def _(
     await _cloudmusic_handler.finish()
 
 
-_qqmusic_link_handler = on_regex(_qqmusic_id_pattern, block=True)
+_qqmusic_link_handler = on_regex(
+    _qqmusic_id_pattern,
+    block=True,
+    rule=lambda: False,
+)
 
 
 @_qqmusic_link_handler.handle()
