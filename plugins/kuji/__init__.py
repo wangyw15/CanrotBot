@@ -28,7 +28,7 @@ async def _():
         img, _ = await kuji.generate_kuji()
         await _command.finish(Image(raw=img))
     else:
-        _, data = await kuji.generate_kuji("")
+        _, data = await kuji.generate_kuji()
         await _command.finish(
             f"{data['count']} - {data['type']}\n\n"
             + "\n".join(data["content"])

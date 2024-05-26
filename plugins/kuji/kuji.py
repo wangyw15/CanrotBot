@@ -20,7 +20,7 @@ def _load_kuji_assets() -> None:
 
 
 async def generate_kuji(
-    image_type: Literal["png", "jpeg", ""] | None = "png"
+    image_type: Literal["png", "jpeg"] | None = "png"
 ) -> Tuple[bytes | None, dict[str, str]]:
     _load_kuji_assets()
     selected_kuji: dict[str, str] = random.choice(_kuji_data)
