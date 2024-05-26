@@ -62,7 +62,9 @@ async def _send_music_card(
 
 
 _cloudmusic_handler = on_regex(
-    r"(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+\/)?song\?\S*id=(\d+)", block=True
+    r"(?:https?:\/\/)?(?:y\.)?music\.163\.com\/(?:\S+\/)?song\?\S*id=(\d+)",
+    block=True,
+    rule=False,
 )
 
 
