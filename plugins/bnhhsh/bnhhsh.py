@@ -26,12 +26,18 @@ def get_pinyin_abbr(content: str) -> str:
     )
 
 
-def yndp(target: str):
-    # TODO 继续重构
+def generate(target: str) -> str:
+    """
+    生成语句
+
+    :param target: 拼音首字母缩写
+
+    :return: 生成的语句
+    """
     cost = {-1: 0}
     record = {-1: []}
     for x in range(len(target)):
-        cost[x] = 2**32
+        cost[x] = 2**32  # 默认cost为无穷大
         for k in range(_longest, 0, -1):
             s = x - k + 1
             if s < 0:
@@ -53,13 +59,5 @@ def yndp(target: str):
     target = [*target]
     for a, b, abbr_map in record[len(target) - 1][::-1]:
         target[a:b] = abbr_map
-    return "".join(target), cost[len(target) - 1]
-
-
-def generate(target: str):
-    return yndp(target)[0]
-
-
-if __name__ == "__main__":
-    while True:
-        print(generate(input(">>> ")))
+    # return "".join(target), cost[len(target) - 1]
+    return "".join(target)
