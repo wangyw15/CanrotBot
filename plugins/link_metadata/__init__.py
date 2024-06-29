@@ -7,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import UniMessage, Image, Text
 
 from essentials.libraries import util
-from .youtube import youtube_id_pattern, fetch_youtube_data, fetch_youtube_thumbnail
+from .youtube import youtube_link_pattern, fetch_youtube_data, fetch_youtube_thumbnail
 
 __plugin_meta__ = PluginMetadata(
     name="链接元数据",
@@ -50,14 +50,20 @@ def _generate_youtube_message(data: dict) -> str:
         if "commentCount" in data["statistics"]
         else ""
     )
-    msg += f"简介:\n{desc}\n" f'视频链接: \nhttps://youtu.be/{data["id"]}'
+    msg += f"简介:\n{desc}\n"
+
+    # 短视频
+    if "#shorts" in data["snippet"]["title"]:
+        msg += f'视频链接: \nhttps://youtube.com/shorts/{data["id"]}'
+    else:
+        msg += f'视频链接: \nhttps://youtu.be/{data["id"]}'
     return msg
 
 
-_youtube_video = on_regex(youtube_id_pattern, block=True)
+youtube_link_handler = on_regex(youtube_link_pattern, block=True)
 
 
-@_youtube_video.handle()
+@youtube_link_handler.handle()
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     data = await fetch_youtube_data(reg[0])
     if data:
@@ -68,4 +74,4 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
             if img_data:
                 final_msg.append(Image(raw=img_data))
         final_msg.append(Text(msg))
-        await _youtube_video.finish(await final_msg.export())
+        await youtube_link_handler.finish(await final_msg.export())
