@@ -1,9 +1,7 @@
-from json import JSONDecodeError
-
 import pytest
-from httpx import Response
-from pytest_mock import MockerFixture
 from nonebug import App
+from pytest_mock import MockerFixture
+
 from tests.utils import make_event
 
 
