@@ -10,10 +10,11 @@ from nonebot.plugin import PluginMetadata
 __plugin_meta__ = PluginMetadata(
     name="查汇率",
     description="可以查到工行的汇率，也可以转换汇率",
-    usage="查汇率：/<currency|汇率> <币种，中英文皆可>\n汇率转换：100jpy=或者100rmb=jpy",
+    usage="查汇率：/<currency|汇率> <币种，中英文皆可>\n汇率转换：[100]jpy[cny]，支持加减乘除",
     config=None,
 )
 
+currency_black_list = ["tmd", "cnm", "nmb"]
 _client = httpx.AsyncClient()
 
 
@@ -27,21 +28,21 @@ async def fetch_currency() -> list[dict[str, str]]:
 
 
 # 搜索指定汇率信息
-currency_query = on_command("currency", aliases={"汇率"}, block=True)
+currency_query_handler = on_command("currency", aliases={"汇率"}, block=True)
 
 
-@currency_query.handle()
+@currency_query_handler.handle()
 async def _(args: Message = CommandArg()):
     if msg := args.extract_plain_text():
         currency_data = await fetch_currency()
         if not currency_data:
-            await currency_query.finish("获取汇率失败")
+            await currency_query_handler.finish("获取汇率失败")
         for item in currency_data:
             if (
                 msg.lower() == item["currencyENName"].lower()
                 or msg == item["currencyCHName"]
             ):
-                await currency_query.finish(
+                await currency_query_handler.finish(
                     f"""
 币种：{item['currencyCHName']}({item['currencyENName']})
 参考价格：  {item['reference']}
@@ -53,55 +54,72 @@ async def _(args: Message = CommandArg()):
 单位：人民币/100外币
                 """.strip()
                 )
-        await currency_query.finish("未找到该货币")
+        await currency_query_handler.finish("未找到该货币")
     else:
-        await currency_query.finish("请输入货币名称")
+        await currency_query_handler.finish("请输入货币名称")
 
 
 # 汇率转换
-_currency_convert_handler = on_regex(
-    r"^(\d+(?:.\d+)?)([a-zA-Z\u4e00-\u9fa5]+)[=＝]([a-zA-Z\u4e00-\u9fa5]+)$",
+currency_convert_handler = on_regex(
+    r"^([\d()\-+*/.]+)?([a-zA-Z]{3})([a-zA-Z]{3})?$",
     flags=re.IGNORECASE,
     block=True,
 )
 
 
-@_currency_convert_handler.handle()
-async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
-    amount: float | int = eval(reg[0].strip())
-    currency_from: str = reg[1].strip()
-    currency_to: str = reg[2].strip()
-    if amount and currency_from and currency_to:
-        currency_data = await fetch_currency()
-        if not currency_data:
-            await _currency_convert_handler.finish("获取汇率失败")
-        price_from = ""
-        price_to = ""
-        name_from = ""
-        name_to = ""
-        for item in currency_data:
-            if (
-                currency_from.lower() == item["currencyENName"].lower()
-                or currency_from == item["currencyCHName"]
-            ):
-                price_from = float(item["foreignBuy"])
-                name_from = item["currencyCHName"]
-            elif currency_from.lower() in ["rmb", "cny"] or currency_from == "人民币":
-                price_from = 100
-                name_from = "人民币"
-            if (
-                currency_to.lower() == item["currencyENName"].lower()
-                or currency_to == item["currencyCHName"]
-            ):
-                price_to = float(item["foreignSell"])
-                name_to = item["currencyCHName"]
-            elif currency_to.lower() in ["rmb", "cny"] or currency_to == "人民币":
-                price_to = 100
-                name_to = "人民币"
-        if price_from and price_to:
-            await _currency_convert_handler.finish(
-                f"{amount}{name_from}={round(amount * price_from / price_to, 4)}{name_to}"
+@currency_convert_handler.handle()
+async def _(group: typing.Annotated[tuple, RegexGroup()]):
+    if not group[0] and not group[2] and group[1].lower() in currency_black_list:
+        await currency_convert_handler.finish()
+
+    # 处理数据
+    amount: float = 100.0
+    currency_from: str = group[1]
+    currency_to = "cny"
+    if group[0]:
+        amount: float = float(eval(group[0]))
+    if group[2]:
+        currency_to = group[2]
+
+    # 获取汇率数据
+    currency_data = await fetch_currency()
+    if not currency_data:
+        await currency_convert_handler.finish("获取汇率失败")
+
+    price_from = ""
+    price_to = ""
+    name_from = ""
+    name_to = ""
+    for item in currency_data:
+        # 源货币
+        if currency_from.lower() == item["currencyENName"].lower():
+            price_from = float(item["foreignBuy"])
+            name_from = item["currencyCHName"]
+        elif currency_from.lower() in ["rmb", "cny"] or currency_from == "人民币":
+            price_from = 100
+            name_from = "人民币"
+
+        # 目标货币
+        if currency_to.lower() == item["currencyENName"].lower():
+            price_to = float(item["foreignSell"])
+            name_to = item["currencyCHName"]
+        elif currency_to.lower() in ["rmb", "cny"] or currency_to == "人民币":
+            price_to = 100
+            name_to = "人民币"
+
+    # 计算结果
+    if price_from and price_to:
+        await currency_convert_handler.finish(
+            "{:.4f}{}={:.4f}{}".format(
+                amount, name_from, amount * price_from / price_to, name_to
             )
-        await currency_query.finish("未找到该货币")
-    else:
-        await currency_query.finish("查询格式有误")
+        )
+
+    # 错误处理
+    error_msg = "未找到货币:"
+    if not price_from:
+        error_msg += " {}".format(currency_from)
+    if not price_to:
+        error_msg += " {}".format(currency_to)
+
+    await currency_convert_handler.finish(error_msg)
