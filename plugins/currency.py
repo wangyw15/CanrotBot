@@ -68,6 +68,8 @@ currency_convert_handler = on_regex(
 
 @currency_convert_handler.handle()
 async def _(group: typing.Annotated[tuple, RegexGroup()]):
+    currency_convert_handler.block = True
+
     # 处理数据
     amount: float = 100.0
     currency_from: str = group[1]
@@ -116,6 +118,7 @@ async def _(group: typing.Annotated[tuple, RegexGroup()]):
     if not price_from:
         # 三个字母误触发做忽略处理
         if not group[0]:
+            currency_convert_handler.block = False
             await currency_convert_handler.finish()
         error_msg += " {}".format(currency_from)
     if not price_to:
