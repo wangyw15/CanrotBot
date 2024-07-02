@@ -153,13 +153,12 @@ async def test_invalid_all_currency(app: App):
 
 
 @pytest.mark.asyncio
-async def test_blacklist(app: App):
-    from plugins.currency import currency_convert_handler, currency_black_list
-    currency_black_list.append("aaa")
+async def test_unintended_trigger(app: App):
+    from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event(currency_black_list[:-1])
+        event = make_event("aaa")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()

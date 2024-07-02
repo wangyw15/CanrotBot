@@ -14,7 +14,6 @@ __plugin_meta__ = PluginMetadata(
     config=None,
 )
 
-currency_black_list = ["tmd", "cnm", "nmb"]
 _client = httpx.AsyncClient()
 
 
@@ -69,9 +68,6 @@ currency_convert_handler = on_regex(
 
 @currency_convert_handler.handle()
 async def _(group: typing.Annotated[tuple, RegexGroup()]):
-    if not group[0] and not group[2] and group[1].lower() in currency_black_list:
-        await currency_convert_handler.finish()
-
     # 处理数据
     amount: float = 100.0
     currency_from: str = group[1]
@@ -118,6 +114,9 @@ async def _(group: typing.Annotated[tuple, RegexGroup()]):
     # 错误处理
     error_msg = "未找到货币:"
     if not price_from:
+        # 三个字母误触发做忽略处理
+        if not group[0]:
+            await currency_convert_handler.finish()
         error_msg += " {}".format(currency_from)
     if not price_to:
         error_msg += " {}".format(currency_to)
