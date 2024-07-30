@@ -1,0 +1,178 @@
+<html>
+
+<head>
+    <style>
+        table {
+            position: relative;
+            border-collapse: collapse;
+            /* cell color */
+            --cell-fixed-color: lightgray;
+            --cell-empty-color: white;
+            /* cell size */
+            --cell-size: 50px;
+            /* cell border */
+            --cell-border: 1px solid black;
+            --cell-border-thick: 3px solid black;
+            /* font size */
+            --font-size: 20px;
+        }
+
+        td {
+            border: var(--cell-border);
+            width: var(--cell-size);
+            height: var(--cell-size);
+            text-align: center;
+            font-size: var(--font-size);
+        }
+
+        td:nth-child(3n) {
+            border-right: var(--cell-border-thick);
+        }
+
+        td:nth-child(3n+1) {
+            border-left: var(--cell-border-thick);
+        }
+
+        tr:nth-child(3n) td {
+            border-bottom: var(--cell-border-thick);
+        }
+
+        tr:nth-child(3n+1) td {
+            border-top: var(--cell-border-thick);
+        }
+    </style>
+</head>
+
+<body>
+    <table id="board">
+        <tbody>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+        </tbody>
+    </table>
+    <span>
+        seed: <span id="seed">seed</span>
+    </span>
+    <script>
+        const seed = "{SEED}";
+        const board_data = "{BOARD}";
+
+        const board_element = document.getElementById('board');
+        const seed_element = document.getElementById('seed');
+
+        if (seed === "{SEED}" || seed === "") {
+            seed_element.parentElement.remove();
+        }
+
+        board_data.forEach((row, i) => {
+            row.forEach((cell, j) => {
+                const td = board_element.rows[i].cells[j];
+                if (cell !== 0) {
+                    td.textContent = cell;
+                    td.style.backgroundColor = 'lightgray';
+                } else {
+                    td.textContent = "";
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
