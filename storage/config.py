@@ -11,7 +11,7 @@ class CanrotConfig(BaseModel):
         f"sqlite:///{canrot_data_path}/data.db?check_same_thread=False"
     )
     canrot_disabled_plugins: list[str] = []  # TODO 实现禁用插件
-    canrot_disabled_adapters: list[str] = []  # 禁用的适配器
+    canrot_enabled_adapters: list[str] = ["console"]  # 启用的适配器
 
 
 _driver = get_driver()

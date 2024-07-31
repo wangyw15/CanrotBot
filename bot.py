@@ -29,17 +29,17 @@ logger.add(
 )
 
 # 注册适配器
-if "console" not in config.canrot_config.canrot_disabled_adapters:
+if "console" in config.canrot_config.canrot_enabled_adapters:
     driver.register_adapter(console.Adapter)
-if "kook" not in config.canrot_config.canrot_disabled_adapters:
+if "kook" in config.canrot_config.canrot_enabled_adapters:
     driver.register_adapter(kook.Adapter)
-if "mirai2" not in config.canrot_config.canrot_disabled_adapters:
+if "mirai2" in config.canrot_config.canrot_enabled_adapters:
     driver.register_adapter(mirai2.Adapter)
-if "onebot_v11" not in config.canrot_config.canrot_disabled_adapters:
+if "onebot_v11" in config.canrot_config.canrot_enabled_adapters:
     driver.register_adapter(onebot_v11.Adapter)
-if "onebot_v12" not in config.canrot_config.canrot_disabled_adapters:
+if "onebot_v12" in config.canrot_config.canrot_enabled_adapters:
     driver.register_adapter(onebot_v12.Adapter)
-if "qq" not in config.canrot_config.canrot_disabled_adapters:
+if "qq" in config.canrot_config.canrot_enabled_adapters:
     driver.register_adapter(qq.Adapter)
 
 # 内置插件

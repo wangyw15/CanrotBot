@@ -10,6 +10,7 @@ __pycache__/
 # configuration and data
 .env
 .env.*
+!.env.example
 canrot_data/
 
 # pytest and pytest-cov

@@ -18,7 +18,9 @@
 
 ```bash
 pip install -r requirements.txt
-playwright install # 如果是第一次启动，则安装 playwright
+playwright install   # 如果是第一次启动，则安装 playwright
+cp .env.example .env # 复制配置文件
+vim .env             # 修改配置文件
 python bot.py
 ```
 
