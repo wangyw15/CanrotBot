@@ -74,8 +74,8 @@ async def _(args: Message = CommandArg()):
                 _comment_data = (
                     session.execute(
                         select(data.Comment).where(
-                            data.Comment.type == data.CommentType.anime,
-                            data.Comment.title == anilist_id,
+                            data.Comment.type == data.CommentType.anime,  # type: ignore
+                            data.Comment.title == anilist_id,  # type: ignore
                         )
                     )
                     .scalars()

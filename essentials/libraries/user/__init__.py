@@ -1,6 +1,4 @@
-# puid (platform user id): qq_1234567890, kook_1234567890, ...
 # uid (user id): uuid4
-import re
 import uuid
 
 import nonebot.adapters.console as console
@@ -13,7 +11,6 @@ from nonebot.adapters import Bot, Event
 from nonebot.matcher import current_bot, current_event
 from sqlalchemy import select, delete, insert
 
-from essentials.libraries import util
 from storage import database
 from . import data
 
@@ -27,7 +24,7 @@ def puid_user_exists(puid: str) -> bool:
     :return: puid是否存在
     """
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.platform_user_id == puid)
+        query = select(data.Bind).where(data.Bind.platform_user_id == puid)  # type: ignore
         result = session.execute(query).first()
         return result is not None
 
@@ -41,7 +38,7 @@ def uid_user_exists(uid: str) -> bool:
     :return: uid是否存在
     """
     with database.get_session().begin() as session:
-        query = select(data.User).where(data.User.user_id == uid)
+        query = select(data.User).where(data.User.user_id == uid)  # type: ignore
         result = session.execute(query).first()
         return result is not None
 
@@ -76,7 +73,7 @@ def unbind(puid: str) -> bool:
     if not puid_user_exists(puid):
         return False
     with database.get_session().begin() as session:
-        query = delete(data.Bind).where(data.Bind.platform_user_id == puid)
+        query = delete(data.Bind).where(data.Bind.platform_user_id == puid)  # type: ignore
         session.execute(query)
         session.commit()
     return True
@@ -100,33 +97,6 @@ def register(puid: str) -> str:
     return uid
 
 
-async def get_puid(bot: Bot | None = None, event: Event | None = None) -> str:
-    """
-    获取puid
-
-    :param bot: Bot
-    :param event: Event
-
-    :return: puid
-    """
-    if not bot:
-        bot = current_bot.get()
-    if not event:
-        event = current_event.get()
-    puid = event.get_user_id()
-    if await util.is_qq(bot):
-        puid = "qq_" + puid
-    elif isinstance(bot, kook.Bot):
-        puid = "kook_" + puid
-    elif isinstance(bot, console.Bot):
-        puid = "console_0"
-    elif isinstance(event, qq.GroupRobotEvent):
-        puid = "qqbot_" + puid  # TODO 确认是否为QQ号，是则改为qq_
-    elif isinstance(event, qq.ChannelEvent):
-        puid = "qqguild_" + puid
-    return puid
-
-
 async def get_uid(puid: str = "") -> str:
     """
     查询puid对应的uid
@@ -136,18 +106,13 @@ async def get_uid(puid: str = "") -> str:
     :return: uid
     """
     if not puid:
-        puid = await get_puid()
+        puid = current_event.get().get_user_id()
     elif not puid_user_exists(puid):
         return ""
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.platform_user_id == puid)
+        query = select(data.Bind).where(data.Bind.platform_user_id == puid)  # type: ignore
         result = session.execute(query).scalar_one()
         return result.user_id
-
-
-def check_puid_validation(puid: str) -> bool:
-    """检查puid是否有效"""
-    return re.match("^[a-z]+_[0-9]+$", puid) is not None
 
 
 def get_bind_by_uid(uid: str) -> list[str]:
@@ -159,7 +124,7 @@ def get_bind_by_uid(uid: str) -> list[str]:
     :return: puid列表
     """
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.user_id == uid)
+        query = select(data.Bind).where(data.Bind.user_id == uid)  # type: ignore
         result = session.execute(query).scalars().all()
         return [_bind.platform_user_id for _bind in result]
 
@@ -187,11 +152,11 @@ async def get_user_name(
 
     :return: 用户昵称
     """
-    # onebot v11
     if not bot:
         bot = current_bot.get()
     if not event:
         event = current_event.get()
+    # onebot v11
     if isinstance(bot, ob11.Bot):
         if isinstance(event, ob11.GroupMessageEvent):
             user_info = await bot.get_group_member_info(
@@ -229,4 +194,17 @@ async def get_user_name(
     elif isinstance(bot, kook.Bot):
         if isinstance(event, kook.Event) and hasattr(event, "extra"):
             return event.extra.author.nickname
+    # qq
+    elif isinstance(bot, qq.Bot):
+        if member := getattr(event, "member", None):
+            if nickname := getattr(member, "nick", None):
+                return nickname
+        if author := getattr(event, "author", None):
+            if username := getattr(author, "username", None):
+                return username
+    # console
+    elif isinstance(bot, console.Bot):
+        if isinstance(event, console.MessageEvent):
+            return event.user.nickname
+
     return default

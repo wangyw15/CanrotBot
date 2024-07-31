@@ -1,6 +1,6 @@
 from arclet.alconna import Alconna, Option, Args
 from nonebot import get_bot
-from nonebot.adapters import Bot
+from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import on_alconna, Query, AlconnaQuery
 from sqlalchemy import select, insert, delete
@@ -79,8 +79,8 @@ async def _(
         if alias:
             if session.execute(
                 select(data.BaiduAccount).where(
-                    data.BaiduAccount.owner_user_id == uid,
-                    data.BaiduAccount.alias == alias,
+                    data.BaiduAccount.owner_user_id == uid,  # type: ignore
+                    data.BaiduAccount.alias == alias,  # type: ignore
                 )
             ).scalar_one_or_none():
                 await _command.finish("该别名已被使用")
@@ -108,14 +108,14 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             # 删除订阅
             session.execute(
                 delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.account_id == account_id,
+                    data.TiebaSignResultSubscriber.account_id == account_id,  # type: ignore
                 )
             )
             # 删除账号
             session.execute(
                 delete(data.BaiduAccount).where(
-                    data.BaiduAccount.owner_user_id == uid,
-                    data.BaiduAccount.id == account_id,
+                    data.BaiduAccount.owner_user_id == uid,  # type: ignore
+                    data.BaiduAccount.id == account_id,  # type: ignore
                 )
             )
         else:
@@ -123,7 +123,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid
+                        data.BaiduAccount.owner_user_id == uid  # type: ignore
                     )
                 )
                 .scalars()
@@ -137,7 +137,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
                 )
             # 删除账号
             session.execute(
-                delete(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)
+                delete(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)  # type: ignore
             )
 
     if account_id:
@@ -157,7 +157,7 @@ async def _():
     with database.get_session().begin() as session:
         accounts = (
             session.execute(
-                select(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)
+                select(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)  # type: ignore
             )
             .scalars()
             .all()
@@ -175,8 +175,10 @@ async def _():
 
 
 @_command.assign("subscribe")
-async def _(bot: Bot, account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
-    puid = await user.get_puid()
+async def _(
+    bot: Bot, event: Event, account_id_query: Query[int] = AlconnaQuery("account_id", 0)
+):
+    puid = event.get_user_id()
     uid = await user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
@@ -188,8 +190,8 @@ async def _(bot: Bot, account_id_query: Query[int] = AlconnaQuery("account_id", 
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,
-                        data.BaiduAccount.id == account_id,
+                        data.BaiduAccount.owner_user_id == uid,  # type: ignore
+                        data.BaiduAccount.id == account_id,  # type: ignore
                     )
                 )
                 .scalars()
@@ -199,7 +201,7 @@ async def _(bot: Bot, account_id_query: Query[int] = AlconnaQuery("account_id", 
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,
+                        data.BaiduAccount.owner_user_id == uid,  # type: ignore
                     )
                 )
                 .scalars()
@@ -211,8 +213,8 @@ async def _(bot: Bot, account_id_query: Query[int] = AlconnaQuery("account_id", 
         for account in accounts:
             if session.execute(
                 select(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.account_id == account.id,
-                    data.TiebaSignResultSubscriber.puid == puid,
+                    data.TiebaSignResultSubscriber.account_id == account.id,  # type: ignore
+                    data.TiebaSignResultSubscriber.puid == puid,  # type: ignore
                 )
             ).scalar_one_or_none():
                 continue
@@ -227,8 +229,8 @@ async def _(bot: Bot, account_id_query: Query[int] = AlconnaQuery("account_id", 
 
 
 @_command.assign("unsubscribe")
-async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
-    puid = await user.get_puid()
+async def _(event: Event, account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
+    puid = event.get_user_id()
     uid = await user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
@@ -239,14 +241,14 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
         if account_id:
             session.execute(
                 delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.account_id == account_id,
-                    data.TiebaSignResultSubscriber.puid == puid,
+                    data.TiebaSignResultSubscriber.account_id == account_id,  # type: ignore
+                    data.TiebaSignResultSubscriber.puid == puid,  # type: ignore
                 )
             )
         else:
             session.execute(
                 delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.puid == puid,
+                    data.TiebaSignResultSubscriber.puid == puid,  # type: ignore
                 )
             )
 
@@ -270,8 +272,8 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,
-                        data.BaiduAccount.id == account_id,
+                        data.BaiduAccount.owner_user_id == uid,  # type: ignore
+                        data.BaiduAccount.id == account_id,  # type: ignore
                     )
                 )
                 .scalars()
@@ -281,7 +283,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,
+                        data.BaiduAccount.owner_user_id == uid,  # type: ignore
                     )
                 )
                 .scalars()
@@ -320,7 +322,7 @@ async def _():
             subscribers = (
                 session.execute(
                     select(data.TiebaSignResultSubscriber).where(
-                        data.TiebaSignResultSubscriber.account_id == account.id,
+                        data.TiebaSignResultSubscriber.account_id == account.id,  # type: ignore
                     )
                 )
                 .scalars()

@@ -20,9 +20,9 @@ _economy = on_command(
 
 
 @_economy.handle()
-async def _(bot: Bot, event: Event, args: Message = CommandArg()):
+async def _(event: Event, args: Message = CommandArg()):
     # 检查是否注册过
-    puid = await user.get_puid(bot, event)
+    puid = event.get_user_id()
     if not user.puid_user_exists(puid):
         await _economy.finish(f"puid: {puid}\n你还没有注册")
 
@@ -33,7 +33,7 @@ async def _(bot: Bot, event: Event, args: Message = CommandArg()):
             final = f"puid: {puid}\nuid: {uid}\n当前余额: {economy.get_balance(uid)} 胡萝卜片\n\n最近五条交易记录:"
             with database.get_session().begin() as session:
                 query = select(economy.data.Transaction).where(
-                    economy.data.Transaction.user_id == uid
+                    economy.data.Transaction.user_id == uid  # type: ignore
                 )
                 history = session.execute(query).scalars().all()
                 for i in history[:5]:

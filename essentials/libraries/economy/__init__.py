@@ -19,7 +19,7 @@ def _add_history(
     with database.get_session().begin() as session:
         if (
             session.execute(
-                select(data.Account).where(data.Account.user_id == uid)
+                select(data.Account).where(data.Account.user_id == uid)  # type: ignore
             ).first()
             is None
         ):
@@ -46,7 +46,7 @@ def get_balance(uid: str) -> float:
     """
     with database.get_session().begin() as session:
         result = session.execute(
-            select(data.Account).where(data.Account.user_id == uid)
+            select(data.Account).where(data.Account.user_id == uid)  # type: ignore
         ).scalar_one_or_none()
         if result is None:
             return 0.0
@@ -62,14 +62,14 @@ def set_balance(uid: str, balance: float) -> None:
     """
     with database.get_session().begin() as session:
         result = session.execute(
-            select(data.Account).where(data.Account.user_id == uid)
+            select(data.Account).where(data.Account.user_id == uid)  # type: ignore
         ).scalar_one_or_none()
         if result is None:
             session.execute(insert(data.Account).values(user_id=uid, balance=balance))
         else:
             session.execute(
                 update(data.Account)
-                .where(data.Account.user_id == uid)
+                .where(data.Account.user_id == uid)  # type: ignore
                 .values(balance=balance)
             )
         session.commit()

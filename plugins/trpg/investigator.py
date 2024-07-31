@@ -96,7 +96,7 @@ def get_investigator(
     :return: investigator_id 存在则返回对应调查员，为空则返回所有调查员，不存在则返回空列表
     """
     with database.get_session().begin() as session:
-        query = select(data.Investigator).where(data.Investigator.owner_user_id == uid)
+        query = select(data.Investigator).where(data.Investigator.owner_user_id == uid)  # type: ignore
         if investigator_id:
             query = query.where(data.Investigator.id == investigator_id)
         return session.execute(query).scalars().all()
@@ -118,7 +118,7 @@ def set_selected_investigator(
         if (
             session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id == user_id)
+                .where(data.Investigator.owner_user_id == user_id)  # type: ignore
                 .where(data.Investigator.id == investigator_id)
             ).first()
             is None
@@ -127,7 +127,7 @@ def set_selected_investigator(
         if (
             session.execute(
                 select(data.PlayerData)
-                .where(data.PlayerData.user_id == user_id)
+                .where(data.PlayerData.user_id == user_id)  # type: ignore
                 .where(data.PlayerData.group_id == group_id)
             ).first()
             is None
@@ -142,8 +142,8 @@ def set_selected_investigator(
         else:
             session.execute(
                 update(data.PlayerData)
-                .where(data.PlayerData.user_id == user_id)
-                .where(data.PlayerData.group_id == group_id)
+                .where(data.PlayerData.user_id == user_id)  # type: ignore
+                .where(data.PlayerData.group_id == group_id)  # type: ignore
                 .values(selected_investigator_id=investigator_id)
             )
         session.commit()
@@ -162,14 +162,14 @@ def get_selected_investigator(user_id: str, group_id: str) -> data.Investigator 
     with database.get_session().begin() as session:
         selected = session.execute(
             select(data.PlayerData)
-            .where(data.PlayerData.user_id == user_id)
-            .where(data.PlayerData.group_id == group_id)
+            .where(data.PlayerData.user_id == user_id)  # type: ignore
+            .where(data.PlayerData.group_id == group_id)  # type: ignore
         ).scalar_one_or_none()
         if selected is not None:
             return session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id == user_id)
-                .where(data.Investigator.id == selected.selected_investigator_id)
+                .where(data.Investigator.owner_user_id == user_id)  # type: ignore
+                .where(data.Investigator.id == selected.selected_investigator_id)  # type: ignore
             ).scalar_one_or_none()
 
 
@@ -186,16 +186,16 @@ def delete_investigator(user_id: str, investigator_id: str) -> bool:
         if (
             session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id == user_id)
-                .where(data.Investigator.id == investigator_id)
+                .where(data.Investigator.owner_user_id == user_id)  # type: ignore
+                .where(data.Investigator.id == investigator_id)  # type: ignore
             ).first()
             is None
         ):
             return False
         session.execute(
             delete(data.Investigator)
-            .where(data.Investigator.owner_user_id == user_id)
-            .where(data.Investigator.id == investigator_id)
+            .where(data.Investigator.owner_user_id == user_id)  # type: ignore
+            .where(data.Investigator.id == investigator_id)  # type: ignore
         )
         session.commit()
         return True
@@ -214,8 +214,8 @@ def check_investigator_id(user_id: str, investigator_id: str) -> bool:
         return (
             session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id == user_id)
-                .where(data.Investigator.id == investigator_id)
+                .where(data.Investigator.owner_user_id == user_id)  # type: ignore
+                .where(data.Investigator.id == investigator_id)  # type: ignore
             ).first()
             is not None
         )

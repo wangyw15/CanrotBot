@@ -58,7 +58,7 @@ class RemoteAsset(Asset):
     def fetch(self, force: bool = False) -> None:
         # TODO 记得修改shit code
         query = select(data.RemoteAssetCache).where(
-            data.RemoteAssetCache.key == self.__key
+            data.RemoteAssetCache.key == self.__key  # type: ignore
         )
         with database.get_session().begin() as session:
             result = session.execute(query).scalar_one_or_none()
@@ -97,7 +97,7 @@ class RemoteAsset(Asset):
                     else:
                         session.execute(
                             update(data.RemoteAssetCache)
-                            .where(data.RemoteAssetCache.key == self.__key)
+                            .where(data.RemoteAssetCache.key == self.__key)  # type: ignore
                             .values(fetch_time=datetime.now(), expire_time=expire)
                         )
             else:

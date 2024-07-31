@@ -109,7 +109,7 @@ def get_reply_rate(group_id: str) -> float:
 
     :return: 概率
     """
-    query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)
+    query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)  # type: ignore
     with database.get_session().begin() as session:
         # 不存在配置则插入默认配置
         if session.execute(query).first() is None:
@@ -126,7 +126,7 @@ def set_reply_rate(group_id: str, rate: float) -> bool:
     :param rate: 概率
     """
     if 0 <= rate <= 1:
-        query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)
+        query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)  # type: ignore
         with database.get_session().begin() as session:
             if session.execute(query).first() is None:
                 session.execute(
@@ -135,7 +135,7 @@ def set_reply_rate(group_id: str, rate: float) -> bool:
             else:
                 session.execute(
                     update(data.ReplyConfig)
-                    .where(data.ReplyConfig.group_id == group_id)
+                    .where(data.ReplyConfig.group_id == group_id)  # type: ignore
                     .values(rate=rate)
                 )
             session.commit()
@@ -152,7 +152,7 @@ def check_reply(event: Event) -> bool:
     :return: 是否可以自动回复
     """
     if group_id := util.get_group_id(event):  # 确保是群消息
-        query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)
+        query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)  # type: ignore
         with database.get_session().begin() as session:
             enable = True
             config = session.execute(query).scalar_one_or_none()
@@ -170,7 +170,7 @@ def set_auto_reply_enable(group_id: str, enabled: bool):
     :param group_id: 群号
     :param enabled: 是否开启
     """
-    query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)
+    query = select(data.ReplyConfig).where(data.ReplyConfig.group_id == group_id)  # type: ignore
     with database.get_session().begin() as session:
         if session.execute(query).first() is None:
             session.execute(
@@ -181,7 +181,7 @@ def set_auto_reply_enable(group_id: str, enabled: bool):
         else:
             session.execute(
                 update(data.ReplyConfig)
-                .where(data.ReplyConfig.group_id == group_id)
+                .where(data.ReplyConfig.group_id == group_id)  # type: ignore
                 .values(enable=enabled)
             )
         session.commit()

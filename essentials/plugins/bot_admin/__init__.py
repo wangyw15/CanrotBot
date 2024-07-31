@@ -31,7 +31,7 @@ async def _(
         elif len(args) == 1 and args[0].lower() in ["disable", "禁用"]:
             enable = False
 
-        query = select(data.GroupConfig).where(data.GroupConfig.group_id == gid)
+        query = select(data.GroupConfig).where(data.GroupConfig.group_id == gid)  # type: ignore
         with database.get_session().begin() as session:
             # 自动创建群组配置
             if session.execute(query).first() is None:
@@ -40,13 +40,13 @@ async def _(
             if enable:
                 session.execute(
                     update(data.GroupConfig)
-                    .where(data.GroupConfig.group_id == gid)
+                    .where(data.GroupConfig.group_id == gid)  # type: ignore
                     .values(enable_bot=True)
                 )
             else:
                 session.execute(
                     update(data.GroupConfig)
-                    .where(data.GroupConfig.group_id == gid)
+                    .where(data.GroupConfig.group_id == gid)  # type: ignore
                     .values(enable_bot=False)
                 )
             session.commit()
@@ -60,7 +60,7 @@ async def _(event: Event, matcher: Matcher):
     if matcher.module.__name__ == __name__:
         return
     if gid := util.get_group_id(event):
-        query = select(data.GroupConfig).where(data.GroupConfig.group_id == gid)
+        query = select(data.GroupConfig).where(data.GroupConfig.group_id == gid)  # type: ignore
         with database.get_session().begin() as session:
             config = session.execute(query).scalar_one_or_none()
             if (config is not None) and (not config.enable_bot):

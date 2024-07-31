@@ -80,7 +80,7 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
     session = maker()
 
     # 获取当前统计数据
-    query = select(data.Statistics).where(data.Statistics.user_id == uid)
+    query = select(data.Statistics).where(data.Statistics.user_id == uid)  # type: ignore
     current_statistics = session.execute(query).scalar_one_or_none()
     if current_statistics is None:
         session.execute(insert(data.Statistics).values(user_id=uid))

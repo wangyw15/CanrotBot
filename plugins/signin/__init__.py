@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from nonebot.adapters import Event
 from arclet.alconna import Option, Args
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
@@ -52,11 +53,11 @@ async def _():
 
 
 @_command.handle()
-async def _(theme: Query[str] = AlconnaQuery("theme", "random")):
+async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
     theme = theme.result.strip().lower()
 
     # 获取 uid
-    puid = await user.get_puid()
+    puid = event.get_user_id()
     if not user.puid_user_exists(puid):
         await _command.finish("你还没有注册")
     uid = await user.get_uid(puid)
@@ -67,7 +68,7 @@ async def _(theme: Query[str] = AlconnaQuery("theme", "random")):
     # 判断是否签到过
     all_record = (
         session.execute(
-            select(data.SigninRecord).where(data.SigninRecord.user_id == uid)
+            select(data.SigninRecord).where(data.SigninRecord.user_id == uid)  # type: ignore
         )
         .scalars()
         .all()
