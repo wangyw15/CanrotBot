@@ -1,3 +1,4 @@
+# TODO 改为复式记账法
 from datetime import datetime
 
 from sqlalchemy import select, insert, update
@@ -7,13 +8,22 @@ from . import data
 from .data import Account, Transaction
 
 
-def _add_history(
+def _add_transaction(
     uid: str,
     amount: float,
     balance: float,
     description: str = "",
     time: datetime | None = None,
 ) -> None:
+    """
+    添加交易记录
+
+    :param uid: uid
+    :param amount: 交易金额
+    :param balance: 交易后余额
+    :param description: 交易描述，默认为空
+    :param time: 交易时间，默认为当前时间
+    """
     if not time:
         time = datetime.now()
     with database.get_session().begin() as session:
@@ -89,12 +99,12 @@ def pay(uid: str, amount: float, description: str = "pay") -> bool:
         return False
     if get_balance(uid) < amount:
         return False
-    _add_history(uid, -amount, get_balance(uid) - amount, description)
+    _add_transaction(uid, -amount, get_balance(uid) - amount, description)
     set_balance(uid, get_balance(uid) - amount)
     return True
 
 
-def earn(uid: str, amount: float, description: str = "earn"):
+def earn(uid: str, amount: float, description: str = "earn") -> None:
     """
     入账
 
@@ -104,7 +114,7 @@ def earn(uid: str, amount: float, description: str = "earn"):
     """
     if amount < 0:
         return
-    _add_history(uid, amount, get_balance(uid) + amount, description)
+    _add_transaction(uid, amount, get_balance(uid) + amount, description)
     set_balance(uid, get_balance(uid) + amount)
 
 
