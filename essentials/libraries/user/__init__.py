@@ -14,11 +14,11 @@ from . import data, snowflake
 
 def puid_user_exists(puid: str) -> bool:
     """
-    检查给定的puid是否存在
+    检查给定的puid是否已注册
 
     :param puid: 要检查的puid
 
-    :return: puid是否存在
+    :return: puid是否已注册
     """
     with database.get_session().begin() as session:
         query = select(data.Bind).where(data.Bind.platform_user_id.is_(puid))
@@ -82,7 +82,7 @@ def register(puid: str) -> int:
 
     :param puid: 要注册的puid
 
-    :return: uid
+    :return: 新用户的uid，如果puid已注册则返回-1
     """
     if puid_user_exists(puid):
         return -1
