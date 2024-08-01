@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
 from . import config
 
 _engine = create_engine(config.canrot_config.canrot_database)
-_session = sessionmaker(bind=_engine)
 
 
 class Base(DeclarativeBase):
@@ -15,6 +14,9 @@ class Base(DeclarativeBase):
 
 def get_engine() -> Engine:
     return _engine
+
+
+_session = sessionmaker(bind=get_engine())
 
 
 def get_session() -> sessionmaker[Session]:
@@ -30,4 +32,4 @@ async def _():
     _engine.dispose()
 
 
-__all__ = ["get_engine"]
+__all__ = ["Base", "get_engine", "get_session", "create_all_tables"]
