@@ -20,7 +20,7 @@ def test_earn(db_initialize: Callable) -> None:
 
     economy.earn("test", 100)
     assert economy.get_balance("test") == 100
-    
+
     economy.earn("test", 100)
     assert economy.get_balance("test") == 200
 
