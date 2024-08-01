@@ -79,8 +79,8 @@ async def _(
         if alias:
             if session.execute(
                 select(data.BaiduAccount).where(
-                    data.BaiduAccount.owner_user_id == uid,  # type: ignore
-                    data.BaiduAccount.alias == alias,  # type: ignore
+                    data.BaiduAccount.owner_user_id.is_(uid),
+                    data.BaiduAccount.alias.is_(alias),
                 )
             ).scalar_one_or_none():
                 await _command.finish("该别名已被使用")
@@ -108,14 +108,14 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             # 删除订阅
             session.execute(
                 delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.account_id == account_id,  # type: ignore
+                    data.TiebaSignResultSubscriber.account_id.is_(account_id),
                 )
             )
             # 删除账号
             session.execute(
                 delete(data.BaiduAccount).where(
-                    data.BaiduAccount.owner_user_id == uid,  # type: ignore
-                    data.BaiduAccount.id == account_id,  # type: ignore
+                    data.BaiduAccount.owner_user_id.is_(uid),
+                    data.BaiduAccount.id.is_(account_id),
                 )
             )
         else:
@@ -123,7 +123,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid  # type: ignore
+                        data.BaiduAccount.owner_user_id.is_(uid)
                     )
                 )
                 .scalars()
@@ -132,12 +132,14 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             for account in accounts:
                 session.execute(
                     delete(data.TiebaSignResultSubscriber).where(
-                        data.TiebaSignResultSubscriber.account_id == account.id,
+                        data.TiebaSignResultSubscriber.account_id.is_(account.id),
                     )
                 )
             # 删除账号
             session.execute(
-                delete(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)  # type: ignore
+                delete(data.BaiduAccount).where(
+                    data.BaiduAccount.owner_user_id.is_(uid)
+                )
             )
 
     if account_id:
@@ -157,7 +159,9 @@ async def _():
     with database.get_session().begin() as session:
         accounts = (
             session.execute(
-                select(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)  # type: ignore
+                select(data.BaiduAccount).where(
+                    data.BaiduAccount.owner_user_id.is_(uid)
+                )
             )
             .scalars()
             .all()
@@ -190,8 +194,8 @@ async def _(
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,  # type: ignore
-                        data.BaiduAccount.id == account_id,  # type: ignore
+                        data.BaiduAccount.owner_user_id.is_(uid),
+                        data.BaiduAccount.id.is_(account_id),
                     )
                 )
                 .scalars()
@@ -201,7 +205,7 @@ async def _(
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,  # type: ignore
+                        data.BaiduAccount.owner_user_id.is_(uid),
                     )
                 )
                 .scalars()
@@ -213,8 +217,8 @@ async def _(
         for account in accounts:
             if session.execute(
                 select(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.account_id == account.id,  # type: ignore
-                    data.TiebaSignResultSubscriber.puid == puid,  # type: ignore
+                    data.TiebaSignResultSubscriber.account_id.is_(account.id),
+                    data.TiebaSignResultSubscriber.puid.is_(puid),
                 )
             ).scalar_one_or_none():
                 continue
@@ -241,14 +245,14 @@ async def _(event: Event, account_id_query: Query[int] = AlconnaQuery("account_i
         if account_id:
             session.execute(
                 delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.account_id == account_id,  # type: ignore
-                    data.TiebaSignResultSubscriber.puid == puid,  # type: ignore
+                    data.TiebaSignResultSubscriber.account_id.is_(account_id),
+                    data.TiebaSignResultSubscriber.puid.is_(puid),
                 )
             )
         else:
             session.execute(
                 delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.puid == puid,  # type: ignore
+                    data.TiebaSignResultSubscriber.puid.is_(puid),
                 )
             )
 
@@ -272,8 +276,8 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,  # type: ignore
-                        data.BaiduAccount.id == account_id,  # type: ignore
+                        data.BaiduAccount.owner_user_id.is_(uid),
+                        data.BaiduAccount.id.is_(account_id),
                     )
                 )
                 .scalars()
@@ -283,7 +287,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
             accounts = (
                 session.execute(
                     select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,  # type: ignore
+                        data.BaiduAccount.owner_user_id.is_(uid),
                     )
                 )
                 .scalars()
@@ -322,7 +326,7 @@ async def _():
             subscribers = (
                 session.execute(
                     select(data.TiebaSignResultSubscriber).where(
-                        data.TiebaSignResultSubscriber.account_id == account.id,  # type: ignore
+                        data.TiebaSignResultSubscriber.account_id.is_(account.id),
                     )
                 )
                 .scalars()

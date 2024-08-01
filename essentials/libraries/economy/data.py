@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Text, Float, DateTime, Integer
+from sqlalchemy import Text, Float, DateTime, Integer, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
@@ -10,10 +10,9 @@ from storage import database
 class Account(database.Base):
     __tablename__ = "economy_accounts"
 
-    id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, nullable=False, autoincrement=True, unique=True
+    user_id: Mapped[int] = mapped_column(
+        BigInteger, primary_key=True, nullable=False, unique=True
     )
-    user_id: Mapped[str] = mapped_column(Text, nullable=False)
     balance: Mapped[float] = mapped_column(Float, nullable=False, default=0)
     extra: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default="")
 
@@ -24,7 +23,7 @@ class Transaction(database.Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, nullable=False, autoincrement=True, unique=True
     )
-    user_id: Mapped[str] = mapped_column(Text, nullable=False)
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     time: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, default=datetime.now
     )

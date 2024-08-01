@@ -74,8 +74,8 @@ async def _(args: Message = CommandArg()):
                 _comment_data = (
                     session.execute(
                         select(data.Comment).where(
-                            data.Comment.type == data.CommentType.anime,  # type: ignore
-                            data.Comment.title == anilist_id,  # type: ignore
+                            data.Comment.type.is_(data.CommentType.anime),
+                            data.Comment.title.is_(anilist_id),
                         )
                     )
                     .scalars()
@@ -84,7 +84,7 @@ async def _(args: Message = CommandArg()):
                 all_comments = ""
                 for i in _comment_data:
                     all_comments += (
-                        f"{datetime.fromisoformat(i.time).strftime('%Y/%m/%d %H:%M:%S')} - "
+                        f"{i.time.strftime('%Y/%m/%d %H:%M:%S')} - "
                         f"{i.nickname}\n"
                         f"{i.content}\n\n"
                     )

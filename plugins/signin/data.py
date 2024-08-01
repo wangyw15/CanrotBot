@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Text, DateTime, Integer
+from sqlalchemy import Text, DateTime, Integer, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
@@ -12,7 +12,7 @@ class SigninRecord(database.Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
     )
-    user_id: Mapped[str] = mapped_column(Text, nullable=False)
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     title: Mapped[str] = mapped_column(Text, nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)

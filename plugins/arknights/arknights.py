@@ -66,7 +66,7 @@ def _init() -> None:
 _init()
 
 
-async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
+async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
     """
     明日方舟十连抽卡，并自动更新统计数据
 
@@ -80,7 +80,7 @@ async def generate_gacha(uid: str) -> Tuple[bytes, list[dict]]:
     session = maker()
 
     # 获取当前统计数据
-    query = select(data.Statistics).where(data.Statistics.user_id == uid)  # type: ignore
+    query = select(data.Statistics).where(data.Statistics.user_id.is_(uid))
     current_statistics = session.execute(query).scalar_one_or_none()
     if current_statistics is None:
         session.execute(insert(data.Statistics).values(user_id=uid))

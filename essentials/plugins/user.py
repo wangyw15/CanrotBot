@@ -1,5 +1,5 @@
 from nonebot import on_command
-from nonebot.adapters import Bot, Event, Message
+from nonebot.adapters import Event, Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 

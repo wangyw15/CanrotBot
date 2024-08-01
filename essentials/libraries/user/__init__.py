@@ -1,6 +1,3 @@
-# uid (user id): uuid4
-import uuid
-
 import nonebot.adapters.console as console
 import nonebot.adapters.kaiheila as kook
 import nonebot.adapters.mirai2 as mirai2
@@ -12,7 +9,7 @@ from nonebot.matcher import current_bot, current_event
 from sqlalchemy import select, delete, insert
 
 from storage import database
-from . import data
+from . import data, snowflake
 
 
 def puid_user_exists(puid: str) -> bool:
@@ -24,12 +21,12 @@ def puid_user_exists(puid: str) -> bool:
     :return: puid是否存在
     """
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.platform_user_id == puid)  # type: ignore
+        query = select(data.Bind).where(data.Bind.platform_user_id.is_(puid))
         result = session.execute(query).first()
         return result is not None
 
 
-def uid_user_exists(uid: str) -> bool:
+def uid_user_exists(uid: int) -> bool:
     """
     检查给定的uid是否存在
 
@@ -38,12 +35,12 @@ def uid_user_exists(uid: str) -> bool:
     :return: uid是否存在
     """
     with database.get_session().begin() as session:
-        query = select(data.User).where(data.User.user_id == uid)  # type: ignore
+        query = select(data.User).where(data.User.id.is_(uid))
         result = session.execute(query).first()
         return result is not None
 
 
-def bind(puid: str, uid: str) -> bool:
+def bind(puid: str, uid: int) -> bool:
     """
     将puid绑定到uid
 
@@ -73,13 +70,13 @@ def unbind(puid: str) -> bool:
     if not puid_user_exists(puid):
         return False
     with database.get_session().begin() as session:
-        query = delete(data.Bind).where(data.Bind.platform_user_id == puid)  # type: ignore
+        query = delete(data.Bind).where(data.Bind.platform_user_id.is_(puid))
         session.execute(query)
         session.commit()
     return True
 
 
-def register(puid: str) -> str:
+def register(puid: str) -> int:
     """
     注册新用户，并且自动绑定puid
 
@@ -88,16 +85,16 @@ def register(puid: str) -> str:
     :return: uid
     """
     if puid_user_exists(puid):
-        return ""
-    uid = str(uuid.uuid4())
+        return -1
+    uid = snowflake.generate_id()
     with database.get_session().begin() as session:
-        session.execute(insert(data.User).values(user_id=uid))
+        session.execute(insert(data.User).values(id=uid))
         session.execute(insert(data.Bind).values(platform_user_id=puid, user_id=uid))
         session.commit()
     return uid
 
 
-async def get_uid(puid: str = "") -> str:
+def get_uid(puid: str = "") -> int:
     """
     查询puid对应的uid
 
@@ -108,14 +105,14 @@ async def get_uid(puid: str = "") -> str:
     if not puid:
         puid = current_event.get().get_user_id()
     elif not puid_user_exists(puid):
-        return ""
+        return -1
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.platform_user_id == puid)  # type: ignore
+        query = select(data.Bind).where(data.Bind.platform_user_id.is_(puid))
         result = session.execute(query).scalar_one()
         return result.user_id
 
 
-def get_bind_by_uid(uid: str) -> list[str]:
+def get_bind_by_uid(uid: int) -> list[str]:
     """
     查询uid绑定的puid
 
@@ -124,12 +121,12 @@ def get_bind_by_uid(uid: str) -> list[str]:
     :return: puid列表
     """
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.user_id == uid)  # type: ignore
+        query = select(data.Bind).where(data.Bind.user_id.is_(uid))
         result = session.execute(query).scalars().all()
         return [_bind.platform_user_id for _bind in result]
 
 
-async def get_bind_by_puid(puid: str) -> list[str]:
+def get_bind_by_puid(puid: str) -> list[str]:
     """
     查询puid对应的uid所绑定的puid
 
@@ -137,7 +134,7 @@ async def get_bind_by_puid(puid: str) -> list[str]:
 
     :return: puid列表
     """
-    return get_bind_by_uid(await get_uid(puid))
+    return get_bind_by_uid(get_uid(puid))
 
 
 async def get_user_name(

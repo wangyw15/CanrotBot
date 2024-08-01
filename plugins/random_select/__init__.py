@@ -68,7 +68,7 @@ async def _(
     with database.get_session().begin() as session:
         result = session.execute(
             select(data.RandomSelectPreset).where(
-                data.RandomSelectPreset.name == preset_name  # type: ignore
+                data.RandomSelectPreset.name.is_(preset_name)
             )
         ).scalar_one_or_none()
         if result:
@@ -98,7 +98,7 @@ async def _(name: Query[str] = AlconnaQuery("name")):
     with database.get_session().begin() as session:
         result: str | None = session.execute(
             select(data.RandomSelectPreset.items).where(
-                data.RandomSelectPreset.name == name.result.strip()  # type: ignore
+                data.RandomSelectPreset.name.is_(name.result.strip())
             )
         ).scalar_one_or_none()
         if not result:
@@ -111,7 +111,7 @@ async def _(name: Query[str] = AlconnaQuery("name")):
     with database.get_session().begin() as session:
         session.execute(
             delete(data.RandomSelectPreset).where(
-                data.RandomSelectPreset.name == name.result.strip()  # type: ignore
+                data.RandomSelectPreset.name.is_(name.result.strip())
             )
         )
     await _command.finish(f"删除预设 {name.result.strip()} 成功")
@@ -135,7 +135,7 @@ async def _(
         with database.get_session().begin() as session:
             result: str | None = session.execute(
                 select(data.RandomSelectPreset.items).where(
-                    data.RandomSelectPreset.name == raw_items  # type: ignore
+                    data.RandomSelectPreset.name.is_(raw_items)
                 )
             ).scalar_one_or_none()
             if result:

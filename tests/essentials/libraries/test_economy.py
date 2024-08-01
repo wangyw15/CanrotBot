@@ -1,7 +1,7 @@
 from typing import Callable
 
-USER1_UID = "test1"
-USER2_UID = "test2"
+USER1_UID = (1 << 62) + 1
+USER2_UID = (1 << 62) + 2
 
 
 def test_create_economy_tables(db_initialize: Callable) -> None:

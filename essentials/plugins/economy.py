@@ -1,5 +1,5 @@
 from nonebot import on_command
-from nonebot.adapters import Bot, Event, Message
+from nonebot.adapters import Event, Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from sqlalchemy import select
@@ -28,12 +28,12 @@ async def _(event: Event, args: Message = CommandArg()):
 
     uid = await user.get_uid(puid)
     if msg := args.extract_plain_text():
-        splitted_args = [x.strip().lower() for x in msg.split()]
+        split_args = [x.strip().lower() for x in msg.split()]
         if msg == "info" or msg == "信息" or msg == "balance" or msg == "余额":
             final = f"puid: {puid}\nuid: {uid}\n当前余额: {economy.get_balance(uid)} 胡萝卜片\n\n最近五条交易记录:"
             with database.get_session().begin() as session:
                 query = select(economy.data.Transaction).where(
-                    economy.data.Transaction.user_id == uid  # type: ignore
+                    economy.data.Transaction.user_id.is_(uid)
                 )
                 history = session.execute(query).scalars().all()
                 for i in history[:5]:
@@ -45,9 +45,9 @@ async def _(event: Event, args: Message = CommandArg()):
                         f"\n{util.MESSAGE_SPLIT_LINE}"
                     )
             await _economy.finish(final)
-        elif splitted_args[0] == "transfer" or splitted_args[0] == "转账":
-            another = splitted_args[1]
-            amount = float(splitted_args[2])
+        elif split_args[0] == "transfer" or split_args[0] == "转账":
+            another = split_args[1]
+            amount = float(split_args[2])
             if "_" in another:
                 another_uid = user.get_uid(another)
             else:

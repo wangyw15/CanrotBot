@@ -1,4 +1,3 @@
-# TODO 改为复式记账法
 from datetime import datetime
 
 from sqlalchemy import select, insert, update
@@ -9,7 +8,7 @@ from .data import Account, Transaction
 
 
 def _add_transaction(
-    uid: str,
+    uid: int,
     amount: float,
     balance: float,
     description: str = "",
@@ -29,7 +28,7 @@ def _add_transaction(
     with database.get_session().begin() as session:
         if (
             session.execute(
-                select(data.Account).where(data.Account.user_id == uid)  # type: ignore
+                select(data.Account).where(data.Account.user_id.is_(uid))
             ).first()
             is None
         ):
@@ -46,7 +45,7 @@ def _add_transaction(
         session.commit()
 
 
-def get_balance(uid: str) -> float:
+def get_balance(uid: int) -> float:
     """
     获取用户余额
 
@@ -56,14 +55,14 @@ def get_balance(uid: str) -> float:
     """
     with database.get_session().begin() as session:
         result = session.execute(
-            select(data.Account).where(data.Account.user_id == uid)  # type: ignore
+            select(data.Account).where(data.Account.user_id.is_(uid))
         ).scalar_one_or_none()
         if result is None:
             return 0.0
         return result.balance
 
 
-def set_balance(uid: str, balance: float) -> None:
+def set_balance(uid: int, balance: float) -> None:
     """
     设置用户余额
 
@@ -72,20 +71,20 @@ def set_balance(uid: str, balance: float) -> None:
     """
     with database.get_session().begin() as session:
         result = session.execute(
-            select(data.Account).where(data.Account.user_id == uid)  # type: ignore
+            select(data.Account).where(data.Account.user_id.is_(uid))
         ).scalar_one_or_none()
         if result is None:
             session.execute(insert(data.Account).values(user_id=uid, balance=balance))
         else:
             session.execute(
                 update(data.Account)
-                .where(data.Account.user_id == uid)  # type: ignore
+                .where(data.Account.user_id.is_(uid))
                 .values(balance=balance)
             )
         session.commit()
 
 
-def pay(uid: str, amount: float, description: str = "pay") -> bool:
+def pay(uid: int, amount: float, description: str = "pay") -> bool:
     """
     出账
 
@@ -104,7 +103,7 @@ def pay(uid: str, amount: float, description: str = "pay") -> bool:
     return True
 
 
-def earn(uid: str, amount: float, description: str = "earn") -> None:
+def earn(uid: int, amount: float, description: str = "earn") -> None:
     """
     入账
 
@@ -118,7 +117,7 @@ def earn(uid: str, amount: float, description: str = "earn") -> None:
     set_balance(uid, get_balance(uid) + amount)
 
 
-def transfer(from_uid: str, to_uid: str, amount: float, description: str = "") -> bool:
+def transfer(from_uid: int, to_uid: int, amount: float, description: str = "") -> bool:
     """
     转账
 

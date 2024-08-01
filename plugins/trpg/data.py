@@ -1,4 +1,4 @@
-from sqlalchemy import Text, Integer, ForeignKey
+from sqlalchemy import Text, Integer, ForeignKey, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import asset, database
@@ -10,7 +10,7 @@ class Investigator(database.Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
     )
-    owner_user_id: Mapped[str] = mapped_column(Text, nullable=False)
+    owner_user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
 
     name: Mapped[str] = mapped_column(Text, nullable=False, default="")
     age: Mapped[int] = mapped_column(Integer, nullable=False, default="")
@@ -34,10 +34,9 @@ class Investigator(database.Base):
 class PlayerData(database.Base):
     __tablename__ = "trpg_player_data"
 
-    id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    user_id: Mapped[int] = mapped_column(
+        BigInteger, primary_key=True, nullable=False, unique=True
     )
-    user_id: Mapped[str] = mapped_column(Text, nullable=False)
     group_id: Mapped[str] = mapped_column(Text, nullable=False)
     selected_investigator_id: Mapped[int] = mapped_column(
         Integer, ForeignKey(Investigator.id), nullable=True

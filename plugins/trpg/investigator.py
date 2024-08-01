@@ -66,7 +66,7 @@ def random_basic_properties() -> dict[str, int]:
     return ret
 
 
-def add_investigator(uid: str, investigator: data.Investigator) -> int:
+def add_investigator(uid: int, investigator: data.Investigator) -> int:
     """
     添加调查员
 
@@ -85,7 +85,7 @@ def add_investigator(uid: str, investigator: data.Investigator) -> int:
 
 
 def get_investigator(
-    uid: str, investigator_id: str = ""
+    uid: int, investigator_id: str = ""
 ) -> Sequence[data.Investigator]:
     """
     获取人物卡
@@ -96,14 +96,16 @@ def get_investigator(
     :return: investigator_id 存在则返回对应调查员，为空则返回所有调查员，不存在则返回空列表
     """
     with database.get_session().begin() as session:
-        query = select(data.Investigator).where(data.Investigator.owner_user_id == uid)  # type: ignore
+        query = select(data.Investigator).where(
+            data.Investigator.owner_user_id.is_(uid)
+        )
         if investigator_id:
-            query = query.where(data.Investigator.id == investigator_id)
+            query = query.where(data.Investigator.id.is_(investigator_id))
         return session.execute(query).scalars().all()
 
 
 def set_selected_investigator(
-    user_id: str, group_id: str, investigator_id: str
+    user_id: int, group_id: str, investigator_id: str
 ) -> bool:
     """
     设置当前人物卡
@@ -118,8 +120,8 @@ def set_selected_investigator(
         if (
             session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id == user_id)  # type: ignore
-                .where(data.Investigator.id == investigator_id)
+                .where(data.Investigator.owner_user_id.is_(user_id))
+                .where(data.Investigator.id.is_(investigator_id))
             ).first()
             is None
         ):
@@ -127,8 +129,8 @@ def set_selected_investigator(
         if (
             session.execute(
                 select(data.PlayerData)
-                .where(data.PlayerData.user_id == user_id)  # type: ignore
-                .where(data.PlayerData.group_id == group_id)
+                .where(data.PlayerData.user_id.is_(user_id))
+                .where(data.PlayerData.group_id.is_(group_id))
             ).first()
             is None
         ):
@@ -142,15 +144,15 @@ def set_selected_investigator(
         else:
             session.execute(
                 update(data.PlayerData)
-                .where(data.PlayerData.user_id == user_id)  # type: ignore
-                .where(data.PlayerData.group_id == group_id)  # type: ignore
+                .where(data.PlayerData.user_id.is_(user_id))
+                .where(data.PlayerData.group_id.is_(group_id))
                 .values(selected_investigator_id=investigator_id)
             )
         session.commit()
         return True
 
 
-def get_selected_investigator(user_id: str, group_id: str) -> data.Investigator | None:
+def get_selected_investigator(user_id: int, group_id: str) -> data.Investigator | None:
     """
     获取当前人物卡
 
@@ -162,18 +164,18 @@ def get_selected_investigator(user_id: str, group_id: str) -> data.Investigator 
     with database.get_session().begin() as session:
         selected = session.execute(
             select(data.PlayerData)
-            .where(data.PlayerData.user_id == user_id)  # type: ignore
-            .where(data.PlayerData.group_id == group_id)  # type: ignore
+            .where(data.PlayerData.user_id.is_(user_id))
+            .where(data.PlayerData.group_id.is_(group_id))
         ).scalar_one_or_none()
         if selected is not None:
             return session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id == user_id)  # type: ignore
-                .where(data.Investigator.id == selected.selected_investigator_id)  # type: ignore
+                .where(data.Investigator.owner_user_id.is_(user_id))
+                .where(data.Investigator.id.is_(selected.selected_investigator_id))
             ).scalar_one_or_none()
 
 
-def delete_investigator(user_id: str, investigator_id: str) -> bool:
+def delete_investigator(user_id: int, investigator_id: str) -> bool:
     """
     删除人物卡
 
@@ -186,22 +188,22 @@ def delete_investigator(user_id: str, investigator_id: str) -> bool:
         if (
             session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id == user_id)  # type: ignore
-                .where(data.Investigator.id == investigator_id)  # type: ignore
+                .where(data.Investigator.owner_user_id.is_(user_id))
+                .where(data.Investigator.id.is_(investigator_id))
             ).first()
             is None
         ):
             return False
         session.execute(
             delete(data.Investigator)
-            .where(data.Investigator.owner_user_id == user_id)  # type: ignore
-            .where(data.Investigator.id == investigator_id)  # type: ignore
+            .where(data.Investigator.owner_user_id.is_(user_id))
+            .where(data.Investigator.id.is_(investigator_id))
         )
         session.commit()
         return True
 
 
-def check_investigator_id(user_id: str, investigator_id: str) -> bool:
+def check_investigator_id(user_id: int, investigator_id: str) -> bool:
     """
     检查调查员 id 是否存在
 
@@ -214,8 +216,8 @@ def check_investigator_id(user_id: str, investigator_id: str) -> bool:
         return (
             session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id == user_id)  # type: ignore
-                .where(data.Investigator.id == investigator_id)  # type: ignore
+                .where(data.Investigator.owner_user_id.is_(user_id))
+                .where(data.Investigator.id.is_(investigator_id))
             ).first()
             is not None
         )
@@ -274,7 +276,7 @@ def get_success_rank(value: int, target: int) -> typing.Tuple[int, str]:
 
 
 def property_check(
-    user_id: str, group_id: str, property_name: str, value: int | None = None
+    user_id: int, group_id: str, property_name: str, value: int | None = None
 ) -> typing.Tuple[str, int, int] | None:
     """
     属性检定
@@ -296,7 +298,7 @@ def property_check(
     return None
 
 
-def calculate_db_physique(user_id: str, group_id: str) -> typing.Tuple[int, int] | None:
+def calculate_db_physique(user_id: int, group_id: str) -> typing.Tuple[int, int] | None:
     """
     计算伤害加值和体格
 
@@ -329,7 +331,7 @@ def calculate_db_physique(user_id: str, group_id: str) -> typing.Tuple[int, int]
     return None
 
 
-def calculate_hp(user_id: str, group_id: str) -> int | None:
+def calculate_hp(user_id: int, group_id: str) -> int | None:
     """
     计算耐久值
 
@@ -344,7 +346,7 @@ def calculate_hp(user_id: str, group_id: str) -> int | None:
     return None
 
 
-def calculate_mov(user_id: str, group_id: str) -> int | None:
+def calculate_mov(user_id: int, group_id: str) -> int | None:
     """
     计算移动速度
 

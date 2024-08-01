@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Text, ForeignKey
+from sqlalchemy import Integer, Text, ForeignKey, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
@@ -10,7 +10,7 @@ class BaiduAccount(database.Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
     )
-    owner_user_id: Mapped[str] = mapped_column(Text, nullable=False)
+    owner_user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     bduss: Mapped[str] = mapped_column(Text, nullable=False)
     stoken: Mapped[str] = mapped_column(Text, nullable=False)
     alias: Mapped[str] = mapped_column(Text, nullable=True, default="")

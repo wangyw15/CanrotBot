@@ -68,7 +68,7 @@ async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
     # 判断是否签到过
     all_record = (
         session.execute(
-            select(data.SigninRecord).where(data.SigninRecord.user_id == uid)  # type: ignore
+            select(data.SigninRecord).where(data.SigninRecord.user_id.is_(uid))
         )
         .scalars()
         .all()
@@ -92,7 +92,7 @@ async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
             )
         )
         session.commit()
-        with _signin_files(uid + ".png").open(mode="wb") as f:
+        with _signin_files(f"{uid}.png").open(mode="wb") as f:
             f.write(img)
         # 签到获得积分
         point_amount = 20 + rank
@@ -107,15 +107,15 @@ async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
         title = today_record.title
         content = today_record.content
 
-        if theme == "random" and _signin_files(uid + ".png").exists():
-            with _signin_files(uid + ".png").open(mode="rb") as f:
+        if theme == "random" and _signin_files(f"{uid}.png").exists():
+            with _signin_files(f"{uid}.png").open(mode="rb") as f:
                 img: bytes = bytes(f.read())
         else:
             # 重新按内容生成图片
             img, _, _, _ = await fortune.generate_fortune(
                 theme, title=today_record.title, content=today_record.content
             )
-            with _signin_files(uid + ".png").open(mode="wb") as f:
+            with _signin_files(f"{uid}.png").open(mode="wb") as f:
                 f.write(img)
     if await util.can_send_segment(Image):
         final_msg.append(Image(raw=img))
