@@ -1,7 +1,7 @@
 from typing import Callable
 
 
-def test_create_table(db_initialize: Callable) -> None:
+def test_create_economy_tables(db_initialize: Callable) -> None:
     from storage.database import Base
     from essentials.libraries import economy
 
