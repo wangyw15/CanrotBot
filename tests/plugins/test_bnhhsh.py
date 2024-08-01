@@ -3,8 +3,6 @@ from nonebug import App
 from tests.utils import make_event
 
 
-# TODO 分析用时过长的问题
-@pytest.mark.skip(reason="运行覆盖率测试时间极长")
 @pytest.mark.asyncio
 async def test_bnhhsh(app: App):
     from plugins.bnhhsh import bnhhsh_handler

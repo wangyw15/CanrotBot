@@ -1,5 +1,3 @@
-import pypinyin
-
 from storage import asset
 
 _asset = asset.LocalAsset("bnhhsh.json")
@@ -18,6 +16,8 @@ def get_pinyin_abbr(content: str) -> str:
 
     :return: 拼音
     """
+    import pypinyin
+
     return "".join(
         [
             x[0].lower()
