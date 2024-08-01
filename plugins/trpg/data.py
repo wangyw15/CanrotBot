@@ -1,14 +1,10 @@
 from sqlalchemy import Text, Integer, ForeignKey
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import asset, database
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class Investigator(Base):
+class Investigator(database.Base):
     __tablename__ = "trpg_investigators"
 
     id: Mapped[int] = mapped_column(
@@ -35,7 +31,7 @@ class Investigator(Base):
     extra: Mapped[str] = mapped_column(Text, nullable=True, default="")
 
 
-class PlayerData(Base):
+class PlayerData(database.Base):
     __tablename__ = "trpg_player_data"
 
     id: Mapped[int] = mapped_column(
@@ -49,7 +45,7 @@ class PlayerData(Base):
     extra: Mapped[str] = mapped_column(Text, nullable=True, default="")
 
 
-class AdditionalProperty(Base):
+class AdditionalProperty(database.Base):
     __tablename__ = "trpg_additional_properties"
 
     id: Mapped[int] = mapped_column(
@@ -64,7 +60,7 @@ class AdditionalProperty(Base):
     description: Mapped[str] = mapped_column(Text, nullable=True, default="")
 
 
-class Skill(Base):
+class Skill(database.Base):
     __tablename__ = "trpg_skills"
 
     id: Mapped[int] = mapped_column(
@@ -79,7 +75,7 @@ class Skill(Base):
     description: Mapped[str] = mapped_column(Text, nullable=True, default="")
 
 
-class Status(Base):
+class Status(database.Base):
     __tablename__ = "trpg_status"
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
@@ -93,7 +89,7 @@ class Status(Base):
     description: Mapped[str] = mapped_column(Text, nullable=True, default="")
 
 
-class Item(Base):
+class Item(database.Base):
     __tablename__ = "trpg_items"
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
@@ -106,7 +102,5 @@ class Item(Base):
     description: Mapped[str] = mapped_column(Text, nullable=True, default="")
     effect: Mapped[str] = mapped_column(Text, nullable=True, default="")
 
-
-Base.metadata.create_all(database.get_engine())
 
 trpg_assets = asset.AssetManager("trpg")

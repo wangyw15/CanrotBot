@@ -1,14 +1,10 @@
 from sqlalchemy import Integer, Text, Boolean
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class CommercialPerformance(Base):
+class CommercialPerformance(database.Base):
     __tablename__ = "commercial_performances"
 
     id: Mapped[int] = mapped_column(
@@ -31,7 +27,7 @@ class CommercialPerformance(Base):
     content: Mapped[str] = mapped_column(Text, nullable=True)
 
 
-class PerformanceActors(Base):
+class PerformanceActors(database.Base):
     __tablename__ = "commercial_performance_actors"
 
     id: Mapped[int] = mapped_column(
@@ -43,6 +39,3 @@ class PerformanceActors(Base):
     gender: Mapped[str] = mapped_column(Text, nullable=True)
     region: Mapped[str] = mapped_column(Text, nullable=True)
     license_numer: Mapped[str] = mapped_column(Text, nullable=True)
-
-
-Base.metadata.create_all(database.get_engine())

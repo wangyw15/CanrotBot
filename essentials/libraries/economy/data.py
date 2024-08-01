@@ -2,16 +2,12 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import Text, Float, DateTime, Integer
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class Account(Base):
+class Account(database.Base):
     __tablename__ = "economy_accounts"
 
     id: Mapped[int] = mapped_column(
@@ -22,7 +18,7 @@ class Account(Base):
     extra: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default="")
 
 
-class Transaction(Base):
+class Transaction(database.Base):
     __tablename__ = "economy_transactions"
 
     id: Mapped[int] = mapped_column(
@@ -36,6 +32,3 @@ class Transaction(Base):
     balance: Mapped[float] = mapped_column(Float, nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     extra: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-
-Base.metadata.create_all(database.get_engine())

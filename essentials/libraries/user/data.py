@@ -1,14 +1,10 @@
 from sqlalchemy import Text, Integer
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class User(Base):
+class User(database.Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(
@@ -18,7 +14,7 @@ class User(Base):
     extra: Mapped[str] = mapped_column(Text, nullable=True)
 
 
-class Bind(Base):
+class Bind(database.Base):
     __tablename__ = "user_binds"
 
     id: Mapped[int] = mapped_column(
@@ -27,6 +23,3 @@ class Bind(Base):
     platform_user_id: Mapped[str] = mapped_column(Text, nullable=False)
     user_id: Mapped[str] = mapped_column(Text, nullable=False)
     extra: Mapped[str] = mapped_column(Text, nullable=True)
-
-
-Base.metadata.create_all(database.get_engine())

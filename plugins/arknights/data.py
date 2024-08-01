@@ -1,16 +1,12 @@
 from datetime import datetime
 
 from sqlalchemy import Integer, Text, DateTime
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class Statistics(Base):
+class Statistics(database.Base):
     __tablename__ = "arknights_gacha_statistics"
 
     id: Mapped[int] = mapped_column(
@@ -25,7 +21,7 @@ class Statistics(Base):
     last_six_star: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
 
-class History(Base):
+class History(database.Base):
     __tablename__ = "arknights_gacha_history"
 
     id: Mapped[int] = mapped_column(
@@ -36,6 +32,3 @@ class History(Base):
         DateTime, nullable=False, default=datetime.now
     )
     operators: Mapped[str] = mapped_column(Text, nullable=False)
-
-
-Base.metadata.create_all(database.get_engine())

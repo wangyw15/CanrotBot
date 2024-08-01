@@ -1,14 +1,10 @@
 from sqlalchemy import Integer, Text
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class RandomSelectPreset(Base):
+class RandomSelectPreset(database.Base):
     __tablename__ = "random_select_preset"
 
     id: Mapped[int] = mapped_column(
@@ -16,6 +12,3 @@ class RandomSelectPreset(Base):
     )
     name: Mapped[str] = mapped_column(Text, nullable=False)
     items: Mapped[str] = mapped_column(Text, nullable=False)
-
-
-Base.metadata.create_all(database.get_engine())

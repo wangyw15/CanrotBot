@@ -1,16 +1,12 @@
 from datetime import datetime
 
 from sqlalchemy import Integer, Text, DateTime
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class History(Base):
+class History(database.Base):
     __tablename__ = "bang_dream_gacha_history"
 
     id: Mapped[int] = mapped_column(
@@ -22,6 +18,3 @@ class History(Base):
     )
     gacha: Mapped[str] = mapped_column(Text, nullable=False)
     cards: Mapped[str] = mapped_column(Text, nullable=False)
-
-
-Base.metadata.create_all(database.get_engine())

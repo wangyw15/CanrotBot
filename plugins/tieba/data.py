@@ -1,14 +1,10 @@
 from sqlalchemy import Integer, Text, ForeignKey
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
 from storage import database
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class BaiduAccount(Base):
+class BaiduAccount(database.Base):
     __tablename__ = "baidu_account"
 
     id: Mapped[int] = mapped_column(
@@ -20,7 +16,7 @@ class BaiduAccount(Base):
     alias: Mapped[str] = mapped_column(Text, nullable=True, default="")
 
 
-class TiebaSignResultSubscriber(Base):
+class TiebaSignResultSubscriber(database.Base):
     __tablename__ = "tieba_sign_result_subscriber"
 
     id: Mapped[int] = mapped_column(
@@ -31,6 +27,3 @@ class TiebaSignResultSubscriber(Base):
     )
     puid: Mapped[str] = mapped_column(Text, nullable=False)
     bot: Mapped[str] = mapped_column(Text, nullable=False)
-
-
-Base.metadata.create_all(database.get_engine())
