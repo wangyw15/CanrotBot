@@ -11,7 +11,18 @@ def test_create_table(db_initialize: Callable) -> None:
     assert economy.data.Transaction.__tablename__ in Base.metadata.tables
 
 
-def test_earn(db_initialize: Callable) -> None:
+def test_set_balance_without_record(db_initialize: Callable) -> None:
+    from essentials.libraries import economy
+
+    db_initialize()
+
+    assert economy.get_balance("test") == 0
+
+    economy.set_balance("test", 100)
+    assert economy.get_balance("test") == 100
+
+
+def test_earn_positive_amount(db_initialize: Callable) -> None:
     from essentials.libraries import economy
 
     db_initialize()
@@ -25,7 +36,21 @@ def test_earn(db_initialize: Callable) -> None:
     assert economy.get_balance("test") == 200
 
 
-def test_pay(db_initialize: Callable) -> None:
+def test_earn_negative_amount(db_initialize: Callable) -> None:
+    from essentials.libraries import economy
+
+    db_initialize()
+
+    assert economy.get_balance("test") == 0
+
+    economy.earn("test", 100)
+    assert economy.get_balance("test") == 100
+
+    economy.earn("test", -100)
+    assert economy.get_balance("test") == 100
+
+
+def test_pay_positive_amount(db_initialize: Callable) -> None:
     from essentials.libraries import economy
 
     db_initialize()
@@ -39,7 +64,21 @@ def test_pay(db_initialize: Callable) -> None:
     assert economy.get_balance("test") == 50
 
 
-def test_transfer(db_initialize: Callable) -> None:
+def test_pay_negative_amount(db_initialize: Callable) -> None:
+    from essentials.libraries import economy
+
+    db_initialize()
+
+    assert economy.get_balance("test") == 0
+
+    economy.earn("test", 100)
+    assert economy.get_balance("test") == 100
+
+    economy.pay("test", -100)
+    assert economy.get_balance("test") == 100
+
+
+def test_transfer_positive_amount(db_initialize: Callable) -> None:
     from essentials.libraries import economy
 
     db_initialize()
@@ -50,6 +89,28 @@ def test_transfer(db_initialize: Callable) -> None:
     economy.earn("test1", 100)
     assert economy.get_balance("test1") == 100
 
-    economy.transfer("test1", "test2", 50)
+    assert economy.transfer("test1", "test2", 50)
     assert economy.get_balance("test1") == 50
     assert economy.get_balance("test2") == 50
+
+
+def test_transfer_not_enough_balance(db_initialize: Callable) -> None:
+    from essentials.libraries import economy
+
+    db_initialize()
+
+    assert economy.get_balance("test1") == 0
+    assert economy.get_balance("test2") == 0
+
+    assert not economy.transfer("test1", "test2", 100)
+
+
+def test_transfer_negative_amount(db_initialize: Callable) -> None:
+    from essentials.libraries import economy
+
+    db_initialize()
+
+    assert economy.get_balance("test1") == 0
+    assert economy.get_balance("test2") == 0
+
+    assert not economy.transfer("test1", "test2", -100)
