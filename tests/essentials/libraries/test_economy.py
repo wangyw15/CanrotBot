@@ -1,5 +1,8 @@
 from typing import Callable
 
+USER1_UID = "test1"
+USER2_UID = "test2"
+
 
 def test_create_economy_tables(db_initialize: Callable) -> None:
     from storage.database import Base
@@ -16,10 +19,10 @@ def test_set_balance_without_record(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert economy.get_balance("test") == 0
+    assert economy.get_balance(USER1_UID) == 0
 
-    economy.set_balance("test", 100)
-    assert economy.get_balance("test") == 100
+    economy.set_balance(USER1_UID, 100)
+    assert economy.get_balance(USER1_UID) == 100
 
 
 def test_earn_positive_amount(db_initialize: Callable) -> None:
@@ -27,13 +30,13 @@ def test_earn_positive_amount(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert economy.get_balance("test") == 0
+    assert economy.get_balance(USER1_UID) == 0
 
-    economy.earn("test", 100)
-    assert economy.get_balance("test") == 100
+    economy.earn(USER1_UID, 100)
+    assert economy.get_balance(USER1_UID) == 100
 
-    economy.earn("test", 100)
-    assert economy.get_balance("test") == 200
+    economy.earn(USER1_UID, 100)
+    assert economy.get_balance(USER1_UID) == 200
 
 
 def test_earn_negative_amount(db_initialize: Callable) -> None:
@@ -41,13 +44,13 @@ def test_earn_negative_amount(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert economy.get_balance("test") == 0
+    assert economy.get_balance(USER1_UID) == 0
 
-    economy.earn("test", 100)
-    assert economy.get_balance("test") == 100
+    economy.earn(USER1_UID, 100)
+    assert economy.get_balance(USER1_UID) == 100
 
-    economy.earn("test", -100)
-    assert economy.get_balance("test") == 100
+    economy.earn(USER1_UID, -100)
+    assert economy.get_balance(USER1_UID) == 100
 
 
 def test_pay_positive_amount(db_initialize: Callable) -> None:
@@ -55,13 +58,13 @@ def test_pay_positive_amount(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert economy.get_balance("test") == 0
+    assert economy.get_balance(USER1_UID) == 0
 
-    economy.earn("test", 100)
-    assert economy.get_balance("test") == 100
+    economy.earn(USER1_UID, 100)
+    assert economy.get_balance(USER1_UID) == 100
 
-    economy.pay("test", 50)
-    assert economy.get_balance("test") == 50
+    economy.pay(USER1_UID, 50)
+    assert economy.get_balance(USER1_UID) == 50
 
 
 def test_pay_negative_amount(db_initialize: Callable) -> None:
@@ -69,13 +72,13 @@ def test_pay_negative_amount(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert economy.get_balance("test") == 0
+    assert economy.get_balance(USER1_UID) == 0
 
-    economy.earn("test", 100)
-    assert economy.get_balance("test") == 100
+    economy.earn(USER1_UID, 100)
+    assert economy.get_balance(USER1_UID) == 100
 
-    economy.pay("test", -100)
-    assert economy.get_balance("test") == 100
+    economy.pay(USER1_UID, -100)
+    assert economy.get_balance(USER1_UID) == 100
 
 
 def test_transfer_positive_amount(db_initialize: Callable) -> None:
@@ -83,15 +86,15 @@ def test_transfer_positive_amount(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert economy.get_balance("test1") == 0
-    assert economy.get_balance("test2") == 0
+    assert economy.get_balance(USER1_UID) == 0
+    assert economy.get_balance(USER2_UID) == 0
 
-    economy.earn("test1", 100)
-    assert economy.get_balance("test1") == 100
+    economy.earn(USER1_UID, 100)
+    assert economy.get_balance(USER1_UID) == 100
 
-    assert economy.transfer("test1", "test2", 50)
-    assert economy.get_balance("test1") == 50
-    assert economy.get_balance("test2") == 50
+    assert economy.transfer(USER1_UID, USER2_UID, 50)
+    assert economy.get_balance(USER1_UID) == 50
+    assert economy.get_balance(USER2_UID) == 50
 
 
 def test_transfer_not_enough_balance(db_initialize: Callable) -> None:
@@ -99,10 +102,10 @@ def test_transfer_not_enough_balance(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert economy.get_balance("test1") == 0
-    assert economy.get_balance("test2") == 0
+    assert economy.get_balance(USER1_UID) == 0
+    assert economy.get_balance(USER2_UID) == 0
 
-    assert not economy.transfer("test1", "test2", 100)
+    assert not economy.transfer(USER1_UID, USER2_UID, 100)
 
 
 def test_transfer_negative_amount(db_initialize: Callable) -> None:
@@ -110,7 +113,7 @@ def test_transfer_negative_amount(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert economy.get_balance("test1") == 0
-    assert economy.get_balance("test2") == 0
+    assert economy.get_balance(USER1_UID) == 0
+    assert economy.get_balance(USER2_UID) == 0
 
-    assert not economy.transfer("test1", "test2", -100)
+    assert not economy.transfer(USER1_UID, USER2_UID, -100)
