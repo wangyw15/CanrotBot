@@ -3,8 +3,6 @@ from typing import Callable
 import pytest
 from nonebot.matcher import current_bot, current_event
 from nonebug import App
-from nonebot import get_adapter
-from pytest_mock import MockerFixture
 
 from tests.utils import make_event
 
