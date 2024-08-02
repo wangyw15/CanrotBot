@@ -1,52 +1,61 @@
 import json
-from typing import Tuple
 
 from nonebot import get_loaded_plugins
+from nonebot.plugin import PluginMetadata
 
 from storage import asset
 from . import render_by_browser, util
 
-_help_assets = asset.AssetManager("help")
-_plugin_metadatas: list[dict[str, str]] = []
-_help_text: str | None = None
-_help_image: bytes | None = None
+_help_asset = asset.AssetManager("help")
 
 
-async def generate_help_message(with_image: bool = True) -> Tuple[str, bytes | None]:
-    global _plugin_metadatas, _help_text, _help_image
-    # 获取所有插件信息
-    if not _plugin_metadatas:
-        for plugin in get_loaded_plugins():
-            if plugin.metadata:
-                _plugin_metadatas.append(
-                    {
-                        "name": plugin.metadata.name,
-                        "description": plugin.metadata.description,
-                        "usage": plugin.metadata.usage,
-                    }
-                )
-    # 文本帮助信息
-    if _help_text is None:
-        _help_text = util.MESSAGE_SPLIT_LINE
-        for plugin in _plugin_metadatas:
-            _help_text += (
-                f'{plugin["name"]}:\n'
-                f'描述:\n{plugin["description"]}\n'
-                f'用法:\n{plugin["usage"]}\n' + util.MESSAGE_SPLIT_LINE + "\n"
-            )
-        _help_text = _help_text.strip()
-    # 图片帮助信息
-    if with_image and _help_image is None:
-        with _help_assets("template.html").open(encoding="utf-8") as f:
-            html = f.read()
-        _help_image = await render_by_browser.render_html(
-            html.replace(
-                "'{{DATA_HERE}}'", json.dumps(_plugin_metadatas, ensure_ascii=False)
-            ),
-            _help_assets(),
-            viewport={"width": 1000, "height": 1000},
-        )
-    # 按需返回
-    if with_image:
-        return _help_text, _help_image
-    return _help_text, None
+def get_plugins_metadata() -> dict[str, PluginMetadata]:
+    """
+    获取所有插件的元数据
+
+    :return: {插件名: 元数据}
+    """
+    return {
+        plugin.name: plugin.metadata
+        for plugin in get_loaded_plugins()
+        if plugin.metadata
+    }
+
+
+def generate_help_text() -> str:
+    """
+    生成文本帮助信息
+
+    :return: 帮助信息文本
+    """
+    return f"\n{util.MESSAGE_SPLIT_LINE}\n".join(
+        [
+            f"{metadata.name}:\n描述:\n{metadata.description}\n用法:\n{metadata.usage}"
+            for _, metadata in get_plugins_metadata().items()
+        ]
+    )
+
+
+async def generate_help_image() -> bytes:
+    """
+    生成图片帮助信息
+
+    :return: 帮助信息图片
+    """
+    # 生成元数据对象
+    metadata_obj: list[dict[str, str]] = [
+        {
+            "name": metadata.name,
+            "description": metadata.description,
+            "usage": metadata.usage,
+        }
+        for _, metadata in get_plugins_metadata().items()
+    ]
+
+    with _help_asset("template.html").open(encoding="utf-8") as f:
+        html = f.read()
+    return await render_by_browser.render_html(
+        html.replace("'{{DATA_HERE}}'", json.dumps(metadata_obj, ensure_ascii=False)),
+        _help_asset(),
+        viewport={"width": 1000, "height": 1000},
+    )
