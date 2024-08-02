@@ -91,8 +91,8 @@ async def generate_fortune(
     bytes_data = await render_by_browser.render_html(
         raw_content,
         str(fortune_assets / "template"),
-        image_type,
         viewport={"width": 480, "height": 480},
+        image_type=image_type,
     )
     return bytes_data, title, text, rank
 

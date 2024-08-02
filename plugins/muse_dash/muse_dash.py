@@ -78,9 +78,7 @@ def _parse_muse_dash_page(content: str) -> dict:
 async def generate_muse_dash_player_image(
     player_id: str, image_type: Literal["png", "jpeg"] = "png"
 ) -> bytes:
-    page = await render_by_browser.get_new_page(
-        viewport={"width": 1000, "height": 2250}
-    )
+    page = await render_by_browser.new_page(viewport={"width": 1000, "height": 2250})
     await page.goto(
         f"https://musedash.moe/player/{player_id}", wait_until="networkidle"
     )
