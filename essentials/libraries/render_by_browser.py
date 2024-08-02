@@ -98,4 +98,4 @@ async def close_browser():
     logger.info("Closed browser renderer")
 
 
-__all__ = ["new_page", "render_html"]
+__all__ = ["new_page", "render_html", "initialize", "dispose"]
