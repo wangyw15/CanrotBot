@@ -18,5 +18,10 @@ def test_generate_help_text() -> None:
 async def test_generate_help_image(mocker: MockerFixture) -> None:
     from essentials.libraries.help import generate_help_image
 
-    mocker.patch("essentials.libraries.render_by_browser.render_html", return_value=b"TEST")
+    render_html = mocker.async_stub("essentials.libraries.render_by_browser.render_html")
+    render_html.return_value = b"TEST"
+
+    mocker.patch("essentials.libraries.render_by_browser.render_html", new=render_html)
     assert await generate_help_image() == b"TEST"
+
+    render_html.assert_called_once()
