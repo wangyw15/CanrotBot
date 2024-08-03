@@ -124,7 +124,7 @@ async def can_send_segment(segment_type: type) -> bool:
         raise
 
 
-async def is_qq(bot: Bot) -> bool:
+def is_qq(bot: Bot) -> bool:
     return (
         isinstance(bot, ob11.Bot)
         or isinstance(bot, ob12.Bot)
@@ -135,5 +135,8 @@ async def is_qq(bot: Bot) -> bool:
 __all__ = [
     "get_group_id",
     "get_bot_name",
+    "seconds_to_time",
+    "can_send_segment",
+    "is_qq",
     "MESSAGE_SPLIT_LINE",
 ]
