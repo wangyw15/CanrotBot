@@ -2,86 +2,20 @@ import hashlib
 import random
 import re
 from datetime import datetime, timezone, timedelta
-from typing import Any
 
-import httpx
 import nonebot.adapters.console as console
 import nonebot.adapters.kaiheila as kook
 import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
 import nonebot.adapters.qq as qq
-from nonebot import get_driver
 from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot_plugin_alconna import UniMessage, SerializeFailed
-
-_driver = get_driver()
-_global_config = _driver.config
-
-
-def _get_config(name: str) -> Any:
-    return _global_config.dict()[name]
-
-
-if proxy := _get_config("canrot_proxy"):
-    _client = httpx.AsyncClient(proxy=proxy)
-else:
-    _client = httpx.AsyncClient()
-_client.timeout = 10
-
 
 MESSAGE_SPLIT_LINE = "--------------------"
 """
 消息分割线
 """
-
-
-async def fetch_bytes_data(url: str, *args, **kwargs) -> bytes | None:
-    """
-    从 URL 获取 bytes 数据
-
-    :param url: URL
-    :param args: 传递给 httpx.AsyncClient.get 的参数
-    :param kwargs: 传递给 httpx.AsyncClient.get 的参数
-
-    :return: bytes 数据
-    """
-    resp = await _client.get(url, *args, **kwargs)
-    if resp.is_success and resp.status_code == 200:
-        return resp.content
-    return None
-
-
-async def fetch_json_data(url: str, *args, **kwargs) -> Any | None:
-    """
-    从 URL 获取 json 数据
-
-    :param url: URL
-    :param args: 传递给 httpx.AsyncClient.get 的参数
-    :param kwargs: 传递给 httpx.AsyncClient.get 的参数
-
-    :return: json 数据
-    """
-    resp = await _client.get(url, *args, **kwargs)
-    if resp.is_success and resp.status_code == 200:
-        return resp.json()
-    return None
-
-
-async def fetch_text_data(url: str, *args, **kwargs) -> str | None:
-    """
-    从 URL 获取字符串
-
-    :param url: URL
-    :param args: 传递给 httpx.AsyncClient.get 的参数
-    :param kwargs: 传递给 httpx.AsyncClient.get 的参数
-
-    :return: 字符串
-    """
-    resp = await _client.get(url, *args, **kwargs)
-    if resp.is_success and resp.status_code == 200:
-        return resp.text
-    return None
 
 
 def get_group_id(event: Event) -> str:
@@ -99,9 +33,9 @@ def get_group_id(event: Event) -> str:
     elif isinstance(event, mirai2.GroupMessage):
         return "qq_" + str(event.sender.group.id)
     elif isinstance(event, qq.GroupRobotEvent):
-        return "qqbot_" + str(event.group_openid)  # TODO 确认是否为QQ号，是则改为qq_
+        return "qqbot_" + str(event.group_openid)
     elif isinstance(event, qq.GuildMessageEvent):
-        return "qqguild_" + str(event)
+        return "qqbot_" + str(event)
     elif isinstance(event, kook.event.ChannelMessageEvent):
         return "kook_" + str(event.group_id)
     elif isinstance(event, console.MessageEvent):
@@ -251,9 +185,6 @@ async def is_qq(bot: Bot) -> bool:
 
 
 __all__ = [
-    "fetch_bytes_data",
-    "fetch_json_data",
-    "fetch_text_data",
     "get_group_id",
     "get_bot_name",
     "random_str",

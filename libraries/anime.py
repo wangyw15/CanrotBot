@@ -2,13 +2,13 @@ import asyncio
 import difflib
 import re
 import urllib.parse
+from datetime import timedelta
 from typing import Tuple
 
 from nonebot import logger
 
-from essentials.libraries import util
+import essentials.libraries.network
 from storage import asset
-from datetime import timedelta
 
 # TODO 改为Anilist API
 _anime_offline_database = asset.RemoteAsset(
@@ -92,7 +92,7 @@ async def search_anime_by_image(img_url: str) -> dict | None:
     :return: 番剧信息
     """
     api_url = "https://api.trace.moe/search?url={url}"
-    if data := await util.fetch_json_data(
+    if data := await essentials.libraries.network.fetch_json_data(
         api_url.format(url=urllib.parse.quote_plus(img_url))
     ):
         return data

@@ -9,7 +9,7 @@ from essentials.libraries import util
 
 
 class SearchImageConfig(BaseModel):
-    canrot_proxy: str = ""
+    proxy: str = ""
     saucenao_api_key: str = ""
     search_result_count: int = 1
 
@@ -17,8 +17,8 @@ class SearchImageConfig(BaseModel):
 _config = SearchImageConfig.parse_obj(get_driver().config)
 
 
-if _config.canrot_proxy:
-    _client = httpx.AsyncClient(proxy=_config.canrot_proxy)
+if _config.proxy:
+    _client = httpx.AsyncClient(proxy=_config.proxy)
 else:
     _client = httpx.AsyncClient()
 _client.timeout = 10

@@ -4,6 +4,7 @@ import random
 from datetime import datetime
 from typing import Literal, Tuple
 
+import essentials.libraries.network
 from essentials.libraries import render_by_browser, util
 from storage import asset
 
@@ -96,12 +97,12 @@ async def generate_card_info_image(card: dict) -> bytes:
 
 async def get_events(time: Literal["now"] | datetime = "now") -> list[dict] | None:
     if time == "now":
-        return await util.fetch_json_data(
+        return await essentials.libraries.network.fetch_json_data(
             f"https://api.matsurihi.me/api/mltd/v2/events?at=now"
         )
     elif isinstance(time, datetime):
         t = datetime.now().astimezone().replace(microsecond=0).isoformat()
-        return await util.fetch_json_data(
+        return await essentials.libraries.network.fetch_json_data(
             f"https://api.matsurihi.me/api/mltd/v2/events?at={t}"
         )
 

@@ -4,11 +4,12 @@ from typing import Literal
 from bs4 import BeautifulSoup
 from nonebot_plugin_alconna import UniMessage, Image, Text
 
+import essentials.libraries.network
 from essentials.libraries import render_by_browser, util
 
 
 async def search_muse_dash_player_id(player_name: str) -> str | None:
-    data: list[list[str]] = await util.fetch_json_data(
+    data: list[list[str]] = await essentials.libraries.network.fetch_json_data(
         f"https://api.musedash.moe/search/{player_name}"
     )
     if data and len(data) != 0 and data[0][0] == player_name:
@@ -17,7 +18,7 @@ async def search_muse_dash_player_id(player_name: str) -> str | None:
 
 
 async def fetch_muse_dash_player_data(player_id: str) -> dict | None:
-    if txt := await util.fetch_text_data(
+    if txt := await essentials.libraries.network.fetch_text_data(
         f"https://musedash.moe/player/{player_id}?lang=ChineseS"
     ):
         return _parse_muse_dash_page(txt)
