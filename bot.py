@@ -20,7 +20,7 @@ from storage import asset, config, database  # asset不可删除
 
 database.create_all_tables()  # 为asset创建表
 
-logger_path = Path(config.canrot_config.canrot_data_path) / "log"
+logger_path = Path(config.global_config.data_path) / "log"
 if not logger_path.exists():
     logger_path.mkdir(parents=True)
 logger.add(
@@ -31,17 +31,17 @@ logger.add(
 )
 
 # 注册适配器
-if "console" in config.canrot_config.canrot_enabled_adapters:
+if "console" in config.global_config.enabled_adapters:
     driver.register_adapter(console.Adapter)
-if "kook" in config.canrot_config.canrot_enabled_adapters:
+if "kook" in config.global_config.enabled_adapters:
     driver.register_adapter(kook.Adapter)
-if "mirai2" in config.canrot_config.canrot_enabled_adapters:
+if "mirai2" in config.global_config.enabled_adapters:
     driver.register_adapter(mirai2.Adapter)
-if "onebot_v11" in config.canrot_config.canrot_enabled_adapters:
+if "onebot_v11" in config.global_config.enabled_adapters:
     driver.register_adapter(onebot_v11.Adapter)
-if "onebot_v12" in config.canrot_config.canrot_enabled_adapters:
+if "onebot_v12" in config.global_config.enabled_adapters:
     driver.register_adapter(onebot_v12.Adapter)
-if "qq" in config.canrot_config.canrot_enabled_adapters:
+if "qq" in config.global_config.enabled_adapters:
     driver.register_adapter(qq.Adapter)
 
 # 内置插件

@@ -1,26 +1,24 @@
 from nonebot import get_driver
 
 from sqlalchemy import create_engine, Engine
-from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
+from sqlalchemy.orm import Session, sessionmaker
 
-from . import config
+from .model import Base
+from .config import DatabaseConfig
 
-_engine = create_engine(config.canrot_config.canrot_database)
-
-
-class Base(DeclarativeBase):
-    pass
+config = DatabaseConfig()
+engine = create_engine(config.connection_string)
 
 
 def get_engine() -> Engine:
-    return _engine
+    return engine
 
 
-_session = sessionmaker(bind=get_engine())
+session_maker = sessionmaker(bind=get_engine())
 
 
 def get_session() -> sessionmaker[Session]:
-    return _session
+    return session_maker
 
 
 def create_all_tables() -> None:
@@ -29,7 +27,7 @@ def create_all_tables() -> None:
 
 @get_driver().on_shutdown
 async def _():
-    _engine.dispose()
+    engine.dispose()
 
 
 __all__ = ["Base", "get_engine", "get_session", "create_all_tables"]

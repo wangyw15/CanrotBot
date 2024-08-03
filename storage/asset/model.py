@@ -12,7 +12,7 @@ from sqlalchemy import select, update, insert
 from storage import database
 from . import data
 from .config import AssetConfig
-from ..config import canrot_config
+from ..config import global_config
 
 config = get_plugin_config(AssetConfig)
 if config.proxy:
@@ -36,7 +36,7 @@ class Asset(metaclass=abc.ABCMeta):
 
 
 class RemoteAsset(Asset):
-    _cache_path = Path(canrot_config.canrot_data_path) / "cache/asset"
+    _cache_path = Path(global_config.data_path) / "cache/asset"
 
     def __init__(
         self, url: str, expire: datetime | timedelta | None = None, key: str = ""

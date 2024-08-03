@@ -5,7 +5,7 @@ from . import config
 
 class FileStorage:
     def __init__(self, name: str):
-        self.__base_path = Path(config.canrot_config.canrot_data_path) / name
+        self.__base_path = Path(config.global_config.data_path) / name
         if not self.__base_path.exists():
             self.__base_path.mkdir(parents=True)
 
