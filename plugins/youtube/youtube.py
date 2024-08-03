@@ -1,23 +1,42 @@
 import datetime
-import typing
 
-from nonebot import on_regex
-from nonebot.params import RegexGroup
-from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import UniMessage, Image, Text
+from nonebot import get_plugin_config
 
-from essentials.libraries import util
-from .youtube import youtube_link_pattern, fetch_youtube_data, fetch_youtube_thumbnail
+from essentials.libraries import network
+from .config import YoutubeConfig
 
-__plugin_meta__ = PluginMetadata(
-    name="链接元数据",
-    description="获取链接指向的内容",
-    usage="发送支持解析的链接会自动触发",
-    config=None,
-)
+YOUTUBE_LINK_PATTERN = r"(?:https?:\/\/)?(?:youtu\.be\/|(?:\w{3}\.)?youtube\.com\/(?:watch\?.*v=|shorts\/))([a-zA-Z0-9-_]+)"
+config = get_plugin_config(YoutubeConfig)
 
 
-def _generate_youtube_message(data: dict) -> str:
+async def fetch_youtube_data(ytb_id: str) -> dict:
+    if config.api_key:
+        data = await network.fetch_json_data(
+            f"https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics&id={ytb_id}&key={config.api_key}"
+        )
+        if data["pageInfo"]["totalResults"] > 0:
+            return data["items"][0]
+    return {}
+
+
+async def fetch_youtube_thumbnail(data: dict) -> bytes | None:
+    """
+    下载 YouTube 封面图
+
+    :param data: YouTube 接口返回的数据
+
+    :return: 封面图数据
+    """
+    url = ""
+    max_width = 0
+    for _, v in data["snippet"]["thumbnails"].items():
+        if v["width"] > max_width:
+            max_width = v["width"]
+            url = v["url"]
+    return await network.fetch_bytes_data(url)
+
+
+def generate_youtube_message(data: dict) -> str:
     # 选择第一行或者前200个字符
     desc = "\n".join(
         [
@@ -58,20 +77,3 @@ def _generate_youtube_message(data: dict) -> str:
     else:
         msg += f'视频链接: \nhttps://youtu.be/{data["id"]}'
     return msg
-
-
-youtube_link_handler = on_regex(youtube_link_pattern, block=True)
-
-
-@youtube_link_handler.handle()
-async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
-    data = await fetch_youtube_data(reg[0])
-    if data:
-        msg = _generate_youtube_message(data)
-        final_msg = UniMessage()
-        if await util.can_send_segment(Image):
-            img_data = await fetch_youtube_thumbnail(data)
-            if img_data:
-                final_msg.append(Image(raw=img_data))
-        final_msg.append(Text(msg))
-        await youtube_link_handler.finish(await final_msg.export())
