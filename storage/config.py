@@ -1,6 +1,6 @@
 from typing import Any
 
-from nonebot import get_driver
+from nonebot import get_driver, get_plugin_config
 from pydantic import BaseModel
 
 from warnings import deprecated
@@ -17,7 +17,7 @@ class CanrotConfig(BaseModel):
 
 _driver = get_driver()
 _global_config = _driver.config
-canrot_config: CanrotConfig = CanrotConfig.parse_obj(_global_config)
+canrot_config: CanrotConfig = get_plugin_config(CanrotConfig)
 
 
 @deprecated("Use get_plugin_config instead")
