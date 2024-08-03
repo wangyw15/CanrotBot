@@ -42,7 +42,7 @@ def test_register_with_bind_puid(db_initialize: Callable) -> None:
     db_initialize()
 
     assert user.register(TEST_PUID1) > 0
-    assert user.register(TEST_PUID1) == -1
+    assert user.register(TEST_PUID1) == 0
 
 
 def test_puid_user_exists_with_bind_puid(db_initialize: Callable) -> None:
@@ -142,7 +142,7 @@ def test_get_uid_with_non_bind_puid(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert user.get_uid(TEST_PUID1) == -1
+    assert user.get_uid(TEST_PUID1) == 0
 
 
 @pytest.mark.asyncio

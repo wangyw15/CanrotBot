@@ -82,10 +82,10 @@ def register(puid: str) -> int:
 
     :param puid: 要注册的puid
 
-    :return: 新用户的uid，如果puid已注册则返回-1
+    :return: 新用户的uid，如果puid已注册则返回0
     """
     if puid_user_exists(puid):
-        return -1
+        return 0
     uid = snowflake.generate_id()
     with database.get_session().begin() as session:
         session.execute(insert(data.User).values(id=uid))
@@ -105,7 +105,7 @@ def get_uid(puid: str = "") -> int:
     if not puid:
         puid = current_event.get().get_user_id()
     elif not puid_user_exists(puid):
-        return -1
+        return 0
     with database.get_session().begin() as session:
         query = select(data.Bind).where(data.Bind.platform_user_id.is_(puid))
         result = session.execute(query).scalar_one()
