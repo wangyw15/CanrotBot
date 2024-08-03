@@ -1,15 +1,10 @@
-import hashlib
-import random
-import re
-from datetime import datetime, timezone, timedelta
-
 import nonebot.adapters.console as console
 import nonebot.adapters.kaiheila as kook
 import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
 import nonebot.adapters.qq as qq
-from nonebot.adapters import Bot, Event, MessageSegment
+from nonebot.adapters import Bot, Event
 from nonebot_plugin_alconna import UniMessage, SerializeFailed
 
 MESSAGE_SPLIT_LINE = "--------------------"
@@ -97,28 +92,6 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
     return default
 
 
-def is_url(msg: MessageSegment | str) -> bool:
-    """
-    检测是否为 URL
-
-    :param msg: 消息内容
-
-    :return: 是否为 URL
-    """
-    if isinstance(msg, str):
-        return re.match(r"^https?://", msg) is not None
-    elif msg.is_text():
-        msg = str(msg)
-        return re.match(r"^https?://", msg) is not None
-    elif isinstance(msg, kook.MessageSegment):
-        if msg.type == "kmarkdown":
-            msg = re.search(r"\[.*]\((\S+)\)", msg.plain_text()).groups()[0]
-            return re.match(r"^https?://", msg) is not None
-        elif msg.type == "text":
-            return re.match(r"^https?://", msg.plain_text()) is not None
-    return False
-
-
 def seconds_to_time(seconds: float) -> str:
     """
     时间戳转换为时间
@@ -132,31 +105,6 @@ def seconds_to_time(seconds: float) -> str:
     m, s = divmod(seconds, 60)
     h, m = divmod(m, 60)
     return f"{str(h).zfill(2)}:{str(m).zfill(2)}:{str(s).zfill(2)}.{str(ms).zfill(3)}"
-
-
-def random_str(length: int) -> str:
-    """
-    随机字符串，可以用作 id
-
-    :param length: 长度
-
-    :return: 随机字符串
-    """
-    ret: list[str] = []
-    while len(ret) < length:
-        ret.extend(
-            hashlib.md5(
-                str(datetime.now().timestamp()).encode(), usedforsecurity=True
-            ).hexdigest()
-        )
-    random.shuffle(ret)
-    return "".join(ret[:length])
-
-
-def get_iso_time_str(t: datetime | None = None) -> str:
-    if not t:
-        t = datetime.now()
-    return t.astimezone(timezone(timedelta(hours=8))).isoformat()
 
 
 async def can_send_segment(segment_type: type) -> bool:
@@ -187,6 +135,5 @@ async def is_qq(bot: Bot) -> bool:
 __all__ = [
     "get_group_id",
     "get_bot_name",
-    "random_str",
     "MESSAGE_SPLIT_LINE",
 ]
