@@ -1,40 +1,37 @@
-import base64
-
-from nonebot import on_command
-from nonebot.params import Message, CommandArg
+from arclet.alconna import Alconna, Args
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import UniMessage, Image
-from tencentcloud.aiart.v20221229 import aiart_client, models
-from tencentcloud.common import credential
+from nonebot_plugin_alconna import Image, on_alconna, Query
 
 from essentials.libraries import user, economy, util
-from storage import config
+from . import tencent_cloud
 
 __plugin_meta__ = PluginMetadata(
     name="AI 作画",
-    description="使用了腾讯云的 AI 作画",
-    usage="/ai <正向提示词>|<反向提示词>|<风格>",
+    description="AI 作画插件，目前支持腾讯云",
+    usage="/ai <正向提示词> [反向提示词] [风格]",
     config=None,
 )
 
-
-_tencent_api_secret_id: str = config.get_config("tencent_api_secret_id")
-_tencent_api_secret_key: str = config.get_config("tencent_api_secret_key")
-if not all([_tencent_api_secret_id, _tencent_api_secret_key]):
-    raise ValueError("腾讯云 API 密钥未配置")
-_credential = credential.Credential(_tencent_api_secret_id, _tencent_api_secret_key)
-
-_client = aiart_client.AiartClient(_credential, "ap-shanghai")
-
-_ai_art_handler = on_command("ai", aliases={"AI"}, block=True)
+_ai_art_handler = on_alconna(
+    Alconna(
+        "ai_art",
+        Args["prompt", str]["negative", str, ""]["styles", str, "201"],
+    ),
+    aliases={"AI", "AI作画", "AI绘画"},
+    block=True,
+)
 
 
 @_ai_art_handler.handle()
-async def _(msg: Message = CommandArg()):
+async def _(
+    prompt: Query[str] = Query("prompt"),
+    negative: Query[str] = Query("negative", ""),
+    styles: Query[str] = Query("styles", "201"),
+):
     if not await util.can_send_segment(Image):
-        await _ai_art_handler.finish("无法发送图片喵")
+        await _ai_art_handler.finish("这里没法图片喵")
 
-    uid = await user.get_uid()
+    uid = user.get_uid()
     if not uid:
         await _ai_art_handler.finish("未注册用户无法使用 AI 作画")
         return
@@ -42,35 +39,7 @@ async def _(msg: Message = CommandArg()):
         await _ai_art_handler.finish("余额不足")
         return
     await _ai_art_handler.send("谢谢你的100个胡萝卜片喵~正在努力画画呢~")
-    if args := msg.extract_plain_text():
-        split = args.split("|")
-        if len(split) == 3:
-            positive = split[0].strip()
-            negative = split[1].strip()
-            styles = split[2].strip().split(",")
-        elif len(split) == 2:
-            positive = split[0].strip()
-            negative = split[1].strip()
-            styles = ["201"]
-        elif len(split) == 1:
-            positive = split[0].strip()
-            negative = ""
-            styles = ["201"]
-        else:
-            await _ai_art_handler.finish("参数错误")
-            return
-        # 生成请求
-        req = models.TextToImageRequest()
-        req.Prompt = positive
-        req.NegativePrompt = negative
-        req.Styles = styles
-        result_config = models.ResultConfig()
-        result_config.Resolution = "768:1024"
-        req.ResultConfig = result_config
-        req.LogoAdd = 0
-        req.RspImgType = "base64"
-        # 发送请求
-        resp = _client.TextToImage(req)
-        await _ai_art_handler.finish(
-            await UniMessage(Image(raw=base64.b64decode(resp.ResultImage))).export()
-        )
+
+    # 生成请求
+    image = tencent_cloud.draw(prompt.result, negative.result, styles.result)
+    await _ai_art_handler.finish(Image(raw=image))
