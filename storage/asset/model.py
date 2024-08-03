@@ -6,12 +6,19 @@ from pathlib import Path
 from typing import Any
 
 from httpx import Client
+from nonebot import get_plugin_config
 from sqlalchemy import select, update, insert
 
-from storage import config, database
+from storage import database
 from . import data
+from .config import AssetConfig
+from ..config import canrot_config
 
-_client = Client(proxy=config.canrot_config.canrot_proxy)
+config = get_plugin_config(AssetConfig)
+if config.proxy:
+    client = Client(proxy=config.proxy)
+else:
+    client = Client()
 
 
 class Asset(metaclass=abc.ABCMeta):
@@ -29,7 +36,7 @@ class Asset(metaclass=abc.ABCMeta):
 
 
 class RemoteAsset(Asset):
-    _cache_path = Path(config.canrot_config.canrot_data_path) / "cache/asset"
+    _cache_path = Path(canrot_config.canrot_data_path) / "cache/asset"
 
     def __init__(
         self, url: str, expire: datetime | timedelta | None = None, key: str = ""
@@ -81,7 +88,7 @@ class RemoteAsset(Asset):
                 expire = self.__expire
 
             if need_fetch:
-                resp = _client.get(self.__url)
+                resp = client.get(self.__url)
                 if resp.is_success:
                     with (self._cache_path / self.__key).open("wb") as f:
                         f.write(resp.content)

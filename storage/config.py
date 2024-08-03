@@ -1,9 +1,5 @@
-from typing import Any
-
-from nonebot import get_driver, get_plugin_config
+from nonebot import get_plugin_config
 from pydantic import BaseModel
-
-from warnings import deprecated
 
 
 class CanrotConfig(BaseModel):
@@ -15,13 +11,4 @@ class CanrotConfig(BaseModel):
     canrot_enabled_adapters: list[str] = ["console"]  # 启用的适配器
 
 
-_driver = get_driver()
-_global_config = _driver.config
 canrot_config: CanrotConfig = get_plugin_config(CanrotConfig)
-
-
-@deprecated("Use get_plugin_config instead")
-def get_config(name: str) -> Any | None:
-    if name not in _global_config.dict():
-        return None
-    return _global_config.dict()[name]
