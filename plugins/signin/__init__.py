@@ -60,7 +60,7 @@ async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
     puid = event.get_user_id()
     if not user.puid_user_exists(puid):
         await _command.finish("你还没有注册")
-    uid = await user.get_uid(puid)
+    uid = user.get_uid(puid)
 
     # 数据库 session
     session = database.get_session()()

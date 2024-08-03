@@ -26,7 +26,7 @@ async def _(event: Event, args: Message = CommandArg()):
     if not user.puid_user_exists(puid):
         await _economy.finish(f"puid: {puid}\n你还没有注册")
 
-    uid = await user.get_uid(puid)
+    uid = user.get_uid(puid)
     if msg := args.extract_plain_text():
         split_args = [x.strip().lower() for x in msg.split()]
         if msg == "info" or msg == "信息" or msg == "balance" or msg == "余额":

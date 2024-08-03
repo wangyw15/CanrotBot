@@ -42,7 +42,7 @@ _investigator_handler = on_shell_command(
 async def _(
     event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]
 ):
-    uid = await user.get_uid()
+    uid = user.get_uid()
     gid = util.get_group_id(event)
     if not uid:
         await _investigator_handler.finish("还未注册或绑定账号")
@@ -135,7 +135,7 @@ _check_handler = on_shell_command("check", aliases={"检定"}, block=True)
 async def _(
     event: Event, args: typing.Annotated[list[str | MessageSegment], ShellCommandArgv()]
 ):
-    uid = await user.get_uid()
+    uid = user.get_uid()
     gid = util.get_group_id(event)
     if not uid:
         await _investigator_handler.finish("还未注册或绑定账号")

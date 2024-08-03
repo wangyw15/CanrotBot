@@ -67,7 +67,7 @@ async def _(
     stoken_query: Query[str] = AlconnaQuery("stoken"),
     alias_query: Query[str] = AlconnaQuery("alias", ""),
 ):
-    uid = await user.get_uid()
+    uid = user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
 
@@ -97,7 +97,7 @@ async def _(
 
 @_command.assign("unbind")
 async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
-    uid = await user.get_uid()
+    uid = user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
 
@@ -150,7 +150,7 @@ async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
 
 @_command.assign("list")
 async def _():
-    uid = await user.get_uid()
+    uid = user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
 
@@ -183,7 +183,7 @@ async def _(
     bot: Bot, event: Event, account_id_query: Query[int] = AlconnaQuery("account_id", 0)
 ):
     puid = event.get_user_id()
-    uid = await user.get_uid()
+    uid = user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
 
@@ -235,7 +235,7 @@ async def _(
 @_command.assign("unsubscribe")
 async def _(event: Event, account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
     puid = event.get_user_id()
-    uid = await user.get_uid()
+    uid = user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
 
@@ -264,7 +264,7 @@ async def _(event: Event, account_id_query: Query[int] = AlconnaQuery("account_i
 
 @_command.assign("sign")
 async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
-    uid = await user.get_uid()
+    uid = user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
 

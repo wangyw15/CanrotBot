@@ -129,7 +129,7 @@ async def _(song_query: Query[str] = AlconnaQuery("song_query", "random")):
 
 @_command.assign("gacha")
 async def _(gacha_id: Query[str] = AlconnaQuery("gacha_id")):
-    uid = await user.get_uid()
+    uid = user.get_uid()
     if not uid:
         await _command.finish("你还没有账号喵~")
 

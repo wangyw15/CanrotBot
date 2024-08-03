@@ -88,7 +88,7 @@ async def _(category: Query[str] = AlconnaQuery("category", "random")):
     if category not in categories:
         await _command.finish("没有这个类型哦")
 
-    if not economy.pay(await user.get_uid(), 2, "随机 waifu"):
+    if not economy.pay(user.get_uid(), 2, "随机 waifu"):
         await _command.finish("你的余额不足哦")
 
     await _command.send("谢谢你的两个胡萝卜片喵~\n正在找图哦~")

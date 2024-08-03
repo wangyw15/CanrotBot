@@ -65,7 +65,7 @@ async def _(state: T_State, guess: Message = Arg()):
     elif guess == answer:
         state[_GUESS_NUMBER_TURNS] += 1
         point_amounts = len(answer) * 10 - 2 * (int(state[_GUESS_NUMBER_TURNS]) - 8)
-        economy.earn(await user.get_uid(), point_amounts)
+        economy.earn(user.get_uid(), point_amounts)
         await guess_number.finish(
             f"居然{state[_GUESS_NUMBER_TURNS]}轮就让你猜出来了。哼，{point_amounts}个胡萝卜片拿去"
         )

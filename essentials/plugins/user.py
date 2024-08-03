@@ -30,7 +30,7 @@ async def _(event: Event, args: Message = CommandArg()):
             if not user.puid_user_exists(puid):
                 await _user.finish(f"puid: {puid}\n你还没有注册")
             else:
-                uid = await user.get_uid(puid)
+                uid = user.get_uid(puid)
                 msg = f"puid: {puid}\nuid: {uid}\n已绑定的 puid:\n"
                 linked_accounts = user.get_bind_by_uid(uid)
                 for i in linked_accounts:
@@ -40,7 +40,7 @@ async def _(event: Event, args: Message = CommandArg()):
             another_puid = splitted_args[1]
             if user.puid_user_exists(another_puid):
                 await _user.finish("该用户已经绑定或注册过了")
-            uid = await user.get_uid(puid)
+            uid = user.get_uid(puid)
             user.bind(another_puid, uid)
             await _user.finish("绑定成功")
         elif (
