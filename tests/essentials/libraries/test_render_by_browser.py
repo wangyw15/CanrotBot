@@ -86,7 +86,7 @@ async def test_initialize_twice(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.asyncio
-async def test_dispose_for_first_time(mocker: MockerFixture) -> None:
+async def test_dispose_once(mocker: MockerFixture) -> None:
     from essentials.libraries import render_by_browser
 
     playwright = FakePlaywright()
