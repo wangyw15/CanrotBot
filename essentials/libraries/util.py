@@ -6,6 +6,7 @@ import nonebot.adapters.onebot.v12 as ob12
 import nonebot.adapters.qq as qq
 from nonebot.adapters import Bot, Event
 from nonebot_plugin_alconna import UniMessage, SerializeFailed
+import warnings
 
 MESSAGE_SPLIT_LINE = "--------------------"
 """
@@ -21,6 +22,7 @@ def get_group_id(event: Event) -> str:
 
     :return: 群 ID (platform_id)
     """
+    warnings.warn("util.get_group_id 已弃用，请使用重载处理", DeprecationWarning)
     if isinstance(event, ob11.GroupMessageEvent) or isinstance(
         event, ob12.GroupMessageEvent
     ):
@@ -48,6 +50,7 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
 
     :return: 机器人昵称
     """
+    warnings.warn("util.get_bot_name 已弃用，请使用重载处理", DeprecationWarning)
     # onebot v11
     if isinstance(bot, ob11.Bot):
         if isinstance(event, ob11.GroupMessageEvent):
@@ -100,6 +103,7 @@ def seconds_to_time(seconds: float) -> str:
 
     :return: 时间
     """
+    warnings.warn("util.seconds_to_time 非通用函数", DeprecationWarning)
     ms = int(seconds % 1 * 1000)
     seconds = int(seconds)
     m, s = divmod(seconds, 60)
@@ -125,6 +129,9 @@ async def can_send_segment(segment_type: type) -> bool:
 
 
 def is_qq(bot: Bot) -> bool:
+    warnings.warn(
+        "util.is_qq 已弃用，且不支持 QQ 官方适配器，请使用重载处理", DeprecationWarning
+    )
     return (
         isinstance(bot, ob11.Bot)
         or isinstance(bot, ob12.Bot)
