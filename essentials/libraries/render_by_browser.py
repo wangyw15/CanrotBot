@@ -29,15 +29,11 @@ async def dispose() -> None:
     """
     释放浏览器渲染器
     """
-    global _browser
     global _playwright
-    if _browser:
-        await _browser.close()
-        _browser = None
     if _playwright:
         await _playwright.stop()
         _playwright = None
-    logger.info("Closed browser renderer")
+        logger.info("Closed Playwright")
 
 
 async def new_page(viewport: ViewportSize | None = None, **kwargs) -> Page:

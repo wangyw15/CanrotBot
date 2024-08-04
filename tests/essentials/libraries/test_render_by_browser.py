@@ -92,17 +92,11 @@ async def test_dispose_for_first_time(mocker: MockerFixture) -> None:
     playwright = FakePlaywright()
 
     mocker.patch("essentials.libraries.render_by_browser._playwright", new=playwright)
-    mocker.patch("essentials.libraries.render_by_browser._browser", new=playwright.browser)
 
-    assert render_by_browser._browser == playwright.browser
     assert render_by_browser._playwright == playwright
 
     await render_by_browser.dispose()
-
-    assert render_by_browser._browser is None
     assert render_by_browser._playwright is None
-
-    playwright.browser.close.assert_called_once()
     playwright.stop.assert_called_once()
 
 
@@ -113,22 +107,14 @@ async def test_dispose_twice(mocker: MockerFixture) -> None:
     playwright = FakePlaywright()
 
     mocker.patch("essentials.libraries.render_by_browser._playwright", new=playwright)
-    mocker.patch("essentials.libraries.render_by_browser._browser", new=playwright.browser)
 
-    assert render_by_browser._browser == playwright.browser
     assert render_by_browser._playwright == playwright
 
     await render_by_browser.dispose()
-
-    assert render_by_browser._browser is None
     assert render_by_browser._playwright is None
-
-    playwright.browser.close.assert_called_once()
     playwright.stop.assert_called_once()
 
     await render_by_browser.dispose()
-
-    playwright.browser.close.assert_called_once()
     playwright.stop.assert_called_once()
 
 
