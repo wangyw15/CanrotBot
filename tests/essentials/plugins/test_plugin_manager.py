@@ -149,7 +149,7 @@ def test_enable_plugin_without_disabled_plugin(db_initialize: Callable) -> None:
 
 @pytest.mark.asyncio
 async def test_list_disable_plugin_with_none_in_chat(
-        app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, make_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
@@ -167,7 +167,7 @@ async def test_list_disable_plugin_with_none_in_chat(
 
 @pytest.mark.asyncio
 async def test_list_disable_plugin_with_one_in_chat(
-        app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, make_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
@@ -208,7 +208,7 @@ async def test_disable_plugin_once_in_chat(
 
 @pytest.mark.asyncio
 async def test_disable_plugin_twice_in_chat(
-        app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, make_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
@@ -229,7 +229,7 @@ async def test_disable_plugin_twice_in_chat(
 
 @pytest.mark.asyncio
 async def test_list_enable_plugin_once_in_chat(
-        app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, make_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
@@ -264,7 +264,7 @@ async def test_list_enable_plugin_once_in_chat(
 
 @pytest.mark.asyncio
 async def test_list_enable_plugin_twice_in_chat(
-        app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, make_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
@@ -290,7 +290,7 @@ async def test_list_enable_plugin_twice_in_chat(
 
 @pytest.mark.asyncio
 async def test_disable_plugin_manager_in_chat(
-        app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, make_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command, SELF_ID
 
@@ -304,25 +304,35 @@ async def test_disable_plugin_manager_in_chat(
         ctx.should_finished()
 
 
-@pytest.mark.skip("影响后续测试")
 @pytest.mark.asyncio
 async def test_disable_all_plugin_in_chat(
-        app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, make_event: Callable, mocker: MockerFixture
 ) -> None:
     from essentials.plugins.plugin_manager.model import ALL_PLUGINS
     from essentials.plugins.plugin_manager import _plugin_manager_command
+    from essentials.plugins.plugin_manager.model import Scope
+
+    from essentials.plugins.plugin_manager import plugin_manager
+    fake_disable_plugin = mocker.stub(name="disable_plugin")
+    fake_disable_plugin.return_value = True
+    mocker.patch.object(
+        plugin_manager,
+        "disable_plugin",
+        new=fake_disable_plugin
+    )
 
     db_initialize()
 
     async with app.test_matcher(_plugin_manager_command) as ctx:
         bot = ctx.create_bot(base=ConsoleBot, adapter=get_adapter(ConsoleAdapter))
-        event = make_event(f"plugin disable {ALL_PLUGINS}")
+        event = make_event(f"plugin disable {ALL_PLUGINS}", user_id=TEST_PLATFORM_ID)
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "已禁用 所有插件")
         ctx.should_finished()
 
-        # 恢复启用，避免影响后续测试
-        event = make_event(f"plugin enable {ALL_PLUGINS}")
-        ctx.receive_event(bot, event)
-        ctx.should_call_send(event, "已启用 所有插件")
-        ctx.should_finished()
+    fake_disable_plugin.assert_called_once_with(
+        ALL_PLUGINS,
+        Scope.PRIVATE_CHAT,
+        Platform.Console,
+        TEST_PLATFORM_ID
+    )
