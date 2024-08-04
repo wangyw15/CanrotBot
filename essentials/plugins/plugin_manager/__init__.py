@@ -191,14 +191,14 @@ async def _(state: T_State, result: Arparma, plugin_id: Query[str] = Query(PLUGI
         ):
             action = "启"
         else:
-            await _plugin_manager_command.finish(f"{display_name} 已经启用过了")
+            await _plugin_manager_command.finish(f"{display_name} 未被禁用")
     elif "disable" in result.options:
         if plugin_manager.disable_plugin(
             plugin_id.result, state[SCOPE], state[PLATFORM], state[PLATFORM_ID]
         ):
             action = "禁"
         else:
-            await _plugin_manager_command.finish(f"{display_name} 已经禁用过了")
+            await _plugin_manager_command.finish(f"{display_name} 未被启用")
 
     if action:
         await _plugin_manager_command.finish(f"已{action}用 {display_name}")
