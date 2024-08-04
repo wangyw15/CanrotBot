@@ -1,29 +1,54 @@
+import importlib
+
 import pytest
 from pytest_mock import MockerFixture
 
 
 @pytest.mark.asyncio
-async def test_create_client(mocker: MockerFixture):
-    # from essentials.libraries.network.config import NetworkConfig
-    #
-    # config = NetworkConfig()
-    # config.proxy = ""
-    #
-    # mocker.patch(
-    #     "essentials.libraries.network.get_plugin_config",
-    #     return_value=config
-    # )
+async def test_create_client_without_proxy(mocker: MockerFixture):
+    config = mocker.stub("NetworkConfig")
+    config.proxy = ""
 
-    initializer = mocker.stub("AsyncClient.__new__")
     mocker.patch(
-        "essentials.libraries.network.AsyncClient.__new__",
-        new_callable=initializer
+        "nonebot.get_plugin_config",
+        return_value=config
+    )
+
+    fake_client = mocker.stub("httpx.AsyncClient")
+    mocker.patch(
+        "httpx.AsyncClient",
+        new=fake_client
     )
 
     import essentials.libraries.network
 
+    assert essentials.libraries.network.network_config.proxy == config.proxy
     assert essentials.libraries.network.client
-    initializer.assert_called_once_with()
+    fake_client.assert_called_once_with()
+
+
+@pytest.mark.asyncio
+async def test_create_client_with_proxy(mocker: MockerFixture):
+    config = mocker.stub("NetworkConfig")
+    config.proxy = "http://localhost:7890"
+
+    mocker.patch(
+        "nonebot.get_plugin_config",
+        return_value=config
+    )
+
+    fake_client = mocker.stub("httpx.AsyncClient")
+    mocker.patch(
+        "httpx.AsyncClient",
+        new=fake_client
+    )
+
+    import essentials.libraries.network
+    importlib.reload(essentials.libraries.network)
+
+    assert essentials.libraries.network.network_config.proxy == config.proxy
+    assert essentials.libraries.network.client
+    fake_client.assert_called_once_with(proxy=config.proxy)
 
 
 @pytest.mark.asyncio
@@ -35,12 +60,15 @@ async def test_fetch_bytes_data(mocker: MockerFixture):
     resp.status_code = 200
     resp.content = b"test"
 
+    stub_get = mocker.async_stub("AsyncClient.get")
+    stub_get.return_value = resp
+
     mocker.patch(
         "essentials.libraries.network.client.get",
-        return_value=resp
+        new=stub_get
     )
 
-    assert await fetch_bytes_data("http://test.com") == b"test"
+    assert await fetch_bytes_data("https://example.com") == b"test"
 
 
 @pytest.mark.asyncio
@@ -50,12 +78,15 @@ async def test_fetch_bytes_data_with_success_false(mocker: MockerFixture):
     resp = mocker.Mock()
     resp.is_success = False
 
+    stub_get = mocker.async_stub("AsyncClient.get")
+    stub_get.return_value = resp
+
     mocker.patch(
         "essentials.libraries.network.client.get",
-        return_value=resp
+        new=stub_get
     )
 
-    assert await fetch_bytes_data("http://test.com") is None
+    assert await fetch_bytes_data("https://example.com") is None
 
 
 @pytest.mark.asyncio
@@ -66,12 +97,15 @@ async def test_fetch_bytes_data_with_status_code_not_200(mocker: MockerFixture):
     resp.is_success = True
     resp.status_code = 404
 
+    stub_get = mocker.async_stub("AsyncClient.get")
+    stub_get.return_value = resp
+
     mocker.patch(
         "essentials.libraries.network.client.get",
-        return_value=resp
+        new=stub_get
     )
 
-    assert await fetch_bytes_data("http://test.com") is None
+    assert await fetch_bytes_data("https://example.com") is None
 
 
 @pytest.mark.asyncio
@@ -83,12 +117,15 @@ async def test_fetch_json_data(mocker: MockerFixture):
     resp.status_code = 200
     resp.json.return_value = {"test": "test"}
 
+    stub_get = mocker.async_stub("AsyncClient.get")
+    stub_get.return_value = resp
+
     mocker.patch(
         "essentials.libraries.network.client.get",
-        return_value=resp
+        new=stub_get
     )
 
-    assert await fetch_json_data("http://test.com") == {"test": "test"}
+    assert await fetch_json_data("https://example.com") == {"test": "test"}
 
 
 @pytest.mark.asyncio
@@ -98,12 +135,15 @@ async def test_fetch_json_data_with_success_false(mocker: MockerFixture):
     resp = mocker.Mock()
     resp.is_success = False
 
+    stub_get = mocker.async_stub("AsyncClient.get")
+    stub_get.return_value = resp
+
     mocker.patch(
         "essentials.libraries.network.client.get",
-        return_value=resp
+        new=stub_get
     )
 
-    assert await fetch_json_data("http://test.com") is None
+    assert await fetch_json_data("https://example.com") is None
 
 
 @pytest.mark.asyncio
@@ -114,12 +154,15 @@ async def test_fetch_json_data_with_status_code_not_200(mocker: MockerFixture):
     resp.is_success = True
     resp.status_code = 404
 
+    stub_get = mocker.async_stub("AsyncClient.get")
+    stub_get.return_value = resp
+
     mocker.patch(
         "essentials.libraries.network.client.get",
-        return_value=resp
+        new=stub_get
     )
 
-    assert await fetch_json_data("http://test.com") is None
+    assert await fetch_json_data("https://example.com") is None
 
 
 @pytest.mark.asyncio
@@ -131,12 +174,15 @@ async def test_fetch_text_data(mocker: MockerFixture):
     resp.status_code = 200
     resp.text = "test"
 
+    stub_get = mocker.async_stub("AsyncClient.get")
+    stub_get.return_value = resp
+
     mocker.patch(
         "essentials.libraries.network.client.get",
-        return_value=resp
+        new=stub_get
     )
 
-    assert await fetch_text_data("http://test.com") == "test"
+    assert await fetch_text_data("https://example.com") == "test"
 
 
 @pytest.mark.asyncio
@@ -146,12 +192,15 @@ async def test_fetch_text_data_with_success_false(mocker: MockerFixture):
     resp = mocker.Mock()
     resp.is_success = False
 
+    stub_get = mocker.async_stub("AsyncClient.get")
+    stub_get.return_value = resp
+
     mocker.patch(
         "essentials.libraries.network.client.get",
-        return_value=resp
+        new=stub_get
     )
 
-    assert await fetch_text_data("http://test.com") is None
+    assert await fetch_text_data("https://example.com") is None
 
 
 @pytest.mark.asyncio
@@ -162,9 +211,12 @@ async def test_fetch_text_data_with_status_code_not_200(mocker: MockerFixture):
     resp.is_success = True
     resp.status_code = 404
 
+    stub_get = mocker.async_stub("AsyncClient.get")
+    stub_get.return_value = resp
+
     mocker.patch(
         "essentials.libraries.network.client.get",
-        return_value=resp
+        new=stub_get
     )
 
-    assert await fetch_text_data("http://test.com") is None
+    assert await fetch_text_data("https://example.com") is None
