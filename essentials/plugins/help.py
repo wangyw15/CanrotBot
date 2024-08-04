@@ -13,8 +13,8 @@ _command = on_alconna(Alconna("help"), aliases={"帮助"}, block=True)
 @_command.handle()
 async def _():
     if await util.can_send_segment(Image):
-        _, img = await help.generate_help_image()
+        img = await help.generate_help_image()
         await _command.finish(Image(raw=img))
     else:
-        msg, _ = help.generate_help_text()
+        msg = help.generate_help_text()
         await _command.finish(msg)
