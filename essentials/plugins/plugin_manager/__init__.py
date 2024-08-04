@@ -235,9 +235,11 @@ async def _(
     scope = Scope.PRIVATE_CHAT
     platform = Platform.Console
     platform_id = str(event.user.id)
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -253,9 +255,11 @@ async def _(
     scope = Scope.PRIVATE_CHAT
     platform = Platform.QQ
     platform_id = str(event.get_user_id())
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -271,9 +275,11 @@ async def _(
     scope = Scope.GROUP_CHAT
     platform = Platform.QQ
     platform_id = str(event.group_openid)
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -289,9 +295,11 @@ async def _(
     scope = Scope.GROUP_CHAT
     platform = Platform.QQ
     platform_id = str(event.channel_id)
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -307,9 +315,11 @@ async def _(
     scope = Scope.PRIVATE_CHAT
     platform = Platform.OneBotV11
     platform_id = str(event.get_user_id())
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -325,9 +335,11 @@ async def _(
     scope = Scope.GROUP_CHAT
     platform = Platform.OneBotV11
     platform_id = str(event.group_id)
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -343,9 +355,11 @@ async def _(
     scope = Scope.PRIVATE_CHAT
     platform = Platform.OneBotV12
     platform_id = str(event.get_user_id())
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -361,9 +375,11 @@ async def _(
     scope = Scope.GROUP_CHAT
     platform = Platform.OneBotV12
     platform_id = str(event.group_id)
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -379,9 +395,11 @@ async def _(
     scope = Scope.PRIVATE_CHAT
     platform = Platform.Mirai2
     platform_id = str(event.get_user_id())
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -397,9 +415,11 @@ async def _(
     scope = Scope.GROUP_CHAT
     platform = Platform.Mirai2
     platform_id = str(event.sender.group.id)
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
 
 
@@ -415,7 +435,9 @@ async def _(
     scope = Scope.GROUP_CHAT
     platform = Platform.Kook
     platform_id = str(event.group_id)
-    if matcher.plugin_id in plugin_manager.list_disabled_plugins(
+
+    disabled_plugins = plugin_manager.list_disabled_plugins(
         scope, platform, platform_id
-    ):
+    )
+    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
         await matcher.finish()
