@@ -149,15 +149,15 @@ def test_enable_plugin_without_disabled_plugin(db_initialize: Callable) -> None:
 
 @pytest.mark.asyncio
 async def test_list_disable_plugin_with_none_in_chat(
-    app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
     async with app.test_matcher(_plugin_manager_command) as ctx:
-        bot = ctx.create_bot(base=ConsoleBot, adapter=get_adapter(ConsoleAdapter))
-        event = make_event("plugin list-disable")
+        bot = create_bot(ctx)
+        event = create_event("plugin list-disable")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -167,22 +167,22 @@ async def test_list_disable_plugin_with_none_in_chat(
 
 @pytest.mark.asyncio
 async def test_list_disable_plugin_with_one_in_chat(
-    app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
     async with app.test_matcher(_plugin_manager_command) as ctx:
-        bot = ctx.create_bot(base=ConsoleBot, adapter=get_adapter(ConsoleAdapter))
-        event = make_event(f"plugin disable {TEST_PLUGIN_ID}")
+        bot = create_bot(ctx)
+        event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
         ctx.should_call_send(event, f"已禁用 {TEST_PLUGIN_ID}")
         ctx.should_finished()
 
-        event = make_event("plugin list-disable")
+        event = create_event("plugin list-disable")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -192,15 +192,15 @@ async def test_list_disable_plugin_with_one_in_chat(
 
 @pytest.mark.asyncio
 async def test_disable_plugin_once_in_chat(
-    app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
     async with app.test_matcher(_plugin_manager_command) as ctx:
-        bot = ctx.create_bot(base=ConsoleBot, adapter=get_adapter(ConsoleAdapter))
-        event = make_event(f"plugin disable {TEST_PLUGIN_ID}")
+        bot = create_bot(ctx)
+        event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, f"已禁用 {TEST_PLUGIN_ID}")
         ctx.should_finished()
@@ -208,20 +208,20 @@ async def test_disable_plugin_once_in_chat(
 
 @pytest.mark.asyncio
 async def test_disable_plugin_twice_in_chat(
-    app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
     async with app.test_matcher(_plugin_manager_command) as ctx:
-        bot = ctx.create_bot(base=ConsoleBot, adapter=get_adapter(ConsoleAdapter))
-        event = make_event(f"plugin disable {TEST_PLUGIN_ID}")
+        bot = create_bot(ctx)
+        event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, f"已禁用 {TEST_PLUGIN_ID}")
         ctx.should_finished()
 
-        event = make_event(f"plugin disable {TEST_PLUGIN_ID}")
+        event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, f"{TEST_PLUGIN_ID} 未被启用")
         ctx.should_finished()
@@ -229,32 +229,32 @@ async def test_disable_plugin_twice_in_chat(
 
 @pytest.mark.asyncio
 async def test_list_enable_plugin_once_in_chat(
-    app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
     async with app.test_matcher(_plugin_manager_command) as ctx:
-        bot = ctx.create_bot(base=ConsoleBot, adapter=get_adapter(ConsoleAdapter))
-        event = make_event(f"plugin disable {TEST_PLUGIN_ID}")
+        bot = create_bot(ctx)
+        event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, f"已禁用 {TEST_PLUGIN_ID}")
         ctx.should_finished()
 
-        event = make_event("plugin list-disable")
+        event = create_event("plugin list-disable")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
         ctx.should_call_send(event, f"被禁用的插件:\n{TEST_PLUGIN_ID}")
         ctx.should_finished()
 
-        event = make_event(f"plugin enable {TEST_PLUGIN_ID}")
+        event = create_event(f"plugin enable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, f"已启用 {TEST_PLUGIN_ID}")
         ctx.should_finished()
 
-        event = make_event("plugin list-disable")
+        event = create_event("plugin list-disable")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -264,25 +264,25 @@ async def test_list_enable_plugin_once_in_chat(
 
 @pytest.mark.asyncio
 async def test_list_enable_plugin_twice_in_chat(
-    app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
     async with app.test_matcher(_plugin_manager_command) as ctx:
-        bot = ctx.create_bot(base=ConsoleBot, adapter=get_adapter(ConsoleAdapter))
-        event = make_event(f"plugin disable {TEST_PLUGIN_ID}")
+        bot = create_bot(ctx)
+        event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, f"已禁用 {TEST_PLUGIN_ID}")
         ctx.should_finished()
 
-        event = make_event(f"plugin enable {TEST_PLUGIN_ID}")
+        event = create_event(f"plugin enable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, f"已启用 {TEST_PLUGIN_ID}")
         ctx.should_finished()
 
-        event = make_event(f"plugin enable {TEST_PLUGIN_ID}")
+        event = create_event(f"plugin enable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, f"{TEST_PLUGIN_ID} 未被禁用")
         ctx.should_finished()
@@ -290,15 +290,15 @@ async def test_list_enable_plugin_twice_in_chat(
 
 @pytest.mark.asyncio
 async def test_disable_plugin_manager_in_chat(
-    app: App, db_initialize: Callable, make_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
     from essentials.plugins.plugin_manager import _plugin_manager_command, SELF_ID
 
     db_initialize()
 
     async with app.test_matcher(_plugin_manager_command) as ctx:
-        bot = ctx.create_bot(base=ConsoleBot, adapter=get_adapter(ConsoleAdapter))
-        event = make_event(f"plugin disable {SELF_ID}")
+        bot = create_bot(ctx)
+        event = create_event(f"plugin disable {SELF_ID}")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "不能禁用插件管理器")
         ctx.should_finished()
@@ -306,7 +306,11 @@ async def test_disable_plugin_manager_in_chat(
 
 @pytest.mark.asyncio
 async def test_disable_all_plugin_in_chat(
-    app: App, db_initialize: Callable, make_event: Callable, mocker: MockerFixture
+    app: App,
+    db_initialize: Callable,
+    create_bot: Callable,
+    create_event: Callable,
+    mocker: MockerFixture
 ) -> None:
     from essentials.plugins.plugin_manager.model import ALL_PLUGINS
     from essentials.plugins.plugin_manager import _plugin_manager_command
@@ -324,8 +328,8 @@ async def test_disable_all_plugin_in_chat(
     db_initialize()
 
     async with app.test_matcher(_plugin_manager_command) as ctx:
-        bot = ctx.create_bot(base=ConsoleBot, adapter=get_adapter(ConsoleAdapter))
-        event = make_event(f"plugin disable {ALL_PLUGINS}", user_id=TEST_PLATFORM_ID)
+        bot = create_bot(ctx)
+        event = create_event(f"plugin disable {ALL_PLUGINS}", user_id=TEST_PLATFORM_ID)
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "已禁用 所有插件")
         ctx.should_finished()

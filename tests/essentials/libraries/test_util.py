@@ -13,7 +13,7 @@ async def test_is_qq_ob11(app: App):
         assert is_qq(ctx.create_bot(base=onebot_v11.Bot))
 
 
-@pytest.mark.skip
+@pytest.mark.skip("无法构造OneBot v12 Bot")
 @pytest.mark.asyncio
 async def test_is_qq_ob12(app: App):
     async with app.test_matcher() as ctx:

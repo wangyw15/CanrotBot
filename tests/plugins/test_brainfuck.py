@@ -1,6 +1,9 @@
 from typing import Callable
 
 import pytest
+from nonebot import get_adapter
+from nonebot.adapters.console import Adapter as ConsoleAdapter
+from nonebot.adapters.console import Bot as ConsoleBot
 from nonebug import App
 
 HELLO_WORLD_CODE = "++++++++++[>+++++++>++++++++++>+++<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+."
@@ -13,14 +16,13 @@ def test__brainfuck_interpreter():
     assert result == "Hello World!"
 
 
-@pytest.mark.skip("nonebot-plugin-alconna do not support fake adapter")
 @pytest.mark.asyncio
-async def test_brainfuck_command(app: App, make_event: Callable):
+async def test_brainfuck_command(app: App, create_bot: Callable, create_event: Callable):
     from plugins.brainfuck import brainfuck_matcher
 
     async with app.test_matcher(brainfuck_matcher) as ctx:
-        bot = ctx.create_bot()
-        event = make_event("/bf " + HELLO_WORLD_CODE)
+        bot = create_bot(ctx)
+        event = create_event("bf " + HELLO_WORLD_CODE)
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()

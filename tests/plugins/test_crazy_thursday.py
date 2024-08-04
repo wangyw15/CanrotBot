@@ -8,7 +8,7 @@ from nonebug import App
 
 @pytest.mark.asyncio
 async def test_crazy_thursday_matched(
-    app: App, mocker: pytest_mock.MockerFixture, make_event: Callable
+    app: App, mocker: pytest_mock.MockerFixture, create_event: Callable
 ):
     from plugins.crazy_thursday import crazy_thursday_matcher, crazy_thursday_posts
 
@@ -18,7 +18,7 @@ async def test_crazy_thursday_matched(
 
     async with app.test_matcher(crazy_thursday_matcher) as ctx:
         bot = ctx.create_bot()
-        event = make_event("今天是疯狂星期四")
+        event = create_event("今天是疯狂星期四")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()

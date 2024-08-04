@@ -7,7 +7,7 @@ from nonebug import App
 
 @pytest.mark.asyncio
 async def test_wordle_success(
-    app: App, mocker: pytest_mock.MockerFixture, make_event: Callable
+    app: App, mocker: pytest_mock.MockerFixture, create_event: Callable
 ):
     from plugins import wordle
 
@@ -18,23 +18,23 @@ async def test_wordle_success(
 
     async with app.test_matcher(wordle.wordle_matcher) as ctx:
         bot = ctx.create_bot()
-        event = make_event("/wordle")
+        event = create_event("/wordle")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
         ctx.should_call_send(event, "新一轮wordle游戏开始，请输入单词")
 
-        event = make_event("crane")
+        event = create_event("crane")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "crane\n❌❌❌❌❔\n第1次")
         ctx.should_rejected()
 
-        event = make_event("hotel")
+        event = create_event("hotel")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "crane\n❌❌❌❌❔\nhotel\n⭕❔❌❔❔\n第2次")
         ctx.should_rejected()
 
-        event = make_event("hello")
+        event = create_event("hello")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "恭喜你猜对了！\n共用了3次机会")
         ctx.should_finished()
@@ -42,7 +42,7 @@ async def test_wordle_success(
 
 @pytest.mark.asyncio
 async def test_wordle_invalid_word(
-    app: App, mocker: pytest_mock.MockerFixture, make_event: Callable
+    app: App, mocker: pytest_mock.MockerFixture, create_event: Callable
 ):
     from plugins import wordle
 
@@ -53,18 +53,18 @@ async def test_wordle_invalid_word(
 
     async with app.test_matcher(wordle.wordle_matcher) as ctx:
         bot = ctx.create_bot()
-        event = make_event("/wordle")
+        event = create_event("/wordle")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
         ctx.should_call_send(event, "新一轮wordle游戏开始，请输入单词")
 
-        event = make_event("aaaaa")
+        event = create_event("aaaaa")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "你输入的单词不在词库中")
         ctx.should_rejected()
 
-        event = make_event("hello")
+        event = create_event("hello")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "恭喜你猜对了！\n共用了1次机会")
         ctx.should_finished()
@@ -72,7 +72,7 @@ async def test_wordle_invalid_word(
 
 @pytest.mark.asyncio
 async def test_wordle_too_many_tries(
-    app: App, mocker: pytest_mock.MockerFixture, make_event: Callable
+    app: App, mocker: pytest_mock.MockerFixture, create_event: Callable
 ):
     from plugins import wordle
 
@@ -83,20 +83,20 @@ async def test_wordle_too_many_tries(
 
     async with app.test_matcher(wordle.wordle_matcher) as ctx:
         bot = ctx.create_bot()
-        event = make_event("/wordle")
+        event = create_event("/wordle")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
         ctx.should_call_send(event, "新一轮wordle游戏开始，请输入单词")
 
-        event = make_event("crane")
+        event = create_event("crane")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "crane\n"
                                     "❌❌❌❌❔\n"
                                     "第1次")
         ctx.should_rejected()
 
-        event = make_event("crane")
+        event = create_event("crane")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "crane\n"
                                     "❌❌❌❌❔\n"
@@ -105,7 +105,7 @@ async def test_wordle_too_many_tries(
                                     "第2次")
         ctx.should_rejected()
 
-        event = make_event("crane")
+        event = create_event("crane")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "crane\n"
                                     "❌❌❌❌❔\n"
@@ -116,7 +116,7 @@ async def test_wordle_too_many_tries(
                                     "第3次")
         ctx.should_rejected()
 
-        event = make_event("crane")
+        event = create_event("crane")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "crane\n"
                                     "❌❌❌❌❔\n"
@@ -129,7 +129,7 @@ async def test_wordle_too_many_tries(
                                     "第4次")
         ctx.should_rejected()
 
-        event = make_event("crane")
+        event = create_event("crane")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "crane\n"
                                     "❌❌❌❌❔\n"
@@ -144,7 +144,7 @@ async def test_wordle_too_many_tries(
                                     "第5次")
         ctx.should_rejected()
 
-        event = make_event("crane")
+        event = create_event("crane")
         ctx.receive_event(bot, event)
         ctx.should_call_send(event, "crane\n"
                                     "❌❌❌❌❔\n"

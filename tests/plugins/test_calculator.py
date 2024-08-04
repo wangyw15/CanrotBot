@@ -5,12 +5,12 @@ from nonebug import App
 
 
 @pytest.mark.asyncio
-async def test_calculator_matched(app: App, make_event: Callable):
+async def test_calculator_matched(app: App, create_event: Callable):
     from plugins.calculator import calculator_matcher
 
     async with app.test_matcher(calculator_matcher) as ctx:
         bot = ctx.create_bot()
-        event = make_event("2*(6+9)/3=")
+        event = create_event("2*(6+9)/3=")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -19,29 +19,29 @@ async def test_calculator_matched(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_calculator_unmatched(app: App, make_event: Callable):
+async def test_calculator_unmatched(app: App, create_event: Callable):
     from plugins.calculator import calculator_matcher
 
     async with app.test_matcher(calculator_matcher) as ctx:
         bot = ctx.create_bot()
-        event = make_event("2*(6+9)/3")
+        event = create_event("2*(6+9)/3")
         ctx.receive_event(bot, event)
         ctx.should_not_pass_rule()
 
     async with app.test_matcher(calculator_matcher) as ctx:
         bot = ctx.create_bot()
-        event = make_event("some message=")
+        event = create_event("some message=")
         ctx.receive_event(bot, event)
         ctx.should_not_pass_rule()
 
 
 @pytest.mark.asyncio
-async def test_calculator_error(app: App, make_event: Callable):
+async def test_calculator_error(app: App, create_event: Callable):
     from plugins.calculator import calculator_matcher
 
     async with app.test_matcher(calculator_matcher) as ctx:
         bot = ctx.create_bot()
-        event = make_event("1/0=")
+        event = create_event("1/0=")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -50,7 +50,7 @@ async def test_calculator_error(app: App, make_event: Callable):
 
     async with app.test_matcher(calculator_matcher) as ctx:
         bot = ctx.create_bot()
-        event = make_event("1()=")
+        event = create_event("1()=")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()

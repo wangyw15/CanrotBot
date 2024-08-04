@@ -146,14 +146,14 @@ def test_get_uid_with_non_bind_puid(db_initialize: Callable) -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_uid_with_auto_puid(db_initialize: Callable, make_event: Callable) -> None:
+async def test_get_uid_with_auto_puid(db_initialize: Callable, create_event: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
     registered_uid = user.register(TEST_PUID1)
     assert registered_uid > 0
-    current_event.set(make_event(user_id=TEST_PUID1))
+    current_event.set(create_event(user_id=TEST_PUID1))
     assert user.get_uid() == registered_uid
 
 
@@ -197,7 +197,7 @@ def test_get_bind_by_puid_with_non_bind_puid(db_initialize: Callable) -> None:
 
 @pytest.mark.asyncio
 async def test_get_user_name_with_default_parameters(
-    db_initialize: Callable, app: App, make_event: Callable
+    db_initialize: Callable, app: App, create_event: Callable
 ) -> None:
     from essentials.libraries import user
 
@@ -207,14 +207,14 @@ async def test_get_user_name_with_default_parameters(
         bot = ctx.create_bot()
 
         current_bot.set(bot)
-        current_event.set(make_event(user_id=TEST_PUID1))
+        current_event.set(create_event(user_id=TEST_PUID1))
 
         assert await user.get_user_name() is None
 
 
 @pytest.mark.asyncio
 async def test_get_user_name_with_bot_provided(
-    db_initialize: Callable, app: App, make_event: Callable
+    db_initialize: Callable, app: App, create_event: Callable
 ) -> None:
     from essentials.libraries import user
 
@@ -223,14 +223,14 @@ async def test_get_user_name_with_bot_provided(
     async with app.test_matcher() as ctx:
         bot = ctx.create_bot()
 
-        current_event.set(make_event(user_id=TEST_PUID1))
+        current_event.set(create_event(user_id=TEST_PUID1))
 
         assert await user.get_user_name(bot=bot) is None
 
 
 @pytest.mark.asyncio
 async def test_get_user_name_with_event_provided(
-    db_initialize: Callable, app: App, make_event: Callable
+    db_initialize: Callable, app: App, create_event: Callable
 ) -> None:
     from essentials.libraries import user
 
@@ -241,12 +241,12 @@ async def test_get_user_name_with_event_provided(
 
         current_bot.set(bot)
 
-        assert await user.get_user_name(event=make_event(user_id=TEST_PUID1)) is None
+        assert await user.get_user_name(event=create_event(user_id=TEST_PUID1)) is None
 
 
 @pytest.mark.asyncio
 async def test_get_user_name_with_bot_and_event_provided(
-    db_initialize: Callable, app: App, make_event: Callable
+    db_initialize: Callable, app: App, create_event: Callable
 ) -> None:
     from essentials.libraries import user
 
@@ -255,7 +255,7 @@ async def test_get_user_name_with_bot_and_event_provided(
     async with app.test_matcher() as ctx:
         bot = ctx.create_bot()
 
-        assert await user.get_user_name(bot=bot, event=make_event(user_id=TEST_PUID1)) is None
+        assert await user.get_user_name(bot=bot, event=create_event(user_id=TEST_PUID1)) is None
 
 
 # TODO 完善各平台get_user_name测试

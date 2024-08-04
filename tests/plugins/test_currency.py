@@ -27,12 +27,12 @@ def setup_currency(mocker: MockerFixture):
 
 
 @pytest.mark.asyncio
-async def test_to_cny_with_default_amount(app: App, make_event: Callable):
+async def test_to_cny_with_default_amount(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("usd")
+        event = create_event("usd")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -41,12 +41,12 @@ async def test_to_cny_with_default_amount(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_from_cny_with_default_amount(app: App, make_event: Callable):
+async def test_from_cny_with_default_amount(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("cnyusd")
+        event = create_event("cnyusd")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -55,12 +55,12 @@ async def test_from_cny_with_default_amount(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_usd_jpy_with_default_amount(app: App, make_event: Callable):
+async def test_usd_jpy_with_default_amount(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("usdjpy")
+        event = create_event("usdjpy")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -69,12 +69,12 @@ async def test_usd_jpy_with_default_amount(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_to_cny_with_custom_amount(app: App, make_event: Callable):
+async def test_to_cny_with_custom_amount(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("1usd")
+        event = create_event("1usd")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -83,12 +83,12 @@ async def test_to_cny_with_custom_amount(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_from_cny_with_custom_amount(app: App, make_event: Callable):
+async def test_from_cny_with_custom_amount(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("1cnyusd")
+        event = create_event("1cnyusd")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -97,12 +97,12 @@ async def test_from_cny_with_custom_amount(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_usd_jpy_with_custom_amount(app: App, make_event: Callable):
+async def test_usd_jpy_with_custom_amount(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("1usdjpy")
+        event = create_event("1usdjpy")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -111,12 +111,12 @@ async def test_usd_jpy_with_custom_amount(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_invalid_from_currency(app: App, make_event: Callable):
+async def test_invalid_from_currency(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("1aaa")
+        event = create_event("1aaa")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -125,12 +125,12 @@ async def test_invalid_from_currency(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_invalid_to_currency(app: App, make_event: Callable):
+async def test_invalid_to_currency(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("1usdaaa")
+        event = create_event("1usdaaa")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -139,12 +139,12 @@ async def test_invalid_to_currency(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_invalid_all_currency(app: App, make_event: Callable):
+async def test_invalid_all_currency(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("1aaabbb")
+        event = create_event("1aaabbb")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -153,12 +153,12 @@ async def test_invalid_all_currency(app: App, make_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_unintended_trigger(app: App, make_event: Callable):
+async def test_unintended_trigger(app: App, create_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = make_event("aaa")
+        event = create_event("aaa")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
