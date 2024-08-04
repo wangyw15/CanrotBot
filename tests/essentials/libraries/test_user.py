@@ -4,7 +4,7 @@ import pytest
 from nonebot.matcher import current_bot, current_event
 from nonebug import App
 
-from tests.utils import make_event
+from typing import Callable
 
 TEST_UID1 = (1 << 62) + 1
 TEST_UID2 = (1 << 62) + 2
@@ -146,7 +146,7 @@ def test_get_uid_with_non_bind_puid(db_initialize: Callable) -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_uid_with_auto_puid(db_initialize: Callable) -> None:
+async def test_get_uid_with_auto_puid(db_initialize: Callable, make_event: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
@@ -196,7 +196,9 @@ def test_get_bind_by_puid_with_non_bind_puid(db_initialize: Callable) -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_user_name_with_default_parameters(db_initialize: Callable, app: App) -> None:
+async def test_get_user_name_with_default_parameters(
+    db_initialize: Callable, app: App, make_event: Callable
+) -> None:
     from essentials.libraries import user
 
     db_initialize()
@@ -211,7 +213,9 @@ async def test_get_user_name_with_default_parameters(db_initialize: Callable, ap
 
 
 @pytest.mark.asyncio
-async def test_get_user_name_with_bot_provided(db_initialize: Callable, app: App) -> None:
+async def test_get_user_name_with_bot_provided(
+    db_initialize: Callable, app: App, make_event: Callable
+) -> None:
     from essentials.libraries import user
 
     db_initialize()
@@ -225,7 +229,9 @@ async def test_get_user_name_with_bot_provided(db_initialize: Callable, app: App
 
 
 @pytest.mark.asyncio
-async def test_get_user_name_with_event_provided(db_initialize: Callable, app: App) -> None:
+async def test_get_user_name_with_event_provided(
+    db_initialize: Callable, app: App, make_event: Callable
+) -> None:
     from essentials.libraries import user
 
     db_initialize()
@@ -239,7 +245,9 @@ async def test_get_user_name_with_event_provided(db_initialize: Callable, app: A
 
 
 @pytest.mark.asyncio
-async def test_get_user_name_with_bot_and_event_provided(db_initialize: Callable, app: App) -> None:
+async def test_get_user_name_with_bot_and_event_provided(
+    db_initialize: Callable, app: App, make_event: Callable
+) -> None:
     from essentials.libraries import user
 
     db_initialize()

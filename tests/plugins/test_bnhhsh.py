@@ -1,10 +1,11 @@
+from typing import Callable
+
 import pytest
 from nonebug import App
-from tests.utils import make_event
 
 
 @pytest.mark.asyncio
-async def test_bnhhsh(app: App):
+async def test_bnhhsh(app: App, make_event: Callable):
     from plugins.bnhhsh import bnhhsh_handler
 
     async with app.test_matcher(bnhhsh_handler) as ctx:

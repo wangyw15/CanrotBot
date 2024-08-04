@@ -1,10 +1,13 @@
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Callable
 
 import nonebot
 import pytest
 from nonebot.adapters.console import Adapter as ConsoleAdapter
+from nonebot.adapters.console import Message, MessageEvent
+from nonechat.info import User
 from pytest_mock import MockerFixture
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker
@@ -33,6 +36,20 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
     for item in items:
         if "network" in item.keywords:
             item.add_marker(skip_network)
+
+
+@pytest.fixture(scope="session")
+def make_event() -> Callable:
+    def _make_event(message: str = "",
+                    self_id: str = "test",
+                    user_id: str = "123456789"):
+        return MessageEvent(
+            time=datetime.now(),
+            self_id=self_id,
+            message=Message(message),
+            user=User(id=user_id, nickname=user_id)
+        )
+    return _make_event
 
 
 @pytest.fixture(scope="session", autouse=True)

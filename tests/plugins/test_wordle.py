@@ -1,12 +1,14 @@
+from typing import Callable
+
 import pytest
 import pytest_mock
 from nonebug import App
 
-from tests.utils import make_event
-
 
 @pytest.mark.asyncio
-async def test_wordle_success(app: App, mocker: pytest_mock.MockerFixture):
+async def test_wordle_success(
+    app: App, mocker: pytest_mock.MockerFixture, make_event: Callable
+):
     from plugins import wordle
 
     expected_answer = "hello"
@@ -39,7 +41,9 @@ async def test_wordle_success(app: App, mocker: pytest_mock.MockerFixture):
 
 
 @pytest.mark.asyncio
-async def test_wordle_invalid_word(app: App, mocker: pytest_mock.MockerFixture):
+async def test_wordle_invalid_word(
+    app: App, mocker: pytest_mock.MockerFixture, make_event: Callable
+):
     from plugins import wordle
 
     expected_answer = "hello"
@@ -67,7 +71,9 @@ async def test_wordle_invalid_word(app: App, mocker: pytest_mock.MockerFixture):
 
 
 @pytest.mark.asyncio
-async def test_wordle_too_many_tries(app: App, mocker: pytest_mock.MockerFixture):
+async def test_wordle_too_many_tries(
+    app: App, mocker: pytest_mock.MockerFixture, make_event: Callable
+):
     from plugins import wordle
 
     expected_answer = "hello"

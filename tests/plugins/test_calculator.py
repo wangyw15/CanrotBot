@@ -1,10 +1,11 @@
+from typing import Callable
+
 import pytest
 from nonebug import App
-from tests.utils import make_event
 
 
 @pytest.mark.asyncio
-async def test_calculator_matched(app: App):
+async def test_calculator_matched(app: App, make_event: Callable):
     from plugins.calculator import calculator_matcher
 
     async with app.test_matcher(calculator_matcher) as ctx:
@@ -18,7 +19,7 @@ async def test_calculator_matched(app: App):
 
 
 @pytest.mark.asyncio
-async def test_calculator_unmatched(app: App):
+async def test_calculator_unmatched(app: App, make_event: Callable):
     from plugins.calculator import calculator_matcher
 
     async with app.test_matcher(calculator_matcher) as ctx:
@@ -35,7 +36,7 @@ async def test_calculator_unmatched(app: App):
 
 
 @pytest.mark.asyncio
-async def test_calculator_error(app: App):
+async def test_calculator_error(app: App, make_event: Callable):
     from plugins.calculator import calculator_matcher
 
     async with app.test_matcher(calculator_matcher) as ctx:

@@ -1,8 +1,8 @@
+from typing import Callable
+
 import pytest
 from nonebug import App
 from pytest_mock import MockerFixture
-
-from tests.utils import make_event
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -27,7 +27,7 @@ def setup_currency(mocker: MockerFixture):
 
 
 @pytest.mark.asyncio
-async def test_to_cny_with_default_amount(app: App):
+async def test_to_cny_with_default_amount(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
@@ -41,7 +41,7 @@ async def test_to_cny_with_default_amount(app: App):
 
 
 @pytest.mark.asyncio
-async def test_from_cny_with_default_amount(app: App):
+async def test_from_cny_with_default_amount(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
@@ -55,7 +55,7 @@ async def test_from_cny_with_default_amount(app: App):
 
 
 @pytest.mark.asyncio
-async def test_usd_jpy_with_default_amount(app: App):
+async def test_usd_jpy_with_default_amount(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
@@ -69,7 +69,7 @@ async def test_usd_jpy_with_default_amount(app: App):
 
 
 @pytest.mark.asyncio
-async def test_to_cny_with_custom_amount(app: App):
+async def test_to_cny_with_custom_amount(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
@@ -83,7 +83,7 @@ async def test_to_cny_with_custom_amount(app: App):
 
 
 @pytest.mark.asyncio
-async def test_from_cny_with_custom_amount(app: App):
+async def test_from_cny_with_custom_amount(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
@@ -97,7 +97,7 @@ async def test_from_cny_with_custom_amount(app: App):
 
 
 @pytest.mark.asyncio
-async def test_usd_jpy_with_custom_amount(app: App):
+async def test_usd_jpy_with_custom_amount(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
@@ -111,7 +111,7 @@ async def test_usd_jpy_with_custom_amount(app: App):
 
 
 @pytest.mark.asyncio
-async def test_invalid_from_currency(app: App):
+async def test_invalid_from_currency(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
@@ -125,7 +125,7 @@ async def test_invalid_from_currency(app: App):
 
 
 @pytest.mark.asyncio
-async def test_invalid_to_currency(app: App):
+async def test_invalid_to_currency(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
@@ -139,7 +139,7 @@ async def test_invalid_to_currency(app: App):
 
 
 @pytest.mark.asyncio
-async def test_invalid_all_currency(app: App):
+async def test_invalid_all_currency(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
@@ -153,7 +153,7 @@ async def test_invalid_all_currency(app: App):
 
 
 @pytest.mark.asyncio
-async def test_unintended_trigger(app: App):
+async def test_unintended_trigger(app: App, make_event: Callable):
     from plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
