@@ -23,6 +23,7 @@ async def initialize() -> None:
     if not _playwright:
         _playwright = await async_playwright().start()
         _browser = await _playwright.chromium.launch()
+        logger.info("Initialized Playwright")
 
 
 async def dispose() -> None:
