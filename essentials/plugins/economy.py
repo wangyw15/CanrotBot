@@ -41,7 +41,7 @@ async def _(event: Event, result: Arparma):
     # 检查是否注册过
     puid = event.get_user_id()
     if not user.puid_user_exists(puid):
-        await _economy_command.finish(f"puid: {puid}\n你还没有注册")
+        await _economy_command.finish(f"puid: {puid}\n未注册")
 
 
 @_economy_command.assign("info")

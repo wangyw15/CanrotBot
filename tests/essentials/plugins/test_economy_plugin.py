@@ -45,7 +45,7 @@ async def test_economy_plugin_info_not_registered(
         ctx.receive_event(bot, event)
         ctx.should_pass_permission()
         ctx.should_pass_rule()
-        ctx.should_call_send(event, f"puid: {TEST_PUID1}\n你还没有注册")
+        ctx.should_call_send(event, f"puid: {TEST_PUID1}\n未注册")
         ctx.should_finished()
 
 
