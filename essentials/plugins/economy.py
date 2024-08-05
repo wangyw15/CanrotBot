@@ -15,7 +15,7 @@ __plugin_meta__ = PluginMetadata(
     name="经济系统",
     description="机器人经济系统，包括查询、转账等",
     usage="经济服务帮助:\n"
-    "用法: /<economy|e|钱包|银行|经济> [操作]\n"
+    "用法: /<economy|钱包|银行|经济> [操作]\n"
     "操作:\n"
     "info|信息: 查看账户信息\n"
     "transfer|转账 <puid|uid> <金额>: 向另一个用户转账",
