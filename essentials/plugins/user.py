@@ -1,65 +1,82 @@
-from nonebot import on_command
-from nonebot.adapters import Event, Message
-from nonebot.params import CommandArg
+from nonebot.adapters import Event
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import (
+    on_alconna,
+    Alconna,
+    Args,
+    Option,
+    Query,
+)
 
 from essentials.libraries import user
 
 __plugin_meta__ = PluginMetadata(
     name="用户服务",
     description="用户服务，包括绑定、注册等",
-    usage="输入 /<user|u|用户|我> 查看帮助",
+    usage=(
+        "用户服务帮助:\n"
+        "用法: /<user|用户|我> [操作]\n"
+        "操作:\n"
+        "register|reg|注册: 注册一个新用户\n"
+        "info|信息: 查看用户信息\n"
+        "bind|绑定 <puid>: 绑定一个puid\n"
+        "unbind|解绑|解除绑定|取消绑定 <puid>: 解除绑定puid"
+    ),
     config=None,
 )
 
-_user = on_command("user", aliases={"u", "用户", "我"}, block=True)
+_user_command = on_alconna(
+    Alconna(
+        "user",
+        Option("info", alias={"信息"}),
+        Option("register", alias={"reg", "注册"}),
+        Option("bind", Args["puid", str], alias={"绑定"}),
+        Option("unbind", Args["puid", str], alias={"解绑", "解除绑定", "取消绑定"}),
+    ),
+    aliases={"用户", "我"},
+    block=True,
+)
 
 
-@_user.handle()
-async def _(event: Event, args: Message = CommandArg()):
+@_user_command.assign("info")
+async def _(event: Event):
     puid = event.get_user_id()
-    if msg := args.extract_plain_text():
-        splitted_args = [x.strip() for x in msg.split()]
-        if msg == "register" or msg == "reg" or msg == "注册":
-            if user.puid_user_exists(puid):
-                await _user.finish("你已经注册过了")
-            else:
-                uid = user.register(puid)
-                await _user.finish(f"注册成功，你的 UID 是 {uid}")
-        elif msg == "info" or msg == "信息":
-            if not user.puid_user_exists(puid):
-                await _user.finish(f"puid: {puid}\n你还没有注册")
-            else:
-                uid = user.get_uid(puid)
-                msg = f"puid: {puid}\nuid: {uid}\n已绑定的 puid:\n"
-                linked_accounts = user.get_bind_by_uid(uid)
-                for i in linked_accounts:
-                    msg += i + "\n"
-                await _user.finish(msg.strip())
-        elif splitted_args[0] == "bind" or splitted_args[0] == "绑定":
-            another_puid = splitted_args[1]
-            if user.puid_user_exists(another_puid):
-                await _user.finish("该用户已经绑定或注册过了")
-            uid = user.get_uid(puid)
-            user.bind(another_puid, uid)
-            await _user.finish("绑定成功")
-        elif (
-            splitted_args[0] == "unbind"
-            or splitted_args[0] == "解绑"
-            or splitted_args[0] == "解除绑定"
-        ):
-            another_puid = splitted_args[1]
-            if not user.puid_user_exists(another_puid):
-                await _user.finish("该用户还没有绑定或注册")
-            user.unbind(another_puid)
-            await _user.finish("解绑成功")
+    if not user.puid_user_exists(puid):
+        await _user_command.finish(f"puid: {puid}\n未注册")
     else:
-        await _user.finish(
-            "用户服务帮助:\n"
-            "用法: /<user|u|用户|我> [操作]\n"
-            "操作:\n"
-            "register|reg|注册: 注册一个新用户\n"
-            "info|信息: 查看用户信息\n"
-            "bind|绑定 <puid>: 绑定一个用户\n"
-            "unbind|解绑|解除绑定 <puid>: 解除绑定一个用户"
-        )
+        uid = user.get_uid()
+        msg = f"当前 puid: {puid}\nuid: {uid}\n已绑定的 puid:\n"
+        msg += "\n".join(user.get_bind_by_uid(uid))
+        await _user_command.finish(msg)
+
+
+@_user_command.assign("register")
+async def _(event: Event):
+    puid = event.get_user_id()
+    if user.puid_user_exists(puid):
+        await _user_command.finish("你已经注册过了")
+    else:
+        uid = user.register(puid)
+        await _user_command.finish(f"注册成功，你的 UID 是 {uid}")
+
+
+@_user_command.assign("bind")
+async def _(puid: Query[str] = Query("puid")):
+    if user.puid_user_exists(puid.result):
+        await _user_command.finish("此 puid 已经绑定或注册过了")
+    uid = user.get_uid()
+    user.bind(puid.result, uid)
+    await _user_command.finish("绑定成功")
+
+
+@_user_command.assign("unbind")
+async def _(puid: Query[str] = Query("puid")):
+    if not user.puid_user_exists(puid.result):
+        await _user_command.finish("此 puid 还未绑定或注册")
+    user.unbind(puid.result)
+    await _user_command.finish("解绑成功")
+
+
+@_user_command.handle()
+async def _():
+    await _user_command.finish(__plugin_meta__.usage)
