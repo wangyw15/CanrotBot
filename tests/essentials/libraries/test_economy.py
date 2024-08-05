@@ -125,11 +125,22 @@ def test_get_transaction_record(db_initialize: Callable) -> None:
     db_initialize()
 
     economy.earn(TEST_UID1, 100)
+    economy.earn(TEST_UID2, 50)
     economy.earn(TEST_UID1, 100)
+    economy.earn(TEST_UID2, 50)
     economy.earn(TEST_UID1, 100)
 
-    records = economy.get_transaction_record(TEST_UID1)
-    assert len(records) == 3
+    records_uid1 = economy.get_transactions(TEST_UID1)
+    assert len(records_uid1) == 3
+    for record in records_uid1:
+        assert record.user_id == TEST_UID1
+        assert record.amount == 100
+
+    records_uid2 = economy.get_transactions(TEST_UID2)
+    assert len(economy.get_transactions(TEST_UID2)) == 2
+    for record in records_uid2:
+        assert record.user_id == TEST_UID2
+        assert record.amount == 50
 
 
 def test_get_transaction_record_with_limit(db_initialize: Callable) -> None:
@@ -141,7 +152,7 @@ def test_get_transaction_record_with_limit(db_initialize: Callable) -> None:
     economy.earn(TEST_UID1, 100)
     economy.earn(TEST_UID1, 100)
 
-    records = economy.get_transaction_record(TEST_UID1, 1)
+    records = economy.get_transactions(TEST_UID1, 1)
     assert len(records) == 1
 
 
@@ -150,5 +161,5 @@ def test_get_transaction_record_empty(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    records = economy.get_transaction_record(TEST_UID1, 1)
+    records = economy.get_transactions(TEST_UID1, 1)
     assert len(records) == 0

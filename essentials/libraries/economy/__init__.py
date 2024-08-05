@@ -138,7 +138,7 @@ def transfer(from_uid: int, to_uid: int, amount: float, description: str = "") -
     return True
 
 
-def get_transaction_record(uid: int, limit: int | None = None) -> Sequence[Transaction]:
+def get_transactions(uid: int, limit: int | None = None) -> Sequence[Transaction]:
     """
     获取交易记录
 
@@ -148,7 +148,7 @@ def get_transaction_record(uid: int, limit: int | None = None) -> Sequence[Trans
     :return: 交易记录
     """
     with database.get_session().begin() as session:
-        return (
+        records = (
             session.execute(
                 select(data.Transaction)
                 .where(data.Transaction.user_id.is_(uid))
@@ -158,3 +158,5 @@ def get_transaction_record(uid: int, limit: int | None = None) -> Sequence[Trans
             .scalars()
             .all()
         )
+        session.expunge_all()
+        return records
