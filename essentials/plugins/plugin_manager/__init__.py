@@ -33,9 +33,9 @@ SELF_ID = __name__.split(".")[-1]
 _plugin_manager_command = on_alconna(
     Alconna(
         "plugin-manager",
-        Option("enable", Args[PLUGIN_ID, str], alias="启用"),
-        Option("disable", Args[PLUGIN_ID, str], alias="禁用"),
-        Option("list-disable", alias="查看禁用"),
+        Option("enable", Args[PLUGIN_ID, str], alias={"启用"}),
+        Option("disable", Args[PLUGIN_ID, str], alias={"禁用"}),
+        Option("list-disable", alias={"查看禁用"}),
     ),
     aliases={"plugin", "管理插件"},
     block=True,
