@@ -4,8 +4,7 @@ import pytest
 from nonebug import App
 from pytest_mock import MockerFixture
 
-TEST_UID1 = (1 << 62) + 1
-TEST_UID2 = (1 << 62) + 2
+TEST_UID = (1 << 62) + 1
 TEST_PUID1 = "TEST_PUID1"
 TEST_PUID2 = "TEST_PUID2"
 
@@ -155,7 +154,7 @@ async def test_economy_plugin_transfer_to_not_registered_uid(
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
 
-        event = create_event(message=f"economy transfer {TEST_UID2} 100", user_id=TEST_PUID1)
+        event = create_event(message=f"economy transfer {TEST_UID} 100", user_id=TEST_PUID1)
         ctx.receive_event(bot, event)
         ctx.should_pass_permission()
         ctx.should_pass_rule()
