@@ -1,66 +1,96 @@
-from nonebot import on_command
-from nonebot.adapters import Event, Message
-from nonebot.params import CommandArg
+from nonebot.adapters import Event
 from nonebot.plugin import PluginMetadata
-from sqlalchemy import select
+from nonebot_plugin_alconna import (
+    on_alconna,
+    Alconna,
+    Args,
+    Arparma,
+    Option,
+    Query,
+)
 
 from essentials.libraries import user, economy, util
-from storage import database
 
 __plugin_meta__ = PluginMetadata(
-    name="经济服务",
-    description="经济服务，包括查询、转账等",
-    usage="经济服务帮助:\n用法: /<economy|e|钱包|银行|经济> [操作]\n操作:\ninfo|信息: 查看账户信息\ntransfer|转账 <puid|uid> <金额>: 向另一个用户转账",
+    name="经济系统",
+    description="机器人经济系统，包括查询、转账等",
+    usage="经济服务帮助:\n"
+    "用法: /<economy|e|钱包|银行|经济> [操作]\n"
+    "操作:\n"
+    "info|信息: 查看账户信息\n"
+    "transfer|转账 <puid|uid> <金额>: 向另一个用户转账",
     config=None,
 )
 
-_economy = on_command(
-    "economy", aliases={"e", "钱包", "银行", "经济", "bank"}, block=True
+_economy_command = on_alconna(
+    Alconna(
+        "economy",
+        Option("info", alias={"信息", "balance", "余额"}),
+        Option("transfer", Args["transferee", str]["amount", float], alias={"转账"}),
+    ),
+    aliases={"钱包", "银行", "经济", "bank"},
+    block=True,
 )
 
 
-@_economy.handle()
-async def _(event: Event, args: Message = CommandArg()):
+@_economy_command.handle()
+async def _(event: Event, result: Arparma):
+    if not result.options:
+        await _economy_command.finish(__plugin_meta__.usage)
+
     # 检查是否注册过
     puid = event.get_user_id()
     if not user.puid_user_exists(puid):
-        await _economy.finish(f"puid: {puid}\n你还没有注册")
+        await _economy_command.finish(f"puid: {puid}\n你还没有注册")
 
-    uid = user.get_uid(puid)
-    if msg := args.extract_plain_text():
-        split_args = [x.strip().lower() for x in msg.split()]
-        if msg == "info" or msg == "信息" or msg == "balance" or msg == "余额":
-            final = f"puid: {puid}\nuid: {uid}\n当前余额: {economy.get_balance(uid)} 胡萝卜片\n\n最近五条交易记录:"
-            with database.get_session().begin() as session:
-                query = select(economy.data.Transaction).where(
-                    economy.data.Transaction.user_id.is_(uid)
-                )
-                history = session.execute(query).scalars().all()
-                for i in history[:5]:
-                    final += (
-                        f"\n时间: {i.time.strftime('%Y-%m-%d %H:%M:%S')}"
-                        f"\n变动: {i.amount}"
-                        f"\n余额: {i.balance}"
-                        f"\n备注: {i.description}"
-                        f"\n{util.MESSAGE_SPLIT_LINE}"
-                    )
-            await _economy.finish(final)
-        elif split_args[0] == "transfer" or split_args[0] == "转账":
-            another = split_args[1]
-            amount = float(split_args[2])
-            if "_" in another:
-                another_uid = user.get_uid(another)
-            else:
-                another_uid = another
-            if not user.uid_user_exists(another_uid):
-                await _economy.finish("不存在此用户")
-            if economy.transfer(uid, another_uid, amount):
-                await _economy.finish(
-                    f"向 uid {another_uid} 转账 {amount} 个胡萝卜片成功"
-                )
-            else:
-                await _economy.finish(
-                    f"向 uid {another_uid} 转账 {amount} 个胡萝卜片失败"
-                )
+
+@_economy_command.assign("info")
+async def _(event: Event):
+    puid = event.get_user_id()
+    uid = user.get_uid()
+    final = (
+        f"puid: {puid}\n"
+        f"uid: {uid}\n"
+        f"当前余额: {economy.get_balance(uid)} 胡萝卜片\n\n"
+        f"最近五条交易记录:"
+    )
+
+    for i in economy.get_transactions(uid, 5):
+        final += (
+            f"\n时间: {i.time.strftime('%Y-%m-%d %H:%M:%S')}"
+            f"\n变动: {i.amount}"
+            f"\n余额: {i.balance}"
+            f"\n备注: {i.description}"
+            f"\n{util.MESSAGE_SPLIT_LINE}"
+        )
+    await _economy_command.finish(final.strip())
+
+
+@_economy_command.assign("transfer")
+async def _(
+    transferee: Query[str] = Query("transferee"),
+    amount: Query[float] = Query("amount"),
+):
+    from_uid = user.get_uid()
+    to_uid = 0
+
+    if transferee.result.isdigit():
+        to_uid = int(transferee.result)
+
+    if not user.uid_user_exists(to_uid):
+        to_uid = 0
+        to_puid = transferee.result
+        if user.puid_user_exists(to_puid):
+            to_uid = user.get_uid(to_puid)
+
+    if to_uid == 0:
+        await _economy_command.finish("未找到此用户")
+
+    if economy.transfer(from_uid, to_uid, amount.result):
+        await _economy_command.finish(
+            f"向 {transferee.result} 转账 {amount.result} 个胡萝卜片成功"
+        )
     else:
-        await _economy.finish(__plugin_meta__.usage)
+        await _economy_command.finish(
+            f"余额不足，向 {transferee.result} 转账 {amount.result} 个胡萝卜片失败"
+        )
