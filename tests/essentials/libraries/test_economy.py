@@ -117,3 +117,38 @@ def test_transfer_negative_amount(db_initialize: Callable) -> None:
     assert economy.get_balance(TEST_UID2) == 0
 
     assert not economy.transfer(TEST_UID1, TEST_UID2, -100)
+
+
+def test_get_transaction_record(db_initialize: Callable) -> None:
+    from essentials.libraries import economy
+
+    db_initialize()
+
+    economy.earn(TEST_UID1, 100)
+    economy.earn(TEST_UID1, 100)
+    economy.earn(TEST_UID1, 100)
+
+    records = economy.get_transaction_record(TEST_UID1)
+    assert len(records) == 3
+
+
+def test_get_transaction_record_with_limit(db_initialize: Callable) -> None:
+    from essentials.libraries import economy
+
+    db_initialize()
+
+    economy.earn(TEST_UID1, 100)
+    economy.earn(TEST_UID1, 100)
+    economy.earn(TEST_UID1, 100)
+
+    records = economy.get_transaction_record(TEST_UID1, 1)
+    assert len(records) == 1
+
+
+def test_get_transaction_record_empty(db_initialize: Callable) -> None:
+    from essentials.libraries import economy
+
+    db_initialize()
+
+    records = economy.get_transaction_record(TEST_UID1, 1)
+    assert len(records) == 0

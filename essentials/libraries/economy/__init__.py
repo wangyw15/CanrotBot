@@ -1,9 +1,9 @@
 from datetime import datetime
+from typing import Sequence
 
 from sqlalchemy import select, insert, update
 
 from storage import database
-from . import data
 from .data import Account, Transaction
 
 
@@ -136,3 +136,25 @@ def transfer(from_uid: int, to_uid: int, amount: float, description: str = "") -
         return False
     earn(to_uid, amount, description)
     return True
+
+
+def get_transaction_record(uid: int, limit: int | None = None) -> Sequence[Transaction]:
+    """
+    获取交易记录
+
+    :param uid: uid
+    :param limit: 交易记录数量，None为全部，默认为全部
+
+    :return: 交易记录
+    """
+    with database.get_session().begin() as session:
+        return (
+            session.execute(
+                select(data.Transaction)
+                .where(data.Transaction.user_id.is_(uid))
+                .order_by(data.Transaction.time.desc())
+                .limit(limit)
+            )
+            .scalars()
+            .all()
+        )
