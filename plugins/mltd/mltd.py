@@ -38,22 +38,20 @@ _cards_for_gasha: dict[int, list[dict]] = {}
 async def load_cards(force_reload: bool = False) -> None:
     global _cards, _cards_zh, _cards_for_gasha
     if force_reload or not _cards or not _cards_zh:
-        cards_asset = await network.fetch_json_data(
+        _cards = await network.fetch_json_data(
             "https://api.matsurihi.me/api/mltd/v2/cards"
             "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true",
             use_cache=True,
             use_proxy=True,
         )
-        cards_zh_asset = await network.fetch_json_data(
+        _cards_zh = await network.fetch_json_data(
             "https://api.matsurihi.me/api/mltd/v2/zh/cards"
             "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true",
             use_cache=True,
             use_proxy=True,
         )
-
-        _cards = cards_asset.json()
-        _cards_zh = cards_zh_asset.json()
         _cards_last_fetch = datetime.now()
+
         # 生成卡池
         _cards_for_gasha = {}
         for card in _cards:

@@ -50,7 +50,9 @@ async def _load_data() -> None:
 
     # 加载角色数据
     operators = await network.fetch_json_data(
-        "gamedata/excel/character_table.json", use_cache=True, use_proxy=True
+        RESOURCE_URL.format("gamedata/excel/character_table.json"),
+        use_cache=True,
+        use_proxy=True,
     )
     logger.info(f"Arknights characters count: {len(operators)}")
 
