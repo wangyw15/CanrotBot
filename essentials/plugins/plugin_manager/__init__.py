@@ -12,7 +12,7 @@ from nonebot_plugin_alconna import (
     on_alconna,
     Alconna,
     Args,
-    Option,
+    Subcommand,
     Query,
     Arparma,
 )
@@ -33,9 +33,9 @@ SELF_ID = __name__.split(".")[-1]
 _plugin_manager_command = on_alconna(
     Alconna(
         "plugin-manager",
-        Option("enable", Args[PLUGIN_ID, str], alias={"启用"}),
-        Option("disable", Args[PLUGIN_ID, str], alias={"禁用"}),
-        Option("list-disable", alias={"查看禁用"}),
+        Subcommand("enable", Args[PLUGIN_ID, str], alias={"启用"}),
+        Subcommand("disable", Args[PLUGIN_ID, str], alias={"禁用"}),
+        Subcommand("list-disable", alias={"查看禁用"}),
     ),
     aliases={"plugin", "管理插件"},
     block=True,
@@ -185,14 +185,14 @@ async def _(state: T_State, result: Arparma, plugin_id: Query[str] = Query(PLUGI
         display_name = "所有插件"
 
     action = ""
-    if "enable" in result.options:
+    if result.find("enable"):
         if plugin_manager.enable_plugin(
             plugin_id.result, state[SCOPE], state[PLATFORM], state[PLATFORM_ID]
         ):
             action = "启"
         else:
             await _plugin_manager_command.finish(f"{display_name} 未被禁用")
-    elif "disable" in result.options:
+    elif result.find("disable"):
         if plugin_manager.disable_plugin(
             plugin_id.result, state[SCOPE], state[PLATFORM], state[PLATFORM_ID]
         ):

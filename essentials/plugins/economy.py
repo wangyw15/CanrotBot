@@ -5,7 +5,7 @@ from nonebot_plugin_alconna import (
     Alconna,
     Args,
     Arparma,
-    Option,
+    Subcommand,
     Query,
 )
 
@@ -25,8 +25,10 @@ __plugin_meta__ = PluginMetadata(
 _economy_command = on_alconna(
     Alconna(
         "economy",
-        Option("info", alias={"信息", "balance", "余额"}),
-        Option("transfer", Args["transferee", str]["amount", float], alias={"转账"}),
+        Subcommand("info", alias={"信息", "balance", "余额"}),
+        Subcommand(
+            "transfer", Args["transferee", str]["amount", float], alias={"转账"}
+        ),
     ),
     aliases={"钱包", "银行", "经济", "bank"},
     block=True,
@@ -35,7 +37,7 @@ _economy_command = on_alconna(
 
 @_economy_command.handle()
 async def _(event: Event, result: Arparma):
-    if not result.options:
+    if not result.subcommands:
         await _economy_command.finish(__plugin_meta__.usage)
 
     # 检查是否注册过

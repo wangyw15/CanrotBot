@@ -4,7 +4,7 @@ from nonebot_plugin_alconna import (
     on_alconna,
     Alconna,
     Args,
-    Option,
+    Subcommand,
     Query,
 )
 
@@ -28,10 +28,10 @@ __plugin_meta__ = PluginMetadata(
 _user_command = on_alconna(
     Alconna(
         "user",
-        Option("info", alias={"信息"}),
-        Option("register", alias={"reg", "注册"}),
-        Option("bind", Args["puid", str], alias={"绑定"}),
-        Option("unbind", Args["puid", str], alias={"解绑", "解除绑定", "取消绑定"}),
+        Subcommand("info", alias={"信息"}),
+        Subcommand("register", alias={"reg", "注册"}),
+        Subcommand("bind", Args["puid", str], alias={"绑定"}),
+        Subcommand("unbind", Args["puid", str], alias={"解绑", "解除绑定", "取消绑定"}),
     ),
     aliases={"用户", "我"},
     block=True,
