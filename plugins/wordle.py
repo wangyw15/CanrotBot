@@ -7,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from pydantic import BaseModel
 
-from storage import asset
+from essentials.libraries import file, path
 
 __plugin_meta__ = PluginMetadata(
     name="Wordle", description="Wordle小游戏", usage="/wordle", config=None
@@ -24,7 +24,7 @@ class WordleConfig(BaseModel):
 config = WordleConfig.parse_obj(get_driver().config)
 
 # load wordle data
-words = asset.LocalAsset("wordle.json").json()
+WORDS = file.read_text(path.get_asset_path() / "wordle.json")
 
 
 def get_wordle_result(answer: str, guess: str) -> str:
@@ -46,7 +46,7 @@ WORDLE_GUESSES = "wordle_guesses"
 
 @wordle_matcher.handle()
 async def _(state: T_State):
-    state[WORDLE_ANSWER] = random.choice(words)
+    state[WORDLE_ANSWER] = random.choice(WORDS)
     state[WORDLE_GUESSES] = []
     await wordle_matcher.send("新一轮wordle游戏开始，请输入单词")
 
@@ -64,7 +64,7 @@ async def _(state: T_State, guess: Message = Arg()):
             f"恭喜你猜对了！\n共用了{len(state[WORDLE_GUESSES]) + 1}次机会"
         )
     # invalid word
-    elif guess not in words:
+    elif guess not in WORDS:
         await wordle_matcher.reject("你输入的单词不在词库中")
     else:
         state[WORDLE_GUESSES].append(guess)

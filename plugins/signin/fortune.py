@@ -1,28 +1,28 @@
 import random
 from typing import Tuple, Literal, Callable
 
-from nonebot import logger
+from nonebot import logger, get_driver
 
-from essentials.libraries import render_by_browser
-from storage import asset
+from essentials.libraries import file, path, render_by_browser
 from . import themes
 
-fortune_assets = asset.AssetManager("fortune")
-_fortune_assets_version: str = ""
-_copywriting: list[dict] = []
+ASSET_PATH = path.get_asset_path("fortune")
+asset_version: str = ""
+copywriting: list[dict] = []
 _themes: dict[str, dict] = {}
 
 
-def _load_fortune_assets() -> None:
-    global _fortune_assets_version
-    global _copywriting
+@get_driver().on_startup
+async def _load_fortune_assets() -> None:
+    global asset_version
+    global copywriting
 
-    if not _fortune_assets_version or not _copywriting:
-        data = fortune_assets["fortune_data"]
-        _fortune_assets_version = str(data["version"])
-        logger.info(f"Fortune version: {_fortune_assets_version}")
-        _copywriting = data["copywriting"]
-        logger.info(f"Fortune copywriting: {len(_copywriting)}")
+    if not asset_version or not copywriting:
+        data = file.read_json(ASSET_PATH / "fortune_data.json")
+        asset_version = str(data["version"])
+        logger.info(f"Fortune version: {asset_version}")
+        copywriting = data["copywriting"]
+        logger.info(f"Fortune copywriting: {len(copywriting)}")
 
     themes.load_themes()
 
@@ -75,10 +75,10 @@ async def generate_fortune(
     """
 
     # 选择运势内容
-    copywriting = random.choice(_copywriting)
-    title = title if title else copywriting["good-luck"]
-    rank = rank if rank else copywriting["rank"]
-    text = content if content else random.choice(copywriting["content"])
+    selected_copywriting = random.choice(copywriting)
+    title = title if title else selected_copywriting["good-luck"]
+    rank = rank if rank else selected_copywriting["rank"]
+    text = content if content else random.choice(selected_copywriting["content"])
 
     # 新版主题
     if t := get_theme_by_name(theme):
@@ -90,7 +90,7 @@ async def generate_fortune(
     raw_content = raw_content.replace("{{title}}", title).replace("{{content}}", text)
     bytes_data = await render_by_browser.render_html(
         raw_content,
-        str(fortune_assets / "template"),
+        str(ASSET_PATH / "template"),
         viewport={"width": 480, "height": 480},
         image_type=image_type,
     )
@@ -99,17 +99,3 @@ async def generate_fortune(
 
 def get_themes() -> list[str]:
     return list(_themes.keys())
-
-
-_load_fortune_assets()
-
-
-async def main():
-    with open("test.png", "wb") as f:
-        f.write((await generate_fortune())[0])
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())

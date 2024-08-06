@@ -16,11 +16,10 @@ nonebot.init(alconna_use_command_start=True)
 driver = nonebot.get_driver()
 
 # 保存日志
-from storage import asset, config, database  # asset不可删除
+from storage import database
+from essentials.libraries import config
 
-database.create_all_tables()  # 为asset创建表
-
-logger_path = Path(config.global_config.data_path) / "log"
+logger_path = Path(config.global_config.user_data_path) / "log"
 if not logger_path.exists():
     logger_path.mkdir(parents=True)
 logger.add(

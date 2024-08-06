@@ -1,34 +1,34 @@
-import asyncio
 import difflib
 import re
 import urllib.parse
-from datetime import timedelta
 from typing import Tuple
 
-from nonebot import logger
+from nonebot import logger, get_driver
 
-import essentials.libraries.network
-from storage import asset
+from essentials.libraries import network
 
 # TODO 改为Anilist API
-_anime_offline_database = asset.RemoteAsset(
-    "https://raw.githubusercontent.com/manami-project/anime-offline-database/master/anime-offline-database-minified.json",
-    expire=timedelta(days=7),
+ANIME_DATABASE_URL = (
+    "https://raw.githubusercontent.com"
+    + "/manami-project/anime-offline-database"
+    + "/master/anime-offline-database-minified.json"
 )
 _animes: list[dict] = []
-# _anilist_id_name: dict[int, str] = {}
 _name_anilist_id: dict[str, int] = {}
 
 
-def _load_animes() -> None:
+@get_driver().on_startup
+async def _load_animes() -> None:
     global _animes, _name_anilist_id
     if not _animes:
-        data = _anime_offline_database.json()
+        data = await network.fetch_json_data(
+            ANIME_DATABASE_URL, use_proxy=True, use_cache=True
+        )
         _animes = data["data"]
         logger.info(f'Anime database last update time: {data["lastUpdate"]}')
         logger.info(f"Loaded animes: {len(_animes)}")
     # 提升搜索速度
-    logger.info("预加载搜索数据")
+    logger.info("Preload search data")
     for i in _animes:
         anilist_id = ""
         for url in i["sources"]:
@@ -40,9 +40,6 @@ def _load_animes() -> None:
         _name_anilist_id[i["title"]] = int(anilist_id)
         for synonym in i["synonyms"]:
             _name_anilist_id[synonym] = int(anilist_id)
-
-
-_load_animes()
 
 
 def search_anime_by_name(name: str) -> Tuple[str, dict, float]:
@@ -92,7 +89,7 @@ async def search_anime_by_image(img_url: str) -> dict | None:
     :return: 番剧信息
     """
     api_url = "https://api.trace.moe/search?url={url}"
-    if data := await essentials.libraries.network.fetch_json_data(
+    if data := await network.fetch_json_data(
         api_url.format(url=urllib.parse.quote_plus(img_url))
     ):
         return data
@@ -117,17 +114,3 @@ def search_anilist_id_by_name(name: str) -> Tuple[str, int, float]:
             result = v
             result_name = k
     return result_name, result, best
-
-
-async def _test() -> None:
-    print(search_anime_by_anilist_id(101905))
-    while True:
-        name = input("Name: ")
-        result_name, anime, possibility = search_anime_by_name(name)
-        print(result_name)
-        print(anime["title"])
-        print(possibility)
-
-
-if __name__ == "__main__":
-    asyncio.run(_test())

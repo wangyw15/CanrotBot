@@ -6,8 +6,8 @@ import jieba
 from nonebot.adapters import Event
 from sqlalchemy import select, update, insert
 
-from essentials.libraries import util
-from storage import database, asset
+from essentials.libraries import file, path, util
+from storage import database
 from . import data
 
 UNKNOWN_RESPONSE: str = "{me}不知道怎么回答{name}喵~"
@@ -16,7 +16,9 @@ BOT_NAME: str = "我"
 SENDER_NAME: str = "主人"
 
 # 加载数据
-_reply_data: list[dict[str, str | None]] = asset.LocalAsset("reply.json").json()
+_reply_data: list[dict[str, str | None]] = file.read_json(
+    path.get_asset_path() / "reply.json"
+)
 
 # 关闭jieba日志
 jieba.setLogLevel(logging.WARNING)

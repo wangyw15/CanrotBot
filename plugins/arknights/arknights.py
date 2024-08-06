@@ -1,19 +1,16 @@
 import json
 import random
-from datetime import timedelta
 from typing import Tuple, Any
 
-from nonebot import logger
+from nonebot import logger, get_driver
 from sqlalchemy import select, insert
 from sqlalchemy.orm import sessionmaker
 
-from essentials.libraries import render_by_browser
-from storage import database, asset
+from essentials.libraries import network, path, render_by_browser
+from storage import database
 from . import data
 
-_arknights_all_characters: dict[str, dict] = {}
-arknights_gacha_operators: dict[int, list[dict]] = {}
-_arknights_operator_professions = [
+OPERATOR_PROFESSIONS = [
     "PIONEER",
     "WARRIOR",
     "SNIPER",
@@ -23,11 +20,7 @@ _arknights_operator_professions = [
     "SPECIAL",
     "TANK",
 ]
-_arknights_local_assets = asset.AssetManager("arknights")
-_arknights_remote_assets = asset.GithubAssetManager(
-    "yuanyan3060/ArknightsGameResource", "main", expire=timedelta(days=7)
-)
-_number_to_rarity = [
+INDEX_TO_RARITY = [
     "one_star",
     "two_stars",
     "three_stars",
@@ -35,35 +28,43 @@ _number_to_rarity = [
     "five_stars",
     "six_stars",
 ]
+LOCAL_ASSETS_PATH = path.get_asset_path("arknights")
+RESOURCE_URL = (
+    "https://raw.githubusercontent.com/yuanyan3060/ArknightsGameResource/main/{}"
+)
+
+operators: dict[str, dict] = {}
+gacha_operators: dict[int, list[dict]] = {}
+resource_version: str = ""
 
 
-def _init() -> None:
-    global _arknights_all_characters
+@get_driver().on_startup
+async def _load_data() -> None:
+    global operators, resource_version
 
-    # 数据版本
-    logger.info(
-        f"ArknightsGameResource version: {_arknights_remote_assets('version').text()}"
+    resource_version = await network.fetch_text_data(
+        RESOURCE_URL.format("version"), use_cache=True, use_proxy=True
     )
 
-    # 加载角色数据
-    _arknights_all_characters = _arknights_remote_assets(
-        "gamedata/excel/character_table.json"
-    ).json()
-    logger.info(f"Arknights characters: {len(_arknights_all_characters)}")
+    # 数据版本
+    logger.info(f"ArknightsGameResource version: {resource_version}")
 
-    # generate gacha operators
-    for k, v in _arknights_all_characters.items():
-        if v["rarity"] not in arknights_gacha_operators:
-            arknights_gacha_operators[v["rarity"]] = []
-        if v["profession"] not in _arknights_operator_professions:
+    # 加载角色数据
+    operators = await network.fetch_json_data(
+        "gamedata/excel/character_table.json", use_cache=True, use_proxy=True
+    )
+    logger.info(f"Arknights characters count: {len(operators)}")
+
+    # 生成寻访干员列表
+    for k, v in operators.items():
+        if v["rarity"] not in gacha_operators:
+            gacha_operators[v["rarity"]] = []
+        if v["profession"] not in OPERATOR_PROFESSIONS:
             continue
         if not v["itemObtainApproach"] == "招募寻访":
             continue
-        arknights_gacha_operators[v["rarity"]].append(v)
-    logger.info(f"arknights gacha operators: {len(arknights_gacha_operators)}")
-
-
-_init()
+        gacha_operators[v["rarity"]].append(v)
+    logger.info(f"arknights gacha operators: {len(gacha_operators)}")
 
 
 async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
@@ -88,7 +89,7 @@ async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
         current_statistics = session.execute(query).scalar_one()
 
     # 寻访干员列表
-    operators: list[dict] = []
+    selected_operators: list[dict] = []
 
     # 六星概率提升
     possibility_offset: float = 0
@@ -96,7 +97,7 @@ async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
         possibility_offset = (current_statistics.last_six_star - 50) * 0.02
 
     # 抽卡
-    while len(operators) != 10:
+    while len(selected_operators) != 10:
         magic_number = random.random()
         # 决定等级
         if magic_number < 0.02 + possibility_offset:
@@ -108,7 +109,7 @@ async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
             rarity = 3
         else:
             rarity = 2
-        operators.append(random.choice(arknights_gacha_operators[rarity]))
+        selected_operators.append(random.choice(gacha_operators[rarity]))
 
     # 更新统计数据
     # 是否抽到六星
@@ -118,13 +119,13 @@ async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
     current_statistics.times += 10
 
     # 统计寻访结果
-    for operator in operators:
+    for operator in selected_operators:
         if operator["rarity"] == 5:
             got_ssr = True
         setattr(
             current_statistics,
-            _number_to_rarity[operator["rarity"]],
-            getattr(current_statistics, _number_to_rarity[operator["rarity"]]) + 1,
+            INDEX_TO_RARITY[operator["rarity"]],
+            getattr(current_statistics, INDEX_TO_RARITY[operator["rarity"]]) + 1,
         )
 
     # 上次抽到六星
@@ -135,7 +136,7 @@ async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
 
     # 寻访历史
     simple_operators: list[dict[str, Any]] = []
-    for i in operators:
+    for i in selected_operators:
         simple_operators.append({"name": i["name"], "rarity": i["rarity"]})
 
     # 保存数据
@@ -148,7 +149,7 @@ async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
     session.close()
 
     # 生成 html
-    with _arknights_local_assets("gacha.html").open("r", encoding="utf-8") as f:
+    with (LOCAL_ASSETS_PATH / "gacha.html").open("r", encoding="utf-8") as f:
         generated_html = f.read().replace(
             "'{{DATA_HERE}}'", json.dumps(operators, ensure_ascii=False)
         )
@@ -156,7 +157,7 @@ async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
     # 生成图片
     img = await render_by_browser.render_html(
         generated_html,
-        _arknights_local_assets(),
+        LOCAL_ASSETS_PATH,
         viewport={"width": 1000, "height": 500},
     )
-    return img, operators
+    return img, selected_operators

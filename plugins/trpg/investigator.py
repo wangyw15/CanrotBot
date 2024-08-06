@@ -8,9 +8,7 @@ from sqlalchemy import select, insert, delete, update
 from storage import database
 from . import dice, data
 
-basic_property_names = [
-    x["name"] for x in data.trpg_assets["basic_properties"].values()
-]
+basic_property_names = [x["name"] for x in data.TRPG_BASIC_PROPERTIES.values()]
 _investigators_key = "investigators"
 
 
@@ -22,8 +20,8 @@ def get_property_name(key: str) -> str:
 
     :return: 属性名
     """
-    if key in data.trpg_assets["basic_properties"]:
-        return data.trpg_assets["basic_properties"][key]["name"]
+    if key in data.TRPG_BASIC_PROPERTIES:
+        return data.TRPG_BASIC_PROPERTIES[key]["name"]
     return ""
 
 
@@ -35,8 +33,8 @@ def get_property_fullname(key: str) -> str:
 
     :return: 属性全名
     """
-    if key in data.trpg_assets["basic_properties"]:
-        return data.trpg_assets["basic_properties"][key]["fullname"]
+    if key in data.TRPG_BASIC_PROPERTIES:
+        return data.TRPG_BASIC_PROPERTIES[key]["fullname"]
     return ""
 
 
@@ -48,7 +46,7 @@ def get_property_key(name: str) -> str:
 
     :return: 属性 key
     """
-    for k, v in data.trpg_assets["basic_properties"].items():
+    for k, v in data.TRPG_BASIC_PROPERTIES.items():
         if v["name"] == name:
             return k
     return ""
@@ -61,7 +59,7 @@ def random_basic_properties() -> dict[str, int]:
     :return: 基础属性
     """
     ret: dict[str, int] = {}
-    for _, v in data.trpg_assets["basic_properties"].items():
+    for _, v in data.TRPG_ASSET_PATH["basic_properties"].items():
         ret[v["name"]] = dice.dice_expression(v["dice"])[0]
     return ret
 

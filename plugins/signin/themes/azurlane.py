@@ -43,7 +43,7 @@ async def get_random_ship_image_url() -> str | None:
 
 
 async def generate_fortune_html() -> str:
-    with (fortune.fortune_assets / "template" / "azurlane.html").open(
+    with (fortune.ASSET_PATH / "template" / "azurlane.html").open(
         "r", encoding="utf-8"
     ) as f:
         return f.read().replace("{{image}}", await get_random_ship_image_url())

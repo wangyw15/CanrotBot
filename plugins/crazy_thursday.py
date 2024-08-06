@@ -3,7 +3,7 @@ import random
 from nonebot import on_keyword
 from nonebot.plugin import PluginMetadata
 
-from storage import asset
+from essentials.libraries import file, path
 
 __plugin_meta__ = PluginMetadata(
     name="疯狂星期四",
@@ -12,8 +12,9 @@ __plugin_meta__ = PluginMetadata(
     config=None,
 )
 
-
-crazy_thursday_posts: list[str] = asset.LocalAsset("crazy_thursday.json").json()
+crazy_thursday_posts: list[str] = file.read_json(
+    path.get_asset_path() / "crazy_thursday.json"
+)
 crazy_thursday_matcher = on_keyword({"疯狂星期四"}, block=True)
 
 

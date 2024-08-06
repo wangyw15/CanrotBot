@@ -71,7 +71,7 @@ async def _(
                     final_msg += f"出生地: {card.birthplace}\n"
                     final_msg += f"职业: {card.profession}\n"
                     # 基本属性
-                    for k, v in data.trpg_assets["basic_properties"].items():
+                    for k, v in data.TRPG_BASIC_PROPERTIES.items():
                         final_msg += (
                             f"{investigator.get_property_name(k)}: "
                             f"{getattr(card, investigator.get_property_fullname(v))}\n"

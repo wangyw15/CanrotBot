@@ -1,7 +1,8 @@
-from storage import asset
+from essentials.libraries import file, path
 
-_asset = asset.LocalAsset("bnhhsh.json")
-_bnhhsh_data: dict[int, dict[str, dict[str, float]]] = _asset.json()
+_bnhhsh_data: dict[int, dict[str, dict[str, float]]] = file.read_json(
+    path.get_asset_path() / "bnhhsh.json"
+)
 _bnhhsh_data: dict[int, dict[str, dict[str, float]]] = {
     int(k): v for k, v in _bnhhsh_data.items()
 }

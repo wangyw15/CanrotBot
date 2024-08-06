@@ -126,7 +126,7 @@ async def _():
 @_command.assign("update")
 async def _():
     await _command.send("正在更新卡片数据喵~")
-    mltd.load_cards(True)
+    await mltd.load_cards(True)
     await _command.finish("更新完毕喵~")
 
 

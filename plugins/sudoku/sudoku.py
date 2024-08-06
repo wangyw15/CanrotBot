@@ -1,7 +1,11 @@
 import random
 
+from essentials.libraries import file, path
+
 SEED_LENGTH = 8
 SEED_CHARS = "0123456789abcdef"
+
+ASSET_PATH = path.get_asset_path("sudoku")
 
 type Board = list[list[int]]
 
@@ -111,17 +115,15 @@ async def generate_board_image(
     :return: 图片
     """
     from essentials.libraries import render_by_browser
-    from storage import asset
 
-    sudoku_assets = asset.AssetManager("sudoku")
-
-    with sudoku_assets("template.html").open("r", encoding="utf-8") as f:
-        template = f.read()
-
-    template = template.replace("{SEED}", seed).replace('"{BOARD}"', str(board))
+    template = (
+        file.read_text(ASSET_PATH / "template.html")
+        .replace("{SEED}", seed)
+        .replace('"{BOARD}"', str(board))
+    )
 
     return await render_by_browser.render_html(
-        template, sudoku_assets(), viewport={"width": 500, "height": 500}
+        template, ASSET_PATH, viewport={"width": 500, "height": 500}
     )
 
 

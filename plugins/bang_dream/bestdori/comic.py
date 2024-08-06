@@ -1,11 +1,10 @@
-from datetime import timedelta
 from typing import Tuple
 
-from storage import asset
+from essentials.libraries import network
 from . import util
 
 
-def get_comic_list() -> dict[str]:
+async def get_comic_list() -> dict[str]:
     """
     获取漫画列表
 
@@ -15,10 +14,10 @@ def get_comic_list() -> dict[str]:
 
     :return: 漫画列表
     """
-    return util.bestdori_api_with_cache("comics/all.5.json", timedelta(days=7))
+    return await util.bestdori_api_with_cache("comics/all.5.json")
 
 
-def get_comic_url(comic_id: str, language: str = "") -> Tuple[str, str] | None:
+async def get_comic_url(comic_id: str, language: str = "") -> Tuple[str, str] | None:
     """
     获取漫画链接
 
@@ -29,7 +28,7 @@ def get_comic_url(comic_id: str, language: str = "") -> Tuple[str, str] | None:
 
     :return: (漫画链接, 语言)
     """
-    comic_list = get_comic_list()
+    comic_list = await get_comic_list()
 
     # 确保漫画id存在
     if comic_id not in comic_list:
@@ -58,7 +57,7 @@ def get_comic_url(comic_id: str, language: str = "") -> Tuple[str, str] | None:
     )
 
 
-def get_comic(comic_id: str, language: str = "") -> Tuple[bytes, str] | None:
+async def get_comic(comic_id: str, language: str = "") -> Tuple[bytes, str] | None:
     """
     获取漫画
 
@@ -69,12 +68,11 @@ def get_comic(comic_id: str, language: str = "") -> Tuple[bytes, str] | None:
 
     :return: (图片, 语言)
     """
-    comic_list = get_comic_list()
+    comic_list = await get_comic_list()
 
     # 确保漫画id存在
     if comic_id not in comic_list:
         return None
 
     url, language = get_comic_url(comic_id, language)
-    file = asset.RemoteAsset(url)
-    return file.raw(), language
+    return await network.fetch_bytes_data(url, use_proxy=True, use_cache=True), language

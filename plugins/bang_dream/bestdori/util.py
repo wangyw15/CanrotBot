@@ -1,11 +1,7 @@
-from datetime import timedelta
 from typing import Tuple, TypeVar
 
-from httpx import AsyncClient
+from essentials.libraries import network
 
-from storage import asset
-
-client = AsyncClient()
 available_languages = ["jp", "en", "tw", "cn", "kr"]  # [日服, 国际服, 台服, 国服, 韩服]
 T = TypeVar("T")
 
@@ -36,15 +32,14 @@ def get_content_by_language(arr: list[T], language: str = "") -> Tuple[T, str]:
     return arr[available_languages.index(language)], language
 
 
-def bestdori_api_with_cache(path: str, valid_duration: timedelta = None) -> dict[str]:
+async def bestdori_api_with_cache(path: str) -> dict[str]:
     """
     获取数据并缓存，默认缓存永久有效
 
     :param path: Bestdori api路径（不带/api）
-    :param valid_duration: 缓存有效期
 
     :return: 数据
     """
-    url = "https://bestdori.com/api/" + path
-    file = asset.RemoteAsset(url, expire=valid_duration)
-    return file.json()
+    return await network.fetch_json_data(
+        "https://bestdori.com/api/" + path, use_cache=True, use_proxy=True
+    )

@@ -1,14 +1,13 @@
 import json
 import random
 
-from essentials.libraries import render_by_browser
-from storage import asset
+from essentials.libraries import file, path, render_by_browser
 from .bestdori import band_character, card, gacha, util
 
-_assets = asset.AssetManager("bang_dream")
+ASSET_PATH = path.get_asset_path("bang_dream")
 
 
-def gacha10(gacha_id: str, language: str = "cn") -> dict:
+async def gacha10(gacha_id: str, language: str = "cn") -> dict:
     """
     一发十连
 
@@ -18,7 +17,7 @@ def gacha10(gacha_id: str, language: str = "cn") -> dict:
     :return: 抽卡结果, 语言
     """
     # 获取卡池信息
-    data = gacha.get_gacha_info(gacha_id)
+    data = await gacha.get_gacha_info(gacha_id)
 
     # 获取权重
     rates: dict[str]
@@ -78,14 +77,14 @@ def gacha10(gacha_id: str, language: str = "cn") -> dict:
 
     # 获取卡片信息
     for card_id in result_card_ids:
-        result_cards[card_id] = card.get_card_info(card_id)
+        result_cards[card_id] = await card.get_card_info(card_id)
 
     return result_cards
 
 
-def generate_data_for_image(gacha_data: dict[str]) -> list[dict]:
+async def generate_data_for_image(gacha_data: dict[str]) -> list[dict]:
     result = []
-    characters: dict[str] = band_character.get_character_list()
+    characters: dict[str] = await band_character.get_character_list()
     for card_id, card_data in gacha_data.items():
         result.append(
             {
@@ -108,18 +107,16 @@ async def generate_image(gacha_data: dict[str]) -> bytes:
     :return: 图片
     """
     data = generate_data_for_image(gacha_data)
-    generated_html = (
-        _assets("gacha.html")
-        .read_text(encoding="utf-8")
-        .replace("'{{DATA_HERE}}'", json.dumps(data, ensure_ascii=False))
+    generated_html = file.read_text(ASSET_PATH / "gacha.html").replace(
+        "'{{DATA_HERE}}'", json.dumps(data, ensure_ascii=False)
     )
 
     return await render_by_browser.render_html(
-        generated_html, _assets(), viewport={"width": 1920, "height": 1080}
+        generated_html, ASSET_PATH, viewport={"width": 1920, "height": 1080}
     )
 
 
-def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
+async def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
     """
     生成抽卡文字
 
@@ -129,7 +126,7 @@ def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
     :return: 文字
     """
     result = ""
-    characters: dict[str] = band_character.get_character_list()
+    characters: dict[str] = await band_character.get_character_list()
     for card_id, card_data in gacha_data.items():
         card_name, _ = util.get_content_by_language(card_data["prefix"], language)
         character_name, _ = util.get_content_by_language(
@@ -139,7 +136,7 @@ def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
     return result.strip()
 
 
-def get_gacha_name(gacha_id: str, language: str = "cn") -> str:
+async def get_gacha_name(gacha_id: str, language: str = "cn") -> str:
     """
     获取卡池名称
 
@@ -148,6 +145,6 @@ def get_gacha_name(gacha_id: str, language: str = "cn") -> str:
 
     :return: 卡池名称
     """
-    data = gacha.get_gacha_info(gacha_id)
+    data = await gacha.get_gacha_info(gacha_id)
     title, _ = util.get_content_by_language(data["gachaName"], language)
     return title

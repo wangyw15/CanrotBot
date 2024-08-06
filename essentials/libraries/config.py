@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class GlobalConfig(BaseModel):
-    data_path: str = Field(default="./canrot_data", alias="canrot_data_path")
+    user_data_path: str = Field(default="./canrot_data", alias="canrot_user_data_path")
     disabled_plugins: list[str] = Field(
         default=[], alias="canrot_disabled_plugins"
     )  # TODO 实现禁用插件

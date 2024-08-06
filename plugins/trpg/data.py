@@ -1,7 +1,8 @@
 from sqlalchemy import Text, Integer, ForeignKey, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
-from storage import asset, database
+from essentials.libraries import file, path
+from storage import database
 
 
 class Investigator(database.Base):
@@ -102,4 +103,5 @@ class Item(database.Base):
     effect: Mapped[str] = mapped_column(Text, nullable=True, default="")
 
 
-trpg_assets = asset.AssetManager("trpg")
+TRPG_ASSET_PATH = path.get_asset_path("trpg")
+TRPG_BASIC_PROPERTIES: dict = file.read_json(TRPG_ASSET_PATH / "basic_properties.json")

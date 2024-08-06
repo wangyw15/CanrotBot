@@ -14,7 +14,7 @@ def _load_legacy_themes() -> None:
     global _legacy_themes
 
     if not _legacy_themes:
-        with open(fortune.fortune_assets / "themes.json", "r", encoding="utf-8") as f:
+        with open(fortune.ASSET_PATH / "themes.json", "r", encoding="utf-8") as f:
             _legacy_themes = json.load(f)
             logger.info(f"Fortune legacy themes: {len(_legacy_themes)}")
 
@@ -22,7 +22,7 @@ def _load_legacy_themes() -> None:
 def _get_random_base_image(theme: str = "random") -> Path:
     if theme == "random" or theme not in _legacy_themes:
         theme = random.choice(list(_legacy_themes.keys()))
-    theme_path = fortune.fortune_assets / "image" / theme
+    theme_path = fortune.ASSET_PATH / "image" / theme
     return random.choice(list(theme_path.iterdir()))
 
 
@@ -41,7 +41,7 @@ def _html_generator(theme: str) -> Callable:
         base_image_path = image_full_path.parent.name + "/" + image_full_path.name
 
         # 生成 html
-        with open(fortune.fortune_assets / "template" / "legacy.html", "r") as f:
+        with open(fortune.ASSET_PATH / "template" / "legacy.html", "r") as f:
             return f.read().replace(
                 "{{image_path}}", str(base_image_path).replace("\\", "/")
             )

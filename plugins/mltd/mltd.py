@@ -4,9 +4,9 @@ import random
 from datetime import datetime
 from typing import Literal, Tuple
 
-import essentials.libraries.network
-from essentials.libraries import render_by_browser, util
-from storage import asset
+from nonebot import get_driver
+
+from essentials.libraries import file, network, path, render_by_browser
 
 event_type = [
     "Showtime",
@@ -28,22 +28,27 @@ event_type = [
 
 appeal_type = ["None", "Vocal", "Dance", "Visual"]
 
-_mltd_assets = asset.AssetManager("mltd")
+ASSET_PATH = path.get_asset_path("mltd")
 _cards: list[dict] = []
 _cards_zh: list[dict] = []
 _cards_for_gasha: dict[int, list[dict]] = {}
 
 
-def load_cards(force_reload: bool = False) -> None:
+@get_driver().on_startup
+async def load_cards(force_reload: bool = False) -> None:
     global _cards, _cards_zh, _cards_for_gasha
     if force_reload or not _cards or not _cards_zh:
-        cards_asset = asset.RemoteAsset(
+        cards_asset = await network.fetch_json_data(
             "https://api.matsurihi.me/api/mltd/v2/cards"
-            "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true"
+            "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true",
+            use_cache=True,
+            use_proxy=True,
         )
-        cards_zh_asset = asset.RemoteAsset(
+        cards_zh_asset = await network.fetch_json_data(
             "https://api.matsurihi.me/api/mltd/v2/zh/cards"
-            "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true"
+            "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true",
+            use_cache=True,
+            use_proxy=True,
         )
 
         _cards = cards_asset.json()
@@ -60,12 +65,10 @@ def load_cards(force_reload: bool = False) -> None:
 
 
 def get_cards() -> list[dict]:
-    load_cards()
     return _cards
 
 
 def search_card(keyword: str, force_jp: bool = False) -> dict:
-    load_cards()
     best = 0.0
     ret = {}
     # 优先搜索中文内容
@@ -87,28 +90,26 @@ def search_card(keyword: str, force_jp: bool = False) -> dict:
 
 
 async def generate_card_info_image(card: dict) -> bytes:
-    with _mltd_assets("card_info.html").open("r", encoding="utf-8") as f:
-        html = f.read()
+    html = file.read_text(ASSET_PATH / "card_info.html")
     html = html.replace("'{DATA_HERE}'", json.dumps(card))
     return await render_by_browser.render_html(
-        html, _mltd_assets(), viewport={"width": 1280, "height": 1000}
+        html, ASSET_PATH, viewport={"width": 1280, "height": 1000}
     )
 
 
 async def get_events(time: Literal["now"] | datetime = "now") -> list[dict] | None:
     if time == "now":
-        return await essentials.libraries.network.fetch_json_data(
-            f"https://api.matsurihi.me/api/mltd/v2/events?at=now"
+        return await network.fetch_json_data(
+            f"https://api.matsurihi.me/api/mltd/v2/events?at=now", use_proxy=True
         )
     elif isinstance(time, datetime):
         t = datetime.now().astimezone().replace(microsecond=0).isoformat()
-        return await essentials.libraries.network.fetch_json_data(
-            f"https://api.matsurihi.me/api/mltd/v2/events?at={t}"
+        return await network.fetch_json_data(
+            f"https://api.matsurihi.me/api/mltd/v2/events?at={t}", use_proxy=True
         )
 
 
 async def gasha() -> Tuple[bytes, list[dict]]:
-    load_cards()
     cards: list[dict] = []
     # SR保底
     got_sr_or_better = False
@@ -127,20 +128,10 @@ async def gasha() -> Tuple[bytes, list[dict]]:
     if not got_sr_or_better:
         cards[random.randint(0, 9)] = random.choice(_cards_for_gasha[3])
     # 生成图片
-    with _mltd_assets("gasha.html").open("r", encoding="utf-8") as f:
-        html = f.read()
-    html = html.replace("'{DATA_HERE}'", json.dumps(cards))
+    html = file.read_text(ASSET_PATH / "gasha.html").replace(
+        "'{DATA_HERE}'", json.dumps(cards)
+    )
     img = await render_by_browser.render_html(
-        html, _mltd_assets(), viewport={"width": 1920, "height": 1080}
+        html, ASSET_PATH, viewport={"width": 1920, "height": 1080}
     )
     return img, cards
-
-
-async def main():
-    await gasha()
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())

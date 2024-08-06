@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from nonebot.adapters import Event
 from arclet.alconna import Option, Args
+from nonebot.adapters import Event
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
     on_alconna,
@@ -14,8 +14,8 @@ from nonebot_plugin_alconna import (
 )
 from sqlalchemy import select, insert
 
-from essentials.libraries import user, economy, util
-from storage import database, file
+from essentials.libraries import user, economy, util, file, path
+from storage import database
 from . import data, fortune
 
 __plugin_meta__ = PluginMetadata(
@@ -25,7 +25,8 @@ __plugin_meta__ = PluginMetadata(
     config=None,
 )
 
-_signin_files = file.FileStorage("signin")
+DATA_PATH = path.get_data_path("signin")
+
 _command = on_alconna(
     Alconna(
         "signin",
@@ -92,7 +93,7 @@ async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
             )
         )
         session.commit()
-        with _signin_files(f"{uid}.png").open(mode="wb") as f:
+        with (DATA_PATH / f"{uid}.png").open(mode="wb") as f:
             f.write(img)
         # 签到获得积分
         point_amount = 20 + rank
@@ -107,15 +108,14 @@ async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
         title = today_record.title
         content = today_record.content
 
-        if theme == "random" and _signin_files(f"{uid}.png").exists():
-            with _signin_files(f"{uid}.png").open(mode="rb") as f:
-                img: bytes = bytes(f.read())
+        if theme == "random" and (DATA_PATH / f"{uid}.png").exists():
+            img: bytes = file.read_bytes(DATA_PATH / f"{uid}.png")
         else:
             # 重新按内容生成图片
             img, _, _, _ = await fortune.generate_fortune(
                 theme, title=today_record.title, content=today_record.content
             )
-            with _signin_files(f"{uid}.png").open(mode="wb") as f:
+            with (DATA_PATH / f"{uid}.png").open(mode="wb") as f:
                 f.write(img)
     if await util.can_send_segment(Image):
         final_msg.append(Image(raw=img))
