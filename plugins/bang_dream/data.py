@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Integer, Text, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 
-from storage import database
+from essentials.libraries import database
 
 
 class History(database.Base):

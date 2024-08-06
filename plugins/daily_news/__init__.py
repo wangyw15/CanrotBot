@@ -7,8 +7,7 @@ from nonebot_plugin_alconna import on_alconna, Image, Option, UniMessage
 from nonebot_plugin_apscheduler import scheduler
 from sqlalchemy import select, delete, insert
 
-from essentials.libraries import util
-from storage import database
+from essentials.libraries import util, database
 from . import data
 
 __plugin_meta__ = PluginMetadata(

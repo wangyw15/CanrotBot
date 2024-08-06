@@ -3,8 +3,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import on_alconna, Query, AlconnaQuery, Image
 from sqlalchemy import select, insert, update, delete
 
-from essentials.libraries import user, util
-from storage import database
+from essentials.libraries import user, util, database
 from . import muse_dash, data
 
 __plugin_meta__ = PluginMetadata(

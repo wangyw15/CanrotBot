@@ -16,9 +16,8 @@ from nonebot_plugin_alconna import (
 )
 from sqlalchemy import insert
 
-from essentials.libraries import economy, user
+from essentials.libraries import economy, user, database
 from essentials.libraries import util
-from storage import database
 from . import bestdori, data, gacha_helper
 
 # TODO 记得改；模拟抽卡、查卡、点歌、签到主题、活动助手等

@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy import Integer, Text, DateTime, Enum, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
-from storage import database
+from essentials.libraries import database
 
 
 class CommentType(enum.Enum):

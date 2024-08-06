@@ -5,7 +5,7 @@ from typing import Sequence
 
 from sqlalchemy import select, insert, delete, update
 
-from storage import database
+from essentials.libraries import database
 from . import dice, data
 
 basic_property_names = [x["name"] for x in data.TRPG_BASIC_PROPERTIES.values()]

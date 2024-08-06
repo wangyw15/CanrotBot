@@ -1,7 +1,7 @@
 from sqlalchemy import select, insert, delete
 
 from essentials.libraries.model import Platform
-from storage import database
+from ...libraries import database
 from .data import PluginManagementData
 from .model import Scope
 

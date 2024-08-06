@@ -6,8 +6,7 @@ from nonebot import logger, get_driver
 from sqlalchemy import select, insert
 from sqlalchemy.orm import sessionmaker
 
-from essentials.libraries import network, path, render_by_browser
-from storage import database
+from essentials.libraries import network, path, render_by_browser, database
 from . import data
 
 OPERATOR_PROFESSIONS = [

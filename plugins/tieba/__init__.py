@@ -6,8 +6,7 @@ from nonebot_plugin_alconna import on_alconna, Query, AlconnaQuery
 from sqlalchemy import select, insert, delete
 from nonebot_plugin_apscheduler import scheduler
 
-from essentials.libraries import user
-from storage import database
+from essentials.libraries import user, database
 from . import data, signin
 
 __plugin_meta__ = PluginMetadata(

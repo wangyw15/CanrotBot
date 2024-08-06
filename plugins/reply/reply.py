@@ -6,8 +6,7 @@ import jieba
 from nonebot.adapters import Event
 from sqlalchemy import select, update, insert
 
-from essentials.libraries import file, path, util
-from storage import database
+from essentials.libraries import file, path, util, database
 from . import data
 
 UNKNOWN_RESPONSE: str = "{me}不知道怎么回答{name}喵~"

@@ -6,11 +6,14 @@ from nonebot.params import ShellCommandArgv
 from nonebot.plugin import PluginMetadata
 from sqlalchemy import select, insert, cast, Integer
 
-from storage import database
+from essentials.libraries import database
 from . import data, scraper
 
 __plugin_meta__ = PluginMetadata(
-    name="演出", description="从上海市文化和旅游局网站获取演出信息", usage="懒得写", config=None  # TODO 帮助信息
+    name="演出",
+    description="从上海市文化和旅游局网站获取演出信息",
+    usage="懒得写",
+    config=None,  # TODO 帮助信息
 )
 
 

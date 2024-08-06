@@ -1,7 +1,7 @@
 from sqlalchemy import Text, Boolean, Float, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
-from storage import database
+from essentials.libraries import database
 
 
 class ReplyConfig(database.Base):

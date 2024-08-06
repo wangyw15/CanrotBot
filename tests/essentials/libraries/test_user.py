@@ -1,5 +1,3 @@
-from typing import Callable
-
 import pytest
 from nonebot.matcher import current_bot, current_event
 from nonebug import App
@@ -19,7 +17,7 @@ def test_snowflake_generate_id() -> None:
 
 
 def test_create_user_tables(db_initialize: Callable) -> None:
-    from storage.database import Base
+    from essentials.libraries.database import Base
     from essentials.libraries import user
 
     db_initialize()

@@ -14,8 +14,7 @@ from nonebot_plugin_alconna import (
 )
 from sqlalchemy import select, insert
 
-from essentials.libraries import user, economy, util, file, path
-from storage import database
+from essentials.libraries import user, economy, util, file, path, database
 from . import data, fortune
 
 __plugin_meta__ = PluginMetadata(

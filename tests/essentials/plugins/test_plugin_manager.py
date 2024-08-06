@@ -1,9 +1,6 @@
 from typing import Callable
 
 import pytest
-from nonebot import get_adapter
-from nonebot.adapters.console import Adapter as ConsoleAdapter
-from nonebot.adapters.console import Bot as ConsoleBot
 from nonebug import App
 from pytest_mock import MockerFixture
 
@@ -14,7 +11,7 @@ TEST_PLATFORM_ID = "TEST_PLATFORM_ID"
 
 
 def test_plugin_manager_create_tables(db_initialize: Callable) -> None:
-    from storage.database import Base
+    from essentials.libraries.database import Base
     from essentials.plugins.plugin_manager.data import PluginManagementData
 
     db_initialize()

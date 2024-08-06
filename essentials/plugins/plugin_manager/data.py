@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Integer, Text, Enum
 from sqlalchemy.orm import Mapped, mapped_column
 
 from essentials.libraries.model import Platform
-from storage import database
+from ...libraries import database
 from .model import Scope
 
 

@@ -5,7 +5,7 @@ TEST_UID2 = (1 << 62) + 2
 
 
 def test_create_economy_tables(db_initialize: Callable) -> None:
-    from storage.database import Base
+    from essentials.libraries.database import Base
     from essentials.libraries import economy
 
     db_initialize()

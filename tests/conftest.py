@@ -51,14 +51,14 @@ def db_engine() -> None:
 def db_mock(mocker: MockerFixture, db_engine: Engine) -> None:
     session = sessionmaker(bind=db_engine)
 
-    mocker.patch("storage.database.get_engine", return_value=db_engine)
-    mocker.patch("storage.database.get_session", return_value=session)
+    mocker.patch("essentials.libraries.database.get_engine", return_value=db_engine)
+    mocker.patch("essentials.libraries.database.get_session", return_value=session)
 
 
 @pytest.fixture(scope="function")
 def db_initialize(db_engine: Engine) -> Callable:
     def _initialize():
-        from storage.database import Base
+        from essentials.libraries.database import Base
         Base.metadata.drop_all(db_engine)
         Base.metadata.create_all(db_engine)
 

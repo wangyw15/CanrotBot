@@ -4,7 +4,7 @@ from typing import Optional
 from sqlalchemy import Text, Float, DateTime, Integer, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
-from storage import database
+from essentials.libraries import database
 
 
 class Account(database.Base):

@@ -1,7 +1,7 @@
 from sqlalchemy import Text, BigInteger, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
-from storage import database
+from essentials.libraries import database
 
 
 class User(database.Base):

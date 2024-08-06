@@ -3,7 +3,7 @@ from typing import Sequence
 
 from sqlalchemy import select, insert, update
 
-from storage import database
+from .. import database
 from .data import Account, Transaction
 
 

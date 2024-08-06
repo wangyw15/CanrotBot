@@ -16,8 +16,7 @@ nonebot.init(alconna_use_command_start=True)
 driver = nonebot.get_driver()
 
 # 保存日志
-from storage import database
-from essentials.libraries import config
+from essentials.libraries import config, database
 
 logger_path = Path(config.global_config.user_data_path) / "log"
 if not logger_path.exists():

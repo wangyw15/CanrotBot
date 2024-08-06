@@ -8,7 +8,7 @@ from nonebot.adapters import Bot, Event
 from nonebot.matcher import current_bot, current_event
 from sqlalchemy import select, delete, insert
 
-from storage import database
+from .. import database
 from . import data, snowflake
 
 

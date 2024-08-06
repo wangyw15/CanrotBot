@@ -1,8 +1,7 @@
 from sqlalchemy import Text, Integer, ForeignKey, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
-from essentials.libraries import file, path
-from storage import database
+from essentials.libraries import file, path, database
 
 
 class Investigator(database.Base):

@@ -7,7 +7,7 @@ from nonebot_plugin_alconna import (
 )
 from sqlalchemy import select, insert, delete
 
-from storage import database
+from essentials.libraries import database
 from . import data, random_selector
 
 __plugin_meta__ = PluginMetadata(

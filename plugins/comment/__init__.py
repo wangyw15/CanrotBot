@@ -7,9 +7,8 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from sqlalchemy import select, insert
 
-from essentials.libraries import user
+from essentials.libraries import user, database
 from libraries import anime
-from storage import database
 from . import data
 
 __plugin_meta__ = PluginMetadata(

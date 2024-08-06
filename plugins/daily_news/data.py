@@ -1,7 +1,7 @@
 from sqlalchemy import Text, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
-from storage import database
+from essentials.libraries import database
 
 
 class Subscribers(database.Base):
