@@ -6,6 +6,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import UniMessage, Image, Text
 
 from essentials.libraries import util
+from .config import YoutubeConfig
 from .youtube import (
     YOUTUBE_LINK_PATTERN,
     fetch_youtube_data,
@@ -17,7 +18,7 @@ __plugin_meta__ = PluginMetadata(
     name="YouTube",
     description="获取 YouTube 链接指向的内容",
     usage="发送支持解析的链接会自动触发",
-    config=None,
+    config=YoutubeConfig,
 )
 
 youtube_link_handler = on_regex(YOUTUBE_LINK_PATTERN, block=True)

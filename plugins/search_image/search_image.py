@@ -1,24 +1,17 @@
 import urllib.parse
 
 import httpx
-from nonebot import get_driver
+from nonebot import get_plugin_config
 from nonebot_plugin_alconna import UniMsg, Image, Text
-from pydantic import BaseModel
 
 from essentials.libraries import util
+from .config import SearchImageConfig
+
+config = get_plugin_config(SearchImageConfig)
 
 
-class SearchImageConfig(BaseModel):
-    proxy: str = ""
-    saucenao_api_key: str = ""
-    search_result_count: int = 1
-
-
-_config = SearchImageConfig.parse_obj(get_driver().config)
-
-
-if _config.proxy:
-    _client = httpx.AsyncClient(proxy=_config.proxy)
+if config.proxy:
+    _client = httpx.AsyncClient(proxy=config.proxy)
 else:
     _client = httpx.AsyncClient()
 _client.timeout = 10
@@ -234,7 +227,7 @@ async def generate_message_from_tracemoe_result(api_result: dict) -> UniMsg:
     if api_result["error"]:
         return UniMsg(Text("搜索失败: " + api_result["error"]))
     msg += Text(f'已搜索 {api_result["frameCount"]} 帧\n')
-    for result in api_result["result"][0 : _config.search_result_count]:
+    for result in api_result["result"][0 : config.search_result_count]:
         msg += Text(util.MESSAGE_SPLIT_LINE + "\n")
         if await util.can_send_segment(Image):
             msg += Image(url=result["image"])
@@ -255,9 +248,9 @@ async def search_image_from_saucenao(img_url: str) -> dict | None:
     )
     resp = await _client.get(
         api_url.format(
-            api_key=_config.saucenao_api_key,
+            api_key=config.saucenao_api_key,
             url=urllib.parse.quote_plus(img_url),
-            numres=_config.search_result_count,
+            numres=config.search_result_count,
         )
     )
     if resp.is_success and resp.status_code == 200:

@@ -1,7 +1,7 @@
 import typing
 
 from arclet.alconna import Args
-from nonebot import get_driver, on_regex
+from nonebot import get_plugin_config, on_regex
 from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
@@ -13,29 +13,19 @@ from nonebot_plugin_alconna import (
     Text,
     Image,
 )
-from pydantic import BaseModel
 
 from essentials.libraries import util
 from . import steam
+from .config import SteamConfig
 
 __plugin_meta__ = PluginMetadata(
     name="Steam助手",
     description="现在只能根据 appid 查询信息",
     usage="/<steam|sbeam|蒸汽|蒸汽平台> <appid>",
-    config=None,
+    config=SteamConfig,
 )
 
-
-class SteamConfig(BaseModel):
-    """
-    Steam插件配置
-    """
-
-    steam_region: str = "cn"
-    steam_language: str = "zh-cn"
-
-
-_steam_config = SteamConfig.parse_obj(get_driver().config)
+_steam_config = get_plugin_config(SteamConfig)
 
 
 async def _generate_message(app_info: dict) -> UniMessage:
@@ -95,7 +85,7 @@ async def _(appid: Query[str] = AlconnaQuery("appid")):
     appid = appid.result.strip()
     if appid.isdigit():
         if appinfo := await steam.fetch_app_info(
-            appid, _steam_config.steam_language, _steam_config.steam_region
+            appid, _steam_config.language, _steam_config.region
         ):
             if appinfo.get(appid, {}).get("success", False):
                 appinfo = appinfo[appid]["data"]
@@ -117,7 +107,7 @@ _steam_link_handler = on_regex(
 async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     appid = reg[0]
     if appinfo := await steam.fetch_app_info(
-        appid, _steam_config.steam_language, _steam_config.steam_region
+        appid, _steam_config.language, _steam_config.region
     ):
         if appinfo.get(appid, {}).get("success", False):
             appinfo = appinfo[appid]["data"]

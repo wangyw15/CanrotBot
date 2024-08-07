@@ -6,7 +6,7 @@ nonebot-adapter-kaiheila
 nonebot-adapter-mirai2
 nonebot-adapter-qq
 nonebot-adapter-console
-pydantic
+pydantic>=2.0.0
 beautifulsoup4
 httpx
 jieba

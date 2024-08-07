@@ -16,12 +16,13 @@ from nonebot_plugin_alconna import (
 
 from essentials.libraries import util
 from . import search_image
+from .config import SearchImageConfig
 
 __plugin_meta__ = PluginMetadata(
     name="识图",
     description="通过 SauceNAO.com 或者 trace.moe 识图，目前仅支持QQ直接发送图片搜索",
     usage="先发送/<识图|搜图>，再发图片或者图片链接\n可选择搜图 API:\ntracemoe (trace.moe) 只能搜番剧\nsaucenao (saucenao.com) 默认",
-    config=search_image.SearchImageConfig,
+    config=SearchImageConfig,
 )
 
 
