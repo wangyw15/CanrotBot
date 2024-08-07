@@ -1,6 +1,7 @@
 import nonebot.adapters.console as console
 import nonebot.adapters.kaiheila as kook
-import nonebot.adapters.mirai2 as mirai2
+
+# import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
 import nonebot.adapters.qq as qq
@@ -27,8 +28,8 @@ def get_group_id(event: Event) -> str:
         event, ob12.GroupMessageEvent
     ):
         return "qq_" + str(event.group_id)
-    elif isinstance(event, mirai2.GroupMessage):
-        return "qq_" + str(event.sender.group.id)
+    # elif isinstance(event, mirai2.GroupMessage):
+    #     return "qq_" + str(event.sender.group.id)
     elif isinstance(event, qq.GroupRobotEvent):
         return "qqbot_" + str(event.group_openid)
     elif isinstance(event, qq.GuildMessageEvent):
@@ -76,15 +77,15 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
             user_info = await bot.get_stranger_info(user_id=event.self.user_id)
             return user_info["nickname"]
     # mirai2
-    elif isinstance(bot, mirai2.Bot):
-        if isinstance(event, mirai2.GroupMessage):
-            user_info = await bot.member_profile(
-                target=event.sender.group.id, member_id=bot.self_id
-            )
-            return user_info["nickname"]
-        elif isinstance(event, mirai2.FriendMessage):
-            user_info = bot.bot_pro_file()
-            return user_info["nickname"]
+    # elif isinstance(bot, mirai2.Bot):
+    #     if isinstance(event, mirai2.GroupMessage):
+    #         user_info = await bot.member_profile(
+    #             target=event.sender.group.id, member_id=bot.self_id
+    #         )
+    #         return user_info["nickname"]
+    #     elif isinstance(event, mirai2.FriendMessage):
+    #         user_info = bot.bot_pro_file()
+    #         return user_info["nickname"]
     # kook
     elif isinstance(bot, kook.Bot):
         if isinstance(event, kook.Event) and hasattr(event, "group_id"):
@@ -135,7 +136,7 @@ def is_qq(bot: Bot) -> bool:
     return (
         isinstance(bot, ob11.Bot)
         or isinstance(bot, ob12.Bot)
-        or isinstance(bot, mirai2.Bot)
+        # or isinstance(bot, mirai2.Bot)
     )
 
 

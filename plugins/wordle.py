@@ -1,6 +1,6 @@
 import random
 
-from nonebot import get_driver, on_command
+from nonebot import on_command, get_plugin_config
 from nonebot.adapters import Message
 from nonebot.params import Arg
 from nonebot.plugin import PluginMetadata
@@ -21,7 +21,7 @@ class WordleConfig(BaseModel):
     wordle_wrong: str = "❌"
 
 
-config = WordleConfig.parse_obj(get_driver().config)
+config = get_plugin_config(WordleConfig)
 
 # load wordle data
 WORDS: list[str] = file.read_json(path.get_asset_path() / "wordle.json")

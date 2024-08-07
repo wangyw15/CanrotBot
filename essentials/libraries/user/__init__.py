@@ -1,6 +1,7 @@
 import nonebot.adapters.console as console
 import nonebot.adapters.kaiheila as kook
-import nonebot.adapters.mirai2 as mirai2
+
+# import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
 import nonebot.adapters.qq as qq
@@ -178,15 +179,15 @@ async def get_user_name(
             user_info = await bot.get_stranger_info(user_id=event.user_id)
             return user_info["nickname"]
     # mirai2
-    elif isinstance(bot, mirai2.Bot):
-        if isinstance(event, mirai2.GroupMessage):
-            resp = await bot.member_list(target=event.sender.group.id)
-            if resp["code"] == 0 and "data" in resp:
-                for member in resp["data"]:
-                    if member["id"] == event.sender.id:
-                        return member["memberName"]
-        elif isinstance(event, mirai2.FriendMessage):
-            return event.sender.nickname
+    # elif isinstance(bot, mirai2.Bot):
+    #     if isinstance(event, mirai2.GroupMessage):
+    #         resp = await bot.member_list(target=event.sender.group.id)
+    #         if resp["code"] == 0 and "data" in resp:
+    #             for member in resp["data"]:
+    #                 if member["id"] == event.sender.id:
+    #                     return member["memberName"]
+    #     elif isinstance(event, mirai2.FriendMessage):
+    #         return event.sender.nickname
     # kook
     elif isinstance(bot, kook.Bot):
         if isinstance(event, kook.Event) and hasattr(event, "extra"):

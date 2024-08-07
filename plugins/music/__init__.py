@@ -1,7 +1,7 @@
 import re
 import typing
 
-import nonebot.adapters.mirai2 as mirai2
+# import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
 from nonebot import on_regex, on_command
@@ -35,30 +35,30 @@ async def _send_music_card(
         await bot.send(
             event, ob12.Message(f"[CQ:music,type={music_type},id={music_id}]")
         )
-    elif isinstance(bot, mirai2.Bot):
-        kind = ""
-        kind_name = ""
-        if music_type == "qq":
-            kind = "QQMusic"
-            kind_name = "QQ音乐"
-        elif music_type == "163":
-            kind = "NeteaseCloudMusic"
-            kind_name = "网易云音乐"
-        if kind:
-            info = await music.fetch_music_info(music_type, music_id)
-            if info:
-                await bot.send(
-                    event,
-                    mirai2.MessageSegment.music_share(
-                        kind=kind,
-                        title=info["title"],
-                        summary=info["artists"],
-                        jump_url=f"https://music.163.com/#/song?id={music_id}",
-                        picture_url=info["cover"],
-                        music_url=f"https://music.163.com/song/media/outer/url?id={music_id}.mp3",
-                        brief=f"[{kind_name}分享] {info['title']}",
-                    ),
-                )
+    # elif isinstance(bot, mirai2.Bot):
+    #     kind = ""
+    #     kind_name = ""
+    #     if music_type == "qq":
+    #         kind = "QQMusic"
+    #         kind_name = "QQ音乐"
+    #     elif music_type == "163":
+    #         kind = "NeteaseCloudMusic"
+    #         kind_name = "网易云音乐"
+    #     if kind:
+    #         info = await music.fetch_music_info(music_type, music_id)
+    #         if info:
+    #             await bot.send(
+    #                 event,
+    #                 mirai2.MessageSegment.music_share(
+    #                     kind=kind,
+    #                     title=info["title"],
+    #                     summary=info["artists"],
+    #                     jump_url=f"https://music.163.com/#/song?id={music_id}",
+    #                     picture_url=info["cover"],
+    #                     music_url=f"https://music.163.com/song/media/outer/url?id={music_id}.mp3",
+    #                     brief=f"[{kind_name}分享] {info['title']}",
+    #                 ),
+    #             )
 
 
 _cloudmusic_handler = on_regex(

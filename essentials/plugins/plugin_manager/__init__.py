@@ -1,6 +1,7 @@
 import nonebot.adapters.console as console
 import nonebot.adapters.kaiheila as kook
-import nonebot.adapters.mirai2 as mirai2
+
+# import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as onebot_v11
 import nonebot.adapters.onebot.v12 as onebot_v12
 import nonebot.adapters.qq as qq
@@ -138,28 +139,28 @@ async def _(
     state[PLATFORM_ID] = str(event.group_id)
 
 
-@_plugin_manager_command.assign("enable")
-@_plugin_manager_command.assign("disable")
-@_plugin_manager_command.assign("list-disable")
-async def _(
-    event: mirai2.FriendMessage,
-    state: T_State,
-):
-    state[SCOPE] = Scope.PRIVATE_CHAT
-    state[PLATFORM] = Platform.Mirai2
-    state[PLATFORM_ID] = str(event.get_user_id())
-
-
-@_plugin_manager_command.assign("enable")
-@_plugin_manager_command.assign("disable")
-@_plugin_manager_command.assign("list-disable")
-async def _(
-    event: mirai2.GroupMessage,
-    state: T_State,
-):
-    state[SCOPE] = Scope.GROUP_CHAT
-    state[PLATFORM] = Platform.Mirai2
-    state[PLATFORM_ID] = str(event.sender.group.id)
+# @_plugin_manager_command.assign("enable")
+# @_plugin_manager_command.assign("disable")
+# @_plugin_manager_command.assign("list-disable")
+# async def _(
+#     event: mirai2.FriendMessage,
+#     state: T_State,
+# ):
+#     state[SCOPE] = Scope.PRIVATE_CHAT
+#     state[PLATFORM] = Platform.Mirai2
+#     state[PLATFORM_ID] = str(event.get_user_id())
+#
+#
+# @_plugin_manager_command.assign("enable")
+# @_plugin_manager_command.assign("disable")
+# @_plugin_manager_command.assign("list-disable")
+# async def _(
+#     event: mirai2.GroupMessage,
+#     state: T_State,
+# ):
+#     state[SCOPE] = Scope.GROUP_CHAT
+#     state[PLATFORM] = Platform.Mirai2
+#     state[PLATFORM_ID] = str(event.sender.group.id)
 
 
 @_plugin_manager_command.assign("enable")
@@ -383,44 +384,44 @@ async def _(
         await matcher.finish()
 
 
-@run_preprocessor
-async def _(
-    event: mirai2.FriendMessage,
-    matcher: Matcher,
-):
-    # 不禁用自己
-    if matcher.plugin_id == __name__.split(".")[-1]:
-        return
-
-    scope = Scope.PRIVATE_CHAT
-    platform = Platform.Mirai2
-    platform_id = str(event.get_user_id())
-
-    disabled_plugins = plugin_manager.list_disabled_plugins(
-        scope, platform, platform_id
-    )
-    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
-        await matcher.finish()
-
-
-@run_preprocessor
-async def _(
-    event: mirai2.GroupMessage,
-    matcher: Matcher,
-):
-    # 不禁用自己
-    if matcher.plugin_id == __name__.split(".")[-1]:
-        return
-
-    scope = Scope.GROUP_CHAT
-    platform = Platform.Mirai2
-    platform_id = str(event.sender.group.id)
-
-    disabled_plugins = plugin_manager.list_disabled_plugins(
-        scope, platform, platform_id
-    )
-    if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
-        await matcher.finish()
+# @run_preprocessor
+# async def _(
+#     event: mirai2.FriendMessage,
+#     matcher: Matcher,
+# ):
+#     # 不禁用自己
+#     if matcher.plugin_id == __name__.split(".")[-1]:
+#         return
+#
+#     scope = Scope.PRIVATE_CHAT
+#     platform = Platform.Mirai2
+#     platform_id = str(event.get_user_id())
+#
+#     disabled_plugins = plugin_manager.list_disabled_plugins(
+#         scope, platform, platform_id
+#     )
+#     if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
+#         await matcher.finish()
+#
+#
+# @run_preprocessor
+# async def _(
+#     event: mirai2.GroupMessage,
+#     matcher: Matcher,
+# ):
+#     # 不禁用自己
+#     if matcher.plugin_id == __name__.split(".")[-1]:
+#         return
+#
+#     scope = Scope.GROUP_CHAT
+#     platform = Platform.Mirai2
+#     platform_id = str(event.sender.group.id)
+#
+#     disabled_plugins = plugin_manager.list_disabled_plugins(
+#         scope, platform, platform_id
+#     )
+#     if ALL_PLUGINS in disabled_plugins or matcher.plugin_id in disabled_plugins:
+#         await matcher.finish()
 
 
 @run_preprocessor
