@@ -21,6 +21,7 @@ cryptography
 black
 anyio
 pytest
+pytest-asyncio
 pytest-mock
 nonebug
 nonechat
