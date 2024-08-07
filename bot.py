@@ -56,6 +56,9 @@ nonebot.load_plugins(str(essentials_plugins_path))
 
 database.create_all_tables()
 
+# LLM
+nonebot.load_plugin("llm")
+
 # 普通插件
 plugins_path = (Path(__file__).parent / "plugins").resolve()
 nonebot.load_plugins(str(plugins_path))

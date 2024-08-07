@@ -1,6 +1,8 @@
 import random
 from collections import namedtuple
 
+from llm import tool
+
 Item = namedtuple("Item", ["name", "weight"])
 
 
@@ -45,3 +47,9 @@ def random_select_from_list(items: list[Item] | list[str]) -> str:
         raise ValueError("Random select failed")
 
     return item.name
+
+
+@tool.register_tool
+def random_select_for_llm(raw_items: str) -> str:
+    items = parse_items(raw_items)
+    return random_select_from_list(items)
