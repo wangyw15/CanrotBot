@@ -29,8 +29,10 @@ async def generate_kuji(
         return None, selected_kuji
 
     # generate html
-    generated_html = file.read_text(ASSET_PATH / "template.html").replace(
-        "'{DATA_HERE}'", json.dumps(selected_kuji, ensure_ascii=False)
+    generated_html = (
+        (ASSET_PATH / "template.html")
+        .read_text(encoding="utf-8")
+        .replace("'{DATA_HERE}'", json.dumps(selected_kuji, ensure_ascii=False))
     )
     img = await render_by_browser.render_html(
         generated_html,

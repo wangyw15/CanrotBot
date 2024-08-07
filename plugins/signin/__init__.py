@@ -14,7 +14,7 @@ from nonebot_plugin_alconna import (
 )
 from sqlalchemy import select, insert
 
-from essentials.libraries import user, economy, util, file, path, database
+from essentials.libraries import user, economy, util, path, database
 from . import data, fortune
 
 __plugin_meta__ = PluginMetadata(
@@ -108,7 +108,7 @@ async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
         content = today_record.content
 
         if theme == "random" and (DATA_PATH / f"{uid}.png").exists():
-            img: bytes = file.read_bytes(DATA_PATH / f"{uid}.png")
+            img: bytes = (DATA_PATH / f"{uid}.png").read_bytes()
         else:
             # 重新按内容生成图片
             img, _, _, _ = await fortune.generate_fortune(

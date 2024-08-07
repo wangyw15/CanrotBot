@@ -24,7 +24,7 @@ class WordleConfig(BaseModel):
 config = WordleConfig.parse_obj(get_driver().config)
 
 # load wordle data
-WORDS = file.read_text(path.get_asset_path() / "wordle.json")
+WORDS: list[str] = file.read_json(path.get_asset_path() / "wordle.json")
 
 
 def get_wordle_result(answer: str, guess: str) -> str:

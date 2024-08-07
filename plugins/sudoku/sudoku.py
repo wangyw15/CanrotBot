@@ -1,6 +1,6 @@
 import random
 
-from essentials.libraries import file, path
+from essentials.libraries import path
 
 SEED_LENGTH = 8
 SEED_CHARS = "0123456789abcdef"
@@ -117,7 +117,8 @@ async def generate_board_image(
     from essentials.libraries import render_by_browser
 
     template = (
-        file.read_text(ASSET_PATH / "template.html")
+        (ASSET_PATH / "template.html")
+        .read_text(encoding="utf-8")
         .replace("{SEED}", seed)
         .replace('"{BOARD}"', str(board))
     )

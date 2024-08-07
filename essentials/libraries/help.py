@@ -3,7 +3,7 @@ import json
 from nonebot import get_loaded_plugins
 from nonebot.plugin import PluginMetadata
 
-from . import file, path, render_by_browser, util
+from . import path, render_by_browser, util
 
 ASSET_PATH = path.get_asset_path("help")
 
@@ -51,7 +51,7 @@ async def generate_help_image() -> bytes:
         for _, metadata in get_plugins_metadata().items()
     ]
 
-    html = file.read_text(ASSET_PATH / "template.html")
+    html = (ASSET_PATH / "template.html").read_text(encoding="utf-8")
     return await render_by_browser.render_html(
         html.replace("'{{DATA_HERE}}'", json.dumps(metadata_obj, ensure_ascii=False)),
         ASSET_PATH,

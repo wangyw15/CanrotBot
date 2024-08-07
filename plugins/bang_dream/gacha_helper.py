@@ -1,7 +1,7 @@
 import json
 import random
 
-from essentials.libraries import file, path, render_by_browser
+from essentials.libraries import path, render_by_browser
 from .bestdori import band_character, card, gacha, util
 
 ASSET_PATH = path.get_asset_path("bang_dream")
@@ -107,8 +107,10 @@ async def generate_image(gacha_data: dict[str]) -> bytes:
     :return: 图片
     """
     data = generate_data_for_image(gacha_data)
-    generated_html = file.read_text(ASSET_PATH / "gacha.html").replace(
-        "'{{DATA_HERE}}'", json.dumps(data, ensure_ascii=False)
+    generated_html = (
+        (ASSET_PATH / "gacha.html")
+        .read_text(encoding="utf-8")
+        .replace("'{{DATA_HERE}}'", json.dumps(data, ensure_ascii=False))
     )
 
     return await render_by_browser.render_html(

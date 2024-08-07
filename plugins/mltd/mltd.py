@@ -6,7 +6,7 @@ from typing import Literal, Tuple
 
 from nonebot import get_driver
 
-from essentials.libraries import file, network, path, render_by_browser
+from essentials.libraries import network, path, render_by_browser
 
 event_type = [
     "Showtime",
@@ -88,8 +88,11 @@ def search_card(keyword: str, force_jp: bool = False) -> dict:
 
 
 async def generate_card_info_image(card: dict) -> bytes:
-    html = file.read_text(ASSET_PATH / "card_info.html")
-    html = html.replace("'{DATA_HERE}'", json.dumps(card))
+    html = (
+        (ASSET_PATH / "card_info.html")
+        .read_text(encoding="utf-8")
+        .replace("'{DATA_HERE}'", json.dumps(card))
+    )
     return await render_by_browser.render_html(
         html, ASSET_PATH, viewport={"width": 1280, "height": 1000}
     )
@@ -126,8 +129,10 @@ async def gasha() -> Tuple[bytes, list[dict]]:
     if not got_sr_or_better:
         cards[random.randint(0, 9)] = random.choice(_cards_for_gasha[3])
     # 生成图片
-    html = file.read_text(ASSET_PATH / "gasha.html").replace(
-        "'{DATA_HERE}'", json.dumps(cards)
+    html = (
+        (ASSET_PATH / "gasha.html")
+        .read_text(encoding="utf-8")
+        .replace("'{DATA_HERE}'", json.dumps(cards))
     )
     img = await render_by_browser.render_html(
         html, ASSET_PATH, viewport={"width": 1920, "height": 1080}
