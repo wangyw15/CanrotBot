@@ -1,6 +1,8 @@
 import inspect
 from typing import Callable
 
+from nonebot import logger, get_driver
+
 from .model import Tool
 
 
@@ -70,4 +72,10 @@ def register_tool(func: Callable) -> Callable:
     resolved = resolve_method(func)
     tools_description.append(resolved)
     tools_callable[resolved["function"]["name"]] = func
+    logger.info(f"Registered tool \"{resolved['function']['name']}\"")
     return func
+
+
+@get_driver().on_startup
+async def log_tool_count():
+    logger.info(f"Registered {len(tools_description)} tools")

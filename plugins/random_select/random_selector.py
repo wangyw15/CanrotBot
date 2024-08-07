@@ -51,5 +51,12 @@ def random_select_from_list(items: list[Item] | list[str]) -> str:
 
 @tool.register_tool
 def random_select_for_llm(raw_items: str) -> str:
+    """
+    从列表中随机选择一个项目，列表中的项目以逗号分隔
+
+    :param raw_items: 项目列表，列表中的项目以逗号分隔
+
+    :return: 随机选择的项目
+    """
     items = parse_items(raw_items)
-    return random_select_from_list(items)
+    return "选择了 " + random_select_from_list(items)
