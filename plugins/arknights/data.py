@@ -6,21 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from essentials.libraries import database
 
 
-class Statistics(database.Base):
-    __tablename__ = "arknights_gacha_statistics"
-
-    user_id: Mapped[int] = mapped_column(
-        BigInteger, primary_key=True, nullable=False, unique=True
-    )
-    three_stars: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    four_stars: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    five_stars: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    six_stars: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    times: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    last_six_star: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-
-
-class History(database.Base):
+class GachaHistory(database.Base):
     __tablename__ = "arknights_gacha_history"
 
     id: Mapped[int] = mapped_column(
@@ -30,4 +16,15 @@ class History(database.Base):
     time: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, default=datetime.now
     )
-    operators: Mapped[str] = mapped_column(Text, nullable=False)
+
+
+class GachaHistoryOperators(database.Base):
+    __tablename__ = "arknights_gacha_operators"
+
+    id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
+    )
+    gacha_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    operator: Mapped[str] = mapped_column(Text, nullable=False)
+    operator_id: Mapped[str] = mapped_column(Text, nullable=False)
+    rarity: Mapped[int] = mapped_column(Integer, nullable=False)

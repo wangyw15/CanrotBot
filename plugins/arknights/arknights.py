@@ -1,39 +1,20 @@
 import json
 import random
-from typing import Tuple, Any
 
 from nonebot import logger, get_driver
-from sqlalchemy import select, insert
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import select
 
 from essentials.libraries import network, path, render_by_browser, database
-from . import data
+from .data import GachaHistory, GachaHistoryOperators
+from .model import OperatorProfessions, GachaOperatorData, GachaStatistics
 
-OPERATOR_PROFESSIONS = [
-    "PIONEER",
-    "WARRIOR",
-    "SNIPER",
-    "CASTER",
-    "SUPPORT",
-    "MEDIC",
-    "SPECIAL",
-    "TANK",
-]
-INDEX_TO_RARITY = [
-    "one_star",
-    "two_stars",
-    "three_stars",
-    "four_stars",
-    "five_stars",
-    "six_stars",
-]
 LOCAL_ASSETS_PATH = path.get_asset_path("arknights")
 RESOURCE_URL = (
     "https://raw.githubusercontent.com/yuanyan3060/ArknightsGameResource/main/{}"
 )
 
 operators: dict[str, dict] = {}
-gacha_operators: dict[int, list[dict]] = {}
+gacha_operators: dict[int, list[GachaOperatorData]] = {}
 resource_version: str = ""
 
 
@@ -56,49 +37,85 @@ async def _load_data() -> None:
     )
     logger.info(f"Arknights characters count: {len(operators)}")
 
+    gacha_operator_count = 0
     # 生成寻访干员列表
-    for k, v in operators.items():
-        if v["rarity"] not in gacha_operators:
-            gacha_operators[v["rarity"]] = []
-        if v["profession"] not in OPERATOR_PROFESSIONS:
+    for operator_id, operator_data in operators.items():
+        if operator_data["rarity"] not in gacha_operators:
+            gacha_operators[operator_data["rarity"]] = []
+        if operator_data["profession"] not in OperatorProfessions:
             continue
-        if not v["itemObtainApproach"] == "招募寻访":
+        if operator_data["itemObtainApproach"] != "招募寻访":
             continue
-        gacha_operators[v["rarity"]].append(v)
-    logger.info(f"arknights gacha operators: {len(gacha_operators)}")
+        gacha_operators[operator_data["rarity"]].append(
+            {
+                "id": operator_id,
+                "name": operator_data["name"],
+                "rarity": operator_data["rarity"],
+                "profession": operator_data["profession"],
+            }
+        )
+        gacha_operator_count += 1
+    logger.info(f"Arknights gacha operators: {gacha_operator_count}")
 
 
-async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
+def get_last_six_star(uid: int) -> int:
     """
-    明日方舟十连抽卡，并自动更新统计数据
+    获取用户最近100次抽卡中抽到六星的次数
 
-    :param uid: uid
+    :param uid: 用户id
 
-    :return: 图片, 干员列表
+    :return: 次数
     """
-    # TODO 分离图片生成
-    # TODO 分离数据库操作
-    maker = sessionmaker(bind=database.get_engine(), expire_on_commit=False)
-    session = maker()
+    with database.get_session().begin() as session:
+        gacha_ids = (
+            session.execute(
+                select(GachaHistory.id)
+                .where(GachaHistory.user_id.is_(uid))
+                .order_by(GachaHistory.time.desc)
+                .limit(100)
+            )
+            .scalars()
+            .all()
+        )
 
-    # 获取当前统计数据
-    query = select(data.Statistics).where(data.Statistics.user_id.is_(uid))
-    current_statistics = session.execute(query).scalar_one_or_none()
-    if current_statistics is None:
-        session.execute(insert(data.Statistics).values(user_id=uid))
-        session.commit()
-        current_statistics = session.execute(query).scalar_one()
+        if not gacha_ids:
+            return 0
+
+        operator_rarities = (
+            session.execute(
+                select(GachaHistoryOperators.rarity)
+                .where(GachaHistoryOperators.gacha_id.in_(gacha_ids))
+                .order_by(GachaHistoryOperators.id.desc)
+            )
+            .scalars()
+            .all()
+        )
+        result = 0
+        for rarity in operator_rarities:
+            if rarity == 5:
+                break
+            result += 1
+        return result
+
+
+def generate_gacha(last_six_star: int, count: int = 10) -> list[GachaOperatorData]:
+    """
+    生成明日方舟十连寻访
+
+    :param last_six_star: 用户最近100次抽卡中抽到六星的次数
+    :param count: 寻访个数
+
+    :return: 干员列表
+    """
+    possibility_offset: float = 0.0
+    if last_six_star > 50:
+        possibility_offset = (last_six_star - 50) * 0.02
 
     # 寻访干员列表
-    selected_operators: list[dict] = []
-
-    # 六星概率提升
-    possibility_offset: float = 0
-    if current_statistics.last_six_star > 50:
-        possibility_offset = (current_statistics.last_six_star - 50) * 0.02
+    selected_operators: list[GachaOperatorData] = []
 
     # 抽卡
-    while len(selected_operators) != 10:
+    for i in range(count):
         magic_number = random.random()
         # 决定等级
         if magic_number < 0.02 + possibility_offset:
@@ -112,53 +129,112 @@ async def generate_gacha(uid: int) -> Tuple[bytes, list[dict]]:
             rarity = 2
         selected_operators.append(random.choice(gacha_operators[rarity]))
 
-    # 更新统计数据
-    # 是否抽到六星
-    got_ssr = False
+    return selected_operators
 
-    # 抽卡次数+10
-    current_statistics.times += 10
 
-    # 统计寻访结果
+def generate_gacha_text(selected_operators: list[GachaOperatorData]) -> str:
+    """
+    生成明日方舟寻访结果文本
+
+    :param selected_operators: 干员列表
+
+    :return: 文本
+    """
+    ret = "明日方舟寻访结果: \n"
     for operator in selected_operators:
-        if operator["rarity"] == 5:
-            got_ssr = True
-        setattr(
-            current_statistics,
-            INDEX_TO_RARITY[operator["rarity"]],
-            getattr(current_statistics, INDEX_TO_RARITY[operator["rarity"]]) + 1,
-        )
+        ret += f"{operator['rarity'] + 1}星 {operator['name']}\n"
+    return ret
 
-    # 上次抽到六星
-    if got_ssr:
-        current_statistics.last_six_star = 0
-    else:
-        current_statistics.last_six_star += 10
 
-    # 寻访历史
-    simple_operators: list[dict[str, Any]] = []
-    for i in selected_operators:
-        simple_operators.append({"name": i["name"], "rarity": i["rarity"]})
+async def generate_gacha_image(selected_operators: list[GachaOperatorData]) -> bytes:
+    """
+    生成明日方舟寻访结果图片
 
-    # 保存数据
-    session.execute(
-        insert(data.History).values(
-            user_id=uid, operators=json.dumps(simple_operators, ensure_ascii=False)
-        )
-    )
-    session.commit()
-    session.close()
+    :param selected_operators: 干员列表
 
+    :return: 图片
+    """
     # 生成 html
     with (LOCAL_ASSETS_PATH / "gacha.html").open("r", encoding="utf-8") as f:
         generated_html = f.read().replace(
-            "'{{DATA_HERE}}'", json.dumps(operators, ensure_ascii=False)
+            "'{{DATA_HERE}}'", json.dumps(selected_operators, ensure_ascii=False)
         )
 
     # 生成图片
-    img = await render_by_browser.render_html(
+    return await render_by_browser.render_html(
         generated_html,
         LOCAL_ASSETS_PATH,
         viewport={"width": 1000, "height": 500},
     )
-    return img, selected_operators
+
+
+def get_gacha_statistics(uid: int) -> GachaStatistics:
+    """
+    获取用户抽卡统计
+
+    :param uid: 用户id
+
+    :return: 统计数据
+    """
+    statistics: GachaStatistics = {
+        "user_id": uid,
+        "times": 0,
+        "one_star": 0,
+        "two_stars": 0,
+        "three_stars": 0,
+        "four_stars": 0,
+        "five_stars": 0,
+        "six_stars": 0,
+        "last_six_star": 0,
+    }
+    with database.get_session().begin() as session:
+        gacha_ids = (
+            session.execute(
+                select(GachaHistory.id)
+                .where(GachaHistory.user_id.is_(uid))
+                .order_by(GachaHistory.time.desc)
+                .limit(100)
+            )
+            .scalars()
+            .all()
+        )
+
+        if not gacha_ids:
+            return statistics
+
+        history_operators = (
+            session.execute(
+                select(GachaHistoryOperators)
+                .where(GachaHistoryOperators.gacha_id.in_(gacha_ids))
+                .order_by(GachaHistoryOperators.id.desc)
+            )
+            .scalars()
+            .all()
+        )
+
+        # 统计数据
+        last_six_star = 0
+        got_six = False
+        for i in history_operators:
+            # 计算上次抽到六星的次数
+            if not got_six:
+                if i.rarity == 5:
+                    got_six = True
+                else:
+                    last_six_star += 1
+            statistics["times"] += 1
+            if i.rarity == 0:
+                statistics["one_star"] += 1
+            elif i.rarity == 1:
+                statistics["two_stars"] += 1
+            elif i.rarity == 2:
+                statistics["three_stars"] += 1
+            elif i.rarity == 3:
+                statistics["four_stars"] += 1
+            elif i.rarity == 4:
+                statistics["five_stars"] += 1
+            elif i.rarity == 5:
+                statistics["six_stars"] += 1
+        statistics["last_six_star"] = last_six_star
+
+        return statistics
