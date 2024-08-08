@@ -25,4 +25,7 @@ llm = on_message(priority=100, rule=Rule(not_command, llm_enabled), block=False)
 @llm.handle()
 async def _(event: Event):
     answer = await ollama_backend.chat(event.get_plaintext())
-    await llm.finish(answer)
+    if isinstance(answer, str):
+        await llm.finish(answer)
+    else:
+        await llm.finish(await answer.export())

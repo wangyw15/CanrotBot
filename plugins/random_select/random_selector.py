@@ -1,3 +1,4 @@
+import json
 import random
 from collections import namedtuple
 
@@ -59,4 +60,4 @@ def random_select_for_llm(raw_items: str) -> str:
     :return: 随机选择的项目
     """
     items = parse_items(raw_items)
-    return "选择了 " + random_select_from_list(items)
+    return json.dumps({"selected": random_select_from_list(items)}, ensure_ascii=False)
