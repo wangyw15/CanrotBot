@@ -1,6 +1,6 @@
 from nonebot import on_message, get_plugin_config
 from nonebot.adapters import Event
-from nonebot.rule import Rule
+from nonebot.rule import Rule, to_me
 
 from .config import LLMConfig
 from .llm_backend import ollama_backend
@@ -19,7 +19,9 @@ async def llm_enabled() -> bool:
     return config.enabled
 
 
-llm = on_message(priority=100, rule=Rule(not_command, llm_enabled), block=False)
+llm = on_message(
+    priority=100, rule=Rule(not_command, llm_enabled, to_me()), block=False
+)
 
 
 @llm.handle()
