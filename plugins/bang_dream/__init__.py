@@ -180,4 +180,4 @@ async def _(gacha_id: Query[int] = Query("gacha_id")):
 
 @bang_dream_command.handle()
 async def _():
-    await bang_dream_command.finish(Text(bang_dream_alconna.get_help()))
+    await bang_dream_command.finish(bang_dream_alconna.get_help())
