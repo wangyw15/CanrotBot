@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import cast
 
 from arclet.alconna import Option, Args
 from nonebot.adapters import Event
@@ -12,7 +13,7 @@ from nonebot_plugin_alconna import (
     Text,
     Image,
 )
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, ColumnElement
 
 from essentials.libraries import user, economy, util, path, database
 from . import data, fortune
@@ -68,7 +69,9 @@ async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
     # 判断是否签到过
     all_record = (
         session.execute(
-            select(data.SigninRecord).where(data.SigninRecord.user_id.is_(uid))
+            select(data.SigninRecord).where(
+                cast(ColumnElement[bool], data.SigninRecord.user_id == uid)
+            )
         )
         .scalars()
         .all()

@@ -1,11 +1,12 @@
 from datetime import datetime, timezone, timedelta
+from typing import cast
 
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg, Arg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, ColumnElement
 
 from essentials.libraries import user, database
 from libraries import anime
@@ -72,9 +73,18 @@ async def _(args: Message = CommandArg()):
             with database.get_session().begin() as session:
                 _comment_data = (
                     session.execute(
-                        select(data.Comment).where(
-                            data.Comment.type.is_(data.CommentType.anime),
-                            data.Comment.title.is_(anilist_id),
+                        select(data.Comment)
+                        .where(
+                            cast(
+                                ColumnElement[bool],
+                                data.Comment.type == data.CommentType.anime,
+                            )
+                        )
+                        .where(
+                            cast(
+                                ColumnElement[bool],
+                                data.Comment.title == anilist_id,
+                            )
                         )
                     )
                     .scalars()

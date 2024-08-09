@@ -1,8 +1,9 @@
 import json
 import random
+from typing import cast
 
 from nonebot import logger, get_driver
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, ColumnElement
 
 from essentials.libraries import network, path, render_by_browser, database
 from .data import GachaHistory, GachaHistoryOperators
@@ -70,7 +71,7 @@ def get_last_six_star(uid: int) -> int:
         gacha_ids = (
             session.execute(
                 select(GachaHistory.id)
-                .where(GachaHistory.user_id.is_(uid))
+                .where(cast(ColumnElement[bool], GachaHistory.user_id == uid))
                 .order_by(GachaHistory.time.desc)
                 .limit(100)
             )
@@ -215,7 +216,7 @@ def get_gacha_statistics(uid: int) -> GachaStatistics:
         gacha_ids = (
             session.execute(
                 select(GachaHistory.id)
-                .where(GachaHistory.user_id.is_(uid))
+                .where(cast(ColumnElement[bool], GachaHistory.user_id == uid))
                 .order_by(GachaHistory.time.desc)
                 .limit(100)
             )

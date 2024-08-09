@@ -1,7 +1,9 @@
+from typing import cast
+
 from arclet.alconna import Alconna, Option, Args
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import on_alconna, Query, AlconnaQuery, Image
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select, insert, update, delete, ColumnElement
 
 from essentials.libraries import user, util, database
 from . import muse_dash, data
@@ -45,7 +47,9 @@ _command = on_alconna(
 @_command.assign("bind")
 async def _(target: Query[str] = AlconnaQuery("target")):
     uid = user.get_uid()
-    query = select(data.MuseDashAccount).where(data.MuseDashAccount.user_id.is_(uid))
+    query = select(data.MuseDashAccount).where(
+        cast(ColumnElement[bool], data.MuseDashAccount.user_id == uid)
+    )
     # 绑定账号
     if not uid:
         await _command.finish("你还未注册账号")
@@ -62,7 +66,9 @@ async def _(target: Query[str] = AlconnaQuery("target")):
             if session.execute(query).first() is not None:
                 session.execute(
                     update(data.MuseDashAccount)
-                    .where(data.MuseDashAccount.user_id.is_(uid))
+                    .where(
+                        cast(ColumnElement[bool], data.MuseDashAccount.user_id == uid)
+                    )
                     .values(player_name=player_name, player_id=player_id)
                 )
             else:
@@ -87,7 +93,7 @@ async def _():
         await _command.finish("你还未注册账号")
     with database.get_session().begin() as session:
         session.execute(
-            delete(data.MuseDashAccount).where(data.MuseDashAccount.user_id.is_(uid))
+            delete(data.MuseDashAccount).where(data.MuseDashAccount.user_id == uid)
         )
         session.commit()
     await _command.finish("解绑成功")
@@ -96,7 +102,7 @@ async def _():
 @_command.assign("info")
 async def _():
     uid = user.get_uid()
-    query = select(data.MuseDashAccount).where(data.MuseDashAccount.user_id.is_(uid))
+    query = select(data.MuseDashAccount).where(data.MuseDashAccount.user_id == uid)
 
     # 检查绑定信息
     if not uid:
@@ -128,9 +134,7 @@ async def _(target: Query[str] = AlconnaQuery("target", "")):
             player_id = await muse_dash.search_muse_dash_player_id(player_name)
     else:
         uid = user.get_uid()
-        query = select(data.MuseDashAccount).where(
-            data.MuseDashAccount.user_id.is_(uid)
-        )
+        query = select(data.MuseDashAccount).where(data.MuseDashAccount.user_id == uid)
 
         # 检查绑定信息
         if not uid:

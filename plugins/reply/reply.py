@@ -1,11 +1,10 @@
-import logging
 import random
-import re
+from typing import cast
 
 from nonebot.adapters import Event
-from sqlalchemy import select, update, insert
+from sqlalchemy import select, update, insert, ColumnElement
 
-from essentials.libraries import file, path, util, database
+from essentials.libraries import util, database
 from . import data
 
 UNKNOWN_RESPONSE: str = "{me}不知道怎么回答{name}喵~"
@@ -50,7 +49,9 @@ def get_reply_rate(group_id: str) -> float:
 
     :return: 概率
     """
-    query = select(data.ReplyConfig).where(data.ReplyConfig.group_id.is_(group_id))
+    query = select(data.ReplyConfig).where(
+        cast(ColumnElement[bool], data.ReplyConfig.group_id == group_id)
+    )
     with database.get_session().begin() as session:
         # 不存在配置则插入默认配置
         if session.execute(query).first() is None:
@@ -67,7 +68,9 @@ def set_reply_rate(group_id: str, rate: float) -> bool:
     :param rate: 概率
     """
     if 0 <= rate <= 1:
-        query = select(data.ReplyConfig).where(data.ReplyConfig.group_id.is_(group_id))
+        query = select(data.ReplyConfig).where(
+            cast(ColumnElement[bool], data.ReplyConfig.group_id == group_id)
+        )
         with database.get_session().begin() as session:
             if session.execute(query).first() is None:
                 session.execute(
@@ -76,7 +79,9 @@ def set_reply_rate(group_id: str, rate: float) -> bool:
             else:
                 session.execute(
                     update(data.ReplyConfig)
-                    .where(data.ReplyConfig.group_id.is_(group_id))
+                    .where(
+                        cast(ColumnElement[bool], data.ReplyConfig.group_id == group_id)
+                    )
                     .values(rate=rate)
                 )
             session.commit()
@@ -93,7 +98,9 @@ def check_reply(event: Event) -> bool:
     :return: 是否可以自动回复
     """
     if group_id := util.get_group_id(event):  # 确保是群消息
-        query = select(data.ReplyConfig).where(data.ReplyConfig.group_id.is_(group_id))
+        query = select(data.ReplyConfig).where(
+            cast(ColumnElement[bool], data.ReplyConfig.group_id == group_id)
+        )
         with database.get_session().begin() as session:
             if random.random() < get_reply_rate(group_id):
                 return True

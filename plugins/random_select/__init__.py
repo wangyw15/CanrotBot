@@ -1,3 +1,5 @@
+from typing import cast
+
 from arclet.alconna import Alconna, Args, Option
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
@@ -5,7 +7,7 @@ from nonebot_plugin_alconna import (
     AlconnaQuery,
     Query,
 )
-from sqlalchemy import select, insert, delete
+from sqlalchemy import select, insert, delete, ColumnElement
 
 from essentials.libraries import database
 from . import data, random_selector
@@ -68,7 +70,7 @@ async def _(
     with database.get_session().begin() as session:
         result = session.execute(
             select(data.RandomSelectPreset).where(
-                data.RandomSelectPreset.name.is_(preset_name)
+                cast(ColumnElement[bool], data.RandomSelectPreset.name == preset_name)
             )
         ).scalar_one_or_none()
         if result:
@@ -98,7 +100,10 @@ async def _(name: Query[str] = AlconnaQuery("name")):
     with database.get_session().begin() as session:
         result: str | None = session.execute(
             select(data.RandomSelectPreset.items).where(
-                data.RandomSelectPreset.name.is_(name.result.strip())
+                cast(
+                    ColumnElement[bool],
+                    data.RandomSelectPreset.name == name.result.strip(),
+                )
             )
         ).scalar_one_or_none()
         if not result:
@@ -111,7 +116,10 @@ async def _(name: Query[str] = AlconnaQuery("name")):
     with database.get_session().begin() as session:
         session.execute(
             delete(data.RandomSelectPreset).where(
-                data.RandomSelectPreset.name.is_(name.result.strip())
+                cast(
+                    ColumnElement[bool],
+                    data.RandomSelectPreset.name == name.result.strip(),
+                )
             )
         )
     await _command.finish(f"删除预设 {name.result.strip()} 成功")
@@ -135,7 +143,7 @@ async def _(
         with database.get_session().begin() as session:
             result: str | None = session.execute(
                 select(data.RandomSelectPreset.items).where(
-                    data.RandomSelectPreset.name.is_(raw_items)
+                    cast(ColumnElement[bool], data.RandomSelectPreset.name == raw_items)
                 )
             ).scalar_one_or_none()
             if result:

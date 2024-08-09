@@ -1,3 +1,5 @@
+from typing import cast
+
 import nonebot.adapters.console as console
 import nonebot.adapters.kaiheila as kook
 
@@ -7,10 +9,10 @@ import nonebot.adapters.onebot.v12 as ob12
 import nonebot.adapters.qq as qq
 from nonebot.adapters import Bot, Event
 from nonebot.matcher import current_bot, current_event
-from sqlalchemy import select, delete, insert
+from sqlalchemy import select, delete, insert, ColumnElement
 
-from .. import database
 from . import data, snowflake
+from .. import database
 
 
 def platform_id_user_exists(platform_id: str) -> bool:
@@ -22,7 +24,9 @@ def platform_id_user_exists(platform_id: str) -> bool:
     :return: platform_id是否已注册
     """
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.platform_id.is_(platform_id))
+        query = select(data.Bind).where(
+            cast(ColumnElement[bool], data.Bind.platform_id == platform_id)
+        )
         result = session.execute(query).first()
         return result is not None
 
@@ -36,7 +40,7 @@ def uid_user_exists(uid: int) -> bool:
     :return: uid是否存在
     """
     with database.get_session().begin() as session:
-        query = select(data.User).where(data.User.id.is_(uid))
+        query = select(data.User).where(cast(ColumnElement[bool], data.User.id == uid))
         result = session.execute(query).first()
         return result is not None
 
@@ -71,7 +75,9 @@ def unbind(platform_id: str) -> bool:
     if not platform_id_user_exists(platform_id):
         return False
     with database.get_session().begin() as session:
-        query = delete(data.Bind).where(data.Bind.platform_id.is_(platform_id))
+        query = delete(data.Bind).where(
+            cast(ColumnElement[bool], data.Bind.platform_id == platform_id)
+        )
         session.execute(query)
         session.commit()
     return True
@@ -108,7 +114,9 @@ def get_uid(platform_id: str = "") -> int:
     elif not platform_id_user_exists(platform_id):
         return 0
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.platform_id.is_(platform_id))
+        query = select(data.Bind).where(
+            cast(ColumnElement[bool], data.Bind.platform_id == platform_id)
+        )
         result = session.execute(query).scalar_one()
         return result.user_id
 
@@ -122,7 +130,9 @@ def get_bind_by_uid(uid: int) -> list[str]:
     :return: platform_id列表
     """
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.user_id.is_(uid))
+        query = select(data.Bind).where(
+            cast(ColumnElement[bool], data.Bind.user_id == uid)
+        )
         result = session.execute(query).scalars().all()
         return [_bind.platform_id for _bind in result]
 

@@ -1,9 +1,11 @@
-from sqlalchemy import select, insert, delete
+from typing import cast
+
+from sqlalchemy import select, insert, delete, ColumnElement
 
 from essentials.libraries.model import Platform
-from ...libraries import database
 from .data import PluginManagementData
 from .model import Scope
+from ...libraries import database
 
 
 def list_disabled_plugins(
@@ -13,10 +15,17 @@ def list_disabled_plugins(
         result = (
             session.execute(
                 select(PluginManagementData.plugin_id)
-                .where(PluginManagementData.scope.is_(scope))
-                .where(PluginManagementData.platform.is_(platform))
-                .where(PluginManagementData.platform_id.is_(platform_id))
-                .where(PluginManagementData.enable.is_(False))
+                .where(cast(ColumnElement[bool], PluginManagementData.scope == scope))
+                .where(
+                    cast(ColumnElement[bool], PluginManagementData.platform == platform)
+                )
+                .where(
+                    cast(
+                        ColumnElement[bool],
+                        PluginManagementData.platform_id == platform_id,
+                    )
+                )
+                .where(cast(ColumnElement[bool], PluginManagementData.enable == False))
             )
             .scalars()
             .all()
@@ -31,11 +40,22 @@ def enable_plugin(
         if plugin_id in list_disabled_plugins(scope, platform, platform_id):
             session.execute(
                 delete(PluginManagementData)
-                .where(PluginManagementData.plugin_id.is_(plugin_id))
-                .where(PluginManagementData.scope.is_(scope))
-                .where(PluginManagementData.platform.is_(platform))
-                .where(PluginManagementData.platform_id.is_(platform_id))
-                .where(PluginManagementData.enable.is_(False))
+                .where(
+                    cast(
+                        ColumnElement[bool], PluginManagementData.plugin_id == plugin_id
+                    )
+                )
+                .where(cast(ColumnElement[bool], PluginManagementData.scope == scope))
+                .where(
+                    cast(ColumnElement[bool], PluginManagementData.platform == platform)
+                )
+                .where(
+                    cast(
+                        ColumnElement[bool],
+                        PluginManagementData.platform_id == platform_id,
+                    )
+                )
+                .where(cast(ColumnElement[bool], PluginManagementData.enable == False))
             )
             session.commit()
             return True

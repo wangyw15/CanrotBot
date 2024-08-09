@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Sequence
+from typing import Sequence, cast
 
-from sqlalchemy import select, insert, update
+from sqlalchemy import select, insert, update, ColumnElement
 
-from .. import database
 from .data import Account, Transaction
+from .. import database
 
 
 def _add_transaction(
@@ -28,7 +28,9 @@ def _add_transaction(
     with database.get_session().begin() as session:
         if (
             session.execute(
-                select(data.Account).where(data.Account.user_id.is_(uid))
+                select(data.Account).where(
+                    cast(ColumnElement[bool], data.Account.user_id == uid)
+                )
             ).first()
             is None
         ):
@@ -55,7 +57,9 @@ def get_balance(uid: int) -> float:
     """
     with database.get_session().begin() as session:
         result = session.execute(
-            select(data.Account).where(data.Account.user_id.is_(uid))
+            select(data.Account).where(
+                cast(ColumnElement[bool], data.Account.user_id == uid)
+            )
         ).scalar_one_or_none()
         if result is None:
             return 0.0
@@ -71,14 +75,16 @@ def set_balance(uid: int, balance: float) -> None:
     """
     with database.get_session().begin() as session:
         result = session.execute(
-            select(data.Account).where(data.Account.user_id.is_(uid))
+            select(data.Account).where(
+                cast(ColumnElement[bool], data.Account.user_id == uid)
+            )
         ).scalar_one_or_none()
         if result is None:
             session.execute(insert(data.Account).values(user_id=uid, balance=balance))
         else:
             session.execute(
                 update(data.Account)
-                .where(data.Account.user_id.is_(uid))
+                .where(cast(ColumnElement[bool], data.Account.user_id == uid))
                 .values(balance=balance)
             )
         session.commit()
@@ -151,7 +157,7 @@ def get_transactions(uid: int, limit: int | None = None) -> Sequence[Transaction
         records = (
             session.execute(
                 select(data.Transaction)
-                .where(data.Transaction.user_id.is_(uid))
+                .where(cast(ColumnElement[bool], data.Transaction.user_id == uid))
                 .order_by(data.Transaction.time.desc())
                 .limit(limit)
             )

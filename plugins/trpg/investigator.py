@@ -1,9 +1,8 @@
 import math
 import re
-import typing
-from typing import Sequence
+from typing import Sequence, cast
 
-from sqlalchemy import select, insert, delete, update
+from sqlalchemy import select, insert, delete, update, ColumnElement
 
 from essentials.libraries import database
 from . import dice, data
@@ -95,10 +94,12 @@ def get_investigator(
     """
     with database.get_session().begin() as session:
         query = select(data.Investigator).where(
-            data.Investigator.owner_user_id.is_(uid)
+            cast(ColumnElement[bool], data.Investigator.owner_user_id == uid)
         )
         if investigator_id:
-            query = query.where(data.Investigator.id.is_(investigator_id))
+            query = query.where(
+                cast(ColumnElement[bool], data.Investigator.id == investigator_id)
+            )
         return session.execute(query).scalars().all()
 
 
@@ -118,8 +119,14 @@ def set_selected_investigator(
         if (
             session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id.is_(user_id))
-                .where(data.Investigator.id.is_(investigator_id))
+                .where(
+                    cast(
+                        ColumnElement[bool], data.Investigator.owner_user_id == user_id
+                    )
+                )
+                .where(
+                    cast(ColumnElement[bool], data.Investigator.id == investigator_id)
+                )
             ).first()
             is None
         ):
@@ -127,8 +134,10 @@ def set_selected_investigator(
         if (
             session.execute(
                 select(data.PlayerData)
-                .where(data.PlayerData.user_id.is_(user_id))
-                .where(data.PlayerData.platform_id.is_(group_id))
+                .where(cast(ColumnElement[bool], data.PlayerData.user_id == user_id))
+                .where(
+                    cast(ColumnElement[bool], data.PlayerData.platform_id == group_id)
+                )
             ).first()
             is None
         ):
@@ -142,8 +151,10 @@ def set_selected_investigator(
         else:
             session.execute(
                 update(data.PlayerData)
-                .where(data.PlayerData.user_id.is_(user_id))
-                .where(data.PlayerData.platform_id.is_(group_id))
+                .where(cast(ColumnElement[bool], data.PlayerData.user_id == user_id))
+                .where(
+                    cast(ColumnElement[bool], data.PlayerData.platform_id == group_id)
+                )
                 .values(selected_investigator_id=investigator_id)
             )
         session.commit()
@@ -162,14 +173,23 @@ def get_selected_investigator(user_id: int, group_id: str) -> data.Investigator 
     with database.get_session().begin() as session:
         selected = session.execute(
             select(data.PlayerData)
-            .where(data.PlayerData.user_id.is_(user_id))
-            .where(data.PlayerData.platform_id.is_(group_id))
+            .where(cast(ColumnElement[bool], data.PlayerData.user_id == user_id))
+            .where(cast(ColumnElement[bool], data.PlayerData.platform_id == group_id))
         ).scalar_one_or_none()
         if selected is not None:
             return session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id.is_(user_id))
-                .where(data.Investigator.id.is_(selected.selected_investigator_id))
+                .where(
+                    cast(
+                        ColumnElement[bool], data.Investigator.owner_user_id == user_id
+                    )
+                )
+                .where(
+                    cast(
+                        ColumnElement[bool],
+                        data.Investigator.id == selected.selected_investigator_id,
+                    )
+                )
             ).scalar_one_or_none()
 
 
@@ -186,16 +206,24 @@ def delete_investigator(user_id: int, investigator_id: str) -> bool:
         if (
             session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id.is_(user_id))
-                .where(data.Investigator.id.is_(investigator_id))
+                .where(
+                    cast(
+                        ColumnElement[bool], data.Investigator.owner_user_id == user_id
+                    )
+                )
+                .where(
+                    cast(ColumnElement[bool], data.Investigator.id == investigator_id)
+                )
             ).first()
             is None
         ):
             return False
         session.execute(
             delete(data.Investigator)
-            .where(data.Investigator.owner_user_id.is_(user_id))
-            .where(data.Investigator.id.is_(investigator_id))
+            .where(
+                cast(ColumnElement[bool], data.Investigator.owner_user_id == user_id)
+            )
+            .where(cast(ColumnElement[bool], data.Investigator.id == investigator_id))
         )
         session.commit()
         return True
@@ -214,8 +242,14 @@ def check_investigator_id(user_id: int, investigator_id: str) -> bool:
         return (
             session.execute(
                 select(data.Investigator)
-                .where(data.Investigator.owner_user_id.is_(user_id))
-                .where(data.Investigator.id.is_(investigator_id))
+                .where(
+                    cast(
+                        ColumnElement[bool], data.Investigator.owner_user_id == user_id
+                    )
+                )
+                .where(
+                    cast(ColumnElement[bool], data.Investigator.id == investigator_id)
+                )
             ).first()
             is not None
         )
@@ -251,7 +285,7 @@ def generate_investigator(raw: str) -> data.Investigator:
     return investigator
 
 
-def get_success_rank(value: int, target: int) -> typing.Tuple[int, str]:
+def get_success_rank(value: int, target: int) -> tuple[int, str]:
     """
     获取成功等级
 
@@ -275,7 +309,7 @@ def get_success_rank(value: int, target: int) -> typing.Tuple[int, str]:
 
 def property_check(
     user_id: int, group_id: str, property_name: str, value: int | None = None
-) -> typing.Tuple[str, int, int] | None:
+) -> tuple[str, int, int] | None:
     """
     属性检定
 
@@ -296,7 +330,7 @@ def property_check(
     return None
 
 
-def calculate_db_physique(user_id: int, group_id: str) -> typing.Tuple[int, int] | None:
+def calculate_db_physique(user_id: int, group_id: str) -> tuple[int, int] | None:
     """
     计算伤害加值和体格
 
