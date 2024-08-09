@@ -21,7 +21,7 @@ from .config import BangDreamConfig
 
 # TODO 记得改；模拟抽卡、查卡、点歌、签到主题、活动助手等
 
-bang_dream_alconna = Alconna(
+bang_dream_command = Alconna(
     "bang_dream",
     Subcommand(
         "comic",
@@ -46,13 +46,13 @@ bang_dream_alconna = Alconna(
 
 __plugin_meta__ = PluginMetadata(
     name="Bang Dream",
-    description=bang_dream_alconna.meta.description,
-    usage=bang_dream_alconna.get_help(),
+    description=bang_dream_command.meta.description,
+    usage=bang_dream_command.get_help(),
     config=BangDreamConfig,
 )
 
-bang_dream_command = on_alconna(
-    bang_dream_alconna,
+bang_dream_matcher = on_alconna(
+    bang_dream_command,
     aliases={"bangdream", "邦邦"},
     block=True,
 )
@@ -60,7 +60,7 @@ bang_dream_command = on_alconna(
 config = get_plugin_config(BangDreamConfig)
 
 
-@bang_dream_command.assign("comic")
+@bang_dream_matcher.assign("comic")
 async def _(comic_query: Query[str] = Query("comic_query", "random")):
     comic_query = comic_query.result.strip()
     comics = await bestdori.comic.get_comic_list()
@@ -86,7 +86,7 @@ async def _(comic_query: Query[str] = Query("comic_query", "random")):
                     best_match = ratio
                     comic_id = _comic_id
     if comic_id is None or comic_id not in comics:
-        await bang_dream_command.finish("没有找到这个漫画喵")
+        await bang_dream_matcher.finish("没有找到这个漫画喵")
     title, _ = bestdori.util.get_content_by_language(
         comics[comic_id]["title"], config.default_language
     )
@@ -97,10 +97,10 @@ async def _(comic_query: Query[str] = Query("comic_query", "random")):
         msg.append(Image(raw=result[0]))
     else:
         msg.append(Text(f"\nhttps://bestdori.com/info/comics/{comic_id}"))
-    await bang_dream_command.finish(msg)
+    await bang_dream_matcher.finish(msg)
 
 
-@bang_dream_command.assign("song")
+@bang_dream_matcher.assign("song")
 async def _(song_query: Query[str] = Query("song_query", "random")):
     song_query = song_query.result.strip()
     songs = await bestdori.song.get_song_list()
@@ -120,10 +120,10 @@ async def _(song_query: Query[str] = Query("song_query", "random")):
                     best_match = ratio
                     song_id = _song_id
     if song_id is None or song_id not in songs:
-        await bang_dream_command.finish("没有找到这首歌喵")
+        await bang_dream_matcher.finish("没有找到这首歌喵")
     info = await bestdori.song.get_song_info(song_id)
     # TODO 封面（难做
-    await bang_dream_command.send(
+    await bang_dream_matcher.send(
         f'{bestdori.util.get_content_by_language(info["musicTitle"], config.default_language)[0]}\n'
         f'作词：{bestdori.util.get_content_by_language(info["lyricist"], config.default_language)[0]}\n'
         f'作曲：{bestdori.util.get_content_by_language(info["composer"], config.default_language)[0]}\n'
@@ -132,23 +132,23 @@ async def _(song_query: Query[str] = Query("song_query", "random")):
     )
     # 发送信息
     if await util.can_send_segment(Voice):
-        await bang_dream_command.send(
+        await bang_dream_matcher.send(
             Voice(url=await bestdori.song.get_song_url(song_id))
         )
-    await bang_dream_command.finish()
+    await bang_dream_matcher.finish()
 
 
-@bang_dream_command.assign("gacha")
+@bang_dream_matcher.assign("gacha")
 async def _(gacha_id: Query[int] = Query("gacha_id")):
     # TODO 卡池列表
     uid = user.get_uid()
     if not uid:
-        await bang_dream_command.finish("你还没有账号喵~")
+        await bang_dream_matcher.finish("你还没有账号喵~")
 
     # 付钱
     if not economy.pay(uid, 25, "邦邦十连"):
-        await bang_dream_command.finish("你的余额不足喵~")
-    await bang_dream_command.send(
+        await bang_dream_matcher.finish("你的余额不足喵~")
+    await bang_dream_matcher.send(
         "你的二十五个胡萝卜片我就收下了~\n一緒にキラキラドキドキしまう！"
     )
 
@@ -175,9 +175,9 @@ async def _(gacha_id: Query[int] = Query("gacha_id")):
     )
     if await util.can_send_segment(Image):
         msg.append(Image(raw=await gacha_helper.generate_image(gacha_data)))
-    await bang_dream_command.finish(msg)
+    await bang_dream_matcher.finish(msg)
 
 
-@bang_dream_command.handle()
+@bang_dream_matcher.handle()
 async def _():
-    await bang_dream_command.finish(bang_dream_alconna.get_help())
+    await bang_dream_matcher.finish(bang_dream_command.get_help())
