@@ -1,41 +1,39 @@
-from arclet.alconna import Alconna, Option
+from arclet.alconna import Alconna, Option, CommandMeta
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import on_alconna, UniMessage, Image, Text
 
 from essentials.libraries import user, economy, util
 from . import arknights, data
 
+arknights_alconna = Alconna(
+    "明日方舟",
+    Option("十连", alias=["gacha", "抽卡"], help_text="来一发十连！"),
+    Option(
+        "抽卡记录",
+        alias=[
+            "gachainfo",
+            "抽卡统计",
+            "抽卡历史",
+            "十连历史",
+            "十连统计",
+            "寻访历史",
+            "寻访统计",
+        ],
+        help_text="查看抽卡记录",
+    ),
+    meta=CommandMeta(description="现在只做了抽卡，未来会加的（画饼"),
+)
+
 __plugin_meta__ = PluginMetadata(
     name="明日方舟助手",
-    description="现在只做了抽卡，未来会加的（画饼",
-    usage=(
-        "/<arknights|粥|舟|方舟|明日方舟> <命令>\n"
-        + "命令列表:\n"
-        + "十连: 一发十连！\n"
-        + "抽卡记录: 查看抽卡记录"
-    ),
+    description=arknights_alconna.meta.description,
+    usage=arknights_alconna.get_help(),
     config=None,
 )
 
 
 _command = on_alconna(
-    Alconna(
-        "明日方舟",
-        Option("十连", alias=["gacha", "抽卡"], help_text="来一发十连！"),
-        Option(
-            "抽卡记录",
-            alias=[
-                "gachainfo",
-                "抽卡统计",
-                "抽卡历史",
-                "十连历史",
-                "十连统计",
-                "寻访历史",
-                "寻访统计",
-            ],
-            help_text="查看抽卡记录",
-        ),
-    ),
+    arknights_alconna,
     aliases={"arknights"},
     block=True,
 )
@@ -96,4 +94,4 @@ async def _():
 
 @_command.handle()
 async def _():
-    await _command.finish(__plugin_meta__.usage)
+    await _command.finish(arknights_alconna.get_help())
