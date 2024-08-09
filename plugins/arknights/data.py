@@ -25,6 +25,6 @@ class GachaHistoryOperators(database.Base):
         Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
     )
     gacha_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    operator: Mapped[str] = mapped_column(Text, nullable=False)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
     operator_id: Mapped[str] = mapped_column(Text, nullable=False)
     rarity: Mapped[int] = mapped_column(Integer, nullable=False)

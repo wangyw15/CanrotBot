@@ -2,7 +2,7 @@ import json
 import random
 
 from nonebot import logger, get_driver
-from sqlalchemy import select
+from sqlalchemy import insert, select
 
 from essentials.libraries import network, path, render_by_browser, database
 from .data import GachaHistory, GachaHistoryOperators
@@ -166,6 +166,30 @@ async def generate_gacha_image(selected_operators: list[GachaOperatorData]) -> b
         LOCAL_ASSETS_PATH,
         viewport={"width": 1000, "height": 500},
     )
+
+
+def save_gacha_history(uid: int, selected_operators: list[GachaOperatorData]) -> None:
+    """
+    保存抽卡历史
+
+    :param uid: 用户id
+    :param selected_operators: 干员列表
+    """
+    with database.get_session().begin() as session:
+        gacha_history = GachaHistory(user_id=uid)
+        session.add(gacha_history)
+        session.flush()
+
+        for operator in selected_operators:
+            session.execute(
+                insert(GachaHistoryOperators).values(
+                    gacha_id=gacha_history.id,
+                    name=operator["name"],
+                    operator_id=operator["id"],
+                    rarity=operator["rarity"],
+                )
+            )
+        session.commit()
 
 
 def get_gacha_statistics(uid: int) -> GachaStatistics:

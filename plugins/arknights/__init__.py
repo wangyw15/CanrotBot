@@ -56,6 +56,7 @@ async def _():
 
     # 寻访
     operators = arknights.generate_gacha(arknights.get_last_six_star(uid))
+    arknights.save_gacha_history(uid, operators)
 
     # 生成消息
     msg = UniMessage()
