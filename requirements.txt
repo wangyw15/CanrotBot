@@ -15,7 +15,6 @@ playwright
 tencentcloud-sdk-python
 sqlalchemy
 nonebot-plugin-alconna
-pymysql
 cryptography
 black
 anyio
