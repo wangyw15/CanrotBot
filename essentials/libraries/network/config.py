@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class NetworkConfig(BaseModel):
-    proxy: str = ""  # 代理连接
+    proxy: str = Field(default="")  # 代理连接

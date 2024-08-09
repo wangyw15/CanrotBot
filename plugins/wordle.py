@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.params import Arg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from essentials.libraries import file, path
 
@@ -16,9 +16,9 @@ __plugin_meta__ = PluginMetadata(
 
 # config
 class WordleConfig(BaseModel):
-    wordle_correct: str = "⭕"
-    wordle_medium: str = "❔"
-    wordle_wrong: str = "❌"
+    wordle_correct: str = Field(default="⭕")
+    wordle_medium: str = Field(default="❔")
+    wordle_wrong: str = Field(default="❌")
 
 
 config = get_plugin_config(WordleConfig)
