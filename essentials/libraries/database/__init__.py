@@ -1,12 +1,11 @@
-from nonebot import get_driver
-
+from nonebot import get_driver, get_plugin_config
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from .model import Base
 from .config import DatabaseConfig
+from .model import Base
 
-config = DatabaseConfig()
+config = get_plugin_config(DatabaseConfig)
 engine = create_engine(config.connection_string)
 
 
