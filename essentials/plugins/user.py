@@ -19,8 +19,8 @@ __plugin_meta__ = PluginMetadata(
         "操作:\n"
         "register|reg|注册: 注册一个新用户\n"
         "info|信息: 查看用户信息\n"
-        "bind|绑定 <puid>: 绑定一个puid\n"
-        "unbind|解绑|解除绑定|取消绑定 <puid>: 解除绑定puid"
+        "bind|绑定 <platform_id>: 绑定一个platform_id\n"
+        "unbind|解绑|解除绑定|取消绑定 <platform_id>: 解除绑定platform_id"
     ),
     config=None,
 )
@@ -30,8 +30,10 @@ _user_command = on_alconna(
         "user",
         Subcommand("info", alias={"信息"}),
         Subcommand("register", alias={"reg", "注册"}),
-        Subcommand("bind", Args["puid", str], alias={"绑定"}),
-        Subcommand("unbind", Args["puid", str], alias={"解绑", "解除绑定", "取消绑定"}),
+        Subcommand("bind", Args["platform_id", str], alias={"绑定"}),
+        Subcommand(
+            "unbind", Args["platform_id", str], alias={"解绑", "解除绑定", "取消绑定"}
+        ),
     ),
     aliases={"用户", "我"},
     block=True,
@@ -40,40 +42,40 @@ _user_command = on_alconna(
 
 @_user_command.assign("info")
 async def _(event: Event):
-    puid = event.get_user_id()
-    if not user.puid_user_exists(puid):
-        await _user_command.finish(f"puid: {puid}\n未注册")
+    platform_id = event.get_user_id()
+    if not user.platform_id_user_exists(platform_id):
+        await _user_command.finish(f"platform_id: {platform_id}\n未注册")
     else:
         uid = user.get_uid()
-        msg = f"当前 puid: {puid}\nuid: {uid}\n已绑定的 puid:\n"
+        msg = f"当前 platform_id: {platform_id}\nuid: {uid}\n已绑定的 platform_id:\n"
         msg += "\n".join(user.get_bind_by_uid(uid))
         await _user_command.finish(msg)
 
 
 @_user_command.assign("register")
 async def _(event: Event):
-    puid = event.get_user_id()
-    if user.puid_user_exists(puid):
+    platform_id = event.get_user_id()
+    if user.platform_id_user_exists(platform_id):
         await _user_command.finish("你已经注册过了")
     else:
-        uid = user.register(puid)
+        uid = user.register(platform_id)
         await _user_command.finish(f"注册成功，你的 UID 是 {uid}")
 
 
 @_user_command.assign("bind")
-async def _(puid: Query[str] = Query("puid")):
-    if user.puid_user_exists(puid.result):
-        await _user_command.finish("此 puid 已经绑定或注册过了")
+async def _(platform_id: Query[str] = Query("platform_id")):
+    if user.platform_id_user_exists(platform_id.result):
+        await _user_command.finish("此 platform_id 已经绑定或注册过了")
     uid = user.get_uid()
-    user.bind(puid.result, uid)
+    user.bind(platform_id.result, uid)
     await _user_command.finish("绑定成功")
 
 
 @_user_command.assign("unbind")
-async def _(puid: Query[str] = Query("puid")):
-    if not user.puid_user_exists(puid.result):
-        await _user_command.finish("此 puid 还未绑定或注册")
-    user.unbind(puid.result)
+async def _(platform_id: Query[str] = Query("platform_id")):
+    if not user.platform_id_user_exists(platform_id.result):
+        await _user_command.finish("此 platform_id 还未绑定或注册")
+    user.unbind(platform_id.result)
     await _user_command.finish("解绑成功")
 
 

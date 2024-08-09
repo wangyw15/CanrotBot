@@ -128,7 +128,7 @@ def set_selected_investigator(
             session.execute(
                 select(data.PlayerData)
                 .where(data.PlayerData.user_id.is_(user_id))
-                .where(data.PlayerData.group_id.is_(group_id))
+                .where(data.PlayerData.platform_id.is_(group_id))
             ).first()
             is None
         ):
@@ -143,7 +143,7 @@ def set_selected_investigator(
             session.execute(
                 update(data.PlayerData)
                 .where(data.PlayerData.user_id.is_(user_id))
-                .where(data.PlayerData.group_id.is_(group_id))
+                .where(data.PlayerData.platform_id.is_(group_id))
                 .values(selected_investigator_id=investigator_id)
             )
         session.commit()
@@ -163,7 +163,7 @@ def get_selected_investigator(user_id: int, group_id: str) -> data.Investigator 
         selected = session.execute(
             select(data.PlayerData)
             .where(data.PlayerData.user_id.is_(user_id))
-            .where(data.PlayerData.group_id.is_(group_id))
+            .where(data.PlayerData.platform_id.is_(group_id))
         ).scalar_one_or_none()
         if selected is not None:
             return session.execute(

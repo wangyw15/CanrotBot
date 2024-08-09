@@ -19,6 +19,6 @@ class Bind(database.Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
     )
-    platform_user_id: Mapped[str] = mapped_column(Text, nullable=False)
+    platform_id: Mapped[str] = mapped_column(Text, nullable=False)
     user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     extra: Mapped[str] = mapped_column(Text, nullable=True)

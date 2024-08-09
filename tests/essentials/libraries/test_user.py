@@ -6,8 +6,8 @@ from typing import Callable
 
 TEST_UID1 = (1 << 62) + 1
 TEST_UID2 = (1 << 62) + 2
-TEST_PUID1 = "TEST_PUID1"
-TEST_PUID2 = "TEST_PUID2"
+TEST_PLATFORM_ID1 = "TEST_PLATFORM_ID1"
+TEST_PLATFORM_ID2 = "TEST_PLATFORM_ID2"
 
 
 def test_snowflake_generate_id() -> None:
@@ -26,38 +26,40 @@ def test_create_user_tables(db_initialize: Callable) -> None:
     assert user.data.Bind.__tablename__ in Base.metadata.tables
 
 
-def test_register_with_non_bind_puid(db_initialize: Callable) -> None:
+def test_register_with_non_bind_platform_id(db_initialize: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    assert user.register(TEST_PUID1) > 0
+    assert user.register(TEST_PLATFORM_ID1) > 0
 
 
-def test_register_with_bind_puid(db_initialize: Callable) -> None:
+def test_register_with_bind_platform_id(db_initialize: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    assert user.register(TEST_PUID1) > 0
-    assert user.register(TEST_PUID1) == 0
+    assert user.register(TEST_PLATFORM_ID1) > 0
+    assert user.register(TEST_PLATFORM_ID1) == 0
 
 
-def test_puid_user_exists_with_bind_puid(db_initialize: Callable) -> None:
+def test_platform_id_user_exists_with_bind_platform_id(db_initialize: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    assert user.register(TEST_PUID1) > 0
-    assert user.puid_user_exists(TEST_PUID1)
+    assert user.register(TEST_PLATFORM_ID1) > 0
+    assert user.platform_id_user_exists(TEST_PLATFORM_ID1)
 
 
-def test_puid_user_exists_with_non_bind_puid(db_initialize: Callable) -> None:
+def test_platform_id_user_exists_with_non_bind_platform_id(
+    db_initialize: Callable,
+) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    assert not user.puid_user_exists(TEST_PUID1)
+    assert not user.platform_id_user_exists(TEST_PLATFORM_ID1)
 
 
 def test_uid_user_exists_with_existing_uid(db_initialize: Callable) -> None:
@@ -65,7 +67,7 @@ def test_uid_user_exists_with_existing_uid(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    registered_uid = user.register(TEST_PUID1)
+    registered_uid = user.register(TEST_PLATFORM_ID1)
     assert registered_uid > 0
     assert user.uid_user_exists(registered_uid)
 
@@ -78,14 +80,16 @@ def test_uid_user_exists_with_non_existing_uid(db_initialize: Callable) -> None:
     assert not user.uid_user_exists(TEST_UID1)
 
 
-def test_bind_with_existing_uid_and_non_bind_puid(db_initialize: Callable) -> None:
+def test_bind_with_existing_uid_and_non_bind_platform_id(
+    db_initialize: Callable,
+) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    registered_uid = user.register(TEST_PUID1)
+    registered_uid = user.register(TEST_PLATFORM_ID1)
     assert registered_uid > 0
-    assert user.bind(TEST_PUID2, registered_uid)
+    assert user.bind(TEST_PLATFORM_ID2, registered_uid)
 
 
 def test_bind_with_non_existing_uid(db_initialize: Callable) -> None:
@@ -93,65 +97,67 @@ def test_bind_with_non_existing_uid(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    assert not user.bind(TEST_PUID1, TEST_UID1)
+    assert not user.bind(TEST_PLATFORM_ID1, TEST_UID1)
 
 
-def test_bind_with_existing_uid_and_bind_puid(db_initialize: Callable) -> None:
+def test_bind_with_existing_uid_and_bind_platform_id(db_initialize: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    registered_uid = user.register(TEST_PUID1)
+    registered_uid = user.register(TEST_PLATFORM_ID1)
     assert registered_uid > 0
-    assert not user.bind(TEST_PUID1, registered_uid)
+    assert not user.bind(TEST_PLATFORM_ID1, registered_uid)
 
 
-def test_unbind_with_bind_puid(db_initialize: Callable) -> None:
+def test_unbind_with_bind_platform_id(db_initialize: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    registered_uid = user.register(TEST_PUID1)
+    registered_uid = user.register(TEST_PLATFORM_ID1)
     assert registered_uid > 0
-    assert user.bind(TEST_PUID2, registered_uid)
-    assert user.unbind(TEST_PUID2)
+    assert user.bind(TEST_PLATFORM_ID2, registered_uid)
+    assert user.unbind(TEST_PLATFORM_ID2)
 
 
-def test_unbind_with_non_bind_puid(db_initialize: Callable) -> None:
+def test_unbind_with_non_bind_platform_id(db_initialize: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    assert not user.unbind(TEST_PUID1)
+    assert not user.unbind(TEST_PLATFORM_ID1)
 
 
-def test_get_uid_with_bind_puid(db_initialize: Callable) -> None:
+def test_get_uid_with_bind_platform_id(db_initialize: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    registered_uid = user.register(TEST_PUID1)
+    registered_uid = user.register(TEST_PLATFORM_ID1)
     assert registered_uid > 0
-    assert user.get_uid(TEST_PUID1) == registered_uid
+    assert user.get_uid(TEST_PLATFORM_ID1) == registered_uid
 
 
-def test_get_uid_with_non_bind_puid(db_initialize: Callable) -> None:
+def test_get_uid_with_non_bind_platform_id(db_initialize: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    assert user.get_uid(TEST_PUID1) == 0
+    assert user.get_uid(TEST_PLATFORM_ID1) == 0
 
 
 @pytest.mark.asyncio
-async def test_get_uid_with_auto_puid(db_initialize: Callable, create_event: Callable) -> None:
+async def test_get_uid_with_auto_platform_id(
+    db_initialize: Callable, create_event: Callable
+) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    registered_uid = user.register(TEST_PUID1)
+    registered_uid = user.register(TEST_PLATFORM_ID1)
     assert registered_uid > 0
-    current_event.set(create_event(user_id=TEST_PUID1))
+    current_event.set(create_event(user_id=TEST_PLATFORM_ID1))
     assert user.get_uid() == registered_uid
 
 
@@ -160,10 +166,13 @@ def test_get_bind_by_uid_with_existing_uid(db_initialize: Callable) -> None:
 
     db_initialize()
 
-    registered_uid = user.register(TEST_PUID1)
+    registered_uid = user.register(TEST_PLATFORM_ID1)
     assert registered_uid > 0
-    assert user.bind(TEST_PUID2, registered_uid)
-    assert user.get_bind_by_uid(registered_uid) == [TEST_PUID1, TEST_PUID2]
+    assert user.bind(TEST_PLATFORM_ID2, registered_uid)
+    assert user.get_bind_by_uid(registered_uid) == [
+        TEST_PLATFORM_ID1,
+        TEST_PLATFORM_ID2,
+    ]
 
 
 def test_get_bind_by_uid_with_non_existing_uid(db_initialize: Callable) -> None:
@@ -174,23 +183,28 @@ def test_get_bind_by_uid_with_non_existing_uid(db_initialize: Callable) -> None:
     assert user.get_bind_by_uid(TEST_UID1) == []
 
 
-def test_get_bind_by_puid_with_bind_puid(db_initialize: Callable) -> None:
+def test_get_bind_by_platform_id_with_bind_platform_id(db_initialize: Callable) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    registered_uid = user.register(TEST_PUID1)
+    registered_uid = user.register(TEST_PLATFORM_ID1)
     assert registered_uid > 0
-    assert user.bind(TEST_PUID2, registered_uid)
-    assert user.get_bind_by_puid(TEST_PUID2) == [TEST_PUID1, TEST_PUID2]
+    assert user.bind(TEST_PLATFORM_ID2, registered_uid)
+    assert user.get_bind_by_platform_id(TEST_PLATFORM_ID2) == [
+        TEST_PLATFORM_ID1,
+        TEST_PLATFORM_ID2,
+    ]
 
 
-def test_get_bind_by_puid_with_non_bind_puid(db_initialize: Callable) -> None:
+def test_get_bind_by_platform_id_with_non_bind_platform_id(
+    db_initialize: Callable,
+) -> None:
     from essentials.libraries import user
 
     db_initialize()
 
-    assert user.get_bind_by_puid(TEST_PUID1) == []
+    assert user.get_bind_by_platform_id(TEST_PLATFORM_ID1) == []
 
 
 @pytest.mark.asyncio
@@ -205,7 +219,7 @@ async def test_get_user_name_with_default_parameters(
         bot = ctx.create_bot()
 
         current_bot.set(bot)
-        current_event.set(create_event(user_id=TEST_PUID1))
+        current_event.set(create_event(user_id=TEST_PLATFORM_ID1))
 
         assert await user.get_user_name() is None
 
@@ -221,7 +235,7 @@ async def test_get_user_name_with_bot_provided(
     async with app.test_matcher() as ctx:
         bot = ctx.create_bot()
 
-        current_event.set(create_event(user_id=TEST_PUID1))
+        current_event.set(create_event(user_id=TEST_PLATFORM_ID1))
 
         assert await user.get_user_name(bot=bot) is None
 
@@ -239,7 +253,10 @@ async def test_get_user_name_with_event_provided(
 
         current_bot.set(bot)
 
-        assert await user.get_user_name(event=create_event(user_id=TEST_PUID1)) is None
+        assert (
+            await user.get_user_name(event=create_event(user_id=TEST_PLATFORM_ID1))
+            is None
+        )
 
 
 @pytest.mark.asyncio
@@ -253,7 +270,12 @@ async def test_get_user_name_with_bot_and_event_provided(
     async with app.test_matcher() as ctx:
         bot = ctx.create_bot()
 
-        assert await user.get_user_name(bot=bot, event=create_event(user_id=TEST_PUID1)) is None
+        assert (
+            await user.get_user_name(
+                bot=bot, event=create_event(user_id=TEST_PLATFORM_ID1)
+            )
+            is None
+        )
 
 
 # TODO 完善各平台get_user_name测试

@@ -60,7 +60,7 @@ async def _(bot: Bot, event: Event):
             with database.get_session().begin() as session:
                 session.execute(
                     delete(data.Subscribers).where(
-                        data.Subscribers.group_id == gid,  # type:ignore
+                        data.Subscribers.platform_id == gid,  # type:ignore
                         data.Subscribers.bot == bot_id,  # type:ignore
                     )
                 )
@@ -89,7 +89,7 @@ async def _():
                 bot = get_bot(str(subscriber.bot))
                 await bot.call_api(
                     "send_group_msg",
-                    group_id=subscriber.group_id,
+                    group_id=subscriber.platform_id,
                     message=f"[CQ:image,file={_img_url}]",
                 )
             except KeyError:

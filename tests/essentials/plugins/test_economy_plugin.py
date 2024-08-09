@@ -5,15 +5,13 @@ from nonebug import App
 from pytest_mock import MockerFixture
 
 TEST_UID = (1 << 62) + 1
-TEST_PUID1 = "TEST_PUID1"
-TEST_PUID2 = "TEST_PUID2"
+TEST_PLATFORM_ID1 = "TEST_PLATFORM_ID1"
+TEST_PLATFORM_ID2 = "TEST_PLATFORM_ID2"
 
 
 @pytest.mark.asyncio
 async def test_economy_plugin_help(
-    app: App,
-    create_bot: Callable,
-    create_event: Callable
+    app: App, create_bot: Callable, create_event: Callable
 ):
     from essentials.plugins.economy import _economy_command, __plugin_meta__
 
@@ -30,106 +28,102 @@ async def test_economy_plugin_help(
 
 @pytest.mark.asyncio
 async def test_economy_plugin_info_not_registered(
-    app: App,
-    db_initialize: Callable,
-    create_bot: Callable,
-    create_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
     from essentials.plugins.economy import _economy_command
 
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
-        event = create_event(message="economy info", user_id=TEST_PUID1)
+        event = create_event(message="economy info", user_id=TEST_PLATFORM_ID1)
 
         ctx.receive_event(bot, event)
         ctx.should_pass_permission()
         ctx.should_pass_rule()
-        ctx.should_call_send(event, f"puid: {TEST_PUID1}\n未注册")
+        ctx.should_call_send(event, f"platform_id: {TEST_PLATFORM_ID1}\n未注册")
         ctx.should_finished()
 
 
 @pytest.mark.asyncio
 async def test_economy_plugin_info_registered(
-    app: App,
-    db_initialize: Callable,
-    create_bot: Callable,
-    create_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
     from essentials.plugins.economy import _economy_command
     from essentials.libraries import user
 
     db_initialize()
 
-    uid = user.register(TEST_PUID1)
+    uid = user.register(TEST_PLATFORM_ID1)
 
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
-        event = create_event(message="economy info", user_id=TEST_PUID1)
+        event = create_event(message="economy info", user_id=TEST_PLATFORM_ID1)
 
         ctx.receive_event(bot, event)
         ctx.should_pass_permission()
         ctx.should_pass_rule()
-        ctx.should_call_send(event, f"puid: {TEST_PUID1}\n"
-                                    f"uid: {uid}\n"
-                                    f"当前余额: 0.0 胡萝卜片\n\n"
-                                    f"最近五条交易记录:")
+        ctx.should_call_send(
+            event,
+            f"platform_id: {TEST_PLATFORM_ID1}\n"
+            f"uid: {uid}\n"
+            f"当前余额: 0.0 胡萝卜片\n\n"
+            f"最近五条交易记录:",
+        )
         ctx.should_finished()
 
 
 @pytest.mark.asyncio
 async def test_economy_plugin_info_registered_with_transactions(
-    app: App,
-    db_initialize: Callable,
-    create_bot: Callable,
-    create_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
     from essentials.plugins.economy import _economy_command
     from essentials.libraries import user, economy
 
     db_initialize()
 
-    uid = user.register(TEST_PUID1)
+    uid = user.register(TEST_PLATFORM_ID1)
     economy.earn(uid, 100.0, "TEST")
     record = economy.get_transactions(uid, 1)[0]
 
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
-        event = create_event(message="economy info", user_id=TEST_PUID1)
+        event = create_event(message="economy info", user_id=TEST_PLATFORM_ID1)
 
         ctx.receive_event(bot, event)
         ctx.should_pass_permission()
         ctx.should_pass_rule()
-        ctx.should_call_send(event, f"puid: {TEST_PUID1}\n"
-                                    f"uid: {uid}\n"
-                                    f"当前余额: 100.0 胡萝卜片\n\n"
-                                    f"最近五条交易记录:"
-                                    f"\n时间: {record.time.strftime('%Y-%m-%d %H:%M:%S')}"
-                                    f"\n变动: {record.amount}"
-                                    f"\n余额: {record.balance}"
-                                    f"\n备注: {record.description}"
-                                    f"\n--------------------"
-                             )
+        ctx.should_call_send(
+            event,
+            f"platform_id: {TEST_PLATFORM_ID1}\n"
+            f"uid: {uid}\n"
+            f"当前余额: 100.0 胡萝卜片\n\n"
+            f"最近五条交易记录:"
+            f"\n时间: {record.time.strftime('%Y-%m-%d %H:%M:%S')}"
+            f"\n变动: {record.amount}"
+            f"\n余额: {record.balance}"
+            f"\n备注: {record.description}"
+            f"\n--------------------",
+        )
         ctx.should_finished()
 
 
 @pytest.mark.asyncio
-async def test_economy_plugin_transfer_to_not_registered_puid(
-        app: App,
-        db_initialize: Callable,
-        create_bot: Callable,
-        create_event: Callable
+async def test_economy_plugin_transfer_to_not_registered_platform_id(
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
     from essentials.plugins.economy import _economy_command
     from essentials.libraries import user
 
     db_initialize()
 
-    user.register(TEST_PUID1)
+    user.register(TEST_PLATFORM_ID1)
 
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
 
-        event = create_event(message=f"economy transfer {TEST_PUID2} 100", user_id=TEST_PUID1)
+        event = create_event(
+            message=f"economy transfer {TEST_PLATFORM_ID2} 100",
+            user_id=TEST_PLATFORM_ID1,
+        )
         ctx.receive_event(bot, event)
         ctx.should_pass_permission()
         ctx.should_pass_rule()
@@ -139,22 +133,21 @@ async def test_economy_plugin_transfer_to_not_registered_puid(
 
 @pytest.mark.asyncio
 async def test_economy_plugin_transfer_to_not_registered_uid(
-        app: App,
-        db_initialize: Callable,
-        create_bot: Callable,
-        create_event: Callable
+    app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
     from essentials.plugins.economy import _economy_command
     from essentials.libraries import user
 
     db_initialize()
 
-    user.register(TEST_PUID1)
+    user.register(TEST_PLATFORM_ID1)
 
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
 
-        event = create_event(message=f"economy transfer {TEST_UID} 100", user_id=TEST_PUID1)
+        event = create_event(
+            message=f"economy transfer {TEST_UID} 100", user_id=TEST_PLATFORM_ID1
+        )
         ctx.receive_event(bot, event)
         ctx.should_pass_permission()
         ctx.should_pass_rule()
@@ -164,11 +157,11 @@ async def test_economy_plugin_transfer_to_not_registered_uid(
 
 @pytest.mark.asyncio
 async def test_economy_plugin_transfer_success(
-        app: App,
-        mocker: MockerFixture,
-        db_initialize: Callable,
-        create_bot: Callable,
-        create_event: Callable
+    app: App,
+    mocker: MockerFixture,
+    db_initialize: Callable,
+    create_bot: Callable,
+    create_event: Callable,
 ):
     from essentials.plugins.economy import _economy_command
     from essentials.libraries import economy, user
@@ -180,13 +173,15 @@ async def test_economy_plugin_transfer_success(
 
     db_initialize()
 
-    uid1 = user.register(TEST_PUID1)
-    uid2 = user.register(TEST_PUID2)
+    uid1 = user.register(TEST_PLATFORM_ID1)
+    uid2 = user.register(TEST_PLATFORM_ID2)
 
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
 
-        event = create_event(message=f"economy transfer {uid2} 100", user_id=TEST_PUID1)
+        event = create_event(
+            message=f"economy transfer {uid2} 100", user_id=TEST_PLATFORM_ID1
+        )
         ctx.receive_event(bot, event)
         ctx.should_pass_permission()
         ctx.should_pass_rule()
@@ -198,11 +193,11 @@ async def test_economy_plugin_transfer_success(
 
 @pytest.mark.asyncio
 async def test_economy_plugin_transfer_fail(
-        app: App,
-        mocker: MockerFixture,
-        db_initialize: Callable,
-        create_bot: Callable,
-        create_event: Callable
+    app: App,
+    mocker: MockerFixture,
+    db_initialize: Callable,
+    create_bot: Callable,
+    create_event: Callable,
 ):
     from essentials.plugins.economy import _economy_command
     from essentials.libraries import economy, user
@@ -214,13 +209,15 @@ async def test_economy_plugin_transfer_fail(
 
     db_initialize()
 
-    uid1 = user.register(TEST_PUID1)
-    uid2 = user.register(TEST_PUID2)
+    uid1 = user.register(TEST_PLATFORM_ID1)
+    uid2 = user.register(TEST_PLATFORM_ID2)
 
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
 
-        event = create_event(message=f"economy transfer {uid2} 100", user_id=TEST_PUID1)
+        event = create_event(
+            message=f"economy transfer {uid2} 100", user_id=TEST_PLATFORM_ID1
+        )
         ctx.receive_event(bot, event)
         ctx.should_pass_permission()
         ctx.should_pass_rule()

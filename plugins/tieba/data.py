@@ -25,5 +25,5 @@ class TiebaSignResultSubscriber(database.Base):
     account_id: Mapped[int] = mapped_column(
         Integer, ForeignKey(BaiduAccount.id), nullable=False
     )
-    puid: Mapped[str] = mapped_column(Text, nullable=False)
+    platform_id: Mapped[str] = mapped_column(Text, nullable=False)
     bot: Mapped[str] = mapped_column(Text, nullable=False)

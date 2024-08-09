@@ -18,7 +18,7 @@ __plugin_meta__ = PluginMetadata(
     "用法: /<economy|钱包|银行|经济> [操作]\n"
     "操作:\n"
     "info|信息: 查看账户信息\n"
-    "transfer|转账 <puid|uid> <金额>: 向另一个用户转账",
+    "transfer|转账 <platform_id|uid> <金额>: 向另一个用户转账",
     config=None,
 )
 
@@ -41,17 +41,17 @@ async def _(event: Event, result: Arparma):
         await _economy_command.finish(__plugin_meta__.usage)
 
     # 检查是否注册过
-    puid = event.get_user_id()
-    if not user.puid_user_exists(puid):
-        await _economy_command.finish(f"puid: {puid}\n未注册")
+    platform_id = event.get_user_id()
+    if not user.platform_id_user_exists(platform_id):
+        await _economy_command.finish(f"platform_id: {platform_id}\n未注册")
 
 
 @_economy_command.assign("info")
 async def _(event: Event):
-    puid = event.get_user_id()
+    platform_id = event.get_user_id()
     uid = user.get_uid()
     final = (
-        f"puid: {puid}\n"
+        f"platform_id: {platform_id}\n"
         f"uid: {uid}\n"
         f"当前余额: {economy.get_balance(uid)} 胡萝卜片\n\n"
         f"最近五条交易记录:"
@@ -81,9 +81,9 @@ async def _(
 
     if not user.uid_user_exists(to_uid):
         to_uid = 0
-        to_puid = transferee.result
-        if user.puid_user_exists(to_puid):
-            to_uid = user.get_uid(to_puid)
+        to_platform_id = transferee.result
+        if user.platform_id_user_exists(to_platform_id):
+            to_uid = user.get_uid(to_platform_id)
 
     if to_uid == 0:
         await _economy_command.finish("未找到此用户")

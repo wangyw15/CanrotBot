@@ -181,7 +181,7 @@ async def _():
 async def _(
     bot: Bot, event: Event, account_id_query: Query[int] = AlconnaQuery("account_id", 0)
 ):
-    puid = event.get_user_id()
+    platform_id = event.get_user_id()
     uid = user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
@@ -217,14 +217,14 @@ async def _(
             if session.execute(
                 select(data.TiebaSignResultSubscriber).where(
                     data.TiebaSignResultSubscriber.account_id.is_(account.id),
-                    data.TiebaSignResultSubscriber.puid.is_(puid),
+                    data.TiebaSignResultSubscriber.platform_id.is_(platform_id),
                 )
             ).scalar_one_or_none():
                 continue
             session.execute(
                 insert(data.TiebaSignResultSubscriber).values(
                     account_id=account.id,
-                    puid=puid,
+                    platform_id=platform_id,
                     bot=bot.self_id,
                 )
             )
@@ -233,7 +233,7 @@ async def _(
 
 @_command.assign("unsubscribe")
 async def _(event: Event, account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
-    puid = event.get_user_id()
+    platform_id = event.get_user_id()
     uid = user.get_uid()
     if not uid:
         await _command.finish("还未注册或绑定账号")
@@ -245,13 +245,13 @@ async def _(event: Event, account_id_query: Query[int] = AlconnaQuery("account_i
             session.execute(
                 delete(data.TiebaSignResultSubscriber).where(
                     data.TiebaSignResultSubscriber.account_id.is_(account_id),
-                    data.TiebaSignResultSubscriber.puid.is_(puid),
+                    data.TiebaSignResultSubscriber.platform_id.is_(platform_id),
                 )
             )
         else:
             session.execute(
                 delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.puid.is_(puid),
+                    data.TiebaSignResultSubscriber.platform_id.is_(platform_id),
                 )
             )
 
@@ -333,10 +333,10 @@ async def _():
             )
             for subscriber in subscribers:
                 # TODO 支持多平台
-                if subscriber.puid.startswith("qq_"):
+                if subscriber.platform_id.startswith("qq_"):
                     bot = get_bot(subscriber.bot)
                     await bot.call_api(
                         "send_private_msg",
-                        user_id=subscriber.puid[3:],
+                        user_id=subscriber.platform_id[3:],
                         message=signin.generate_text_result(result),
                     )

@@ -13,16 +13,16 @@ from .. import database
 from . import data, snowflake
 
 
-def puid_user_exists(puid: str) -> bool:
+def platform_id_user_exists(platform_id: str) -> bool:
     """
-    检查给定的puid是否已注册
+    检查给定的platform_id是否已注册
 
-    :param puid: 要检查的puid
+    :param platform_id: 要检查的platform_id
 
-    :return: puid是否已注册
+    :return: platform_id是否已注册
     """
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.platform_user_id.is_(puid))
+        query = select(data.Bind).where(data.Bind.platform_id.is_(platform_id))
         result = session.execute(query).first()
         return result is not None
 
@@ -41,101 +41,101 @@ def uid_user_exists(uid: int) -> bool:
         return result is not None
 
 
-def bind(puid: str, uid: int) -> bool:
+def bind(platform_id: str, uid: int) -> bool:
     """
-    将puid绑定到uid
+    将platform_id绑定到uid
 
-    :param puid: 被绑定的puid
+    :param platform_id: 被绑定的platform_id
     :param uid: 要绑定到的uid
 
     :return: 是否成功绑定
     """
     if not uid_user_exists(uid):
         return False
-    if puid_user_exists(puid):
+    if platform_id_user_exists(platform_id):
         return False
     with database.get_session().begin() as session:
-        session.execute(insert(data.Bind).values(platform_user_id=puid, user_id=uid))
+        session.execute(insert(data.Bind).values(platform_id=platform_id, user_id=uid))
         session.commit()
     return True
 
 
-def unbind(puid: str) -> bool:
+def unbind(platform_id: str) -> bool:
     """
-    puid解绑
+    platform_id解绑
 
-    :param puid: 要解绑的puid
+    :param platform_id: 要解绑的platform_id
 
     :return: 是否成功解绑
     """
-    if not puid_user_exists(puid):
+    if not platform_id_user_exists(platform_id):
         return False
     with database.get_session().begin() as session:
-        query = delete(data.Bind).where(data.Bind.platform_user_id.is_(puid))
+        query = delete(data.Bind).where(data.Bind.platform_id.is_(platform_id))
         session.execute(query)
         session.commit()
     return True
 
 
-def register(puid: str) -> int:
+def register(platform_id: str) -> int:
     """
-    注册新用户，并且自动绑定puid
+    注册新用户，并且自动绑定platform_id
 
-    :param puid: 要注册的puid
+    :param platform_id: 要注册的platform_id
 
-    :return: 新用户的uid，如果puid已注册则返回0
+    :return: 新用户的uid，如果platform_id已注册则返回0
     """
-    if puid_user_exists(puid):
+    if platform_id_user_exists(platform_id):
         return 0
     uid = snowflake.generate_id()
     with database.get_session().begin() as session:
         session.execute(insert(data.User).values(id=uid))
-        session.execute(insert(data.Bind).values(platform_user_id=puid, user_id=uid))
+        session.execute(insert(data.Bind).values(platform_id=platform_id, user_id=uid))
         session.commit()
     return uid
 
 
-def get_uid(puid: str = "") -> int:
+def get_uid(platform_id: str = "") -> int:
     """
-    查询puid对应的uid
+    查询platform_id对应的uid
 
-    :param puid: 要查询的puid，为空则自动获取
+    :param platform_id: 要查询的platform_id，为空则自动获取
 
     :return: uid
     """
-    if not puid:
-        puid = current_event.get().get_user_id()
-    elif not puid_user_exists(puid):
+    if not platform_id:
+        platform_id = current_event.get().get_user_id()
+    elif not platform_id_user_exists(platform_id):
         return 0
     with database.get_session().begin() as session:
-        query = select(data.Bind).where(data.Bind.platform_user_id.is_(puid))
+        query = select(data.Bind).where(data.Bind.platform_id.is_(platform_id))
         result = session.execute(query).scalar_one()
         return result.user_id
 
 
 def get_bind_by_uid(uid: int) -> list[str]:
     """
-    查询uid绑定的puid
+    查询uid绑定的platform_id
 
     :param uid: 要查询的uid
 
-    :return: puid列表
+    :return: platform_id列表
     """
     with database.get_session().begin() as session:
         query = select(data.Bind).where(data.Bind.user_id.is_(uid))
         result = session.execute(query).scalars().all()
-        return [_bind.platform_user_id for _bind in result]
+        return [_bind.platform_id for _bind in result]
 
 
-def get_bind_by_puid(puid: str) -> list[str]:
+def get_bind_by_platform_id(platform_id: str) -> list[str]:
     """
-    查询puid对应的uid所绑定的puid
+    查询platform_id对应的uid所绑定的platform_id
 
-    :param puid: 要查询的puid
+    :param platform_id: 要查询的platform_id
 
-    :return: puid列表
+    :return: platform_id列表
     """
-    return get_bind_by_uid(get_uid(puid))
+    return get_bind_by_uid(get_uid(platform_id))
 
 
 async def get_user_name(

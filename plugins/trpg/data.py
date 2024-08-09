@@ -37,7 +37,7 @@ class PlayerData(database.Base):
     user_id: Mapped[int] = mapped_column(
         BigInteger, primary_key=True, nullable=False, unique=True
     )
-    group_id: Mapped[str] = mapped_column(Text, nullable=False)
+    platform_id: Mapped[str] = mapped_column(Text, nullable=False)
     selected_investigator_id: Mapped[int] = mapped_column(
         Integer, ForeignKey(Investigator.id), nullable=True
     )
