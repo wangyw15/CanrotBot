@@ -5,7 +5,7 @@ from nonebot_plugin_alconna import on_alconna, UniMessage, Image, Text
 from essentials.libraries import user, economy, util
 from . import arknights, data
 
-arknights_alconna = Alconna(
+arknights_command = Alconna(
     "明日方舟",
     Option("十连", alias=["gacha", "抽卡"], help_text="来一发十连！"),
     Option(
@@ -26,31 +26,31 @@ arknights_alconna = Alconna(
 
 __plugin_meta__ = PluginMetadata(
     name="明日方舟助手",
-    description=arknights_alconna.meta.description,
-    usage=arknights_alconna.get_help(),
+    description=arknights_command.meta.description,
+    usage=arknights_command.get_help(),
     config=None,
 )
 
 
-_command = on_alconna(
-    arknights_alconna,
+arknights_matcher = on_alconna(
+    arknights_command,
     aliases={"arknights"},
     block=True,
 )
 
 
-@_command.assign("十连")
+@arknights_matcher.assign("十连")
 async def _():
     uid = user.get_uid()
     if not uid:
-        await _command.finish("你还没有账号喵~")
+        await arknights_matcher.finish("你还没有账号喵~")
 
     # 付钱
     if not economy.pay(uid, 25, "方舟十连"):
-        await _command.finish("你的余额不足喵~")
+        await arknights_matcher.finish("你的余额不足喵~")
 
     # 付款提示
-    await _command.send("你的二十五个胡萝卜片我就收下了喵~")
+    await arknights_matcher.send("你的二十五个胡萝卜片我就收下了喵~")
 
     # 寻访
     operators = arknights.generate_gacha(arknights.get_last_six_star(uid))
@@ -62,20 +62,20 @@ async def _():
     if await util.can_send_segment(Image):
         msg.append(Image(raw=await arknights.generate_gacha_image(operators)))
 
-    await _command.finish(msg)
+    await arknights_matcher.finish(msg)
 
 
-@_command.assign("抽卡记录")
+@arknights_matcher.assign("抽卡记录")
 async def _():
     uid = user.get_uid()
     if not uid:
-        await _command.finish("你还没有账号喵~")
+        await arknights_matcher.finish("你还没有账号喵~")
 
     result = arknights.get_gacha_statistics(uid)
 
     if result["times"] == 0:
         # 未抽过卡
-        await _command.finish("你还没有抽过卡喵~")
+        await arknights_matcher.finish("你还没有抽过卡喵~")
     else:
         msg = (
             "明日方舟抽卡统计: \n"
@@ -89,9 +89,9 @@ async def _():
             f"6星干员: {result['six_stars']}\n"
             f"距离上次抽到6星次数: {result['last_six_star']}"
         )
-        await _command.finish(msg)
+        await arknights_matcher.finish(msg)
 
 
-@_command.handle()
+@arknights_matcher.handle()
 async def _():
-    await _command.finish(arknights_alconna.get_help())
+    await arknights_matcher.finish(arknights_command.get_help())
