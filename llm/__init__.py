@@ -20,7 +20,7 @@ async def llm_enabled() -> bool:
 
 
 llm = on_message(
-    priority=100, rule=Rule(not_command, llm_enabled, to_me()), block=False
+    priority=100, rule=Rule(not_command, llm_enabled) & to_me(), block=False
 )
 
 
