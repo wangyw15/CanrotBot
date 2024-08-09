@@ -61,18 +61,14 @@ def resolve_method(func: Callable) -> Tool:
 tools_description: list[Tool] = []
 tools_callable: dict[str, Callable] = {}
 
-custom_tools_description: list[Tool] = []
-custom_tools_callable: dict[str, Callable] = {}
 
-
-def check_annotation(func: Callable, return_type: type) -> bool:
+def check_annotation(func: Callable) -> type:
     """
     检查方法参数是否全部标记为 str，是否有返回值标注
 
     :param func: 方法
-    :param return_type: 返回值类型
 
-    :return: 是否通过检查
+    :return: 返回值类型
     """
     spec = inspect.getfullargspec(func)
     for arg in spec.args:
@@ -82,22 +78,29 @@ def check_annotation(func: Callable, return_type: type) -> bool:
             raise ValueError(f"Argument {arg} must be annotated as str")
     if "return" not in spec.annotations:
         raise ValueError("No type annotation found for return")
-    if spec.annotations["return"] is not return_type:
-        raise ValueError(f"Return value must be annotated as {return_type.__name__}")
-    return True
+    return spec.annotations["return"]
 
 
 def register_tool(func: Callable) -> Callable:
     """
-    装饰器，将方法注册为 Tool，需要参数和返回值都标记为 str
+    装饰器，将方法注册为 Tool，需要参数和返回值都标记为 str, UniMessage或tuple[str, UniMessage]
+
+    str 返回作为 LLM Toolcall 的返回值，UniMessage 作为追加消息发送
+
+    返回没有 str 则不会继续使用 LLM，直接使用 UniMessage 作为返回
 
     :param func: 方法
 
     :return: 方法
     """
     # 检查类型标注
-    if not check_annotation(func, str):
-        raise ValueError("Annotation check failed")
+    if check_annotation(func) not in (
+        str,
+        UniMessage,
+        tuple[str, UniMessage],
+        tuple[UniMessage | str],
+    ):
+        raise ValueError("Return type must be str or UniMessage")
 
     # 注册 Tool
     resolved = resolve_method(func)
@@ -107,27 +110,6 @@ def register_tool(func: Callable) -> Callable:
     return func
 
 
-def register_custom_tool(func: Callable) -> Callable:
-    """
-    装饰器，将方法注册为 Tool，且返回消息由 Tool 自定义，需要参数标记为 str，返回标记为 UniMessage
-
-    :param func: 方法
-
-    :return: 方法
-    """
-    # 检查类型标注
-    if not check_annotation(func, UniMessage):
-        raise ValueError("Annotation check failed")
-
-    # 注册 Custom tool
-    resolved = resolve_method(func)
-    custom_tools_description.append(resolved)
-    custom_tools_callable[resolved["function"]["name"]] = func
-    logger.info(f"Registered custom tool \"{resolved['function']['name']}\"")
-    return func
-
-
 @get_driver().on_startup
 async def log_tool_count():
     logger.info(f"Registered {len(tools_description)} tools")
-    logger.info(f"Registered {len(custom_tools_description)} custom tools")
