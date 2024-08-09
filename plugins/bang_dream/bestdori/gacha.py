@@ -10,7 +10,7 @@ async def get_gacha_list() -> dict[str]:
     return await util.bestdori_api_with_cache("gacha/all.5.json")
 
 
-async def get_gacha_info(gacha_id: str) -> dict[str]:
+async def get_gacha_info(gacha_id: int) -> dict[str]:
     """
     获取抽卡信息
 

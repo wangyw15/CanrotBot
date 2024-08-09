@@ -1,13 +1,16 @@
 import json
 import random
 
-from essentials.libraries import path, render_by_browser
+from sqlalchemy import insert
+
+from essentials.libraries import database, path, render_by_browser
 from .bestdori import band_character, card, gacha, util
+from .data import GachaHistory, GachaHistoryCards
 
 ASSET_PATH = path.get_asset_path("bang_dream")
 
 
-async def gacha10(gacha_id: str, language: str = "cn") -> dict:
+async def gacha10(gacha_id: int, language: str = "cn") -> dict[str, dict]:
     """
     一发十连
 
@@ -82,7 +85,7 @@ async def gacha10(gacha_id: str, language: str = "cn") -> dict:
     return result_cards
 
 
-async def generate_data_for_image(gacha_data: dict[str]) -> list[dict]:
+async def generate_data_for_image(gacha_data: dict[str, dict]) -> list[dict]:
     result = []
     characters: dict[str] = await band_character.get_character_list()
     for card_id, card_data in gacha_data.items():
@@ -98,7 +101,7 @@ async def generate_data_for_image(gacha_data: dict[str]) -> list[dict]:
     return result
 
 
-async def generate_image(gacha_data: dict[str]) -> bytes:
+async def generate_image(gacha_data: dict[str, dict]) -> bytes:
     """
     生成抽卡图片
 
@@ -118,7 +121,7 @@ async def generate_image(gacha_data: dict[str]) -> bytes:
     )
 
 
-async def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
+async def generate_text(gacha_data: dict[str, dict], language: str = "cn") -> str:
     """
     生成抽卡文字
 
@@ -138,7 +141,7 @@ async def generate_text(gacha_data: dict[str], language: str = "cn") -> str:
     return result.strip()
 
 
-async def get_gacha_name(gacha_id: str, language: str = "cn") -> str:
+async def get_gacha_name(gacha_id: int, language: str = "cn") -> str:
     """
     获取卡池名称
 
@@ -150,3 +153,32 @@ async def get_gacha_name(gacha_id: str, language: str = "cn") -> str:
     data = await gacha.get_gacha_info(gacha_id)
     title, _ = util.get_content_by_language(data["gachaName"], language)
     return title
+
+
+def save_gacha_history(
+    user_id: int, gacha_id: int, cards: dict[str, dict], language: str = "cn"
+):
+    """
+    保存抽卡记录
+
+    :params user_id: 用户
+    :params gacha_id: 卡池
+    :params cards: 卡片
+    """
+    with database.get_session().begin() as session:
+        history = GachaHistory(user_id=user_id, gacha_id=gacha_id)
+        session.add(history)
+        session.flush()
+
+        for card_id, card_data in cards.items():
+            session.execute(
+                insert(GachaHistoryCards).values(
+                    gacha_history_id=history.id,
+                    character_id=card_data["characterId"],
+                    name=util.get_content_by_language(card_data["prefix"], language),
+                    card_id=card_id,
+                    rarity=card_data["rarity"],
+                    attribute=card_data["attribute"],
+                )
+            )
+        session.commit()
