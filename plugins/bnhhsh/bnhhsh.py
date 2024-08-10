@@ -9,24 +9,6 @@ _bnhhsh_data: dict[int, dict[str, dict[str, float]]] = {
 _longest = max(_bnhhsh_data.keys())
 
 
-def get_pinyin_abbr(content: str) -> str:
-    """
-    获取拼音首字母缩写
-
-    :param content: 内容
-
-    :return: 拼音
-    """
-    import pypinyin
-
-    return "".join(
-        [
-            x[0].lower()
-            for x in pypinyin.pinyin(content, style=pypinyin.Style.FIRST_LETTER)
-        ]
-    )
-
-
 def generate(target: str) -> str:
     """
     生成语句
