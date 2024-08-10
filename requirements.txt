@@ -24,3 +24,4 @@ nonebug
 nonechat
 hishel
 ollama
+openai

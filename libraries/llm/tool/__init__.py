@@ -1,10 +1,10 @@
 import inspect
-from typing import Callable
+from typing import Callable, Sequence
 
 from nonebot import logger, get_driver
 from nonebot_plugin_alconna import UniMessage
 
-from .model import Tool
+from .model import Tool, ToolCall, ToolCallResult
 
 
 def resolve_method(func: Callable) -> Tool:
@@ -110,6 +110,52 @@ def register_tool(func: Callable) -> Callable:
     return func
 
 
+def run_tool_call(tool_call: Sequence[ToolCall]) -> Sequence[ToolCallResult]:
+    """
+    执行 Tool
+
+    :param tool_call: ToolCall
+
+    :return: 返回值
+    """
+    ret: list[ToolCallResult] = []
+
+    for call in tool_call:
+        if call["function"]["name"] in tools_callable:
+            tool_name = call["function"]["name"]
+            tool_args = call["function"]["arguments"]
+
+            logger.info(f'Called tool "{tool_name}"')
+            logger.debug(f'Tool "{tool_name}" called with arguments {tool_args}')
+
+            tool_ret = tools_callable[tool_name](**tool_args)
+
+            logger.debug(f'Tool "{tool_name}" returned with {tool_ret}')
+
+            return_type = check_annotation(tools_callable[call["function"]["name"]])
+            current_result = {"name": tool_name}
+            if return_type == str:
+                current_result["result"] = tool_ret
+            elif return_type == UniMessage:
+                current_result["message"] = tool_ret
+            elif return_type == tuple[str, UniMessage]:
+                current_result["result"] = tool_ret[0]
+                current_result["message"] = tool_ret[1]
+            elif return_type == tuple[UniMessage | str]:
+                current_result["result"] = tool_ret[1]
+                current_result["message"] = tool_ret[0]
+            ret.append(current_result)
+        else:
+            logger.warning(f'Tool "{call["function"]["name"]}" not found')
+    return ret
+
+
 @get_driver().on_startup
 async def log_tool_count():
     logger.info(f"Registered {len(tools_description)} tools")
+
+
+__all__ = [
+    "register_tool",
+    "run_tool_call",
+]

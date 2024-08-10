@@ -1,9 +1,10 @@
 from nonebot import on_message, get_plugin_config
 from nonebot.adapters import Event
 from nonebot.rule import Rule, to_me
+from nonebot_plugin_alconna import UniMessage
 
+from libraries.llm.llm_backend import ollama_chat, openai_chat
 from .config import LLMConfig
-from .llm_backend import ollama_backend
 
 config = get_plugin_config(LLMConfig)
 
@@ -26,8 +27,10 @@ llm = on_message(
 
 @llm.handle()
 async def _(event: Event):
-    answer = await ollama_backend.chat(event.get_plaintext())
-    if isinstance(answer, str):
-        await llm.finish(answer)
-    else:
-        await llm.finish(await answer.export())
+    answer = "后端无回复"
+    extra = UniMessage()
+    if config.backend == "ollama":
+        answer, extra = await ollama_chat(event.get_plaintext())
+    elif config.backend == "openai":
+        answer, extra = await openai_chat(event.get_plaintext())
+    await llm.finish(await (UniMessage.text(answer) + extra).export())

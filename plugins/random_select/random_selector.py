@@ -2,7 +2,7 @@ import json
 import random
 from collections import namedtuple
 
-from llm import tool
+from libraries.llm import tool
 
 Item = namedtuple("Item", ["name", "weight"])
 
