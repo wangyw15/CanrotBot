@@ -10,7 +10,7 @@ from .config import OllamaConfig
 from ... import tool
 
 ollama_config = get_plugin_config(OllamaConfig)
-ollama_client = ollama.AsyncClient(ollama_config.ollama_host)
+ollama_client = ollama.AsyncClient(ollama_config.host)
 
 
 async def chat(message: list[Message] | str) -> str | UniMessage:
@@ -21,7 +21,7 @@ async def chat(message: list[Message] | str) -> str | UniMessage:
         messages = [i.copy() for i in message]
 
     response = await ollama_client.chat(
-        model=ollama_config.ollama_model,
+        model=ollama_config.model,
         messages=messages,
         stream=False,
         tools=tool.tools_description,
@@ -55,7 +55,7 @@ async def chat(message: list[Message] | str) -> str | UniMessage:
                 messages.append({"role": "tool", "content": str(tool_ret)})
 
         response = await ollama_client.chat(
-            model=ollama_config.ollama_model,
+            model=ollama_config.model,
             messages=messages,
             stream=False,
         )
