@@ -40,11 +40,10 @@ async def gacha10(gacha_id: int, language: str = "cn") -> dict[str, dict]:
 
     # 抽卡结果
     result_card_ids = []
-    result_cards = {}
     # 保底
     three_star_appeared = False
 
-    for i in range(10):
+    while len(result_card_ids) < 10:
         # 随机概率
         rate = random.randint(1, int(total_rate * 10)) / 10
         # 计算稀有度
@@ -79,6 +78,7 @@ async def gacha10(gacha_id: int, language: str = "cn") -> dict[str, dict]:
         result_card_ids.append(card_id)
 
     # 获取卡片信息
+    result_cards = {}
     for card_id in result_card_ids:
         result_cards[card_id] = await card.get_card_info(card_id)
 
@@ -109,7 +109,7 @@ async def generate_image(gacha_data: dict[str, dict]) -> bytes:
 
     :return: 图片
     """
-    data = generate_data_for_image(gacha_data)
+    data = await generate_data_for_image(gacha_data)
     generated_html = (
         (ASSET_PATH / "gacha.html")
         .read_text(encoding="utf-8")
