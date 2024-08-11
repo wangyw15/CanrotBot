@@ -19,7 +19,15 @@ def _timestamp_to_datetime(timestamp: str) -> datetime:
 
 
 @get_driver().on_startup
-async def _load_hitokoto_assets():
+async def _on_startup() -> None:
+    try:
+        await load_hitokoto_assets()
+    except Exception as e:
+        logger.error("Failed to load hitokoto assets")
+        logger.exception(e)
+
+
+async def load_hitokoto_assets() -> None:
     global version
     global categories
     global sentences
@@ -53,20 +61,29 @@ async def _load_hitokoto_assets():
             )
 
 
-def get_categories() -> list[dict[str, str]]:
+def get_categories() -> list[dict[str, str]] | None:
+    if not categories:
+        return None
+
     for item in categories:
         yield {"name": item["name"], "desc": item["desc"], "key": item["key"]}
 
 
-def get_key_by_name(name: str) -> str:
+def get_key_by_name(name: str) -> str | None:
+    if not categories:
+        return None
+
     return list(filter(lambda x: x["name"] == name, categories))[0]["key"]
 
 
-def get_name_by_key(key: str) -> str:
+def get_name_by_key(key: str) -> str | None:
+    if not categories:
+        return None
+
     return list(filter(lambda x: x["key"] == key, categories))[0]["name"]
 
 
-def random_hitokoto(selected_categories: str = all_category_keys) -> dict:
+def random_hitokoto(selected_categories: str = all_category_keys) -> dict | None:
     """
     随机一言
 
@@ -74,6 +91,9 @@ def random_hitokoto(selected_categories: str = all_category_keys) -> dict:
 
     :return: 一言信息
     """
+    if not sentences or not all_category_keys:
+        return None
+
     selected_sentences = []
     for key in selected_categories:
         if key in all_category_keys:
@@ -81,7 +101,7 @@ def random_hitokoto(selected_categories: str = all_category_keys) -> dict:
     return random.choice(selected_sentences)
 
 
-def get_hitokoto_by_uuid(uuid: str) -> dict:
+def get_hitokoto_by_uuid(uuid: str) -> dict | None:
     """
     根据uuid获取一言信息
 
@@ -89,6 +109,9 @@ def get_hitokoto_by_uuid(uuid: str) -> dict:
 
     :return: 一言信息
     """
+    if not categories or not sentences:
+        return None
+
     for category in categories:
         for sentence in sentences[category["key"]]:
             if sentence["uuid"] == uuid:

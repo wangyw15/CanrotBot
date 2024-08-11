@@ -1,7 +1,6 @@
 import difflib
 import re
 import urllib.parse
-from typing import Tuple
 
 from nonebot import logger, get_driver
 
@@ -18,7 +17,15 @@ _name_anilist_id: dict[str, int] = {}
 
 
 @get_driver().on_startup
-async def _load_animes() -> None:
+async def _on_startup() -> None:
+    try:
+        await load_animes()
+    except Exception as e:
+        logger.error("Failed to load animes")
+        logger.exception(e)
+
+
+async def load_animes() -> None:
     global _animes, _name_anilist_id
     if not _animes:
         data = await network.fetch_json_data(
@@ -42,12 +49,17 @@ async def _load_animes() -> None:
             _name_anilist_id[synonym] = int(anilist_id)
 
 
-def search_anime_by_name(name: str) -> Tuple[str, dict, float]:
+def search_anime_by_name(name: str) -> tuple[str, dict, float] | None:
     """
     搜索番剧
+
     :param name: 番剧名
+
     :return: 番剧名, 番剧信息, 匹配度
     """
+    if not _animes:
+        return None
+
     best: float = 0.0
     result = {}
     result_name = ""
@@ -75,6 +87,9 @@ def search_anime_by_anilist_id(anilist_id: str | int) -> dict | None:
 
     :return: 番剧信息
     """
+    if not _animes:
+        return None
+
     url = f"https://anilist.co/anime/{anilist_id}"
     for anime in _animes:
         if url in anime["sources"]:
@@ -96,7 +111,7 @@ async def search_anime_by_image(img_url: str) -> dict | None:
     return None
 
 
-def search_anilist_id_by_name(name: str) -> Tuple[str, int, float]:
+def search_anilist_id_by_name(name: str) -> tuple[str, int, float] | None:
     """
     根据名称搜索 AniList id
 
@@ -104,6 +119,9 @@ def search_anilist_id_by_name(name: str) -> Tuple[str, int, float]:
 
     :return: 番剧名, AniList id, 匹配度
     """
+    if not _name_anilist_id:
+        return None
+
     best: float = 0.0
     result = 0
     result_name = ""

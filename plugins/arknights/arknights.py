@@ -20,7 +20,15 @@ resource_version: str = ""
 
 
 @get_driver().on_startup
-async def _load_data() -> None:
+async def _on_startup() -> None:
+    try:
+        await load_arknights_data()
+    except Exception as e:
+        logger.error(f"Failed to load Arknights data")
+        logger.exception(e)
+
+
+async def load_arknights_data() -> None:
     global operators, resource_version
 
     resource_version = await network.fetch_text_data(
@@ -99,7 +107,9 @@ def get_last_six_star(uid: int) -> int:
         return result
 
 
-def generate_gacha(last_six_star: int, count: int = 10) -> list[GachaOperatorData]:
+def generate_gacha(
+    last_six_star: int, count: int = 10
+) -> list[GachaOperatorData] | None:
     """
     生成明日方舟十连寻访
 
@@ -108,6 +118,9 @@ def generate_gacha(last_six_star: int, count: int = 10) -> list[GachaOperatorDat
 
     :return: 干员列表
     """
+    if not gacha_operators:
+        return None
+
     possibility_offset: float = 0.0
     if last_six_star > 50:
         possibility_offset = (last_six_star - 50) * 0.02

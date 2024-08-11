@@ -2,9 +2,9 @@ import difflib
 import json
 import random
 from datetime import datetime
-from typing import Literal, Tuple
+from typing import Literal
 
-from nonebot import get_driver
+from nonebot import get_driver, logger
 
 from essentials.libraries import network, path, render_by_browser
 
@@ -35,6 +35,14 @@ _cards_for_gasha: dict[int, list[dict]] = {}
 
 
 @get_driver().on_startup
+async def _on_startup() -> None:
+    try:
+        await load_cards()
+    except Exception as e:
+        logger.error("Failed to load cards")
+        logger.exception(e)
+
+
 async def load_cards(force_reload: bool = False) -> None:
     global _cards, _cards_zh, _cards_for_gasha
     if force_reload or not _cards or not _cards_zh:
@@ -62,11 +70,17 @@ async def load_cards(force_reload: bool = False) -> None:
             _cards_for_gasha[card["rarity"]].append(card)
 
 
-def get_cards() -> list[dict]:
+def get_cards() -> list[dict] | None:
+    if not _cards:
+        return None
+
     return _cards
 
 
-def search_card(keyword: str, force_jp: bool = False) -> dict:
+def search_card(keyword: str, force_jp: bool = False) -> dict | None:
+    if not _cards or not _cards_zh:
+        return None
+
     best = 0.0
     ret = {}
     # 优先搜索中文内容
@@ -108,9 +122,13 @@ async def get_events(time: Literal["now"] | datetime = "now") -> list[dict] | No
         return await network.fetch_json_data(
             f"https://api.matsurihi.me/api/mltd/v2/events?at={t}", use_proxy=True
         )
+    return None
 
 
-async def gasha() -> Tuple[bytes, list[dict]]:
+async def gasha() -> tuple[bytes, list[dict]] | None:
+    if not _cards_for_gasha:
+        return None
+
     cards: list[dict] = []
     # SR保底
     got_sr_or_better = False
