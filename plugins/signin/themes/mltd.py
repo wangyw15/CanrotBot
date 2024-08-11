@@ -1,15 +1,11 @@
 import random
 
-from nonebot import require
-
+import libraries.mltd
 from .. import fortune
-
-require("mltd")
-from plugins.mltd import mltd
 
 
 def _generate_mltd_html() -> str:
-    card = random.choice(mltd.get_cards())
+    card = random.choice(libraries.mltd.get_cards())
     with (fortune.ASSET_PATH / "template" / "mltd.html").open(
         "r", encoding="utf-8"
     ) as f:

@@ -1,16 +1,12 @@
 import random
 
-from nonebot import require
-
+import libraries.arknights
 from .. import fortune
-
-require("arknights")
-from plugins.arknights import arknights
 
 
 async def _generate_arknights_html() -> str:
-    rarity = random.choice(list(arknights.gacha_operators.keys()))
-    operator: dict = random.choice(arknights.gacha_operators[rarity])
+    rarity = random.choice(list(libraries.arknights.gacha_operators.keys()))
+    operator: dict = random.choice(libraries.arknights.gacha_operators[rarity])
     operator_prefab_key = operator["phases"][0]["characterPrefabKey"]
     with (fortune.ASSET_PATH / "template" / "arknights.html").open(
         "r", encoding="utf-8"

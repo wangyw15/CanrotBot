@@ -11,6 +11,7 @@ from nonebot_plugin_alconna import (
     Text,
 )
 
+import libraries.mltd
 from essentials.libraries import user, economy, util
 from . import mltd
 
@@ -55,7 +56,7 @@ _command = on_alconna(
 
 @_command.assign("event")
 async def _():
-    data = await mltd.get_events()
+    data = await libraries.mltd.get_events()
     if data:
         msg = UniMessage()
         msg.append(Text("现在正在进行的活动:"))
@@ -64,8 +65,8 @@ async def _():
             text_msg = ""
             text_msg += (
                 f"{mltd_event['name']}\n"
-                f"类型: {mltd.event_type[mltd_event['type'] - 1]}\n"
-                f"Appeal 类型: {mltd.appeal_type[mltd_event['appealType']]}\n"
+                f"类型: {libraries.mltd.EVENT_TYPE[mltd_event['type'] - 1]}\n"
+                f"Appeal 类型: {libraries.mltd.APPEAL_TYPE[mltd_event['appealType']]}\n"
                 f"活动开始时间: {iso8601_to_local(mltd_event['schedule']['beginAt'])}\n"
                 f"活动结束时间: {iso8601_to_local(mltd_event['schedule']['endAt'])}\n"
                 f"页面开放时间: {iso8601_to_local(mltd_event['schedule']['pageOpenedAt'])}\n"
@@ -102,7 +103,7 @@ async def _():
 async def _(query: Query[str] = AlconnaQuery("card", "query")):
     if await util.can_send_segment(Image):
         await _command.send("正在搜索喵~")
-        card = mltd.search_card(query.result.strip())
+        card = libraries.mltd.search_card(query.result.strip())
         await _command.finish(Image(raw=await mltd.generate_card_info_image(card)))
     await _command.finish("这里不支持发送图片所以没法查卡喵~")
 
@@ -126,7 +127,7 @@ async def _():
 @_command.assign("update")
 async def _():
     await _command.send("正在更新卡片数据喵~")
-    await mltd.load_cards(True)
+    await libraries.mltd.load_cards(True)
     await _command.finish("更新完毕喵~")
 
 
