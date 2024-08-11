@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Literal
 
-from nonebot import logger, get_driver
+from nonebot import logger, get_driver, get_plugin_config
 from playwright.async_api import (
     Browser,
     Playwright,
@@ -10,8 +10,11 @@ from playwright.async_api import (
     ViewportSize,
 )
 
+from .config import RenderByBrowserConfig
+
 _playwright: Playwright | None = None
 _browser: Browser | None = None
+config = get_plugin_config(RenderByBrowserConfig)
 
 
 async def initialize() -> None:
@@ -22,7 +25,10 @@ async def initialize() -> None:
     global _browser
     if not _playwright:
         _playwright = await async_playwright().start()
-        _browser = await _playwright.chromium.launch()
+        if config.proxy == "":
+            _browser = await _playwright.chromium.launch()
+        else:
+            _browser = await _playwright.chromium.launch(proxy={"server": config.proxy})
         logger.info("Initialized Playwright")
 
 
