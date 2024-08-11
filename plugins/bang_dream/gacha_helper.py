@@ -175,7 +175,7 @@ def save_gacha_history(
                 insert(GachaHistoryCards).values(
                     gacha_history_id=history.id,
                     character_id=card_data["characterId"],
-                    name=util.get_content_by_language(card_data["prefix"], language),
+                    name=util.get_content_by_language(card_data["prefix"], language)[0],
                     card_id=card_id,
                     rarity=card_data["rarity"],
                     attribute=card_data["attribute"],
