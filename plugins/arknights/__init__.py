@@ -1,17 +1,17 @@
-from arclet.alconna import Alconna, Option, CommandMeta
+from arclet.alconna import CommandMeta
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import on_alconna, UniMessage, Image, Text
+from nonebot_plugin_alconna import on_alconna, Alconna, Image, Subcommand
 
 from essentials.libraries import user, economy, util
 from . import arknights, data
 
 arknights_command = Alconna(
     "明日方舟",
-    Option("十连", alias=["gacha", "抽卡"], help_text="来一发十连！"),
-    Option(
-        "抽卡记录",
+    Subcommand("gacha", alias=["十连", "抽卡"], help_text="来一发十连！"),
+    Subcommand(
+        "gachainfo",
         alias=[
-            "gachainfo",
+            "抽卡记录",
             "抽卡统计",
             "抽卡历史",
             "十连历史",
@@ -39,7 +39,7 @@ arknights_matcher = on_alconna(
 )
 
 
-@arknights_matcher.assign("十连")
+@arknights_matcher.assign("gacha")
 async def _():
     uid = user.get_uid()
     if not uid:
@@ -56,16 +56,16 @@ async def _():
     operators = arknights.generate_gacha(arknights.get_last_six_star(uid))
     arknights.save_gacha_history(uid, operators)
 
-    # 生成消息
-    msg = UniMessage()
-    msg.append(Text(arknights.generate_gacha_text(operators)))
+    # 发送消息
+    await arknights_matcher.send(arknights.generate_gacha_text(operators))
     if await util.can_send_segment(Image):
-        msg.append(Image(raw=await arknights.generate_gacha_image(operators)))
+        await arknights_matcher.send(
+            Image(raw=await arknights.generate_gacha_image(operators))
+        )
+    await arknights_matcher.finish()
 
-    await arknights_matcher.finish(msg)
 
-
-@arknights_matcher.assign("抽卡记录")
+@arknights_matcher.assign("gachainfo")
 async def _():
     uid = user.get_uid()
     if not uid:
