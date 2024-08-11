@@ -1,16 +1,11 @@
+import importlib
 from datetime import datetime
 from pathlib import Path
 
 import nonebot
-import nonebot.adapters.console as console
-import nonebot.adapters.kaiheila as kook
-
-# import nonebot.adapters.mirai2 as mirai2
-import nonebot.adapters.onebot.v11 as onebot_v11
-import nonebot.adapters.onebot.v12 as onebot_v12
-import nonebot.adapters.qq as qq
 from nonebot import logger
 from nonebot.log import default_format
+
 from essentials.libraries.model import PluginListMode
 
 # 初始化
@@ -31,18 +26,22 @@ logger.add(
 )
 
 # 注册适配器
-if "console" in config.global_config.enabled_adapters:
-    driver.register_adapter(console.Adapter)
-if "kook" in config.global_config.enabled_adapters:
-    driver.register_adapter(kook.Adapter)
-# if "mirai2" in config.global_config.enabled_adapters:
-#     driver.register_adapter(mirai2.Adapter)
-if "onebot_v11" in config.global_config.enabled_adapters:
-    driver.register_adapter(onebot_v11.Adapter)
-if "onebot_v12" in config.global_config.enabled_adapters:
-    driver.register_adapter(onebot_v12.Adapter)
-if "qq" in config.global_config.enabled_adapters:
-    driver.register_adapter(qq.Adapter)
+for adapter_name in config.global_config.enabled_adapters:
+    adapter_fullname = f"nonebot.adapters.{adapter_name}"
+    try:
+        adapter_module = importlib.import_module(adapter_fullname)
+        driver.register_adapter(adapter_module.Adapter)
+    except ModuleNotFoundError as e:
+        logger.error(f"Adapter {adapter_fullname} not found")
+        logger.exception(e)
+    except AttributeError as e:
+        logger.error(f"Cannot find Adapter in {adapter_fullname}")
+        logger.exception(e)
+    except Exception as e:
+        logger.error(
+            f"Unknown error occurred while registering adapter {adapter_fullname}"
+        )
+        logger.exception(e)
 
 # 内置插件
 nonebot.load_builtin_plugins("echo", "single_session")
