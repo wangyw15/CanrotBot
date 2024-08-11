@@ -8,7 +8,9 @@ from .config import NetworkConfig
 from essentials.libraries import path
 
 network_config = get_plugin_config(NetworkConfig)
-cache_storage = AsyncFileStorage(base_path=path.get_cache_path())
+cache_storage = AsyncFileStorage(
+    base_path=path.get_cache_path(), ttl=network_config.cache_ttl or None
+)
 
 client = AsyncClient()
 cache_client = AsyncCacheClient(storage=cache_storage)
