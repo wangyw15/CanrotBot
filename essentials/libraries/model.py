@@ -8,3 +8,8 @@ class Platform(Enum):
     OneBotV12 = "onebot_v12"
     # Mirai2 = "mirai2"
     Kook = "kook"
+
+
+class PluginListMode(Enum):
+    Blacklist = "blacklist"
+    Whitelist = "whitelist"

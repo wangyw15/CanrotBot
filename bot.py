@@ -11,6 +11,7 @@ import nonebot.adapters.onebot.v12 as onebot_v12
 import nonebot.adapters.qq as qq
 from nonebot import logger
 from nonebot.log import default_format
+from essentials.libraries.model import PluginListMode
 
 # 初始化
 nonebot.init(alconna_use_command_start=True)
@@ -56,9 +57,29 @@ nonebot.load_plugins(str(essentials_plugins_path))
 
 database.create_all_tables()
 
-# 普通插件
-plugins_path = (Path(__file__).parent / "plugins").resolve()
-nonebot.load_plugins(str(plugins_path))
+# 按需加载普通插件
+plugins_path = Path(__file__).parent / "plugins"
+for plugin_path in plugins_path.iterdir():
+    plugin_name = plugin_path.stem
+
+    # 跳过隐藏文件
+    if plugin_name.startswith("_"):
+        continue
+
+    # 跳过黑名单插件
+    if config.global_config.plugin_list_mode == PluginListMode.Blacklist:
+        if plugin_name in config.global_config.plugin_list:
+            logger.info(f"Skip loading plugin {plugin_name}")
+            continue
+
+    # 跳过非白名单插件
+    if config.global_config.plugin_list_mode == PluginListMode.Whitelist:
+        if plugin_name not in config.global_config.plugin_list:
+            logger.info(f"Skip loading plugin {plugin_name}")
+            continue
+
+    # 加载插件
+    nonebot.load_plugin(plugin_path)
 
 database.create_all_tables()
 
