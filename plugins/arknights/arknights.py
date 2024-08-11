@@ -80,7 +80,7 @@ def get_last_six_star(uid: int) -> int:
             session.execute(
                 select(GachaHistory.id)
                 .where(cast(ColumnElement[bool], GachaHistory.user_id == uid))
-                .order_by(GachaHistory.time.desc)
+                .order_by(GachaHistory.time.desc())
                 .limit(100)
             )
             .scalars()
@@ -94,7 +94,7 @@ def get_last_six_star(uid: int) -> int:
             session.execute(
                 select(GachaHistoryOperators.rarity)
                 .where(GachaHistoryOperators.gacha_id.in_(gacha_ids))
-                .order_by(GachaHistoryOperators.id.desc)
+                .order_by(GachaHistoryOperators.id.desc())
             )
             .scalars()
             .all()
@@ -230,7 +230,7 @@ def get_gacha_statistics(uid: int) -> GachaStatistics:
             session.execute(
                 select(GachaHistory.id)
                 .where(cast(ColumnElement[bool], GachaHistory.user_id == uid))
-                .order_by(GachaHistory.time.desc)
+                .order_by(GachaHistory.time.desc())
                 .limit(100)
             )
             .scalars()
@@ -244,7 +244,7 @@ def get_gacha_statistics(uid: int) -> GachaStatistics:
             session.execute(
                 select(GachaHistoryOperators)
                 .where(GachaHistoryOperators.gacha_id.in_(gacha_ids))
-                .order_by(GachaHistoryOperators.id.desc)
+                .order_by(GachaHistoryOperators.id.desc())
             )
             .scalars()
             .all()
