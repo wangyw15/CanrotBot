@@ -161,21 +161,18 @@ async def _(gacha_id: Query[int] = Query("gacha_id")):
     )
 
     # 发送信息
-    msg = UniMessage()
-    # 卡池信息
-    msg.append(
-        Text(
-            await gacha_helper.get_gacha_name(gacha_id.result, config.default_language)
-            + "\n"
-        )
+    # 卡池信息和抽卡结果
+    await bang_dream_matcher.send(
+        await gacha_helper.get_gacha_name(gacha_id.result, config.default_language)
+        + "\n"
+        + await gacha_helper.generate_text(gacha_data, config.default_language)
     )
-    # 抽卡结果
-    msg.append(
-        Text(await gacha_helper.generate_text(gacha_data, config.default_language))
-    )
+    # 抽卡图片
     if await util.can_send_segment(Image):
-        msg.append(Image(raw=await gacha_helper.generate_image(gacha_data)))
-    await bang_dream_matcher.finish(msg)
+        await bang_dream_matcher.send(
+            Image(raw=await gacha_helper.generate_image(gacha_data))
+        )
+    await bang_dream_matcher.finish()
 
 
 @bang_dream_matcher.handle()
