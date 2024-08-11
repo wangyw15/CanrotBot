@@ -1,8 +1,7 @@
 import inspect
-from typing import Callable, Sequence
+from typing import Callable
 
 from nonebot import logger, get_driver
-from nonebot_plugin_alconna import UniMessage
 
 from .model import Tool, ToolCall, ToolCallResult
 
@@ -83,24 +82,15 @@ def check_annotation(func: Callable) -> type:
 
 def register_tool(func: Callable) -> Callable:
     """
-    装饰器，将方法注册为 Tool，需要参数和返回值都标记为 str, UniMessage或tuple[str, UniMessage]
-
-    str 返回作为 LLM Toolcall 的返回值，UniMessage 作为追加消息发送
-
-    返回没有 str 则不会继续使用 LLM，直接使用 UniMessage 作为返回
+    装饰器，将方法注册为 Tool，需要参数和返回值都标记为 str
 
     :param func: 方法
 
     :return: 方法
     """
     # 检查类型标注
-    if check_annotation(func) not in (
-        str,
-        UniMessage,
-        tuple[str, UniMessage],
-        tuple[UniMessage | str],
-    ):
-        raise ValueError("Return type must be str or UniMessage")
+    if check_annotation(func) != str:
+        raise ValueError("Tool function's return type must be str")
 
     # 注册 Tool
     resolved = resolve_method(func)
@@ -110,7 +100,7 @@ def register_tool(func: Callable) -> Callable:
     return func
 
 
-def run_tool_call(tool_call: Sequence[ToolCall]) -> Sequence[ToolCallResult]:
+def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
     """
     执行 Tool
 
@@ -132,18 +122,14 @@ def run_tool_call(tool_call: Sequence[ToolCall]) -> Sequence[ToolCallResult]:
 
             logger.debug(f'Tool "{tool_name}" returned with {tool_ret}')
 
-            return_type = check_annotation(tools_callable[call["function"]["name"]])
+            # 生成返回值
             current_result = {"name": tool_name}
-            if return_type == str:
-                current_result["result"] = tool_ret
-            elif return_type == UniMessage:
-                current_result["message"] = tool_ret
-            elif return_type == tuple[str, UniMessage]:
-                current_result["result"] = tool_ret[0]
-                current_result["message"] = tool_ret[1]
-            elif return_type == tuple[UniMessage | str]:
-                current_result["result"] = tool_ret[1]
-                current_result["message"] = tool_ret[0]
+
+            # OpenAI 兼容
+            if "id" in call:
+                current_result["tool_call_id"] = call["id"]
+
+            current_result["result"] = tool_ret
             ret.append(current_result)
         else:
             logger.warning(f'Tool "{call["function"]["name"]}" not found')

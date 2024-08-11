@@ -1,20 +1,40 @@
-from typing import Sequence
+import json
+from typing import cast
 
-import openai
 from nonebot import get_plugin_config
-from nonebot_plugin_alconna import UniMessage
+from openai import AsyncOpenAI
+from openai.types.chat import ChatCompletionMessage, ChatCompletionMessageToolCall
+from openai.types.chat.chat_completion import ChatCompletion, Choice
 
 from .config import OpenAIConfig
 from ... import tool
 from ...model import Message
 
 openai_config = get_plugin_config(OpenAIConfig)
-openai_client = openai.AsyncOpenAI(
+openai_client = AsyncOpenAI(
     base_url=openai_config.base_url, api_key=openai_config.api_key
 )
 
 
-async def chat(message: Sequence[Message] | str) -> tuple[str, UniMessage]:
+def convert_tool_calls(
+    openai_tool_calls: list[ChatCompletionMessageToolCall],
+) -> list[tool.ToolCall]:
+    ret: list[tool.ToolCall] = []
+    for tool_call in openai_tool_calls:
+        func = tool_call.function
+        ret.append(
+            {
+                "id": tool_call.id,
+                "function": {
+                    "name": func.name,
+                    "arguments": json.loads(func.arguments),
+                },
+            }
+        )
+    return ret
+
+
+async def chat(message: list[Message] | str) -> str:
     """
     生成聊天回复
 
@@ -22,35 +42,45 @@ async def chat(message: Sequence[Message] | str) -> tuple[str, UniMessage]:
 
     :return: 返回消息，额外消息（可能为空消息）
     """
-    extra_message: UniMessage = UniMessage()
     if isinstance(message, str):
-        messages: list[Message] = [{"role": "user", "content": message}]
+        messages: list[ChatCompletionMessage] = [{"role": "user", "content": message}]
     else:
-        messages = [i.copy() for i in message]
+        messages: list[ChatCompletionMessage] = cast(
+            list[ChatCompletionMessage], [i.copy() for i in message]
+        )
 
-    response = await openai_client.chat.completions.create(
-        model=openai_config.model,
-        messages=messages,
-        stream=False,
-        tools=tool.tools_description,
-    )
+    finish_reason: str | None = None
+    choice: None | Choice = None
 
-    if "tool_calls" in response["message"]:
-        messages.append(response["message"])
-        tool_results = tool.run_tool_call(response["message"]["tool_calls"])
-        with_tool_call_result = False
-        for result in tool_results:
-            if "result" in result:
-                with_tool_call_result = True
-                messages.append({"role": "tool", "content": result["result"]})
-            if "message" in result:
-                extra_message += result["message"]
+    while finish_reason is None or finish_reason == "tool_calls":
+        completion: ChatCompletion = await openai_client.chat.completions.create(  # type: ignore
+            model=openai_config.model,
+            messages=messages,
+            stream=False,
+            tools=tool.tools_description,
+        )
 
-        if with_tool_call_result:
-            response = await openai_client.chat.completions.create(
-                model=openai_config.model,
-                messages=messages,
-                stream=False,
-            )
+        choice = completion.choices[0]
+        finish_reason = choice.finish_reason
 
-    return response["message"]["content"], extra_message
+        if finish_reason == "tool_calls":
+            messages.append(choice.message)
+            tool_calls = completion.choices[0].message.tool_calls or []
+
+            tool_results = tool.run_tool_call(convert_tool_calls(tool_calls))
+            for result in tool_results:
+                messages.append(
+                    cast(
+                        ChatCompletionMessage,
+                        {
+                            "role": "tool",
+                            "tool_call_id": result["tool_call_id"],
+                            "name": result["name"],
+                            "content": result["result"],
+                        },
+                    )
+                )
+
+    if choice:
+        return choice.message.content
+    return ""

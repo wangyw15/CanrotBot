@@ -1,6 +1,4 @@
-from typing import TypedDict, Literal, Mapping, Sequence, NotRequired, Any
-
-from nonebot_plugin_alconna import UniMessage
+from typing import TypedDict, Literal, NotRequired, Any
 
 
 class Property(TypedDict):
@@ -10,8 +8,8 @@ class Property(TypedDict):
 
 class Parameters(TypedDict):
     type: Literal["object"]
-    properties: Mapping[str, Property]
-    required: Sequence[str]
+    properties: dict[str, Property]
+    required: list[str]
 
 
 class ToolFunction(TypedDict):
@@ -27,14 +25,17 @@ class Tool(TypedDict):
 
 class ToolCallFunction(TypedDict):
     name: str
-    arguments: NotRequired[Mapping[str, Any]]
+    arguments: NotRequired[dict[str, Any]]
 
 
 class ToolCall(TypedDict):
+    id: NotRequired[str]
     function: ToolCallFunction
+    type: NotRequired[Literal["function"]]
 
 
 class ToolCallResult(TypedDict):
     name: str
+    tool_call_id: NotRequired[str]
     result: NotRequired[str]
-    message: NotRequired[UniMessage]
+    # message: NotRequired[UniMessage]
