@@ -9,6 +9,7 @@ from nonebot_plugin_alconna import (
     Args,
     Target,
     UniMessage,
+    CommandMeta,
 )
 from nonebot_plugin_apscheduler import scheduler
 
@@ -52,11 +53,12 @@ tieba_command = Alconna(
         alias=["签到信息"],
         help_text="查看最近一次签到信息",
     ),
+    meta=CommandMeta(description="贴吧相关功能，如签到"),
 )
 
 __plugin_meta__ = PluginMetadata(
     name="贴吧",
-    description="比如贴吧签到、签到和签到",
+    description=tieba_command.meta.description,
     usage=tieba_command.get_help(),
     config=None,
 )
