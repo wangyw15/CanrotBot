@@ -6,7 +6,7 @@ from .config import DatabaseConfig
 from .model import Base
 
 config = get_plugin_config(DatabaseConfig)
-engine = create_engine(config.connection_string)
+engine = create_engine(config.connection_string, pool_pre_ping=True, pool_recycle=600)
 
 
 def get_engine() -> Engine:
