@@ -10,6 +10,12 @@ class Platform(Enum):
     Kook = "kook"
 
 
+class ChatType(Enum):
+    Private = "private"
+    Group = "group"
+    Channel = "channel"
+
+
 class PluginListMode(Enum):
     Blacklist = "blacklist"
     Whitelist = "whitelist"

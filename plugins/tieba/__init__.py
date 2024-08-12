@@ -1,341 +1,258 @@
-from typing import cast
-
-from arclet.alconna import Alconna, Option, Args
 from nonebot import get_bot
 from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import on_alconna, Query, AlconnaQuery
+from nonebot_plugin_alconna import (
+    on_alconna,
+    Query,
+    Alconna,
+    Subcommand,
+    Args,
+    Target,
+    UniMessage,
+)
 from nonebot_plugin_apscheduler import scheduler
-from sqlalchemy import select, insert, delete, ColumnElement
 
-from essentials.libraries import user, database
-from . import data, signin
+import plugins.tieba.model
+from essentials.libraries import user, model
+from . import data, tieba
+
+tieba_command = Alconna(
+    "tieba",
+    Subcommand(
+        "add",
+        Args["bduss", str]["stoken", str]["alias", str, ""],
+        alias=["绑定"],
+        help_text="绑定贴吧账号",
+    ),
+    Subcommand(
+        "delete",
+        Args["account_id", int],
+        alias=["解绑"],
+        help_text="解绑贴吧账号",
+    ),
+    Subcommand("list", alias=["绑定列表"], help_text="查看绑定列表"),
+    Subcommand(
+        "subscribe",
+        Args["account_id", int],
+        alias=["订阅"],
+        help_text="订阅签到结果",
+    ),
+    Subcommand(
+        "unsubscribe",
+        Args["account_id", int],
+        alias=["退订"],
+        help_text="退订签到结果",
+    ),
+    Subcommand(
+        "sign", Args["account_id", int, 0], alias=["签到"], help_text="手动一键签到"
+    ),
+    Subcommand(
+        "signinfo",
+        Args["account_id", int],
+        alias=["签到信息"],
+        help_text="查看最近一次签到信息",
+    ),
+)
 
 __plugin_meta__ = PluginMetadata(
     name="贴吧",
     description="比如贴吧签到、签到和签到",
-    usage="/tieba signin",
+    usage=tieba_command.get_help(),
     config=None,
 )
 
-
-_command = on_alconna(
-    Alconna(
-        "tieba",
-        Option(
-            "bind",
-            Args["bduss", str]["stoken", str]["alias", str, ""],
-            alias=["绑定"],
-            help_text="绑定贴吧账号",
-        ),
-        Option(
-            "unbind",
-            Args["account_id", int, 0],
-            alias=["解绑"],
-            help_text="解绑贴吧账号",
-        ),
-        Option("list", alias=["绑定列表"], help_text="查看绑定列表"),
-        Option(
-            "subscribe",
-            Args["account_id", int, 0],
-            alias=["订阅"],
-            help_text="订阅签到结果",
-        ),
-        Option(
-            "unsubscribe",
-            Args["account_id", int, 0],
-            alias=["退订"],
-            help_text="退订签到结果",
-        ),
-        Option(
-            "sign", Args["account_id", int, 0], alias=["签到"], help_text="手动一键签到"
-        ),
-        Option(
-            "signinfo",
-            Args["account_id", int, 0],
-            alias=["签到信息"],
-            help_text="查看签到信息",
-        ),
-    ),
+tieba_matcher = on_alconna(
+    tieba_command,
     aliases={"贴吧"},
     block=True,
 )
 
 
-@_command.assign("bind")
+@tieba_matcher.assign("add")
 async def _(
-    bduss_query: Query[str] = AlconnaQuery("bduss"),
-    stoken_query: Query[str] = AlconnaQuery("stoken"),
-    alias_query: Query[str] = AlconnaQuery("alias", ""),
+    bduss_query: Query[str] = Query("bduss"),
+    stoken_query: Query[str] = Query("stoken"),
+    alias_query: Query[str] = Query("alias", ""),
 ):
     uid = user.get_uid()
     if not uid:
-        await _command.finish("还未注册或绑定账号")
+        await tieba_matcher.finish("还未注册或绑定账号")
 
     bduss = bduss_query.result.strip()
     stoken = stoken_query.result.strip()
     alias = alias_query.result.strip()
 
-    with database.get_session().begin() as session:
-        if alias:
-            if session.execute(
-                select(data.BaiduAccount)
-                .where(
-                    cast(ColumnElement[bool], data.BaiduAccount.owner_user_id == uid)
-                )
-                .where(cast(ColumnElement[bool], data.BaiduAccount.alias == alias))
-            ).scalar_one_or_none():
-                await _command.finish("该别名已被使用")
-        session.execute(
-            insert(data.BaiduAccount).values(
-                owner_user_id=uid,
-                bduss=bduss,
-                stoken=stoken,
-                alias=alias,
-            )
-        )
-    await _command.finish("绑定成功")
+    if tieba.check_alias_exists(uid, alias):
+        await tieba_matcher.finish("该别名已被使用")
+
+    tieba.add_account(uid, bduss, stoken, alias)
+    await tieba_matcher.finish("绑定成功")
 
 
-@_command.assign("unbind")
-async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
+@tieba_matcher.assign("delete")
+async def _(account_id_query: Query[int] = Query("account_id")):
     uid = user.get_uid()
     if not uid:
-        await _command.finish("还未注册或绑定账号")
+        await tieba_matcher.finish("还未注册或绑定账号")
+
+    accounts = tieba.get_all_owned_accounts(uid)
+    if not accounts:
+        await tieba_matcher.finish("还未绑定贴吧账号")
 
     account_id = account_id_query.result
+    if tieba.check_account_exists(uid, account_id):
+        await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
 
-    with database.get_session().begin() as session:
-        if account_id:
-            # 删除订阅
-            session.execute(
-                delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.account_id == account_id,
-                )
-            )
-            # 删除账号
-            session.execute(
-                delete(data.BaiduAccount).where(
-                    data.BaiduAccount.owner_user_id == uid,
-                    data.BaiduAccount.id == account_id,
-                )
-            )
-        else:
-            # 删除订阅
-            accounts = (
-                session.execute(
-                    select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid
-                    )
-                )
-                .scalars()
-                .all()
-            )
-            for account in accounts:
-                session.execute(
-                    delete(data.TiebaSignResultSubscriber).where(
-                        data.TiebaSignResultSubscriber.account_id == account.id,
-                    )
-                )
-            # 删除账号
-            session.execute(
-                delete(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)
-            )
+    tieba.unsubscribe_all(account_id)
+    tieba.delete_account(uid, account_id)
 
-    if account_id:
-        await _command.finish(f"账号 {account_id} 解绑成功")
-    else:
-        await _command.finish("所有账号解绑成功")
+    await tieba_matcher.finish(f"账号 {account_id} 解绑成功")
 
 
-@_command.assign("list")
+@tieba_matcher.assign("list")
 async def _():
     uid = user.get_uid()
     if not uid:
-        await _command.finish("还未注册或绑定账号")
+        await tieba_matcher.finish("还未注册或绑定账号")
 
     msg = "已绑定账号"
 
-    with database.get_session().begin() as session:
-        accounts = (
-            session.execute(
-                select(data.BaiduAccount).where(data.BaiduAccount.owner_user_id == uid)
-            )
-            .scalars()
-            .all()
-        )
+    accounts = tieba.get_all_owned_accounts(uid)
+    if not accounts:
+        await tieba_matcher.finish("还未绑定贴吧账号")
+    for account in accounts:
+        if account.alias:
+            msg += f"\n{account.id}({account.alias}): {account.bduss[:5]}...{account.bduss[-5:]}"
+        else:
+            msg += f"\n{account.id}: {account.bduss[:5]}...{account.bduss[-5:]}"
 
-        if not accounts:
-            await _command.finish("还未绑定贴吧账号")
-        for account in accounts:
-            if account.alias:
-                msg += f"\n{account.id}({account.alias}): {account.bduss[:5]}...{account.bduss[-5:]}"
-            else:
-                msg += f"\n{account.id}: {account.bduss[:5]}...{account.bduss[-5:]}"
-
-    await _command.finish(msg)
+    await tieba_matcher.finish(msg)
 
 
-@_command.assign("subscribe")
-async def _(
-    bot: Bot, event: Event, account_id_query: Query[int] = AlconnaQuery("account_id", 0)
-):
-    platform_id = event.get_user_id()
+@tieba_matcher.assign("subscribe")
+async def _(bot: Bot, event: Event, account_id_query: Query[int] = Query("account_id")):
     uid = user.get_uid()
     if not uid:
-        await _command.finish("还未注册或绑定账号")
+        await tieba_matcher.finish("还未注册或绑定账号")
+
+    accounts = tieba.get_all_owned_accounts(uid)
+    if not accounts:
+        await tieba_matcher.finish("还未绑定贴吧账号")
 
     account_id = account_id_query.result
+    if tieba.check_account_exists(uid, account_id):
+        await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
 
-    with database.get_session().begin() as session:
-        if account_id:
-            accounts = (
-                session.execute(
-                    select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,
-                        data.BaiduAccount.id == account_id,
-                    )
-                )
-                .scalars()
-                .all()
-            )
-        else:
-            accounts = (
-                session.execute(
-                    select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,
-                    )
-                )
-                .scalars()
-                .all()
-            )
-        if not accounts:
-            await _command.finish("还未绑定贴吧账号")
-
-        for account in accounts:
-            if session.execute(
-                select(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.account_id == account.id,
-                    data.TiebaSignResultSubscriber.platform_id == platform_id,
-                )
-            ).scalar_one_or_none():
-                continue
-            session.execute(
-                insert(data.TiebaSignResultSubscriber).values(
-                    account_id=account.id,
-                    platform_id=platform_id,
-                    bot=bot.self_id,
-                )
-            )
-    await _command.finish("订阅成功")
+    # TODO 支持私聊之外的订阅
+    tieba.subscribe(
+        account_id, event.get_user_id(), bot.self_id, model.ChatType.Private
+    )
+    await tieba_matcher.finish("订阅成功")
 
 
-@_command.assign("unsubscribe")
-async def _(event: Event, account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
-    platform_id = event.get_user_id()
+@tieba_matcher.assign("unsubscribe")
+async def _(bot: Bot, event: Event, account_id_query: Query[int] = Query("account_id")):
     uid = user.get_uid()
     if not uid:
-        await _command.finish("还未注册或绑定账号")
+        await tieba_matcher.finish("还未注册或绑定账号")
+
+    accounts = tieba.get_all_owned_accounts(uid)
+    if not accounts:
+        await tieba_matcher.finish("还未绑定贴吧账号")
 
     account_id = account_id_query.result
+    if tieba.check_account_exists(uid, account_id):
+        await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
 
-    with database.get_session().begin() as session:
-        if account_id:
-            session.execute(
-                delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.account_id == account_id,
-                    data.TiebaSignResultSubscriber.platform_id == platform_id,
-                )
-            )
-        else:
-            session.execute(
-                delete(data.TiebaSignResultSubscriber).where(
-                    data.TiebaSignResultSubscriber.platform_id == platform_id,
-                )
-            )
+    # TODO 支持私聊之外的订阅
+    tieba.unsubscribe(
+        account_id, event.get_user_id(), bot.self_id, model.ChatType.Private
+    )
+    await tieba_matcher.finish(f"账号 {account_id} 退订成功")
+
+
+@tieba_matcher.assign("sign")
+async def _(account_id_query: Query[int] = Query("account_id", 0)):
+    uid = user.get_uid()
+    if not uid:
+        await tieba_matcher.finish("还未注册或绑定账号")
+
+    accounts = tieba.get_all_owned_accounts(uid)
+    if not accounts:
+        await tieba_matcher.finish("还未绑定贴吧账号")
+
+    account_id = account_id_query.result
+    signin_result: dict[int, list[data.ForumSigninResultData]] = {}
+    accounts: list[data.Account] = []
 
     if account_id:
-        await _command.finish(f"账号 {account_id} 退订成功")
+        if tieba.check_account_exists(uid, account_id):
+            await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
+        accounts.append(tieba.get_account(uid, account_id))
     else:
-        await _command.finish("所有账号退订成功")
+        accounts = tieba.get_all_owned_accounts(uid)
 
-
-@_command.assign("sign")
-async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
-    uid = user.get_uid()
-    if not uid:
-        await _command.finish("还未注册或绑定账号")
-
-    account_id = account_id_query.result
-    signin_result: dict[int, list[signin.ForumSigninResult] | None] = {}
-
-    with database.get_session().begin() as session:
-        if account_id:
-            accounts = (
-                session.execute(
-                    select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,
-                        data.BaiduAccount.id == account_id,
-                    )
-                )
-                .scalars()
-                .all()
-            )
-        else:
-            accounts = (
-                session.execute(
-                    select(data.BaiduAccount).where(
-                        data.BaiduAccount.owner_user_id == uid,
-                    )
-                )
-                .scalars()
-                .all()
-            )
-        if not accounts:
-            await _command.finish("还未绑定贴吧账号")
-        for account in accounts:
-            signin_result[account.id] = await signin.signin(
-                account.bduss, account.stoken
-            )
+    for account in accounts:
+        result = await tieba.signin(account)
+        signin_result[account_id] = result
+        tieba.save_signin_result(account_id, result)
 
     msg = "签到结果"
 
     for account_id, result in signin_result.items():
         if result:
-            msg += f"\n账号 {account_id}\n{signin.generate_text_result(result)}"
+            msg += f"\n账号 {account_id}\n{tieba.generate_text_result(result)}"
         else:
             msg += f"\n账号 {account_id} 签到失败"
-    await _command.finish(msg)
+    await tieba_matcher.finish(msg)
 
 
-@_command.assign("signinfo")
-async def _(account_id_query: Query[int] = AlconnaQuery("account_id", 0)):
-    # TODO 记得做
-    await _command.finish("暂未实现")
+@tieba_matcher.assign("signinfo")
+async def _(account_id_query: Query[int] = Query("account_id")):
+    uid = user.get_uid()
+    if not uid:
+        await tieba_matcher.finish("还未注册或绑定账号")
+
+    accounts = tieba.get_all_owned_accounts(uid)
+    if not accounts:
+        await tieba_matcher.finish("还未绑定贴吧账号")
+
+    account_id = account_id_query.result
+    if tieba.check_account_exists(uid, account_id):
+        await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
+
+    result = tieba.get_latest_signin_result(account_id)
+    if not result:
+        await tieba_matcher.finish("还未签到过")
+    await tieba_matcher.finish("签到结果\n" + tieba.generate_text_result(result))
 
 
 @scheduler.scheduled_job("cron", hour="0", id="tieba_signin")
-async def _():
-    with database.get_session().begin() as session:
-        accounts = session.execute(select(data.BaiduAccount)).scalars().all()
-        for account in accounts:
-            result = await signin.signin(account.bduss, account.stoken)
+async def run_daily_signin():
+    # TODO 支持私聊之外的订阅
+    signin_message: dict[str, str] = {}  # type,bot,pid
 
-            subscribers = (
-                session.execute(
-                    select(data.TiebaSignResultSubscriber).where(
-                        data.TiebaSignResultSubscriber.account_id == account.id,
-                    )
-                )
-                .scalars()
-                .all()
+    accounts = tieba.get_all_accounts()
+    for account in accounts:
+        result = await tieba.signin(account)
+        tieba.save_signin_result(account.id, result)
+
+        display_name = tieba.get_account_alias(account.id)
+        if not display_name:
+            display_name = str(account.id)
+
+        current_result = f"\n账号 {display_name}\n{tieba.generate_text_result(result)}"
+
+        subscribers = tieba.get_signin_result_subscribers(account.id)
+        for subscriber in subscribers:
+            key = (
+                f"{model.ChatType.Private},{subscriber.bot_id},{subscriber.platform_id}"
             )
-            for subscriber in subscribers:
-                # TODO 支持多平台
-                if subscriber.platform_id.startswith("qq_"):
-                    bot = get_bot(subscriber.bot)
-                    await bot.call_api(
-                        "send_private_msg",
-                        user_id=subscriber.platform_id[3:],
-                        message=signin.generate_text_result(result),
-                    )
+            if subscriber.platform_id not in signin_message:
+                signin_message[key] = "签到结果:"
+            signin_message[key] += current_result
+
+    for target_str, message in signin_message:
+        chat_type, bot_id, platform_id = target_str.split(",")
+        target = Target(id=platform_id, self_id=bot_id, private=True)
+        await UniMessage(message).send(bot=get_bot(bot_id), target=target)
