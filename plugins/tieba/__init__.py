@@ -102,7 +102,7 @@ async def _(account_id_query: Query[int] = Query("account_id")):
         await tieba_matcher.finish("还未绑定贴吧账号")
 
     account_id = account_id_query.result
-    if tieba.check_account_exists(uid, account_id):
+    if not tieba.check_account_exists(uid, account_id):
         await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
 
     tieba.unsubscribe_all(account_id)
@@ -142,7 +142,7 @@ async def _(bot: Bot, event: Event, account_id_query: Query[int] = Query("accoun
         await tieba_matcher.finish("还未绑定贴吧账号")
 
     account_id = account_id_query.result
-    if tieba.check_account_exists(uid, account_id):
+    if not tieba.check_account_exists(uid, account_id):
         await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
 
     # TODO 支持私聊之外的订阅
@@ -163,7 +163,7 @@ async def _(bot: Bot, event: Event, account_id_query: Query[int] = Query("accoun
         await tieba_matcher.finish("还未绑定贴吧账号")
 
     account_id = account_id_query.result
-    if tieba.check_account_exists(uid, account_id):
+    if not tieba.check_account_exists(uid, account_id):
         await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
 
     # TODO 支持私聊之外的订阅
@@ -188,7 +188,7 @@ async def _(account_id_query: Query[int] = Query("account_id", 0)):
     accounts: list[data.Account] = []
 
     if account_id:
-        if tieba.check_account_exists(uid, account_id):
+        if not tieba.check_account_exists(uid, account_id):
             await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
         accounts.append(tieba.get_account(uid, account_id))
     else:
@@ -220,7 +220,7 @@ async def _(account_id_query: Query[int] = Query("account_id")):
         await tieba_matcher.finish("还未绑定贴吧账号")
 
     account_id = account_id_query.result
-    if tieba.check_account_exists(uid, account_id):
+    if not tieba.check_account_exists(uid, account_id):
         await tieba_matcher.finish("你没有这个 ID 对应的百度账号")
 
     result = tieba.get_latest_signin_result(account_id)
