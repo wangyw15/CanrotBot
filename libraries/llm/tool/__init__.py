@@ -115,12 +115,9 @@ def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
             tool_name = call["function"]["name"]
             tool_args = call["function"]["arguments"]
 
-            logger.info(f'Called tool "{tool_name}"')
-            logger.debug(f'Tool "{tool_name}" called with arguments {tool_args}')
-
+            logger.info(f'Tool "{tool_name}" called with arguments {tool_args}')
             tool_ret = tools_callable[tool_name](**tool_args)
-
-            logger.debug(f'Tool "{tool_name}" returned with {tool_ret}')
+            logger.info(f'Tool "{tool_name}" returned with {tool_ret}')
 
             # 生成返回值
             current_result = {"name": tool_name}
