@@ -1,7 +1,7 @@
 import typing
 
 from nonebot import get_plugin_config, on_regex
-from nonebot.adapters.qq import Event as QQEvent
+from nonebot.adapters.qq import Bot as QQBot
 from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
@@ -61,9 +61,9 @@ async def link_set_state(
 
 @steam_command_matcher.handle()
 @steam_link_matcher.handle()
-async def set_official_qq_state(event: QQEvent, state: T_State):
-    # do not remove event parameter, it's necessary to decide whether to send url
-    event.get_user_id()  # just to make event used, meaningless
+async def set_official_qq_state(bot: QQBot, state: T_State):
+    # do not remove bot parameter, it's necessary to decide whether to send url
+    _ = bot.self_id  # just to make bot used, meaningless
     state["official_qq"] = True
 
 

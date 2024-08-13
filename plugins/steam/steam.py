@@ -1,6 +1,5 @@
 from nonebot_plugin_alconna import UniMessage, Image, Text
 
-from essentials.libraries import util
 from essentials.libraries.network import fetch_json_data
 
 
@@ -48,10 +47,10 @@ async def generate_message(app_info: dict, with_url=True) -> UniMessage:
     if with_url:
         txt_msg += f"\n链接: https://store.steampowered.com/app/{appid}"
 
+    txt_msg = f"\n{txt_msg}\n"
+
     ret = UniMessage()
-    if await util.can_send_segment(Image):
-        ret.append(Image(url=header_img))
+    ret.append(Image(url=header_img))
     ret.append(Text(txt_msg))
-    if await util.can_send_segment(Image):
-        ret.append(Image(url=bg_img))
+    ret.append(Image(url=bg_img))
     return ret
