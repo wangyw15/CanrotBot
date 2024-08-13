@@ -2,6 +2,7 @@ import typing
 
 from nonebot import get_plugin_config, on_regex
 from nonebot.adapters.qq import Bot as QQBot
+from nonebot.matcher import Matcher
 from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
@@ -69,21 +70,21 @@ async def set_official_qq_state(bot: QQBot, state: T_State):
 
 @steam_command_matcher.handle()
 @steam_link_matcher.handle()
-async def send_game_info(state: T_State):
+async def send_game_info(state: T_State, matcher: Matcher):
     appid: str = state["appid"]
     if appinfo := await steam.fetch_app_info(
         appid, _steam_config.language, _steam_config.region
     ):
         if appinfo.get(appid, {}).get("success", False):
             appinfo = appinfo[appid]["data"]
-            await steam_command_matcher.finish(
-                await steam.generate_message(
-                    appinfo, with_url=not state.get("official_qq", False)
-                )
+            await matcher.finish(
+                await (
+                    await steam.generate_message(
+                        appinfo, with_url=not state.get("official_qq", False)
+                    )
+                ).export()
             )
         else:
-            await steam_command_matcher.finish(
-                f"未在 Steam {_steam_config.region} 区域找到该游戏"
-            )
+            await matcher.finish(f"未在 Steam {_steam_config.region} 区域找到该游戏")
     else:
-        await steam_command_matcher.finish("Steam 请求失败")
+        await matcher.finish("Steam 请求失败")
