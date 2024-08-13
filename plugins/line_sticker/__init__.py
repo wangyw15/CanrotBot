@@ -1,12 +1,13 @@
 import typing
 
 from nonebot import on_regex
-from nonebot.adapters import Bot, Event
 from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import File, UniMessage
+from nonebot_plugin_alconna import (
+    File,
+    UniMessage,
+)
 
-from essentials.libraries import util
 from . import line_sticker
 
 __plugin_meta__ = PluginMetadata(
@@ -17,20 +18,15 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-_line_sticker_handler = on_regex(
+line_sticker_link_matcher = on_regex(
     r"(?:https?:\/\/)?store\.line\.me\/stickershop\/product\/(\d+)", block=True
 )
 
 
-@_line_sticker_handler.handle()
-async def _(
-    bot: Bot, event: Event, reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]
-):
-    if not await util.can_send_segment(File):
-        await _line_sticker_handler.finish()
+@line_sticker_link_matcher.handle()
+async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     sticker_id = reg[0].strip()
     name, content = await line_sticker.get_line_sticker(sticker_id)
-    await line_sticker.send_file(content, name + ".zip", bot, event)
-    await _line_sticker_handler.finish(
+    await line_sticker_link_matcher.finish(
         await UniMessage(File(raw=content, name=name + ".zip")).export()
     )
