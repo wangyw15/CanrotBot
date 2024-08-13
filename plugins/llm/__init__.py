@@ -1,4 +1,4 @@
-from nonebot import on_message, get_plugin_config
+from nonebot import on_message, get_plugin_config, logger
 from nonebot.adapters import Event
 from nonebot.rule import Rule, to_me
 
@@ -27,8 +27,15 @@ llm = on_message(
 @llm.handle()
 async def _(event: Event):
     answer = "后端无回复"
-    if config.backend == "ollama":
-        answer = await ollama_chat(event.get_plaintext())
-    elif config.backend == "openai":
-        answer = await openai_chat(event.get_plaintext())
+
+    try:
+        if config.backend == "ollama":
+            answer = await ollama_chat(event.get_plaintext())
+        elif config.backend == "openai":
+            answer = await openai_chat(event.get_plaintext())
+    except Exception as e:
+        logger.error("Error in llm plugin")
+        logger.exception(e)
+        await llm.finish(f"出现错误：\n{e}")
+
     await llm.finish(answer)
