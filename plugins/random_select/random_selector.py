@@ -1,8 +1,9 @@
 import json
 import random
 from collections import namedtuple
+from typing import Annotated
 
-from libraries.llm import tool
+from libraries.llm.tool import BaseTool
 
 Item = namedtuple("Item", ["name", "weight"])
 
@@ -50,14 +51,16 @@ def random_select_from_list(items: list[Item] | list[str]) -> str:
     return item.name
 
 
-@tool.register_tool
-def random_select_for_llm(raw_items: str) -> str:
-    """
-    从列表中随机选择一个项目，列表中的项目以逗号分隔
+class RandomSelectTool(BaseTool):
+    __tool_name__ = "random_select"
+    __description__ = "从列表中随机选择一个项目，列表中的项目以逗号分隔"
+    __command__ = False
 
-    :param raw_items: 项目列表，列表中的项目以逗号分隔
-
-    :return: 随机选择的项目
-    """
-    items = parse_items(raw_items)
-    return json.dumps({"selected": random_select_from_list(items)}, ensure_ascii=False)
+    def __call__(
+        self, raw_items: Annotated[str, "项目列表，列表中的项目以逗号分隔"]
+    ) -> str:
+        items = parse_items(raw_items)
+        self.items = items
+        return json.dumps(
+            {"selected": random_select_from_list(items)}, ensure_ascii=False
+        )

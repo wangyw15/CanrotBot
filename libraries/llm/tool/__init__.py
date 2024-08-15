@@ -1,103 +1,59 @@
 import inspect
-from typing import Callable
 
 from nonebot import logger, get_driver
+from nonebot_plugin_alconna import UniMessage
 
-from .model import Tool, ToolCall, ToolCallResult
+from .model import Tool, ToolCall, ToolCallResult, BaseTool
 
 
-def resolve_method(func: Callable) -> Tool:
+def resolve_tool(tool_provider: type[BaseTool]) -> Tool:
     """
     解析方法为 Tool 类型
 
-    :param func: 方法
+    :param tool_provider: BaseTool 派生类
 
     :return: Tool
     """
-    docstring = inspect.getdoc(func) or ""
-    if not docstring:
-        raise ValueError("No docstring found")
+    if not tool_provider.__description__:
+        raise ValueError("Tool description must be provided")
 
     ret: Tool = {
         "type": "function",
         "function": {
-            "name": func.__name__,
-            "description": "",
+            "name": tool_provider.__tool_name__ or tool_provider.__name__,
+            "description": tool_provider.__description__,
             "parameters": {"type": "object", "properties": {}, "required": []},
         },
     }
 
-    lines = docstring.splitlines()
-    for line in lines:
-        if line.startswith(":param"):
-            _, name, desc = line.split(" ", 2)
-            name = name[:-1]
-            ret["function"]["parameters"]["properties"][name] = {
-                "type": "string",
-                "description": desc,
-            }
-            ret["function"]["parameters"]["required"].append(name)
-        elif line.startswith(":return"):
-            _, desc = line.split(" ", 1)
-        else:
-            if line:
-                ret["function"]["description"] += line + "\n"
-    ret["function"]["description"] = ret["function"]["description"].strip()
+    tool_func = tool_provider.__call__
+    signature = inspect.signature(tool_func)
 
-    # 检查是否有缺失的描述
-    if not ret["function"]["description"]:
-        raise ValueError("No description found for function")
+    # 解析参数
+    for param in signature.parameters.values():
+        if param.name == "self":
+            continue
+        if param.annotation == inspect.Parameter.empty:
+            raise ValueError(f"No type annotation found for argument {param.name}")
+        if not isinstance(param.annotation.__metadata__[0], str):
+            raise ValueError(
+                f"Argument {param.name} must be annotated with str as description"
+            )
 
-    for arg in inspect.getfullargspec(func).args:
-        if (
-            arg not in ret["function"]["parameters"]["properties"]
-            or not ret["function"]["parameters"]["properties"][arg]["description"]
-        ):
-            raise ValueError(f"No description found for parameter {arg}")
+        ret["function"]["parameters"]["properties"][param.name] = {
+            "type": "string",
+            "description": param.annotation.__metadata__[0],
+        }
+        ret["function"]["parameters"]["required"].append(param.name)
+
+    # 检查返回值
+    if signature.return_annotation != str:
+        raise ValueError("Return value must be annotated as str")
     return ret
 
 
 tools_description: list[Tool] = []
-tools_callable: dict[str, Callable] = {}
-
-
-def check_annotation(func: Callable) -> type:
-    """
-    检查方法参数是否全部标记为 str，是否有返回值标注
-
-    :param func: 方法
-
-    :return: 返回值类型
-    """
-    spec = inspect.getfullargspec(func)
-    for arg in spec.args:
-        if arg not in spec.annotations:
-            raise ValueError(f"No type annotation found for argument {arg}")
-        if spec.annotations[arg] is not str:
-            raise ValueError(f"Argument {arg} must be annotated as str")
-    if "return" not in spec.annotations:
-        raise ValueError("No type annotation found for return")
-    return spec.annotations["return"]
-
-
-def register_tool(func: Callable) -> Callable:
-    """
-    装饰器，将方法注册为 Tool，需要参数和返回值都标记为 str
-
-    :param func: 方法
-
-    :return: 方法
-    """
-    # 检查类型标注
-    if check_annotation(func) != str:
-        raise ValueError("Tool function's return type must be str")
-
-    # 注册 Tool
-    resolved = resolve_method(func)
-    tools_description.append(resolved)
-    tools_callable[resolved["function"]["name"]] = func
-    logger.info(f"Registered tool \"{resolved['function']['name']}\"")
-    return func
+tools_callable: dict[str, type[BaseTool]] = {}
 
 
 def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
@@ -114,13 +70,13 @@ def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
         if call["function"]["name"] in tools_callable:
             tool_name = call["function"]["name"]
             tool_args = call["function"]["arguments"]
+            tool_instance = tools_callable[tool_name]()
+
+            current_result = {"name": tool_name, "instance": tool_instance}
 
             logger.info(f'Tool "{tool_name}" called with arguments {tool_args}')
-            tool_ret = tools_callable[tool_name](**tool_args)
+            tool_ret = tool_instance(**tool_args)
             logger.info(f'Tool "{tool_name}" returned with {tool_ret}')
-
-            # 生成返回值
-            current_result = {"name": tool_name}
 
             # OpenAI 兼容
             if "id" in call:
@@ -133,12 +89,29 @@ def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
     return ret
 
 
+def run_message_postprocess(
+    message: str, tool_results: list[ToolCallResult]
+) -> UniMessage:
+    ret_message = UniMessage(message)
+    for tool in tool_results:
+        ret_message = tool["instance"].message_postprocess(ret_message)
+    return ret_message
+
+
 @get_driver().on_startup
-async def log_tool_count():
+async def register_tools():
+    for tool_class in BaseTool.__subclasses__():
+        tool = resolve_tool(tool_class)
+        tools_description.append(tool)
+        tools_callable[tool["function"]["name"]] = tool_class
+
+        logger.info(
+            f'Registered tool "{tool["function"]["name"]}" from "{tool_class.__name__}"'
+        )
     logger.info(f"Registered {len(tools_description)} tools")
 
 
 __all__ = [
-    "register_tool",
+    "BaseTool",
     "run_tool_call",
 ]

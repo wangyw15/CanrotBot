@@ -30,12 +30,21 @@ async def _(event: Event):
 
     try:
         if config.backend == "ollama":
-            answer = await ollama_chat(event.get_plaintext())
+            chat = ollama_chat
         elif config.backend == "openai":
-            answer = await openai_chat(event.get_plaintext())
+            chat = openai_chat
+        else:
+            raise NotImplementedError(f"Invalid backend: {config.backend}")
+        answer = await chat(
+            event.get_plaintext(),
+            with_tool_call=True,
+            with_message_postprocessing=True,
+        )
     except Exception as e:
         logger.error("Error in llm plugin")
         logger.exception(e)
         await llm.finish(f"出现错误：\n{e}")
 
-    await llm.finish(answer)
+    if isinstance(answer, str):
+        await llm.finish(answer)
+    await llm.finish(await answer.export())
