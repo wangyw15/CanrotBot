@@ -5,7 +5,7 @@ from libraries.llm.tool import BaseTool
 from libraries.mediawiki import MediaWikiClient
 
 
-class PokeTool(BaseTool):
+class PokemonTool(BaseTool):
     __description__ = "从神奇宝贝百科搜索词条并获取最相关词条对应的页面内容，在神奇宝贝百科上可以查到所有神奇宝贝（宝可梦）相关的内容"
     __command__ = False
 
