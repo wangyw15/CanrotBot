@@ -15,6 +15,7 @@ async def chat(
     message: list[Message] | str,
     with_tool_call: bool = True,
     with_message_postprocessing: bool = False,
+    **kwargs,
 ) -> str | UniMessage:
     """
     生成聊天回复
@@ -22,6 +23,7 @@ async def chat(
     :param message: 消息
     :param with_tool_call: 是否使用 tool_call
     :param with_message_postprocessing: 是否使用消息后处理，仅在 with_tool_call 为 True 时有效
+    :param kwargs: OllamaClient 的参数
 
     :return: 返回消息：str 则为普通消息，UniMessage 则为经过后处理消息
     """
@@ -35,6 +37,7 @@ async def chat(
         messages=messages,
         stream=False,
         tools=tool.tools_description if with_tool_call else None,
+        **kwargs,
     )
     tool_results: list[ToolCallResult] = []
 

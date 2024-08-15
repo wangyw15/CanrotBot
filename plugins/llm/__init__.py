@@ -40,6 +40,7 @@ async def _(event: Event):
             event.get_plaintext(),
             with_tool_call=True,
             with_message_postprocessing=True,
+            temperature=config.tempurature,
         )
     except Exception as e:
         logger.error("Error in llm plugin")
