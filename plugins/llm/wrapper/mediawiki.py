@@ -1,6 +1,6 @@
 import json
 from typing import Annotated
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 
 from nonebot_plugin_alconna import UniMessage
 
@@ -111,5 +111,7 @@ class MediaWikiTool(BaseTool):
             if can_send_url():
                 url = urlparse(self.client.base_url)
                 prefix = "wiki/" if self.target.endswith("维基百科") else ""
-                message += f"\n{url.scheme}://{url.netloc}/{prefix}{self.keyword}"
+                message += (
+                    f"\n{url.scheme}://{url.netloc}/{prefix}{quote(self.keyword)}"
+                )
         return message
