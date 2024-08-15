@@ -1,0 +1,1 @@
+from .moegirl import MoegirlTool

@@ -4,6 +4,7 @@ from nonebot.rule import Rule, to_me
 
 from libraries.llm.llm_backend import ollama_chat, openai_chat
 from .config import LLMConfig
+from .wrapper import *
 
 config = get_plugin_config(LLMConfig)
 
