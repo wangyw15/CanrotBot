@@ -28,7 +28,7 @@ HOSTS_DESCRIPTION = [
     },
     {
         "name": "萌娘百科",
-        "description": "可以查到所有漫画、动漫、游戏等二次元相关的内容，是二次元内容涵盖最全面的百科",
+        "description": "可以查到所有漫画、动漫、游戏等二次元相关的内容，是二次元内容涵盖最全面的百科。如果是动漫、漫画等二次元ACG相关内容，就优先选择萌娘百科。",
     },
     {
         "name": "神奇宝贝百科",
@@ -40,7 +40,9 @@ HOSTS_DESCRIPTION = [
 class MediaWikiTool(BaseTool):
     __description__ = (
         f"提供从不同百科搜索词条，并获取最相关词条对应的页面内容的能力。"
-        + f"当前支持的百科有{', '.join(HOSTS_URL.keys())}。"
+        + f"当前支持的百科有："
+        + "；".join([i["name"] + "，" + i["description"] for i in HOSTS_DESCRIPTION])
+        + "需要根据关键词所属的不同领域选择最合适的百科。"
     )
     __command__ = False
 
@@ -52,7 +54,7 @@ class MediaWikiTool(BaseTool):
         self,
         action: Annotated[
             str,
-            "hosts为获取所有可用的百科名称及其能搜索到的内容，是需要最先运行的action；search为在百科上进行搜索并获取最相关的一个页面标题；get为根据标题获取页面文本。hosts和search的结果不能直接作为回答，需要再通过get获取页面内容，根据页面内容进行回答。get接受的参数为search中返回的title字段。",
+            "hosts为获取所有可用的百科名称及其能搜索到的内容；search为在百科上进行搜索并获取最相关的一个页面标题；get为根据标题获取页面文本。hosts和search的结果不能直接作为回答，需要再通过get获取页面内容，根据页面内容进行回答。get接受的参数为search中返回的title字段。",
         ],
         target: Annotated[
             str,
