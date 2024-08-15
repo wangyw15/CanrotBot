@@ -17,9 +17,12 @@ class PokemonTool(BaseTool):
         self,
         action: Annotated[
             str,
-            "search为在神奇宝贝百科上进行搜索并获取最相关的一个页面标题；get为根据标题获取页面文本。search的结果不能直接作为回答，需要获取页面内容再进行回答",
+            "search为在神奇宝贝百科上进行搜索并获取最相关的一个页面标题；get为根据标题获取页面文本。search的结果不能直接作为回答，需要再通过get获取页面内容，根据页面内容进行回答。get接受的参数为search中返回的title字段",
         ],
-        keyword: Annotated[str, "进行搜索的关键词或页面标题"],
+        keyword: Annotated[
+            str,
+            "进行搜索的关键词或页面标题，根据action的不同，keyword的含义也不同：search时为搜索关键词；get时为页面标题，来自于search的title字段",
+        ],
     ) -> str:
         if action == "search":
             data = await self.client.search(keyword)
