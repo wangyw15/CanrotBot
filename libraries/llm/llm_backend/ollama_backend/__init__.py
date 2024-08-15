@@ -41,7 +41,7 @@ async def chat(
     if "tool_calls" in response["message"]:
         messages.append(response["message"])
 
-        tool_results = tool.run_tool_call(response["message"]["tool_calls"])
+        tool_results = await tool.run_tool_call(response["message"]["tool_calls"])
         for result in tool_results:
             messages.append({"role": "tool", "content": result["result"]})
 
@@ -54,6 +54,6 @@ async def chat(
     final_message: str = response["message"]["content"]
 
     if with_tool_call and with_message_postprocessing:
-        return tool.run_message_postprocess(final_message, tool_results)
+        return await tool.run_message_postprocess(final_message, tool_results)
     else:
         return final_message

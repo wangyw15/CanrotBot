@@ -76,7 +76,7 @@ async def chat(
             messages.append(choice.message)
             tool_calls = completion.choices[0].message.tool_calls or []
 
-            tool_results = tool.run_tool_call(convert_tool_calls(tool_calls))
+            tool_results = await tool.run_tool_call(convert_tool_calls(tool_calls))
             for result in tool_results:
                 messages.append(
                     cast(
@@ -96,6 +96,6 @@ async def chat(
     final_message: str = choice.message.content
 
     if with_tool_call and with_message_postprocessing:
-        return tool.run_message_postprocess(final_message, all_tool_results)
+        return await tool.run_message_postprocess(final_message, all_tool_results)
     else:
         return final_message

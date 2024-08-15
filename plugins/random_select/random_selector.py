@@ -56,7 +56,7 @@ class RandomSelectTool(BaseTool):
     __description__ = "从列表中随机选择一个项目，列表中的项目以逗号分隔"
     __command__ = False
 
-    def __call__(
+    async def __call__(
         self, raw_items: Annotated[str, "项目列表，列表中的项目以逗号分隔"]
     ) -> str:
         items = parse_items(raw_items)

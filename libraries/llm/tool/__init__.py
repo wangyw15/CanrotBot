@@ -56,7 +56,7 @@ tools_description: list[Tool] = []
 tools_callable: dict[str, type[BaseTool]] = {}
 
 
-def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
+async def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
     """
     执行 Tool
 
@@ -75,7 +75,7 @@ def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
             current_result = {"name": tool_name, "instance": tool_instance}
 
             logger.info(f'Tool "{tool_name}" called with arguments {tool_args}')
-            tool_ret = tool_instance(**tool_args)
+            tool_ret = await tool_instance(**tool_args)
             logger.info(f'Tool "{tool_name}" returned with {tool_ret}')
 
             # OpenAI 兼容
@@ -89,12 +89,12 @@ def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
     return ret
 
 
-def run_message_postprocess(
+async def run_message_postprocess(
     message: str, tool_results: list[ToolCallResult]
 ) -> UniMessage:
     ret_message = UniMessage(message)
     for tool in tool_results:
-        ret_message = tool["instance"].message_postprocess(ret_message)
+        ret_message = await tool["instance"].message_postprocess(ret_message)
     return ret_message
 
 

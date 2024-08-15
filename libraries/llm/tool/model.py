@@ -46,13 +46,13 @@ class BaseTool(metaclass=abc.ABCMeta):
     """ 是否是命令，如果是命令则会阻断 llm 后续对话，直接调用 tool_call """
 
     @abc.abstractmethod
-    def __call__(self, *args, **kwargs) -> str:
+    async def __call__(self, *args, **kwargs) -> str:
         """
         tool_call 调用的方法
         """
         pass
 
-    def message_postprocess(self, message: UniMessage) -> UniMessage:
+    async def message_postprocess(self, message: UniMessage) -> UniMessage:
         """
         对 tool_call 的返回结果进行后处理，根据 tool_call 调用顺序执行
 
