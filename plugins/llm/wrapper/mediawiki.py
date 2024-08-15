@@ -1,6 +1,10 @@
 import json
 from typing import Annotated
+from urllib.parse import urlparse
 
+from nonebot_plugin_alconna import UniMessage
+
+from essentials.libraries.util import can_send_url
 from libraries.llm.tool import BaseTool
 from libraries.mediawiki import MediaWikiClient
 from ..config import llm_plugin_config
@@ -49,6 +53,9 @@ class MediaWikiTool(BaseTool):
     def __init__(self):
         super().__init__()
         self.client = MediaWikiClient("")
+        self.action = ""
+        self.target = ""
+        self.keyword = ""
 
     async def __call__(
         self,
@@ -65,6 +72,10 @@ class MediaWikiTool(BaseTool):
             "进行搜索的关键词或页面标题，根据action的不同，keyword的含义也不同：search时为搜索关键词；get时为页面标题，来自于search的title字段",
         ],
     ) -> str:
+        # 保存参数
+        self.action = action
+        self.target = target
+        self.keyword = keyword
 
         if action == "hosts":
             return json.dumps(HOSTS_DESCRIPTION, ensure_ascii=False)
@@ -93,3 +104,12 @@ class MediaWikiTool(BaseTool):
             )
         else:
             return "未知操作"
+
+    async def message_postprocess(self, message: UniMessage) -> UniMessage:
+        if self.action == "get":
+            message += f"\n\n来源：{self.target} - {self.keyword}"
+            if can_send_url():
+                url = urlparse(self.client.base_url)
+                prefix = "wiki/" if self.target.endswith("维基百科") else ""
+                message += f"\n{url.scheme}://{url.netloc}/{prefix}{self.keyword}"
+        return message

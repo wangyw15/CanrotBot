@@ -6,6 +6,7 @@ import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
 import nonebot.adapters.qq as qq
 from nonebot.adapters import Bot, Event
+from nonebot.matcher import current_bot
 from nonebot_plugin_alconna import UniMessage, SerializeFailed
 import warnings
 
@@ -140,6 +141,22 @@ def is_qq(bot: Bot) -> bool:
     )
 
 
+def can_send_url() -> bool:
+    """
+    是否可以发送 URL
+
+    :return: 是否可以发送
+    """
+    try:
+        from nonebot.adapters.qq import Bot as QQBot
+
+        if isinstance(current_bot.get(), QQBot):
+            return False
+    except ImportError:
+        pass
+    return True
+
+
 __all__ = [
     "get_group_id",
     "get_bot_name",
@@ -147,4 +164,5 @@ __all__ = [
     "can_send_segment",
     "is_qq",
     "MESSAGE_SPLIT_LINE",
+    "can_send_url",
 ]
