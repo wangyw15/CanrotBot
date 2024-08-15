@@ -76,7 +76,10 @@ async def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
 
             logger.info(f'Tool "{tool_name}" called with arguments {tool_args}')
             tool_ret = await tool_instance(**tool_args)
-            logger.info(f'Tool "{tool_name}" returned with {tool_ret}')
+            logger.info(
+                f'Tool "{tool_name}" returned with {tool_ret[0:1000]}'  # 防止过长
+                + f'{"..." if len(tool_ret) > 1000 else ""}'
+            )
 
             # OpenAI 兼容
             if "id" in call:

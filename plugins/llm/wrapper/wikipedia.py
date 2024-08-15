@@ -5,19 +5,19 @@ from libraries.llm.tool import BaseTool
 from libraries.mediawiki import MediaWikiClient
 
 
-class PokemonTool(BaseTool):
-    __description__ = "从神奇宝贝百科搜索词条并获取最相关词条对应的页面内容，在神奇宝贝百科上可以查到所有神奇宝贝（宝可梦）相关的内容"
+class WikipediaTool(BaseTool):
+    __description__ = "从维基百科搜索词条并获取最相关词条对应的页面内容，在维基百科上可以查到几乎所有内容"
     __command__ = False
 
     def __init__(self):
         super().__init__()
-        self.client = MediaWikiClient("https://wiki.52poke.com/api.php")
+        self.client = MediaWikiClient("https://en.wikipedia.org/w/api.php")
 
     async def __call__(
         self,
         action: Annotated[
             str,
-            "search为在神奇宝贝百科上进行搜索并获取最相关的一个页面标题；get为根据标题获取页面文本。search的结果不能直接作为回答，需要再通过get获取页面内容，根据页面内容进行回答。get接受的参数为search中返回的title字段",
+            "search为在维基百科上进行搜索并获取最相关的一个页面标题；get为根据标题获取页面文本。search的结果不能直接作为回答，需要再通过get获取页面内容，根据页面内容进行回答。get接受的参数为search中返回的title字段",
         ],
         keyword: Annotated[
             str,
