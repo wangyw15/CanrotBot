@@ -158,5 +158,7 @@ async def _(
         prompt = custom_prompt
 
     await _command.finish(
-        (prompt + random_selector.random_select_from_list(parsed_items)).strip()
+        (
+            prompt + " ".join(random_selector.random_select_from_list(parsed_items))
+        ).strip()
     )
