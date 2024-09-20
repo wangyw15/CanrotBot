@@ -8,17 +8,12 @@ def test_create_client_without_proxy(mocker: MockerFixture):
     config = mocker.stub("NetworkConfig")
     config.user_data_path = "./canrot_data"
     config.proxy = ""
+    config.cache_ttl = ""
 
-    mocker.patch(
-        "nonebot.get_plugin_config",
-        return_value=config
-    )
+    mocker.patch("nonebot.get_plugin_config", return_value=config)
 
     fake_client = mocker.stub("httpx.AsyncClient")
-    mocker.patch(
-        "httpx.AsyncClient",
-        new=fake_client
-    )
+    mocker.patch("httpx.AsyncClient", new=fake_client)
 
     import essentials.libraries.network
 
@@ -33,18 +28,13 @@ def test_create_client_with_proxy(mocker: MockerFixture):
     config.user_data_path = "./canrot_data"
     config.proxy = "http://localhost:7890"
 
-    mocker.patch(
-        "nonebot.get_plugin_config",
-        return_value=config
-    )
+    mocker.patch("nonebot.get_plugin_config", return_value=config)
 
     fake_client = mocker.stub("httpx.AsyncClient")
-    mocker.patch(
-        "httpx.AsyncClient",
-        new=fake_client
-    )
+    mocker.patch("httpx.AsyncClient", new=fake_client)
 
     import essentials.libraries.network
+
     importlib.reload(essentials.libraries.network)
 
     assert essentials.libraries.network.network_config.proxy == config.proxy
@@ -64,10 +54,7 @@ async def test_fetch_bytes_data(mocker: MockerFixture):
     stub_get = mocker.async_stub("AsyncClient.get")
     stub_get.return_value = resp
 
-    mocker.patch(
-        "essentials.libraries.network.client.get",
-        new=stub_get
-    )
+    mocker.patch("essentials.libraries.network.client.get", new=stub_get)
 
     assert await fetch_bytes_data("https://example.com", use_proxy=False) == b"test"
 
@@ -82,10 +69,7 @@ async def test_fetch_bytes_data_with_success_false(mocker: MockerFixture):
     stub_get = mocker.async_stub("AsyncClient.get")
     stub_get.return_value = resp
 
-    mocker.patch(
-        "essentials.libraries.network.client.get",
-        new=stub_get
-    )
+    mocker.patch("essentials.libraries.network.client.get", new=stub_get)
 
     assert await fetch_bytes_data("https://example.com", use_proxy=False) is None
 
@@ -101,10 +85,7 @@ async def test_fetch_bytes_data_with_status_code_not_200(mocker: MockerFixture):
     stub_get = mocker.async_stub("AsyncClient.get")
     stub_get.return_value = resp
 
-    mocker.patch(
-        "essentials.libraries.network.client.get",
-        new=stub_get
-    )
+    mocker.patch("essentials.libraries.network.client.get", new=stub_get)
 
     assert await fetch_bytes_data("https://example.com", use_proxy=False) is None
 
@@ -121,12 +102,11 @@ async def test_fetch_json_data(mocker: MockerFixture):
     stub_get = mocker.async_stub("AsyncClient.get")
     stub_get.return_value = resp
 
-    mocker.patch(
-        "essentials.libraries.network.client.get",
-        new=stub_get
-    )
+    mocker.patch("essentials.libraries.network.client.get", new=stub_get)
 
-    assert await fetch_json_data("https://example.com", use_proxy=False) == {"test": "test"}
+    assert await fetch_json_data("https://example.com", use_proxy=False) == {
+        "test": "test"
+    }
 
 
 @pytest.mark.asyncio
@@ -139,10 +119,7 @@ async def test_fetch_json_data_with_success_false(mocker: MockerFixture):
     stub_get = mocker.async_stub("AsyncClient.get")
     stub_get.return_value = resp
 
-    mocker.patch(
-        "essentials.libraries.network.client.get",
-        new=stub_get
-    )
+    mocker.patch("essentials.libraries.network.client.get", new=stub_get)
 
     assert await fetch_json_data("https://example.com", use_proxy=False) is None
 
@@ -158,10 +135,7 @@ async def test_fetch_json_data_with_status_code_not_200(mocker: MockerFixture):
     stub_get = mocker.async_stub("AsyncClient.get")
     stub_get.return_value = resp
 
-    mocker.patch(
-        "essentials.libraries.network.client.get",
-        new=stub_get
-    )
+    mocker.patch("essentials.libraries.network.client.get", new=stub_get)
 
     assert await fetch_json_data("https://example.com", use_proxy=False) is None
 
@@ -178,10 +152,7 @@ async def test_fetch_text_data(mocker: MockerFixture):
     stub_get = mocker.async_stub("AsyncClient.get")
     stub_get.return_value = resp
 
-    mocker.patch(
-        "essentials.libraries.network.client.get",
-        new=stub_get
-    )
+    mocker.patch("essentials.libraries.network.client.get", new=stub_get)
 
     assert await fetch_text_data("https://example.com", use_proxy=False) == "test"
 
@@ -196,10 +167,7 @@ async def test_fetch_text_data_with_success_false(mocker: MockerFixture):
     stub_get = mocker.async_stub("AsyncClient.get")
     stub_get.return_value = resp
 
-    mocker.patch(
-        "essentials.libraries.network.client.get",
-        new=stub_get
-    )
+    mocker.patch("essentials.libraries.network.client.get", new=stub_get)
 
     assert await fetch_text_data("https://example.com", use_proxy=False) is None
 
@@ -215,9 +183,6 @@ async def test_fetch_text_data_with_status_code_not_200(mocker: MockerFixture):
     stub_get = mocker.async_stub("AsyncClient.get")
     stub_get.return_value = resp
 
-    mocker.patch(
-        "essentials.libraries.network.client.get",
-        new=stub_get
-    )
+    mocker.patch("essentials.libraries.network.client.get", new=stub_get)
 
     assert await fetch_text_data("https://example.com", use_proxy=False) is None
