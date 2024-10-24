@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 from nonebot import get_plugin_config
 
@@ -9,7 +10,7 @@ _calculate_config = get_plugin_config(CalculatorConfig)
 
 def qalc(expression: str) -> str:
     raw_result = subprocess.check_output(
-        [_calculate_config.qalculate_bin, expression], shell=True
+        [_calculate_config.qalculate_bin, expression], shell=sys.platform == "win32"
     )
     try:
         return raw_result.decode("utf-8")

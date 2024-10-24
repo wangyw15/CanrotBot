@@ -20,11 +20,11 @@ __plugin_meta__ = PluginMetadata(
 
 
 def calculate(expression: str) -> str:
-    if qalculate.check_qalculate():
-        return qalculate.calculate(expression)
-
     if re.fullmatch(r"^([\d()\-+*/.]+)=?$", expression):
         return "{}={:g}".format(expression, eval(expression.rstrip("=")))
+
+    if qalculate.check_qalculate():
+        return qalculate.calculate(expression)
 
     raise NotImplementedError("未安装 qalculate，不支持此表达式: {}".format(expression))
 
