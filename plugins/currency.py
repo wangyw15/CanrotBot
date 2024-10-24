@@ -2,7 +2,7 @@ import re
 import typing
 
 import httpx
-from nonebot import on_command, on_regex
+from nonebot import on_command, on_regex, logger
 from nonebot.adapters import Message
 from nonebot.params import CommandArg, RegexGroup
 from nonebot.plugin import PluginMetadata
@@ -82,10 +82,11 @@ async def _(group: typing.Annotated[tuple, RegexGroup()]):
     # 获取汇率数据
     currency_data = await fetch_currency()
     if not currency_data:
-        await currency_convert_handler.finish("获取汇率失败")
+        logger.warning("获取汇率失败")
+        await currency_convert_handler.finish()
 
-    price_from = ""
-    price_to = ""
+    price_from = 0.0
+    price_to = 0.0
     name_from = ""
     name_to = ""
     for item in currency_data:
@@ -93,7 +94,7 @@ async def _(group: typing.Annotated[tuple, RegexGroup()]):
         if currency_from.lower() == item["currencyENName"].lower():
             price_from = float(item["foreignBuy"])
             name_from = item["currencyCHName"]
-        elif currency_from.lower() in ["rmb", "cny"] or currency_from == "人民币":
+        elif currency_from.lower() in ["rmb", "cny"]:
             price_from = 100
             name_from = "人民币"
 
@@ -101,7 +102,7 @@ async def _(group: typing.Annotated[tuple, RegexGroup()]):
         if currency_to.lower() == item["currencyENName"].lower():
             price_to = float(item["foreignSell"])
             name_to = item["currencyCHName"]
-        elif currency_to.lower() in ["rmb", "cny"] or currency_to == "人民币":
+        elif currency_to.lower() in ["rmb", "cny"]:
             price_to = 100
             name_to = "人民币"
 
@@ -114,14 +115,11 @@ async def _(group: typing.Annotated[tuple, RegexGroup()]):
         )
 
     # 错误处理
-    error_msg = "未找到货币:"
     if not price_from:
-        # 三个字母误触发做忽略处理
-        if not group[0]:
-            currency_convert_handler.block = False
-            await currency_convert_handler.finish()
-        error_msg += " {}".format(currency_from)
+        logger.warning("未找到货币: {} 可能是误触发".format(currency_from))
     if not price_to:
-        error_msg += " {}".format(currency_to)
+        logger.warning("未找到货币: {} 可能是误触发".format(currency_to))
 
-    await currency_convert_handler.finish(error_msg)
+    # 由于触发方式特殊，因此不做block，可由其他响应器继续处理
+    currency_convert_handler.block = False
+    await currency_convert_handler.finish()
