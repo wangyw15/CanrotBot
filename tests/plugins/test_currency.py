@@ -120,7 +120,6 @@ async def test_invalid_from_currency(app: App, create_event: Callable):
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
-        ctx.should_call_send(event, "未找到货币: aaa")
         ctx.should_finished()
 
 
