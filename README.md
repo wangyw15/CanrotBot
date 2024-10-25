@@ -24,7 +24,7 @@
 uv run playwright install # 初始化环境，并安装 playwright
 cp .env.example .env      # 复制配置文件
 vim .env                  # 修改配置文件
-uv run bot.py             # 启动机器人
+uv run bot                # 启动机器人
 ```
 
 ## 配置数据库
@@ -36,8 +36,8 @@ uv run bot.py             # 启动机器人
 ## 测试
 
 ```bash
-pytest tests # 普通测试
-pytest tests --cov --cov-report=html # 覆盖率测试
+uv run pytest # 普通测试
+uv run pytest --cov --cov-report=html # 覆盖率测试
 ```
 
 # 功能列表

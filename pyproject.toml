@@ -33,7 +33,7 @@ dependencies = [
 ]
 
 [project.scripts]
-start = "canrotbot:main"
+bot = "canrotbot:main"
 
 [project.optional-dependencies]
 check = ["black", "isort"]
