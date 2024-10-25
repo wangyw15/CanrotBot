@@ -11,7 +11,7 @@ TEST_PLATFORM_ID2 = "TEST_PLATFORM_ID2"
 
 @pytest.mark.asyncio
 async def test_user_plugin_help(app: App, create_bot: Callable, create_event: Callable):
-    from essentials.plugins.user import _user_command, __plugin_meta__
+    from canrotbot.essentials.plugins.user import _user_command, __plugin_meta__
 
     async with app.test_matcher(_user_command) as ctx:
         bot = create_bot(ctx)
@@ -28,7 +28,7 @@ async def test_user_plugin_help(app: App, create_bot: Callable, create_event: Ca
 async def test_user_plugin_info_not_registered(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.user import _user_command
+    from canrotbot.essentials.plugins.user import _user_command
 
     async with app.test_matcher(_user_command) as ctx:
         bot = create_bot(ctx)
@@ -45,8 +45,8 @@ async def test_user_plugin_info_not_registered(
 async def test_user_plugin_info_registered(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.user import _user_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.user import _user_command
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -77,10 +77,10 @@ async def test_user_plugin_register_once(
     create_bot: Callable,
     create_event: Callable,
 ):
-    from essentials.plugins.user import _user_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.user import _user_command
+    from canrotbot.essentials.libraries import user
 
-    fake_register = mocker.stub("essentials.libraries.user.register")
+    fake_register = mocker.stub("canrotbot.essentials.libraries.user.register")
     fake_register.return_value = TEST_UID
 
     mocker.patch.object(user, "register", new=fake_register)
@@ -104,8 +104,8 @@ async def test_user_plugin_register_once(
 async def test_user_plugin_register_twice(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.user import _user_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.user import _user_command
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -126,8 +126,8 @@ async def test_user_plugin_register_twice(
 async def test_user_plugin_bind_once(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.user import _user_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.user import _user_command
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -150,8 +150,8 @@ async def test_user_plugin_bind_once(
 async def test_user_plugin_bind_twice(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.user import _user_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.user import _user_command
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -175,8 +175,8 @@ async def test_user_plugin_bind_twice(
 async def test_user_plugin_unbind_once(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.user import _user_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.user import _user_command
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -200,8 +200,8 @@ async def test_user_plugin_unbind_once(
 async def test_user_plugin_unbind_twice(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.user import _user_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.user import _user_command
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 

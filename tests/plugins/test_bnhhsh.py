@@ -6,7 +6,7 @@ from nonebug import App
 
 @pytest.mark.asyncio
 async def test_bnhhsh(app: App, create_event: Callable):
-    from plugins.bnhhsh import bnhhsh_handler
+    from canrotbot.plugins.bnhhsh import bnhhsh_handler
 
     async with app.test_matcher(bnhhsh_handler) as ctx:
         bot = ctx.create_bot()

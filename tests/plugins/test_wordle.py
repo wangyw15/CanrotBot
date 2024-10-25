@@ -9,7 +9,7 @@ from nonebug import App
 async def test_wordle_success(
     app: App, mocker: pytest_mock.MockerFixture, create_event: Callable
 ):
-    from plugins import wordle
+    from canrotbot.plugins import wordle
 
     expected_answer = "hello"
     assert expected_answer
@@ -44,7 +44,7 @@ async def test_wordle_success(
 async def test_wordle_invalid_word(
     app: App, mocker: pytest_mock.MockerFixture, create_event: Callable
 ):
-    from plugins import wordle
+    from canrotbot.plugins import wordle
 
     expected_answer = "hello"
     assert expected_answer
@@ -74,7 +74,7 @@ async def test_wordle_invalid_word(
 async def test_wordle_too_many_tries(
     app: App, mocker: pytest_mock.MockerFixture, create_event: Callable
 ):
-    from plugins import wordle
+    from canrotbot.plugins import wordle
 
     expected_answer = "hello"
     assert expected_answer

@@ -41,11 +41,11 @@ class FakePage:
 
 @pytest.mark.asyncio
 async def test_initialize_for_first_time(mocker: MockerFixture) -> None:
-    from essentials.libraries import render_by_browser
+    from canrotbot.essentials.libraries import render_by_browser
 
     playwright = FakePlaywright()
     mocker.patch(
-        "essentials.libraries.render_by_browser.async_playwright",
+        "canrotbot.essentials.libraries.render_by_browser.async_playwright",
         return_value=playwright,
     )
 
@@ -63,13 +63,13 @@ async def test_initialize_for_first_time(mocker: MockerFixture) -> None:
 
 @pytest.mark.asyncio
 async def test_initialize_twice(mocker: MockerFixture) -> None:
-    from essentials.libraries import render_by_browser
+    from canrotbot.essentials.libraries import render_by_browser
 
     playwright = FakePlaywright()
 
-    mocker.patch("essentials.libraries.render_by_browser._playwright", new=playwright)
+    mocker.patch("canrotbot.essentials.libraries.render_by_browser._playwright", new=playwright)
     mocker.patch(
-        "essentials.libraries.render_by_browser._browser",
+        "canrotbot.essentials.libraries.render_by_browser._browser",
         new=playwright.browser,
     )
 
@@ -87,11 +87,11 @@ async def test_initialize_twice(mocker: MockerFixture) -> None:
 
 @pytest.mark.asyncio
 async def test_dispose_once(mocker: MockerFixture) -> None:
-    from essentials.libraries import render_by_browser
+    from canrotbot.essentials.libraries import render_by_browser
 
     playwright = FakePlaywright()
 
-    mocker.patch("essentials.libraries.render_by_browser._playwright", new=playwright)
+    mocker.patch("canrotbot.essentials.libraries.render_by_browser._playwright", new=playwright)
 
     assert render_by_browser._playwright == playwright
 
@@ -102,11 +102,11 @@ async def test_dispose_once(mocker: MockerFixture) -> None:
 
 @pytest.mark.asyncio
 async def test_dispose_twice(mocker: MockerFixture) -> None:
-    from essentials.libraries import render_by_browser
+    from canrotbot.essentials.libraries import render_by_browser
 
     playwright = FakePlaywright()
 
-    mocker.patch("essentials.libraries.render_by_browser._playwright", new=playwright)
+    mocker.patch("canrotbot.essentials.libraries.render_by_browser._playwright", new=playwright)
 
     assert render_by_browser._playwright == playwright
 
@@ -120,10 +120,10 @@ async def test_dispose_twice(mocker: MockerFixture) -> None:
 
 @pytest.mark.asyncio
 async def test_new_page_with_default_viewport(mocker: MockerFixture) -> None:
-    from essentials.libraries import render_by_browser
+    from canrotbot.essentials.libraries import render_by_browser
 
     browser = FakeBrowser()
-    mocker.patch("essentials.libraries.render_by_browser._browser", new=browser)
+    mocker.patch("canrotbot.essentials.libraries.render_by_browser._browser", new=browser)
 
     await render_by_browser.new_page()
 
@@ -132,10 +132,10 @@ async def test_new_page_with_default_viewport(mocker: MockerFixture) -> None:
 
 @pytest.mark.asyncio
 async def test_new_page_with_custom_viewport(mocker: MockerFixture) -> None:
-    from essentials.libraries import render_by_browser
+    from canrotbot.essentials.libraries import render_by_browser
 
     browser = FakeBrowser()
-    mocker.patch("essentials.libraries.render_by_browser._browser", new=browser)
+    mocker.patch("canrotbot.essentials.libraries.render_by_browser._browser", new=browser)
 
     assert render_by_browser._browser == browser
 
@@ -147,9 +147,9 @@ async def test_new_page_with_custom_viewport(mocker: MockerFixture) -> None:
 
 @pytest.mark.asyncio
 async def test_new_page_without_initialize(mocker: MockerFixture) -> None:
-    from essentials.libraries import render_by_browser
+    from canrotbot.essentials.libraries import render_by_browser
 
-    mocker.patch("essentials.libraries.render_by_browser._browser", new=None)
+    mocker.patch("canrotbot.essentials.libraries.render_by_browser._browser", new=None)
 
     assert render_by_browser._browser is None
 
@@ -159,11 +159,11 @@ async def test_new_page_without_initialize(mocker: MockerFixture) -> None:
 
 @pytest.mark.asyncio
 async def test_render_html(mocker: MockerFixture) -> None:
-    from essentials.libraries import render_by_browser
+    from canrotbot.essentials.libraries import render_by_browser
 
     page = FakePage()
     page.screenshot.return_value = b"TEST"
-    mocker.patch("essentials.libraries.render_by_browser.new_page", return_value=page)
+    mocker.patch("canrotbot.essentials.libraries.render_by_browser.new_page", return_value=page)
 
     assert await render_by_browser.render_html("FAKEHTML", base_path="FAKEPATH") == b"TEST"
 

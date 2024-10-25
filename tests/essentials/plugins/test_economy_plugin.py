@@ -13,7 +13,7 @@ TEST_PLATFORM_ID2 = "TEST_PLATFORM_ID2"
 async def test_economy_plugin_help(
     app: App, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.economy import _economy_command, __plugin_meta__
+    from canrotbot.essentials.plugins.economy import _economy_command, __plugin_meta__
 
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
@@ -30,7 +30,7 @@ async def test_economy_plugin_help(
 async def test_economy_plugin_info_not_registered(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.economy import _economy_command
+    from canrotbot.essentials.plugins.economy import _economy_command
 
     async with app.test_matcher(_economy_command) as ctx:
         bot = create_bot(ctx)
@@ -47,8 +47,8 @@ async def test_economy_plugin_info_not_registered(
 async def test_economy_plugin_info_registered(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.economy import _economy_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.economy import _economy_command
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -75,8 +75,8 @@ async def test_economy_plugin_info_registered(
 async def test_economy_plugin_info_registered_with_transactions(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.economy import _economy_command
-    from essentials.libraries import user, economy
+    from canrotbot.essentials.plugins.economy import _economy_command
+    from canrotbot.essentials.libraries import user, economy
 
     db_initialize()
 
@@ -110,8 +110,8 @@ async def test_economy_plugin_info_registered_with_transactions(
 async def test_economy_plugin_transfer_to_not_registered_platform_id(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.economy import _economy_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.economy import _economy_command
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -135,8 +135,8 @@ async def test_economy_plugin_transfer_to_not_registered_platform_id(
 async def test_economy_plugin_transfer_to_not_registered_uid(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ):
-    from essentials.plugins.economy import _economy_command
-    from essentials.libraries import user
+    from canrotbot.essentials.plugins.economy import _economy_command
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -163,8 +163,8 @@ async def test_economy_plugin_transfer_success(
     create_bot: Callable,
     create_event: Callable,
 ):
-    from essentials.plugins.economy import _economy_command
-    from essentials.libraries import economy, user
+    from canrotbot.essentials.plugins.economy import _economy_command
+    from canrotbot.essentials.libraries import economy, user
 
     fake_transfer = mocker.stub("transfer")
     fake_transfer.return_value = True
@@ -199,8 +199,8 @@ async def test_economy_plugin_transfer_fail(
     create_bot: Callable,
     create_event: Callable,
 ):
-    from essentials.plugins.economy import _economy_command
-    from essentials.libraries import economy, user
+    from canrotbot.essentials.plugins.economy import _economy_command
+    from canrotbot.essentials.libraries import economy, user
 
     fake_transfer = mocker.stub("transfer")
     fake_transfer.return_value = False

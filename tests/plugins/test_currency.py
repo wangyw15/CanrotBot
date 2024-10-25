@@ -8,7 +8,7 @@ from pytest_mock import MockerFixture
 @pytest.fixture(scope="function", autouse=True)
 def setup_currency(mocker: MockerFixture):
     mocker.patch(
-        "plugins.currency.fetch_currency",
+        "canrotbot.plugins.currency.fetch_currency",
         return_value=[
             {
                 "currencyCHName": "美元",
@@ -28,7 +28,7 @@ def setup_currency(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_to_cny_with_default_amount(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
@@ -42,7 +42,7 @@ async def test_to_cny_with_default_amount(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_from_cny_with_default_amount(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
@@ -56,7 +56,7 @@ async def test_from_cny_with_default_amount(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_usd_jpy_with_default_amount(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
@@ -70,7 +70,7 @@ async def test_usd_jpy_with_default_amount(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_to_cny_with_custom_amount(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
@@ -84,7 +84,7 @@ async def test_to_cny_with_custom_amount(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_from_cny_with_custom_amount(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
@@ -98,7 +98,7 @@ async def test_from_cny_with_custom_amount(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_usd_jpy_with_custom_amount(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
@@ -112,7 +112,7 @@ async def test_usd_jpy_with_custom_amount(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_invalid_from_currency(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
@@ -126,7 +126,7 @@ async def test_invalid_from_currency(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_invalid_to_currency(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
@@ -140,7 +140,7 @@ async def test_invalid_to_currency(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_invalid_all_currency(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
@@ -154,7 +154,7 @@ async def test_invalid_all_currency(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_unintended_trigger(app: App, create_event: Callable):
-    from plugins.currency import currency_convert_handler
+    from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()

@@ -11,14 +11,14 @@ TEST_PLATFORM_ID2 = "TEST_PLATFORM_ID2"
 
 
 def test_snowflake_generate_id() -> None:
-    from essentials.libraries.user import snowflake
+    from canrotbot.essentials.libraries.user import snowflake
 
     assert snowflake.generate_id() > 0
 
 
 def test_create_user_tables(db_initialize: Callable) -> None:
-    from essentials.libraries.database import Base
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries.database import Base
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -27,7 +27,7 @@ def test_create_user_tables(db_initialize: Callable) -> None:
 
 
 def test_register_with_non_bind_platform_id(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -35,7 +35,7 @@ def test_register_with_non_bind_platform_id(db_initialize: Callable) -> None:
 
 
 def test_register_with_bind_platform_id(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -44,7 +44,7 @@ def test_register_with_bind_platform_id(db_initialize: Callable) -> None:
 
 
 def test_platform_id_user_exists_with_bind_platform_id(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -55,7 +55,7 @@ def test_platform_id_user_exists_with_bind_platform_id(db_initialize: Callable) 
 def test_platform_id_user_exists_with_non_bind_platform_id(
     db_initialize: Callable,
 ) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -63,7 +63,7 @@ def test_platform_id_user_exists_with_non_bind_platform_id(
 
 
 def test_uid_user_exists_with_existing_uid(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -73,7 +73,7 @@ def test_uid_user_exists_with_existing_uid(db_initialize: Callable) -> None:
 
 
 def test_uid_user_exists_with_non_existing_uid(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -83,7 +83,7 @@ def test_uid_user_exists_with_non_existing_uid(db_initialize: Callable) -> None:
 def test_bind_with_existing_uid_and_non_bind_platform_id(
     db_initialize: Callable,
 ) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -93,7 +93,7 @@ def test_bind_with_existing_uid_and_non_bind_platform_id(
 
 
 def test_bind_with_non_existing_uid(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -101,7 +101,7 @@ def test_bind_with_non_existing_uid(db_initialize: Callable) -> None:
 
 
 def test_bind_with_existing_uid_and_bind_platform_id(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -111,7 +111,7 @@ def test_bind_with_existing_uid_and_bind_platform_id(db_initialize: Callable) ->
 
 
 def test_unbind_with_bind_platform_id(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -122,7 +122,7 @@ def test_unbind_with_bind_platform_id(db_initialize: Callable) -> None:
 
 
 def test_unbind_with_non_bind_platform_id(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -130,7 +130,7 @@ def test_unbind_with_non_bind_platform_id(db_initialize: Callable) -> None:
 
 
 def test_get_uid_with_bind_platform_id(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -140,7 +140,7 @@ def test_get_uid_with_bind_platform_id(db_initialize: Callable) -> None:
 
 
 def test_get_uid_with_non_bind_platform_id(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -151,7 +151,7 @@ def test_get_uid_with_non_bind_platform_id(db_initialize: Callable) -> None:
 async def test_get_uid_with_auto_platform_id(
     db_initialize: Callable, create_event: Callable
 ) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -162,7 +162,7 @@ async def test_get_uid_with_auto_platform_id(
 
 
 def test_get_bind_by_uid_with_existing_uid(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -176,7 +176,7 @@ def test_get_bind_by_uid_with_existing_uid(db_initialize: Callable) -> None:
 
 
 def test_get_bind_by_uid_with_non_existing_uid(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -184,7 +184,7 @@ def test_get_bind_by_uid_with_non_existing_uid(db_initialize: Callable) -> None:
 
 
 def test_get_bind_by_platform_id_with_bind_platform_id(db_initialize: Callable) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -200,7 +200,7 @@ def test_get_bind_by_platform_id_with_bind_platform_id(db_initialize: Callable) 
 def test_get_bind_by_platform_id_with_non_bind_platform_id(
     db_initialize: Callable,
 ) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -211,7 +211,7 @@ def test_get_bind_by_platform_id_with_non_bind_platform_id(
 async def test_get_user_name_with_default_parameters(
     db_initialize: Callable, app: App, create_event: Callable
 ) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -228,7 +228,7 @@ async def test_get_user_name_with_default_parameters(
 async def test_get_user_name_with_bot_provided(
     db_initialize: Callable, app: App, create_event: Callable
 ) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -244,7 +244,7 @@ async def test_get_user_name_with_bot_provided(
 async def test_get_user_name_with_event_provided(
     db_initialize: Callable, app: App, create_event: Callable
 ) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 
@@ -263,7 +263,7 @@ async def test_get_user_name_with_event_provided(
 async def test_get_user_name_with_bot_and_event_provided(
     db_initialize: Callable, app: App, create_event: Callable
 ) -> None:
-    from essentials.libraries import user
+    from canrotbot.essentials.libraries import user
 
     db_initialize()
 

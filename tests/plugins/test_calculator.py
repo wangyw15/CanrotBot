@@ -6,7 +6,7 @@ from nonebug import App
 
 @pytest.mark.asyncio
 async def test_calculator_matched(app: App, create_event: Callable):
-    from plugins.calculator import calculator_matcher
+    from canrotbot.plugins.calculator import calculator_matcher
 
     async with app.test_matcher(calculator_matcher) as ctx:
         bot = ctx.create_bot()
@@ -20,7 +20,7 @@ async def test_calculator_matched(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_calculator_unmatched(app: App, create_event: Callable):
-    from plugins.calculator import calculator_matcher
+    from canrotbot.plugins.calculator import calculator_matcher
 
     async with app.test_matcher(calculator_matcher) as ctx:
         bot = ctx.create_bot()
@@ -37,7 +37,7 @@ async def test_calculator_unmatched(app: App, create_event: Callable):
 
 @pytest.mark.asyncio
 async def test_calculator_error(app: App, create_event: Callable):
-    from plugins.calculator import calculator_matcher
+    from canrotbot.plugins.calculator import calculator_matcher
 
     async with app.test_matcher(calculator_matcher) as ctx:
         bot = ctx.create_bot()

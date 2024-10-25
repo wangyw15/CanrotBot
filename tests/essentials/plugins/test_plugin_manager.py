@@ -4,15 +4,15 @@ import pytest
 from nonebug import App
 from pytest_mock import MockerFixture
 
-from essentials.libraries.model import Platform
+from canrotbot.essentials.libraries.model import Platform
 
 TEST_PLUGIN_ID = "TEST_PLUGIN_ID"
 TEST_PLATFORM_ID = "TEST_PLATFORM_ID"
 
 
 def test_plugin_manager_create_tables(db_initialize: Callable) -> None:
-    from essentials.libraries.database import Base
-    from essentials.plugins.plugin_manager.data import PluginManagementData
+    from canrotbot.essentials.libraries.database import Base
+    from canrotbot.essentials.plugins.plugin_manager.data import PluginManagementData
 
     db_initialize()
 
@@ -20,8 +20,8 @@ def test_plugin_manager_create_tables(db_initialize: Callable) -> None:
 
 
 def test_disable_plugin_once(db_initialize: Callable) -> None:
-    from essentials.plugins.plugin_manager.plugin_manager import disable_plugin, list_disabled_plugins
-    from essentials.plugins.plugin_manager.model import Scope
+    from canrotbot.essentials.plugins.plugin_manager.plugin_manager import disable_plugin, list_disabled_plugins
+    from canrotbot.essentials.plugins.plugin_manager.model import Scope
 
     db_initialize()
 
@@ -46,8 +46,8 @@ def test_disable_plugin_once(db_initialize: Callable) -> None:
 
 
 def test_disable_plugin_twice(db_initialize: Callable) -> None:
-    from essentials.plugins.plugin_manager.plugin_manager import disable_plugin, list_disabled_plugins
-    from essentials.plugins.plugin_manager.model import Scope
+    from canrotbot.essentials.plugins.plugin_manager.plugin_manager import disable_plugin, list_disabled_plugins
+    from canrotbot.essentials.plugins.plugin_manager.model import Scope
 
     db_initialize()
 
@@ -83,8 +83,8 @@ def test_disable_plugin_twice(db_initialize: Callable) -> None:
 
 
 def test_enable_plugin_with_disabled_plugin(db_initialize: Callable) -> None:
-    from essentials.plugins.plugin_manager.plugin_manager import disable_plugin, enable_plugin, list_disabled_plugins
-    from essentials.plugins.plugin_manager.model import Scope
+    from canrotbot.essentials.plugins.plugin_manager.plugin_manager import disable_plugin, enable_plugin, list_disabled_plugins
+    from canrotbot.essentials.plugins.plugin_manager.model import Scope
 
     db_initialize()
 
@@ -120,8 +120,8 @@ def test_enable_plugin_with_disabled_plugin(db_initialize: Callable) -> None:
 
 
 def test_enable_plugin_without_disabled_plugin(db_initialize: Callable) -> None:
-    from essentials.plugins.plugin_manager.plugin_manager import enable_plugin, list_disabled_plugins
-    from essentials.plugins.plugin_manager.model import Scope
+    from canrotbot.essentials.plugins.plugin_manager.plugin_manager import enable_plugin, list_disabled_plugins
+    from canrotbot.essentials.plugins.plugin_manager.model import Scope
 
     db_initialize()
 
@@ -148,7 +148,7 @@ def test_enable_plugin_without_disabled_plugin(db_initialize: Callable) -> None:
 async def test_list_disable_plugin_with_none_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
@@ -166,7 +166,7 @@ async def test_list_disable_plugin_with_none_in_chat(
 async def test_list_disable_plugin_with_one_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
@@ -191,7 +191,7 @@ async def test_list_disable_plugin_with_one_in_chat(
 async def test_disable_plugin_once_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
@@ -207,7 +207,7 @@ async def test_disable_plugin_once_in_chat(
 async def test_disable_plugin_twice_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
@@ -228,7 +228,7 @@ async def test_disable_plugin_twice_in_chat(
 async def test_list_enable_plugin_once_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
@@ -263,7 +263,7 @@ async def test_list_enable_plugin_once_in_chat(
 async def test_list_enable_plugin_twice_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
 
     db_initialize()
 
@@ -289,7 +289,7 @@ async def test_list_enable_plugin_twice_in_chat(
 async def test_disable_plugin_manager_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from essentials.plugins.plugin_manager import _plugin_manager_command, SELF_ID
+    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command, SELF_ID
 
     db_initialize()
 
@@ -309,11 +309,11 @@ async def test_disable_all_plugin_in_chat(
     create_event: Callable,
     mocker: MockerFixture
 ) -> None:
-    from essentials.plugins.plugin_manager.model import ALL_PLUGINS
-    from essentials.plugins.plugin_manager import _plugin_manager_command
-    from essentials.plugins.plugin_manager.model import Scope
+    from canrotbot.essentials.plugins.plugin_manager.model import ALL_PLUGINS
+    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager.model import Scope
 
-    from essentials.plugins.plugin_manager import plugin_manager
+    from canrotbot.essentials.plugins.plugin_manager import plugin_manager
     fake_disable_plugin = mocker.stub(name="disable_plugin")
     fake_disable_plugin.return_value = True
     mocker.patch.object(

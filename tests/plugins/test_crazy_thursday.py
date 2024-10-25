@@ -10,7 +10,7 @@ from nonebug import App
 async def test_crazy_thursday_matched(
     app: App, mocker: pytest_mock.MockerFixture, create_event: Callable
 ):
-    from plugins.crazy_thursday import crazy_thursday_matcher, crazy_thursday_posts
+    from canrotbot.plugins.crazy_thursday import crazy_thursday_matcher, crazy_thursday_posts
 
     expected_post = random.choice(crazy_thursday_posts)
     assert expected_post

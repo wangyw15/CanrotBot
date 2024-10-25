@@ -18,12 +18,13 @@
 
 > 仅支持 Python 3.12+
 
+安装[uv](https://docs.astral.sh/uv/getting-started/installation/)
+
 ```bash
-pip install -r requirements.txt
-playwright install   # 如果是第一次启动，则安装 playwright
-cp .env.example .env # 复制配置文件
-vim .env             # 修改配置文件
-python bot.py
+uv run playwright install # 初始化环境，并安装 playwright
+cp .env.example .env      # 复制配置文件
+vim .env                  # 修改配置文件
+uv run bot.py             # 启动机器人
 ```
 
 ## 配置数据库

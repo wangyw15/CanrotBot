@@ -1,6 +1,4 @@
-import sys
 from datetime import datetime
-from pathlib import Path
 from typing import Callable
 
 import nonebot
@@ -14,8 +12,6 @@ from pytest_mock import MockerFixture
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import close_all_sessions
-
-sys.path.append(str(Path(__file__).parent.parent))
 
 
 def pytest_addoption(parser: pytest.Parser):
@@ -51,14 +47,14 @@ def db_engine() -> None:
 def db_mock(mocker: MockerFixture, db_engine: Engine) -> None:
     session = sessionmaker(bind=db_engine)
 
-    mocker.patch("essentials.libraries.database.get_engine", return_value=db_engine)
-    mocker.patch("essentials.libraries.database.get_session", return_value=session)
+    mocker.patch("canrotbot.essentials.libraries.database.get_engine", return_value=db_engine)
+    mocker.patch("canrotbot.essentials.libraries.database.get_session", return_value=session)
 
 
 @pytest.fixture(scope="function")
 def db_initialize(db_engine: Engine) -> Callable:
     def _initialize():
-        from essentials.libraries.database import Base
+        from canrotbot.essentials.libraries.database import Base
         Base.metadata.drop_all(db_engine)
         Base.metadata.create_all(db_engine)
 

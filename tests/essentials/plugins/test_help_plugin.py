@@ -12,8 +12,8 @@ async def test_help_text(
     create_bot: Callable,
     create_event: Callable
 ):
-    from essentials.plugins.help import _help_command
-    from essentials.libraries import help as help_lib
+    from canrotbot.essentials.plugins.help import _help_command
+    from canrotbot.essentials.libraries import help as help_lib
 
     fake_generate_help_text = mocker.stub("generate_help_text")
     fake_generate_help_text.return_value = "HELP_MSG"

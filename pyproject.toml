@@ -1,11 +1,11 @@
 [project]
 name = "CanrotBot"
+version = "8.3.0"
 authors = [
-    {name = "wangyw15", email = "wangyanwei15@outlook.com"}
+    { name = "wangyw15", email = "wangyanwei15@outlook.com" }
 ]
 readme = "README.md"
 license = {file = "LICENSE"}
-dynamic = ["version"]
 requires-python = ">=3.12"
 dependencies = [
     "nb-cli",
@@ -26,16 +26,32 @@ dependencies = [
     "nonebot-plugin-alconna",
     "cryptography",
     "anyio",
-    "nonebug",
     "nonechat",
     "hishel",
     "ollama",
     "openai",
 ]
 
-[project.optional-dependencies]
-code_check = ["black", "isort"]
-test = ["pytest", "pytest-asyncio", "pytest-mock"]
+[project.scripts]
+start = "canrotbot:main"
 
-[tool.setuptools]
-py-modules = []
+[project.optional-dependencies]
+check = ["black", "isort"]
+test = ["pytest", "pytest-asyncio", "pytest-mock", "nonebug"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+pythonpath = [
+    "src",
+    "src/canrotbot",
+]
+testpaths = [
+    "tests",
+]
+# pytest-asyncio
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"

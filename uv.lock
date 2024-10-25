@@ -150,8 +150,8 @@ wheels = [
 
 [[package]]
 name = "canrotbot"
-version = "0.0.0"
-source = { virtual = "." }
+version = "8.3.0"
+source = { editable = "." }
 dependencies = [
     { name = "anyio" },
     { name = "beautifulsoup4" },
@@ -167,7 +167,6 @@ dependencies = [
     { name = "nonebot-plugin-alconna" },
     { name = "nonebot-plugin-apscheduler" },
     { name = "nonebot2", extra = ["fastapi"] },
-    { name = "nonebug" },
     { name = "nonechat" },
     { name = "ollama" },
     { name = "openai" },
@@ -179,11 +178,12 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
-code-check = [
+check = [
     { name = "black" },
     { name = "isort" },
 ]
 test = [
+    { name = "nonebug" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-mock" },
@@ -193,11 +193,11 @@ test = [
 requires-dist = [
     { name = "anyio" },
     { name = "beautifulsoup4" },
-    { name = "black", marker = "extra == 'code-check'" },
+    { name = "black", marker = "extra == 'check'" },
     { name = "cryptography" },
     { name = "hishel" },
     { name = "httpx" },
-    { name = "isort", marker = "extra == 'code-check'" },
+    { name = "isort", marker = "extra == 'check'" },
     { name = "nb-cli" },
     { name = "nonebot-adapter-console" },
     { name = "nonebot-adapter-kaiheila" },
@@ -207,7 +207,7 @@ requires-dist = [
     { name = "nonebot-plugin-alconna" },
     { name = "nonebot-plugin-apscheduler" },
     { name = "nonebot2", extras = ["fastapi"] },
-    { name = "nonebug" },
+    { name = "nonebug", marker = "extra == 'test'" },
     { name = "nonechat" },
     { name = "ollama" },
     { name = "openai" },

@@ -7,7 +7,7 @@ from pytest_mock import MockerFixture
 
 @pytest.mark.asyncio
 async def test_fetch_json_data_fail(mocker: MockerFixture):
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     mocker.patch(
         "httpx.AsyncClient.get",
@@ -22,10 +22,10 @@ async def test_fetch_json_data_fail(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_fetch_video_data_bv(mocker: MockerFixture):
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     mocker.patch(
-        "plugins.bilibili.bilibili.fetch_json_data",
+        "canrotbot.plugins.bilibili.bilibili.fetch_json_data",
         return_value={
             "code": 0,
             "data": {
@@ -42,10 +42,10 @@ async def test_fetch_video_data_bv(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_fetch_video_data_av(mocker: MockerFixture):
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     mocker.patch(
-        "plugins.bilibili.bilibili.fetch_json_data",
+        "canrotbot.plugins.bilibili.bilibili.fetch_json_data",
         return_value={
             "code": 0,
             "data": {
@@ -62,10 +62,10 @@ async def test_fetch_video_data_av(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_fetch_video_data_invalid_bv(mocker: MockerFixture):
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     mocker.patch(
-        "plugins.bilibili.bilibili.fetch_json_data",
+        "canrotbot.plugins.bilibili.bilibili.fetch_json_data",
         return_value={"code": -400, "message": "请求错误", "ttl": 1},
     )
 
@@ -75,10 +75,10 @@ async def test_fetch_video_data_invalid_bv(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_fetch_video_data_invalid_av(mocker: MockerFixture):
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     mocker.patch(
-        "plugins.bilibili.bilibili.fetch_json_data",
+        "canrotbot.plugins.bilibili.bilibili.fetch_json_data",
         return_value={"code": -400, "message": "请求错误", "ttl": 1},
     )
 
@@ -88,7 +88,7 @@ async def test_fetch_video_data_invalid_av(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_fetch_video_data_invalid_vid():
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     data = await bilibili.fetch_video_data("invalid_vid")
     assert data is None
@@ -96,7 +96,7 @@ async def test_fetch_video_data_invalid_vid():
 
 @pytest.mark.asyncio
 async def test_get_bvid_from_short_link_valid(mocker: MockerFixture):
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     mocker.patch(
         "httpx.AsyncClient.get",
@@ -116,7 +116,7 @@ async def test_get_bvid_from_short_link_valid(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_get_bvid_from_short_link_invalid(mocker: MockerFixture):
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     mocker.patch(
         "httpx.AsyncClient.get",
@@ -131,10 +131,10 @@ async def test_get_bvid_from_short_link_invalid(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_fetch_all_projects(mocker: MockerFixture):
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     mocker.patch(
-        "plugins.bilibili.bilibili.fetch_json_data",
+        "canrotbot.plugins.bilibili.bilibili.fetch_json_data",
         return_value={
             "errno": 0,
             "data": {
@@ -155,10 +155,10 @@ async def test_fetch_all_projects(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_fetch_all_projects_invalid_area(mocker: MockerFixture):
-    from plugins.bilibili import bilibili
+    from canrotbot.plugins.bilibili import bilibili
 
     mocker.patch(
-        "plugins.bilibili.bilibili.fetch_json_data",
+        "canrotbot.plugins.bilibili.bilibili.fetch_json_data",
         return_value={
             "errno": 0,
             "errtag": 0,
