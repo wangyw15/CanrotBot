@@ -1,0 +1,41 @@
+[project]
+name = "CanrotBot"
+authors = [
+    {name = "wangyw15", email = "wangyanwei15@outlook.com"}
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+dynamic = ["version"]
+requires-python = ">=3.12"
+dependencies = [
+    "nb-cli",
+    "nonebot2[fastapi]",
+    "nonebot-plugin-apscheduler",
+    "nonebot-adapter-onebot",
+    "nonebot-adapter-kaiheila",
+    "nonebot-adapter-mirai2",
+    "nonebot-adapter-qq",
+    "nonebot-adapter-console",
+    "pydantic>=2",
+    "beautifulsoup4",
+    "httpx",
+    "pillow",
+    "playwright",
+    "tencentcloud-sdk-python",
+    "sqlalchemy>=2",
+    "nonebot-plugin-alconna",
+    "cryptography",
+    "anyio",
+    "nonebug",
+    "nonechat",
+    "hishel",
+    "ollama",
+    "openai",
+]
+
+[project.optional-dependencies]
+code_check = ["black", "isort"]
+test = ["pytest", "pytest-asyncio", "pytest-mock"]
+
+[tool.setuptools]
+py-modules = []
