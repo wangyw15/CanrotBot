@@ -23,7 +23,7 @@ dependencies = [
     "playwright",
     "tencentcloud-sdk-python",
     "sqlalchemy>=2",
-    "nonebot-plugin-alconna",
+    "nonebot-plugin-alconna==0.51.4",
     "cryptography",
     "anyio",
     "nonechat",

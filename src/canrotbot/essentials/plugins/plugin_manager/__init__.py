@@ -1,6 +1,5 @@
 import nonebot.adapters.console as console
 import nonebot.adapters.kaiheila as kook
-
 # import nonebot.adapters.mirai2 as mirai2
 import nonebot.adapters.onebot.v11 as onebot_v11
 import nonebot.adapters.onebot.v12 as onebot_v12
