@@ -6,6 +6,7 @@ from nonebot_plugin_alconna import (
     on_alconna,
     AlconnaQuery,
     Query,
+    Subcommand,
 )
 from sqlalchemy import select, insert, delete, ColumnElement
 
@@ -24,21 +25,21 @@ EMPTY_PROMPT = "{EMPTY_PROMPT}"
 _command = on_alconna(
     Alconna(
         "random",
-        Option(
+        Subcommand(
             "add-preset",
             Args["name", str]["preset_items", str],
             alias=["添加预设"],
         ),
-        Option(
+        Subcommand(
             "list-preset",
             alias=["列出预设"],
         ),
-        Option(
+        Subcommand(
             "view-preset",
             Args["name", str],
             alias=["查看预设"],
         ),
-        Option(
+        Subcommand(
             "delete-preset",
             Args["name", str],
             alias=["删除预设"],
