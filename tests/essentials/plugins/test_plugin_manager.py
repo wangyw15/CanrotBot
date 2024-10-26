@@ -148,11 +148,11 @@ def test_enable_plugin_without_disabled_plugin(db_initialize: Callable) -> None:
 async def test_list_disable_plugin_with_none_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import plugin_manager_matcher
 
     db_initialize()
 
-    async with app.test_matcher(_plugin_manager_command) as ctx:
+    async with app.test_matcher(plugin_manager_matcher) as ctx:
         bot = create_bot(ctx)
         event = create_event("plugin list-disable")
         ctx.receive_event(bot, event)
@@ -166,11 +166,11 @@ async def test_list_disable_plugin_with_none_in_chat(
 async def test_list_disable_plugin_with_one_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import plugin_manager_matcher
 
     db_initialize()
 
-    async with app.test_matcher(_plugin_manager_command) as ctx:
+    async with app.test_matcher(plugin_manager_matcher) as ctx:
         bot = create_bot(ctx)
         event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
@@ -191,11 +191,11 @@ async def test_list_disable_plugin_with_one_in_chat(
 async def test_disable_plugin_once_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import plugin_manager_matcher
 
     db_initialize()
 
-    async with app.test_matcher(_plugin_manager_command) as ctx:
+    async with app.test_matcher(plugin_manager_matcher) as ctx:
         bot = create_bot(ctx)
         event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
@@ -207,11 +207,11 @@ async def test_disable_plugin_once_in_chat(
 async def test_disable_plugin_twice_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import plugin_manager_matcher
 
     db_initialize()
 
-    async with app.test_matcher(_plugin_manager_command) as ctx:
+    async with app.test_matcher(plugin_manager_matcher) as ctx:
         bot = create_bot(ctx)
         event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
@@ -228,11 +228,11 @@ async def test_disable_plugin_twice_in_chat(
 async def test_list_enable_plugin_once_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import plugin_manager_matcher
 
     db_initialize()
 
-    async with app.test_matcher(_plugin_manager_command) as ctx:
+    async with app.test_matcher(plugin_manager_matcher) as ctx:
         bot = create_bot(ctx)
         event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
@@ -263,11 +263,11 @@ async def test_list_enable_plugin_once_in_chat(
 async def test_list_enable_plugin_twice_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import plugin_manager_matcher
 
     db_initialize()
 
-    async with app.test_matcher(_plugin_manager_command) as ctx:
+    async with app.test_matcher(plugin_manager_matcher) as ctx:
         bot = create_bot(ctx)
         event = create_event(f"plugin disable {TEST_PLUGIN_ID}")
         ctx.receive_event(bot, event)
@@ -289,15 +289,15 @@ async def test_list_enable_plugin_twice_in_chat(
 async def test_disable_plugin_manager_in_chat(
     app: App, db_initialize: Callable, create_bot: Callable, create_event: Callable
 ) -> None:
-    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command, SELF_ID
+    from canrotbot.essentials.plugins.plugin_manager import plugin_manager_matcher, SELF_ID
 
     db_initialize()
 
-    async with app.test_matcher(_plugin_manager_command) as ctx:
+    async with app.test_matcher(plugin_manager_matcher) as ctx:
         bot = create_bot(ctx)
         event = create_event(f"plugin disable {SELF_ID}")
         ctx.receive_event(bot, event)
-        ctx.should_call_send(event, "不能禁用插件管理器")
+        ctx.should_call_send(event, "不能操作插件管理器")
         ctx.should_finished()
 
 
@@ -310,7 +310,7 @@ async def test_disable_all_plugin_in_chat(
     mocker: MockerFixture
 ) -> None:
     from canrotbot.essentials.plugins.plugin_manager.model import ALL_PLUGINS
-    from canrotbot.essentials.plugins.plugin_manager import _plugin_manager_command
+    from canrotbot.essentials.plugins.plugin_manager import plugin_manager_matcher
     from canrotbot.essentials.plugins.plugin_manager.model import Scope
 
     from canrotbot.essentials.plugins.plugin_manager import plugin_manager
@@ -324,7 +324,7 @@ async def test_disable_all_plugin_in_chat(
 
     db_initialize()
 
-    async with app.test_matcher(_plugin_manager_command) as ctx:
+    async with app.test_matcher(plugin_manager_matcher) as ctx:
         bot = create_bot(ctx)
         event = create_event(f"plugin disable {ALL_PLUGINS}", user_id=TEST_PLATFORM_ID)
         ctx.receive_event(bot, event)
