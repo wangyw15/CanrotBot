@@ -8,7 +8,6 @@ readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.12"
 dependencies = [
-    "nb-cli",
     "nonebot2[fastapi]",
     "nonebot-plugin-apscheduler",
     "nonebot-adapter-onebot",
@@ -35,9 +34,17 @@ dependencies = [
 [project.scripts]
 bot = "canrotbot:main"
 
-[project.optional-dependencies]
-check = ["black", "isort"]
-test = ["pytest", "pytest-asyncio", "pytest-mock", "nonebug"]
+[dependency-groups]
+dev = [
+    "nonebug>=0.4.1",
+    "pytest-asyncio>=0.24.0",
+    "pytest-mock>=3.14.0",
+    "pytest>=8.3.3",
+]
+lint = [
+    "black",
+    "isort",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -55,3 +62,15 @@ testpaths = [
 # pytest-asyncio
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
+
+[tool.black]
+target-version = ['py312']
+line-length = 88
+include = '\.pyi?$'
+diff = true
+color = true
+
+[tool.isort]
+py_version = 312
+profile = "black"
+color_output = true
