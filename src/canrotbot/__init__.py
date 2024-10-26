@@ -7,7 +7,7 @@ from nonebot import logger
 from nonebot.log import default_format
 
 
-def main() -> None:
+def run() -> None:
     from canrotbot.essentials.libraries.model import PluginListMode
 
     # 初始化

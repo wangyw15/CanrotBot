@@ -32,7 +32,7 @@ dependencies = [
 ]
 
 [project.scripts]
-bot = "canrotbot:main"
+bot = "canrotbot:run"
 
 [dependency-groups]
 dev = [
@@ -44,6 +44,9 @@ dev = [
 lint = [
     "black",
     "isort",
+]
+build = [
+    "nuitka"
 ]
 
 [build-system]
