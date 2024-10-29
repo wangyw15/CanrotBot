@@ -24,7 +24,7 @@
 uv run playwright install # 初始化环境，并安装 playwright
 cp .env.example .env      # 复制配置文件
 vim .env                  # 修改配置文件
-uv run bot                # 启动机器人
+uv run canrotbot                # 启动机器人
 ```
 
 ## 配置数据库

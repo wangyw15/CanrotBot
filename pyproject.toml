@@ -32,7 +32,7 @@ dependencies = [
 ]
 
 [project.scripts]
-bot = "canrotbot:run"
+canrotbot = "canrotbot:run"
 
 [dependency-groups]
 dev = [
