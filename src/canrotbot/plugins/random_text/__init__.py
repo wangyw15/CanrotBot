@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from nonebot import load_plugins
+from nonebot import load_plugin
 
 from canrotbot.essentials.libraries import path
 
@@ -16,4 +16,6 @@ def get_data(name: str) -> list:
     return _random_text_data[name]
 
 
-load_plugins(str(Path(__file__).parent))
+for i in Path(__file__).parent.glob("*.py"):
+    if not i.stem.startswith("_"):
+        load_plugin(f"canrotbot.plugins.random_text.{i.stem}")
