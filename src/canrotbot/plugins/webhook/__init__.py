@@ -106,6 +106,15 @@ async def _(bot: Bot, event: Event, token: Query[str] = Query("token")):
         await webhook_matcher.finish("Webhook 删除失败")
 
 
+@webhook_matcher.assign("view")
+async def _(bot: Bot, event: Event, token: Query[str] = Query("token")):
+    if hook := webhook.get_webhook(token.result):
+        if hook.bot_id == bot.self_id and hook.platform_id == event.get_user_id():
+            url = webhook.generate_webhook_url(token.result)
+            await webhook_matcher.finish(f"token: {token.result}\n模板: {hook.template_name}\nURL: {url}")
+    await webhook_matcher.finish("Webhook token 不存在")
+
+
 @webhook_matcher.assign("create")
 async def _(
     bot: Bot,
@@ -119,15 +128,6 @@ async def _(
     await webhook_matcher.finish(
         f"Webhook 创建成功\ntoken: {token}\n模板: {template_name.result}\nURL: {url}\n请妥善保管，不要随意泄露给他人，避免骚扰信息。"
     )
-
-
-@webhook_matcher.assign("view")
-async def _(bot: Bot, event: Event, token: Query[str] = Query("token")):
-    if hook := webhook.get_webhook(token.result):
-        if hook.bot_id == bot.self_id and hook.platform_id == event.get_user_id():
-            url = webhook.generate_webhook_url(token.result)
-            await webhook_matcher.finish(f"token: {token.result}\n模板: {hook.template_name}\nURL: {url}")
-    await webhook_matcher.finish("Webhook token 不存在")
 
 
 app: FastAPI = get_app()
