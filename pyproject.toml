@@ -36,6 +36,9 @@ dependencies = [
 [project.scripts]
 canrotbot = "canrotbot:run"
 
+[project.optional-dependencies]
+mariadb = ["mariadb>=1.1.10"]
+
 [dependency-groups]
 dev = [
     "nonebug>=0.4.1",
