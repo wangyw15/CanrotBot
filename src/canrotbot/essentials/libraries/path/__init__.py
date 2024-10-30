@@ -15,7 +15,7 @@ def get_asset_path(name: str = "") -> Path:
 
     :return: 文件夹路径
     """
-    path = Path(config.asset_path) / "assets" / name
+    path = Path(config.asset_path) / name
     path.mkdir(parents=True, exist_ok=True)
     return path
 
