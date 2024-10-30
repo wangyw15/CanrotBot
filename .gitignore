@@ -255,3 +255,6 @@ htmlcov
 *.dist
 *.onefile-build
 *.exe
+
+# uv
+uv.lock
