@@ -1,3 +1,6 @@
+{% if body is string %}
+pong
+{% else %}
 {% for game in body %}
 {{ game.title }}
 当前价格：{{ game.lastPrice.amount }} {{ game.lastPrice.currency }}
@@ -13,3 +16,4 @@
 {% endif %}
 {% endfor %}
 {% endfor %}
+{% endif %}

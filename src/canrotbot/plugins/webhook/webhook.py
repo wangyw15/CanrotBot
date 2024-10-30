@@ -135,7 +135,7 @@ def create_template(name: str, content: str, force: bool = False) -> bool:
 
     :return: 是否成功
     """
-    file = CUSTOM_TEMPLATE_PATH / (name + ".jinja2")
+    file = CUSTOM_TEMPLATE_PATH / (name + ".jinja")
     if file.exists() and not force:
         return False
     with file.open("w", encoding="utf-8") as f:
@@ -152,11 +152,11 @@ def list_templates() -> list[str]:
     templates: list[str] = []
 
     # 内置模板
-    for file in BUILTIN_TEMPLATE_PATH.glob("*.jinja2"):
+    for file in BUILTIN_TEMPLATE_PATH.glob("*.jinja"):
         templates.append(file.stem)
 
     # 自定义模板
-    for file in CUSTOM_TEMPLATE_PATH.glob("*.jinja2"):
+    for file in CUSTOM_TEMPLATE_PATH.glob("*.jinja"):
         if file.stem not in templates:
             templates.append(file.stem)
 
@@ -172,7 +172,7 @@ def delete_template(name: str, force: bool = False) -> bool:
 
     :return: 是否成功
     """
-    file = CUSTOM_TEMPLATE_PATH / (name + ".jinja2")
+    file = CUSTOM_TEMPLATE_PATH / (name + ".jinja")
     # 检查模板是否存在
     if not file.exists():
         return False
@@ -199,12 +199,12 @@ def get_template(name: str) -> Optional[str]:
 
     :return: 模板内容
     """
-    file = CUSTOM_TEMPLATE_PATH / (name + ".jinja2")
+    file = CUSTOM_TEMPLATE_PATH / (name + ".jinja")
     if file.exists():
         with file.open("r", encoding="utf-8") as f:
             return f.read()
 
-    file = BUILTIN_TEMPLATE_PATH / (name + ".jinja2")
+    file = BUILTIN_TEMPLATE_PATH / (name + ".jinja")
     if file.exists():
         with file.open("r", encoding="utf-8") as f:
             return f.read()
