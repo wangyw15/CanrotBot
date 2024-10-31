@@ -6,13 +6,16 @@ pong
 当前价格：{{ game.lastPrice.amount }} {{ game.lastPrice.currency }}
 历史最低：{{ game.historyLow.amount }} {{ game.historyLow.currency }}
 {%- for deal in game.deals -%}
-{%- if deal.cut != 0 -%}
+{%- if deal.cut != 0 %}
 ----------
 商店：{{ deal.shop.name }}
 原价：{{ deal.regular.amount }} {{ deal.regular.currency }}
 现价：{{ deal.price.amount }} {{ deal.price.currency }}
 折扣：{{ deal.cut }}%
 史低：{{ deal.storeLow.amount }} {{ deal.storeLow.currency }}
+{%- if with_url %}
+链接: {{ deal.url }}
+{%- endif -%}
 {%- endif -%}
 {%- endfor -%}
 {%- endfor -%}

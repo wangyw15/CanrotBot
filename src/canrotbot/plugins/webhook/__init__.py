@@ -3,8 +3,9 @@ from typing import Annotated, Any
 from fastapi import Body, FastAPI
 from fastapi.responses import JSONResponse
 from jinja2 import Template
-from nonebot import get_app, logger
+from nonebot import get_app, get_bot, logger
 from nonebot.adapters import Bot, Event
+from nonebot.adapters.qq import Bot as QQBot
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
     Alconna,
@@ -147,7 +148,8 @@ async def _(token: str, body: Annotated[Any, Body()]):
     # 生成消息
     target = webhook.get_target(token)
     template = Template(webhook.get_template(push_config.template_name))
-    message = template.render(body=body)
+    # 官方 QQ 机器人不发送链接
+    message = template.render(body=body, with_url=not isinstance(get_bot(target.self_id), QQBot))
 
     # 推送消息
     logger.info("Received webhook and pushed")
