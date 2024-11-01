@@ -18,6 +18,6 @@ RUN echo "ENVIRONMENT=prod" >> .env
 RUN echo "DRIVER=~fastapi+~httpx+~websockets" >> .env
 RUN echo "canrot_user_data_path=/data" >> .env
 RUN uv sync --index https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
-RUN http_proxy="http://127.0.0.1:7890" https_proxy="http://127.0.0.1:7890" uv run playwright install
+RUN http_proxy="http://127.0.0.1:7890" https_proxy="http://127.0.0.1:7890" uv run playwright install chromium
 
 CMD ["uv", "run", "canrotbot"]

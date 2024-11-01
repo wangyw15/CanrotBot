@@ -21,11 +21,11 @@
 安装[uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ```bash
-uv python install 3.12    # 安装 Python 3.12
-uv run playwright install # 初始化环境，并安装 playwright
-cp .env.example .env      # 复制配置文件
-vim .env                  # 修改配置文件
-uv run canrotbot          # 启动机器人
+uv python install 3.12             # 安装 Python 3.12
+uv run playwright install chromium # 初始化环境，并安装 playwright
+cp .env.example .env               # 复制配置文件
+vim .env                           # 修改配置文件
+uv run canrotbot                   # 启动机器人
 ```
 
 ## 配置数据库
