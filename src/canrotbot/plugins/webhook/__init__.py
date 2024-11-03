@@ -1,6 +1,6 @@
 from typing import Annotated, Any
 
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, Request
 from fastapi.responses import JSONResponse
 from jinja2 import Template
 from nonebot import get_app, get_bot, logger
@@ -112,7 +112,9 @@ async def _(bot: Bot, event: Event, token: Query[str] = Query("token")):
     if hook := webhook.get_webhook(token.result):
         if hook.bot_id == bot.self_id and hook.platform_id == event.get_user_id():
             url = webhook.generate_webhook_url(token.result)
-            await webhook_matcher.finish(f"token: {token.result}\n模板: {hook.template_name}\nURL: {url}")
+            await webhook_matcher.finish(
+                f"token: {token.result}\n模板: {hook.template_name}\nURL: {url}"
+            )
     await webhook_matcher.finish("Webhook token 不存在")
 
 
@@ -135,7 +137,7 @@ app: FastAPI = get_app()
 
 
 @app.post("/webhook/{token}")
-async def _(token: str, body: Annotated[Any, Body()]):
+async def _(token: str, body: Annotated[Any, Body()], request: Request):
     """
     Webhook 推送
     """
@@ -149,7 +151,11 @@ async def _(token: str, body: Annotated[Any, Body()]):
     target = webhook.get_target(token)
     template = Template(webhook.get_template(push_config.template_name))
     # 官方 QQ 机器人不发送链接
-    message = template.render(body=body, with_url=not isinstance(get_bot(target.self_id), QQBot))
+    message = template.render(
+        body=body,
+        headers=dict(zip(request.headers.keys(), request.headers.values())),
+        with_url=not isinstance(get_bot(target.self_id), QQBot),
+    )
 
     # 推送消息
     logger.info("Received webhook and pushed")
