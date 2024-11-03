@@ -4,21 +4,26 @@ from hishel import AsyncCacheClient, AsyncFileStorage
 from httpx import AsyncClient
 from nonebot import get_plugin_config, logger
 
-from .config import NetworkConfig
 from canrotbot.essentials.libraries import path
+
+from .config import NetworkConfig
 
 network_config = get_plugin_config(NetworkConfig)
 cache_storage = AsyncFileStorage(
     base_path=path.get_cache_path(), ttl=network_config.cache_ttl or None
 )
 
-client = AsyncClient()
-cache_client = AsyncCacheClient(storage=cache_storage)
+client = AsyncClient(timeout=network_config.timeout)
+cache_client = AsyncCacheClient(storage=cache_storage, timeout=network_config.timeout)
 
 if network_config.proxy:
-    proxy_client = AsyncClient(proxy=network_config.proxy)
+    proxy_client = AsyncClient(
+        proxy=network_config.proxy, timeout=network_config.timeout
+    )
     proxy_cache_client = AsyncCacheClient(
-        proxy=network_config.proxy, storage=cache_storage
+        proxy=network_config.proxy,
+        storage=cache_storage,
+        timeout=network_config.timeout,
     )
 
 
@@ -47,7 +52,7 @@ async def fetch_bytes_data(
     use_proxy: bool = network_config.proxy != "",
     use_cache: bool = False,
     *args,
-    **kwargs
+    **kwargs,
 ) -> bytes | None:
     """
     从 URL 获取 bytes 数据
@@ -72,7 +77,7 @@ async def fetch_json_data(
     use_proxy: bool = network_config.proxy != "",
     use_cache: bool = False,
     *args,
-    **kwargs
+    **kwargs,
 ) -> Any | None:
     """
     从 URL 获取 json 数据
@@ -97,7 +102,7 @@ async def fetch_text_data(
     use_proxy: bool = network_config.proxy != "",
     use_cache: bool = False,
     *args,
-    **kwargs
+    **kwargs,
 ) -> str | None:
     """
     从 URL 获取字符串
