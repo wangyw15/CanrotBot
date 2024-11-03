@@ -16,7 +16,7 @@
 
 # 使用方法
 
-> 仅支持 Python 3.12+
+## 经典方式
 
 安装[uv](https://docs.astral.sh/uv/getting-started/installation/)
 
@@ -26,6 +26,14 @@ uv run playwright install chromium # 初始化环境，并安装 playwright
 cp .env.example .env               # 复制配置文件
 vim .env                           # 修改配置文件
 uv run canrotbot                   # 启动机器人
+```
+
+## Docker/Podman
+
+```bash
+docker bulid -t canrotbot .
+docker build -t canrotbot:9.0.0 -f Dockerfile.mirror .
+docker run --name canrotbot -v .env:/app/.env.prod -v data:/data -p 8080:8080 canrotbot
 ```
 
 ## 配置数据库
