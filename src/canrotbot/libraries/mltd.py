@@ -26,7 +26,6 @@ EVENT_TYPE = [
 APPEAL_TYPE = ["None", "Vocal", "Dance", "Visual"]
 
 cards: list[dict] = []
-cards_zh: list[dict] = []
 cards_for_gasha: dict[int, list[dict]] = {}
 
 
@@ -40,16 +39,10 @@ async def _on_startup() -> None:
 
 
 async def load_cards(force_reload: bool = False) -> None:
-    global cards, cards_zh, cards_for_gasha
-    if force_reload or not cards or not cards_zh:
+    global cards, cards_for_gasha
+    if force_reload or not cards:
         cards = await network.fetch_json_data(
-            "https://api.matsurihi.me/api/mltd/v2/cards"
-            "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true",
-            use_cache=True,
-            use_proxy=True,
-        )
-        cards_zh = await network.fetch_json_data(
-            "https://api.matsurihi.me/api/mltd/v2/zh/cards"
+            "https://api.matsurihi.me/api/mltd/v2/cards" +
             "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true",
             use_cache=True,
             use_proxy=True,
@@ -73,22 +66,13 @@ def get_cards() -> list[dict] | None:
     return cards
 
 
-def search_card(keyword: str, force_jp: bool = False) -> dict | None:
-    if not cards or not cards_zh:
+def search_card(keyword: str) -> dict | None:
+    if not cards:
         return None
 
     best = 0.0
     ret = {}
-    # 优先搜索中文内容
-    if not force_jp:
-        for card in cards_zh:
-            ratio = difflib.SequenceMatcher(None, keyword, card["name"]).quick_ratio()
-            if ratio > best:
-                best = ratio
-                ret = card
-        if keyword in ret["name"]:
-            return ret
-    # 搜索日文内容
+
     for card in cards:
         ratio = difflib.SequenceMatcher(None, keyword, card["name"]).quick_ratio()
         if ratio > best:
@@ -100,7 +84,7 @@ def search_card(keyword: str, force_jp: bool = False) -> dict | None:
 async def get_events(time: Literal["now"] | datetime = "now") -> list[dict] | None:
     if time == "now":
         return await network.fetch_json_data(
-            f"https://api.matsurihi.me/api/mltd/v2/events?at=now", use_proxy=True
+            "https://api.matsurihi.me/api/mltd/v2/events?at=now", use_proxy=True
         )
     elif isinstance(time, datetime):
         t = datetime.now().astimezone().replace(microsecond=0).isoformat()
