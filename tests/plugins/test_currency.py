@@ -46,7 +46,7 @@ async def test_from_cny_with_default_amount(app: App, create_event: Callable):
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = create_event("cnyusd")
+        event = create_event("100cnyusd")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -60,7 +60,7 @@ async def test_usd_jpy_with_default_amount(app: App, create_event: Callable):
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
-        event = create_event("usdjpy")
+        event = create_event("100usdjpy")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
@@ -120,6 +120,7 @@ async def test_invalid_from_currency(app: App, create_event: Callable):
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()
+        ctx.should_call_send(event, "未找到货币: aaa")
         ctx.should_finished()
 
 
@@ -152,12 +153,25 @@ async def test_invalid_all_currency(app: App, create_event: Callable):
 
 
 @pytest.mark.asyncio
-async def test_unintended_trigger(app: App, create_event: Callable):
+async def test_unintended_trigger_with_only_currency_from(app: App, create_event: Callable):
     from canrotbot.plugins.currency import currency_convert_handler
 
     async with app.test_matcher(currency_convert_handler) as ctx:
         bot = ctx.create_bot()
         event = create_event("aaa")
+        ctx.receive_event(bot, event)
+        ctx.should_pass_rule()
+        ctx.should_pass_permission()
+        ctx.should_finished()
+
+
+@pytest.mark.asyncio
+async def test_unintended_trigger_with_both_currency(app: App, create_event: Callable):
+    from canrotbot.plugins.currency import currency_convert_handler
+
+    async with app.test_matcher(currency_convert_handler) as ctx:
+        bot = ctx.create_bot()
+        event = create_event("genius")
         ctx.receive_event(bot, event)
         ctx.should_pass_rule()
         ctx.should_pass_permission()

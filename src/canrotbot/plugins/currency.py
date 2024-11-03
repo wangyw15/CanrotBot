@@ -117,16 +117,16 @@ async def _(group: typing.Annotated[tuple, RegexGroup()]):
     # 错误处理
     currency_not_found: list[str] = []
     if not price_from:
-        logger.warning("未找到货币: {} 可能是误触发".format(currency_from))
+        logger.warning("Currency {} not found, maybe mis-triggered".format(currency_from))
         currency_not_found.append(currency_from)
     if not price_to:
-        logger.warning("未找到货币: {}".format(currency_to))
+        logger.warning("Currency {} not found, maybe mis-triggered".format(currency_to))
         currency_not_found.append(currency_to)
 
-    # 提供了两种货币，不判定为误触发
-    if group[2]:
+    # 只在提供数字是提示错误
+    if group[0]:
         await currency_convert_handler.finish("未找到货币: " + " ".join(currency_not_found))
 
-    # 仅提供了一种货币，判定为误触发，不做block，可由其他响应器继续处理
+    # 其他情况判定为误触发，不做block，可由其他响应器继续处理
     currency_convert_handler.block = False
     await currency_convert_handler.finish()
