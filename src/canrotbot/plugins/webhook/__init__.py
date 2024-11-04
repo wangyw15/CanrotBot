@@ -4,20 +4,19 @@ from fastapi import Body, FastAPI, Request
 from fastapi.responses import JSONResponse
 from jinja2 import Template
 from nonebot import get_app, get_bot, logger
-from nonebot.adapters import Bot, Event
 from nonebot.adapters.qq import Bot as QQBot
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
     Alconna,
     Args,
     CommandMeta,
+    MsgTarget,
     Query,
     Subcommand,
     UniMessage,
     on_alconna,
 )
 
-from ...essentials.libraries.model import ChatType
 from . import webhook
 from .config import WebhookConfig
 
@@ -90,8 +89,8 @@ async def _(name: Query[str] = Query("name")):
 
 
 @webhook_matcher.assign("list")
-async def _(bot: Bot, event: Event):
-    webhooks = webhook.list_webhooks(bot.self_id, event.get_user_id())
+async def _(target: MsgTarget):
+    webhooks = webhook.list_webhooks(target)
     if not webhooks:
         await webhook_matcher.finish("没有已创建的 Webhook")
     await webhook_matcher.finish(
@@ -100,17 +99,18 @@ async def _(bot: Bot, event: Event):
 
 
 @webhook_matcher.assign("delete")
-async def _(bot: Bot, event: Event, token: Query[str] = Query("token")):
-    if webhook.delete_webhook(bot.self_id, event.get_user_id(), token.result):
+async def _(target: MsgTarget, token: Query[str] = Query("token")):
+    if webhook.delete_webhook(target, token.result):
         await webhook_matcher.finish("Webhook 删除成功")
     else:
         await webhook_matcher.finish("Webhook 删除失败")
 
 
 @webhook_matcher.assign("view")
-async def _(bot: Bot, event: Event, token: Query[str] = Query("token")):
+async def _(target: MsgTarget, token: Query[str] = Query("token")):
     if hook := webhook.get_webhook(token.result):
-        if hook.bot_id == bot.self_id and hook.platform_id == event.get_user_id():
+        tokens = [i.token for i in webhook.list_webhooks(target)]
+        if hook.token in tokens:
             url = webhook.generate_webhook_url(token.result)
             await webhook_matcher.finish(
                 f"token: {token.result}\n模板: {hook.template_name}\nURL: {url}"
@@ -120,13 +120,10 @@ async def _(bot: Bot, event: Event, token: Query[str] = Query("token")):
 
 @webhook_matcher.assign("create")
 async def _(
-    bot: Bot,
-    event: Event,
+    target: MsgTarget,
     template_name: Query[str] = Query("template_name", "default"),
 ):
-    token = webhook.create_webhook(
-        template_name.result, ChatType.Private, bot.self_id, event.get_user_id()
-    )
+    token = webhook.create_webhook(template_name.result, target)
     url = webhook.generate_webhook_url(token)
     await webhook_matcher.finish(
         f"Webhook 创建成功\ntoken: {token}\n模板: {template_name.result}\nURL: {url}\n请妥善保管，不要随意泄露给他人，避免骚扰信息。"

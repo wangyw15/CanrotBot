@@ -6,7 +6,6 @@ from nonebot_plugin_alconna import Target
 from sqlalchemy import delete, insert, select
 
 from canrotbot.essentials.libraries import database, path
-from canrotbot.essentials.libraries.model import ChatType
 
 from .config import WebhookConfig
 from .data import Webhook
@@ -26,16 +25,12 @@ def generate_token() -> str:
     return str(uuid.uuid4()).replace("-", "")
 
 
-def create_webhook(
-    template_name: str, chat_type: ChatType, bot_id: str, platform_id: str
-) -> str:
+def create_webhook(template_name: str, target: Target) -> str:
     """
     创建 webhook
 
     :param template_name: 模板名称
-    :param chat_type: 聊天类型
-    :param bot_id: 机器人 ID
-    :param platform_id: 平台 ID
+    :param target: 推送目标
 
     :return: token
     """
@@ -50,30 +45,33 @@ def create_webhook(
             insert(Webhook).values(
                 token=token,
                 template_name=template_name,
-                chat_type=chat_type,
-                bot_id=bot_id,
-                platform_id=platform_id,
+                private_chat=target.private,
+                channel_chat=target.channel,
+                self_id=target.self_id,
+                platform_id=target.id,
             )
         )
 
         return token
 
 
-def list_webhooks(bot_id: str, platform_id: str) -> Sequence[Webhook]:
+def list_webhooks(target: Target) -> Sequence[Webhook]:
     """
     列出 webhook
 
-    :param bot_id: 机器人 ID
-    :param platform_id: 平台 ID
+    :param target: 推送目标
 
     :return: webhook 列表
     """
     with database.get_session().begin() as session:
         ret = (
             session.execute(
-                select(Webhook)
-                .where(Webhook.bot_id == bot_id)
-                .where(Webhook.platform_id == platform_id)
+                select(Webhook).where(
+                    Webhook.private_chat == target.private,
+                    Webhook.channel_chat == target.channel,
+                    Webhook.self_id == target.self_id,
+                    Webhook.platform_id == target.id,
+                )
             )
             .scalars()
             .all()
@@ -82,28 +80,33 @@ def list_webhooks(bot_id: str, platform_id: str) -> Sequence[Webhook]:
         return ret
 
 
-def delete_webhook(bot_id: str, platform_id: str, token: str) -> bool:
+def delete_webhook(target: Target, token: str) -> bool:
     """
     删除 webhook
 
-    :param bot_id: 机器人 ID
-    :param platform_id: 平台 ID
+    :param target: 推送目标
     :param token: token
 
     :return: 是否成功
     """
     with database.get_session().begin() as session:
         if session.execute(
-            select(Webhook)
-            .where(Webhook.bot_id == bot_id)
-            .where(Webhook.platform_id == platform_id)
-            .where(Webhook.token == token)
+            select(Webhook).where(
+                Webhook.private_chat == target.private,
+                Webhook.channel_chat == target.channel,
+                Webhook.self_id == target.self_id,
+                Webhook.platform_id == target.id,
+                Webhook.token == token,
+            )
         ).scalar():
             session.execute(
-                delete(Webhook)
-                .where(Webhook.bot_id == bot_id)
-                .where(Webhook.platform_id == platform_id)
-                .where(Webhook.token == token)
+                delete(Webhook).where(
+                    Webhook.private_chat == target.private,
+                    Webhook.channel_chat == target.channel,
+                    Webhook.self_id == target.self_id,
+                    Webhook.platform_id == target.id,
+                    Webhook.token == token,
+                )
             )
             return True
         return False
@@ -226,10 +229,10 @@ def get_target(token: str) -> Optional[Target]:
         ).scalar_one_or_none()
         if webhook:
             return Target(
+                private=webhook.private_chat,
+                channel=webhook.channel_chat,
+                self_id=webhook.self_id,
                 id=webhook.platform_id,
-                self_id=webhook.bot_id,
-                private=webhook.chat_type == ChatType.Private,
-                channel=webhook.chat_type == ChatType.Channel,
             )
         return None
 

@@ -1,8 +1,7 @@
-from sqlalchemy import Enum, Integer, Text
+from sqlalchemy import Boolean, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from canrotbot.essentials.libraries import database
-from canrotbot.essentials.libraries.model import ChatType
 
 
 class Webhook(database.Base):
@@ -14,8 +13,7 @@ class Webhook(database.Base):
     token: Mapped[str] = mapped_column(Text, nullable=False)
     template_name: Mapped[str] = mapped_column(Text, nullable=False)
 
-    chat_type: Mapped[ChatType] = mapped_column(
-        Enum(ChatType), nullable=False, default=ChatType.Private
-    )
-    bot_id: Mapped[str] = mapped_column(Text, nullable=False)
+    private_chat: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    channel_chat: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    self_id: Mapped[str] = mapped_column(Text, nullable=False)
     platform_id: Mapped[str] = mapped_column(Text, nullable=False)
