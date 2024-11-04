@@ -97,22 +97,6 @@ async def get_bot_name(event: Event, bot: Bot, default: str = None) -> str | Non
     return default
 
 
-def seconds_to_time(seconds: float) -> str:
-    """
-    时间戳转换为时间
-
-    :param seconds: 时间戳
-
-    :return: 时间
-    """
-    warnings.warn("util.seconds_to_time 非通用函数", DeprecationWarning)
-    ms = int(seconds % 1 * 1000)
-    seconds = int(seconds)
-    m, s = divmod(seconds, 60)
-    h, m = divmod(m, 60)
-    return f"{str(h).zfill(2)}:{str(m).zfill(2)}:{str(s).zfill(2)}.{str(ms).zfill(3)}"
-
-
 async def can_send_segment(segment_type: type) -> bool:
     """
     是否可以发送指定类型的消息段
@@ -160,7 +144,6 @@ def can_send_url() -> bool:
 __all__ = [
     "get_group_id",
     "get_bot_name",
-    "seconds_to_time",
     "can_send_segment",
     "is_qq",
     "MESSAGE_SPLIT_LINE",
