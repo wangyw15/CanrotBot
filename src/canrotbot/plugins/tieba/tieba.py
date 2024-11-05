@@ -3,15 +3,16 @@ from time import sleep
 from typing import cast
 
 from httpx import AsyncClient
-from sqlalchemy import select, delete, ColumnElement
+from nonebot_plugin_alconna import Target
+from sqlalchemy import ColumnElement, delete, insert, select
 
 from canrotbot.essentials.libraries import database
-from canrotbot.essentials.libraries.model import ChatType
+
 from .data import (
     Account,
-    SigninResultSubscriber,
-    ForumSigninResultList,
     ForumSigninResultData,
+    ForumSigninResultList,
+    SigninResultSubscriber,
 )
 from .model import ForumSigninResultType
 
@@ -123,38 +124,31 @@ def get_all_owned_accounts(owner_user_id: int) -> list[Account]:
         return ret
 
 
-def subscribe(
-    baidu_account_id: int, platform_id: str, bot_id: str, chat_type: ChatType
-) -> None:
+def subscribe(baidu_account_id: int, target: Target) -> None:
     """
     订阅签到结果
 
     :param baidu_account_id: 百度账号ID
-    :param platform_id: 平台ID
-    :param bot_id: 机器人ID
-    :param chat_type: 聊天类型
+    :param target: 订阅目标
     """
     with database.get_session().begin() as session:
-        subscriber = SigninResultSubscriber(
-            account_id=baidu_account_id,
-            platform_id=platform_id,
-            bot_id=bot_id,
-            chat_type=chat_type,
+        session.execute(
+            insert(SigninResultSubscriber).values(
+                account_id=baidu_account_id,
+                private_chat=target.private,
+                channel_chat=target.channel,
+                self_id=target.self_id,
+                platform_id=target.id,
+            )
         )
-        session.add(subscriber)
-        session.commit()
 
 
-def unsubscribe(
-    baidu_account_id: int, platform_id: str, bot_id: str, chat_type: ChatType
-) -> None:
+def unsubscribe(baidu_account_id: int, target: Target) -> None:
     """
     取消订阅签到结果
 
     :param baidu_account_id: 百度账号ID
-    :param platform_id: 平台ID
-    :param bot_id: 机器人ID
-    :param chat_type: 聊天类型
+    :param target: 订阅目标
     """
     with database.get_session().begin() as session:
         session.execute(
@@ -168,18 +162,28 @@ def unsubscribe(
             .where(
                 cast(
                     ColumnElement[bool],
-                    SigninResultSubscriber.platform_id == platform_id,
+                    SigninResultSubscriber.private_chat == target.private,
                 )
             )
-            .where(cast(ColumnElement[bool], SigninResultSubscriber.bot_id == bot_id))
             .where(
                 cast(
                     ColumnElement[bool],
-                    SigninResultSubscriber.chat_type == chat_type,
+                    SigninResultSubscriber.channel_chat == target.channel,
+                )
+            )
+            .where(
+                cast(
+                    ColumnElement[bool],
+                    SigninResultSubscriber.self_id == target.self_id,
+                )
+            )
+            .where(
+                cast(
+                    ColumnElement[bool],
+                    SigninResultSubscriber.platform_id == target.id,
                 )
             )
         )
-        session.commit()
 
 
 def unsubscribe_all(baidu_account_id: int) -> None:
@@ -197,12 +201,11 @@ def unsubscribe_all(baidu_account_id: int) -> None:
                 )
             )
         )
-        session.commit()
 
 
 def get_signin_result_subscribers(
     baidu_account_id: int,
-) -> list[SigninResultSubscriber]:
+) -> list[Target]:
     """
     获取订阅者
 
@@ -219,8 +222,16 @@ def get_signin_result_subscribers(
                 )
             )
         )
-        ret: list[SigninResultSubscriber] = [x for x in result.scalars().all()]
-        session.expunge_all()
+        ret: list[Target] = []
+        for raw_subscriber in result.scalars().all():
+            ret.append(
+                Target(
+                    private=raw_subscriber.private_chat,
+                    channel=raw_subscriber.channel_chat,
+                    self_id=raw_subscriber.self_id,
+                    id=raw_subscriber.platform_id,
+                )
+            )
         return ret
 
 
@@ -260,28 +271,6 @@ def check_account_exists(owner_user_id: int, account_id: int) -> bool:
         return result.one_or_none() is not None
 
 
-def get_all_subscribers(baidu_account_id: int) -> list[SigninResultSubscriber]:
-    """
-    获取所有订阅者
-
-    :param baidu_account_id: 百度账号ID
-
-    :return: 订阅者
-    """
-    with database.get_session().begin() as session:
-        result = session.execute(
-            select(SigninResultSubscriber).where(
-                cast(
-                    ColumnElement[bool],
-                    SigninResultSubscriber.account_id == baidu_account_id,
-                )
-            )
-        )
-        ret: list[SigninResultSubscriber] = [x for x in result.scalars().all()]
-        session.expunge_all()
-        return ret
-
-
 def save_signin_result(account_id: int, result: list[ForumSigninResultData]) -> int:
     """
     保存签到结果
@@ -303,7 +292,7 @@ def save_signin_result(account_id: int, result: list[ForumSigninResultData]) -> 
         for data in result:
             data.signin_id = signin_id
             session.add(data)
-        session.commit()
+        session.expunge_all()
 
         return signin_id
 

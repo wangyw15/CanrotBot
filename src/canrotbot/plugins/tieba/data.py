@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import Integer, Text, ForeignKey, BigInteger, Enum, DateTime
+from sqlalchemy import BigInteger, Boolean, DateTime, Enum, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from canrotbot.essentials.libraries import database
-from canrotbot.essentials.libraries.model import ChatType
+
 from .model import ForumSigninResultType
 
 
@@ -61,8 +61,8 @@ class SigninResultSubscriber(database.Base):
     account_id: Mapped[int] = mapped_column(
         Integer, ForeignKey(Account.id), nullable=False
     )
-    chat_type: Mapped[ChatType] = mapped_column(
-        Enum(ChatType), nullable=False, default=ChatType.Private
-    )
-    bot_id: Mapped[str] = mapped_column(Text, nullable=False)
+
+    private_chat: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    channel_chat: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    self_id: Mapped[str] = mapped_column(Text, nullable=False)
     platform_id: Mapped[str] = mapped_column(Text, nullable=False)
