@@ -93,27 +93,6 @@ async def _():
     await tieba_matcher.finish(msg)
 
 
-@tieba_matcher.assign("add")
-async def _(
-    bduss_query: Query[str] = Query("bduss"),
-    stoken_query: Query[str] = Query("stoken"),
-    alias_query: Query[str] = Query("alias", ""),
-):
-    uid = user.get_uid()
-    if not uid:
-        await tieba_matcher.finish("还未注册或绑定账号")
-
-    bduss = bduss_query.result.strip()
-    stoken = stoken_query.result.strip()
-    alias = alias_query.result.strip()
-
-    if tieba.check_alias_exists(uid, alias):
-        await tieba_matcher.finish("该别名已被使用")
-
-    tieba.add_account(uid, bduss, stoken, alias)
-    await tieba_matcher.finish("绑定成功")
-
-
 @tieba_matcher.assign("delete")
 async def _(account_id_query: Query[int] = Query("delete_account_id")):
     uid = user.get_uid()
@@ -228,6 +207,27 @@ async def _(account_id_query: Query[int] = Query("signinfo_account_id")):
     if not result:
         await tieba_matcher.finish("还未签到过")
     await tieba_matcher.finish("签到结果\n" + tieba.generate_text_result(result))
+
+
+@tieba_matcher.assign("add")
+async def _(
+    bduss_query: Query[str] = Query("bduss"),
+    stoken_query: Query[str] = Query("stoken"),
+    alias_query: Query[str] = Query("alias", ""),
+):
+    uid = user.get_uid()
+    if not uid:
+        await tieba_matcher.finish("还未注册或绑定账号")
+
+    bduss = bduss_query.result.strip()
+    stoken = stoken_query.result.strip()
+    alias = alias_query.result.strip()
+
+    if tieba.check_alias_exists(uid, alias):
+        await tieba_matcher.finish("该别名已被使用")
+
+    tieba.add_account(uid, bduss, stoken, alias)
+    await tieba_matcher.finish("绑定成功")
 
 
 @scheduler.scheduled_job("cron", hour="0", id="tieba_signin")
