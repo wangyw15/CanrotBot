@@ -1,5 +1,4 @@
-from nonebot import get_app, get_bot, logger, get_plugin_config
-from nonebot.adapters.qq import Bot as QQBot
+from nonebot import get_plugin_config, logger
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
     Alconna,
@@ -10,22 +9,36 @@ from nonebot_plugin_alconna import (
     Subcommand,
     UniMessage,
     on_alconna,
-    Target,
 )
 from nonebot_plugin_apscheduler import scheduler
 
-from .config import RssConfig
 from . import rss
+from .config import RssConfig
 from .data import RssSubscription
 
 rss_config = get_plugin_config(RssConfig)
 
 rss_command = Alconna(
     "rss",
-    Subcommand("subscribe", Args["subscribe_url", str], alias={"订阅", "sub"}, help_text="订阅RSS"),
-    Subcommand("unsubscribe", Args["unsubscribe_id", int], alias={"退订", "unsub"}, help_text="退订RSS"),
+    Subcommand(
+        "subscribe",
+        Args["subscribe_url", str],
+        alias={"订阅", "sub"},
+        help_text="订阅RSS",
+    ),
+    Subcommand(
+        "unsubscribe",
+        Args["unsubscribe_id", int],
+        alias={"退订", "unsub"},
+        help_text="退订RSS",
+    ),
     Subcommand("list", help_text="列出RSS订阅"),
-    Subcommand("update", Args["update_id", int, -1], alias={"更新"}, help_text="手动更新RSS订阅"),
+    Subcommand(
+        "update",
+        Args["update_id", int, -1],
+        alias={"更新"},
+        help_text="手动更新RSS订阅",
+    ),
     meta=CommandMeta(description="提供RSS订阅推送功能"),
 )
 
@@ -61,7 +74,9 @@ async def _(target: MsgTarget):
     subscriptions = rss.list_target_subscriptions(target)
     if not subscriptions:
         await rss_matcher.finish("没有已订阅的RSS")
-    await rss_matcher.finish("\n".join([f"{i.id}: {i.title} - {i.url}" for i in subscriptions]))
+    await rss_matcher.finish(
+        "\n".join([f"{i.id}: {i.title} - {i.url}" for i in subscriptions])
+    )
 
 
 @rss_matcher.assign("update")

@@ -50,12 +50,12 @@ async def add_subscription(url: str, target: Target) -> bool:
     """
     with database.get_session().begin() as session:
         subscription = session.execute(
-                select(RssSubscription)
-                .where(RssSubscription.url == url)
-                .where(RssSubscription.private_chat == target.private)
-                .where(RssSubscription.channel_chat == target.channel)
-                .where(RssSubscription.self_id == target.self_id)
-                .where(RssSubscription.platform_id == target.id)
+            select(RssSubscription)
+            .where(RssSubscription.url == url)
+            .where(RssSubscription.private_chat == target.private)
+            .where(RssSubscription.channel_chat == target.channel)
+            .where(RssSubscription.self_id == target.self_id)
+            .where(RssSubscription.platform_id == target.id)
         ).one_or_none()
         # 避免重复订阅
         if subscription:
@@ -123,13 +123,17 @@ def list_target_subscriptions(target: Target) -> list[RssSubscription]:
     :return: 订阅列表
     """
     with database.get_session().begin() as session:
-        result = session.execute(
-            select(RssSubscription)
-            .where(RssSubscription.private_chat == target.private)
-            .where(RssSubscription.channel_chat == target.channel)
-            .where(RssSubscription.self_id == target.self_id)
-            .where(RssSubscription.platform_id == target.id)
-        ).scalars().all()
+        result = (
+            session.execute(
+                select(RssSubscription)
+                .where(RssSubscription.private_chat == target.private)
+                .where(RssSubscription.channel_chat == target.channel)
+                .where(RssSubscription.self_id == target.self_id)
+                .where(RssSubscription.platform_id == target.id)
+            )
+            .scalars()
+            .all()
+        )
         session.expunge_all()
         return list(result)
 
@@ -172,8 +176,7 @@ def get_subscription_target(subscription_id: int) -> Target | None:
     """
     with database.get_session().begin() as session:
         subscription = session.execute(
-            select(RssSubscription)
-            .where(RssSubscription.id == subscription_id)
+            select(RssSubscription).where(RssSubscription.id == subscription_id)
         ).scalar_one_or_none()
         if not subscription:
             return None
@@ -185,7 +188,9 @@ def get_subscription_target(subscription_id: int) -> Target | None:
         )
 
 
-async def update_subscription(subscription_id: int, only_new_entries: bool = False) -> list[RssEntry]:
+async def update_subscription(
+    subscription_id: int, only_new_entries: bool = False
+) -> list[RssEntry]:
     """
     更新RSS订阅
 
