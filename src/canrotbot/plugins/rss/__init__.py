@@ -97,3 +97,5 @@ async def update(subscription_ids: list[int] | None = None):
             msg += f"{i+1}.\n{entry.title}\n{entry.link}\n\n"
 
         await UniMessage(msg.strip()).send(rss.get_subscription_target(subscription.id))
+
+    logger.info("Update complete")
