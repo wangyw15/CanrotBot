@@ -46,7 +46,8 @@ _command = on_alconna(
         ),
         Args["items", str, ""]["prompt", str, ""],
     ),
-    aliases={"r", "随机", "随机选择"},
+    aliases={"随机", "随机选择"},
+    block=True,
 )
 
 # 抛硬币
