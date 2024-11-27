@@ -1,7 +1,9 @@
 import abc
-from typing import TypedDict, Literal, NotRequired, Any
+from typing import Any, Literal, NotRequired, TypedDict
 
 from nonebot_plugin_alconna import UniMessage
+
+type ToolType = Literal["function", "builtin_function"]
 
 
 class Property(TypedDict):
@@ -22,7 +24,7 @@ class ToolFunction(TypedDict):
 
 
 class Tool(TypedDict):
-    type: Literal["function"]
+    type: ToolType
     function: ToolFunction
 
 
@@ -38,6 +40,8 @@ class ToolCall(TypedDict):
 
 
 class BaseTool(metaclass=abc.ABCMeta):
+    __tool_type__: ToolType = "function"
+    """ Tool 类型 """
     __tool_name__: str = ""
     """ Tool 名称 """
     __description__: str = ""

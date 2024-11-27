@@ -1,10 +1,11 @@
-from nonebot import on_message, logger
+from nonebot import logger, on_message
 from nonebot.adapters import Event
 from nonebot.rule import Rule, to_me
 
 from canrotbot.libraries.llm.llm_backend import ollama_chat, openai_chat
+
+from . import wrapper as wrapper
 from .config import llm_plugin_config
-from .wrapper import *
 
 
 async def not_command(event: Event) -> bool:
@@ -18,12 +19,12 @@ async def llm_enabled() -> bool:
     return llm_plugin_config.enabled
 
 
-llm = on_message(
+llm_matcher = on_message(
     priority=100, rule=Rule(not_command, llm_enabled) & to_me(), block=False
 )
 
 
-@llm.handle()
+@llm_matcher.handle()
 async def _(event: Event):
     answer = "后端无回复"
 
@@ -43,8 +44,8 @@ async def _(event: Event):
     except Exception as e:
         logger.error("Error in llm plugin")
         logger.exception(e)
-        await llm.finish(f"出现错误：\n{e}")
+        await llm_matcher.finish(f"出现错误：\n{e}")
 
     if isinstance(answer, str):
-        await llm.finish(answer)
-    await llm.finish(await answer.export())
+        await llm_matcher.finish(answer)
+    await llm_matcher.finish(await answer.export())

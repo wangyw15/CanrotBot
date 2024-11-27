@@ -1,9 +1,10 @@
 import inspect
+from typing import cast
 
-from nonebot import logger, get_driver
+from nonebot import get_driver, logger
 from nonebot_plugin_alconna import UniMessage
 
-from .model import Tool, ToolCall, ToolCallResult, BaseTool
+from .model import BaseTool, Tool, ToolCall, ToolCallResult, ToolType
 
 
 def resolve_tool(tool_provider: type[BaseTool]) -> Tool:
@@ -14,11 +15,10 @@ def resolve_tool(tool_provider: type[BaseTool]) -> Tool:
 
     :return: Tool
     """
-    if not tool_provider.__description__:
-        raise ValueError("Tool description must be provided")
+    tool_type: ToolType = tool_provider.__tool_type__ or cast(ToolType, "function")
 
     ret: Tool = {
-        "type": "function",
+        "type": tool_type,
         "function": {
             "name": tool_provider.__tool_name__ or tool_provider.__name__,
             "description": tool_provider.__description__,
@@ -28,6 +28,18 @@ def resolve_tool(tool_provider: type[BaseTool]) -> Tool:
 
     tool_func = tool_provider.__call__
     signature = inspect.signature(tool_func)
+
+    # 检查返回值
+    if signature.return_annotation != str:
+        raise ValueError("Return value must be annotated as str")
+
+    # builtin_function 忽略剩下的检查
+    if tool_type == "builtin_function":
+        return ret
+
+    # 检查描述
+    if not tool_provider.__description__:
+        raise ValueError("Tool description must be provided")
 
     # 解析参数
     for param in signature.parameters.values():
@@ -45,10 +57,6 @@ def resolve_tool(tool_provider: type[BaseTool]) -> Tool:
             "description": param.annotation.__metadata__[0],
         }
         ret["function"]["parameters"]["required"].append(param.name)
-
-    # 检查返回值
-    if signature.return_annotation != str:
-        raise ValueError("Return value must be annotated as str")
     return ret
 
 

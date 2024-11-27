@@ -1,12 +1,13 @@
 import json
 from typing import Annotated
-from urllib.parse import urlparse, quote
+from urllib.parse import quote, urlparse
 
 from nonebot_plugin_alconna import UniMessage
 
 from canrotbot.essentials.libraries.util import can_send_url
 from canrotbot.libraries.llm.tool import BaseTool
 from canrotbot.libraries.mediawiki import MediaWikiClient
+
 from ..config import llm_plugin_config
 
 HOSTS_URL = {
@@ -43,8 +44,8 @@ HOSTS_DESCRIPTION = [
 
 class MediaWikiTool(BaseTool):
     __description__ = (
-        f"提供从不同百科搜索词条，并获取最相关词条对应的页面内容的能力。"
-        + f"当前支持的百科有："
+        "提供从不同百科搜索词条，并获取最相关词条对应的页面内容的能力。"
+        + "当前支持的百科有："
         + "；".join([i["name"] + "，" + i["description"] for i in HOSTS_DESCRIPTION])
         + "需要根据关键词所属的不同领域选择最合适的百科。"
     )
