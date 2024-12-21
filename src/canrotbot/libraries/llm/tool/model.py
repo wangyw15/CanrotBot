@@ -1,42 +1,37 @@
 import abc
-from typing import Any, Literal, NotRequired, TypedDict
+from typing import Any, Literal, Optional
 
 from nonebot_plugin_alconna import UniMessage
+from pydantic import BaseModel
 
 type ToolType = Literal["function", "builtin_function"]
 
 
-class Property(TypedDict):
+class Property(BaseModel):
     type: Literal["string"]
     description: str
 
 
-class Parameters(TypedDict):
+class Parameters(BaseModel):
     type: Literal["object"]
     properties: dict[str, Property]
     required: list[str]
 
 
-class ToolFunction(TypedDict):
+class ToolFunction(BaseModel):
     name: str
     description: str
     parameters: Parameters
 
 
-class Tool(TypedDict):
+class Tool(BaseModel):
     type: ToolType
     function: ToolFunction
 
 
-class ToolCallFunction(TypedDict):
+class ToolCallFunction(BaseModel):
     name: str
-    arguments: NotRequired[dict[str, Any]]
-
-
-class ToolCall(TypedDict):
-    id: NotRequired[str]
-    function: ToolCallFunction
-    type: NotRequired[Literal["function"]]
+    arguments: Optional[dict[str, Any]]
 
 
 class BaseTool(metaclass=abc.ABCMeta):
@@ -67,8 +62,20 @@ class BaseTool(metaclass=abc.ABCMeta):
         return message
 
 
-class ToolCallResult(TypedDict):
+class ToolCallResult:
     name: str
-    tool_call_id: NotRequired[str]
-    result: NotRequired[str]
+    tool_call_id: Optional[str]
+    result: Optional[str]
     instance: BaseTool
+
+    def __init__(
+        self,
+        name: str,
+        instance: BaseTool,
+        tool_call_id: str = None,
+        result: str = None,
+    ):
+        self.name = name
+        self.instance = instance
+        self.tool_call_id = tool_call_id
+        self.result = result

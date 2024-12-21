@@ -1,10 +1,22 @@
 import inspect
+import json
 from typing import cast
 
 from nonebot import get_driver, logger
 from nonebot_plugin_alconna import UniMessage
+from openai.types.chat.chat_completion_message_tool_call import (
+    ChatCompletionMessageToolCall,
+)
 
-from .model import BaseTool, Tool, ToolCall, ToolCallResult, ToolType
+from .model import (
+    BaseTool,
+    Parameters,
+    Property,
+    Tool,
+    ToolCallResult,
+    ToolFunction,
+    ToolType,
+)
 
 
 def resolve_tool(tool_provider: type[BaseTool]) -> Tool:
@@ -17,14 +29,14 @@ def resolve_tool(tool_provider: type[BaseTool]) -> Tool:
     """
     tool_type: ToolType = tool_provider.__tool_type__ or cast(ToolType, "function")
 
-    ret: Tool = {
-        "type": tool_type,
-        "function": {
-            "name": tool_provider.__tool_name__ or tool_provider.__name__,
-            "description": tool_provider.__description__,
-            "parameters": {"type": "object", "properties": {}, "required": []},
-        },
-    }
+    ret: Tool = Tool(
+        type=tool_type,
+        function=ToolFunction(
+            name=tool_provider.__tool_name__ or tool_provider.__name__,
+            description=tool_provider.__description__,
+            parameters=Parameters(type="object", properties={}, required=[]),
+        ),
+    )
 
     tool_func = tool_provider.__call__
     signature = inspect.signature(tool_func)
@@ -52,11 +64,11 @@ def resolve_tool(tool_provider: type[BaseTool]) -> Tool:
                 f"Argument {param.name} must be annotated with str as description"
             )
 
-        ret["function"]["parameters"]["properties"][param.name] = {
-            "type": "string",
-            "description": param.annotation.__metadata__[0],
-        }
-        ret["function"]["parameters"]["required"].append(param.name)
+        ret.function.parameters.properties[param.name] = Property(
+            type="string",
+            description=param.annotation.__metadata__[0],
+        )
+        ret.function.parameters.required.append(param.name)
     return ret
 
 
@@ -64,7 +76,9 @@ tools_description: list[Tool] = []
 tools_callable: dict[str, type[BaseTool]] = {}
 
 
-async def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
+async def run_tool_call(
+    tool_call: list[ChatCompletionMessageToolCall],
+) -> list[ToolCallResult]:
     """
     执行 Tool
 
@@ -75,28 +89,25 @@ async def run_tool_call(tool_call: list[ToolCall]) -> list[ToolCallResult]:
     ret: list[ToolCallResult] = []
 
     for call in tool_call:
-        if call["function"]["name"] in tools_callable:
-            tool_name = call["function"]["name"]
-            tool_args = call["function"]["arguments"]
+        tool_name = call.function.name
+        tool_args = json.loads(call.function.arguments)
+        if call.function.name in tools_callable:
             tool_instance = tools_callable[tool_name]()
 
-            current_result = {"name": tool_name, "instance": tool_instance}
+            current_result = ToolCallResult(name=tool_name, instance=tool_instance)
 
             logger.info(f'Tool "{tool_name}" called with arguments {tool_args}')
             tool_ret = await tool_instance(**tool_args)
             logger.info(
                 f'Tool "{tool_name}" returned with {tool_ret[0:1000]}'  # 防止过长
-                + f'{"..." if len(tool_ret) > 1000 else ""}'
+                + f' {"..." if len(tool_ret) > 1000 else ""}'
             )
 
-            # OpenAI 兼容
-            if "id" in call:
-                current_result["tool_call_id"] = call["id"]
-
-            current_result["result"] = tool_ret
+            current_result.tool_call_id = call.id
+            current_result.result = tool_ret
             ret.append(current_result)
         else:
-            logger.warning(f'Tool "{call["function"]["name"]}" not found')
+            logger.warning(f'Tool "{call.function.name}" not found')
     return ret
 
 
@@ -105,7 +116,7 @@ async def run_message_postprocess(
 ) -> UniMessage:
     ret_message = UniMessage(message)
     for tool in tool_results:
-        ret_message = await tool["instance"].message_postprocess(ret_message)
+        ret_message = await tool.instance.message_postprocess(ret_message)
     return ret_message
 
 
@@ -114,10 +125,10 @@ async def register_tools():
     for tool_class in BaseTool.__subclasses__():
         tool = resolve_tool(tool_class)
         tools_description.append(tool)
-        tools_callable[tool["function"]["name"]] = tool_class
+        tools_callable[tool.function.name] = tool_class
 
         logger.info(
-            f'Registered tool "{tool["function"]["name"]}" from "{tool_class.__name__}"'
+            f'Registered tool "{tool.function.name}" from "{tool_class.__name__}"'
         )
     logger.info(f"Registered {len(tools_description)} tools")
 
