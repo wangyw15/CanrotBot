@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Integer, Text
+from sqlalchemy import BigInteger, Boolean, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from canrotbot.essentials.libraries import database
@@ -11,7 +11,7 @@ class LLMContext(database.Base):
         Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
     )
     # owner
-    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     # data
     name: Mapped[str] = mapped_column(Text, nullable=True, default="")
     selected: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
