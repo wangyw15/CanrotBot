@@ -11,26 +11,26 @@ from canrotbot.libraries.mediawiki import MediaWikiClient
 from ..config import llm_plugin_config
 
 HOSTS_URL = {
-    "中文维基百科": "https://zh.wikipedia.org/w/api.php",
+    # "中文维基百科": "https://zh.wikipedia.org/w/api.php",
     # "日文维基百科": "https://jp.wikipedia.org/w/api.php",
-    "英文维基百科": "https://en.wikipedia.org/w/api.php",
+    # "英文维基百科": "https://en.wikipedia.org/w/api.php",
     "萌娘百科": "https://moegirl.uk/api.php",
     "神奇宝贝百科": "https://wiki.52poke.com/api.php",
 }
 
 HOSTS_DESCRIPTION = [
-    {
-        "name": "中文维基百科",
-        "description": "在中文维基百科上可以查到几乎所有中国文化和中文相关内容。如果你不知道选择哪个百科，可以优先选择中文维基百科。当中文维基百科上没有相关内容时，可以尝试日文维基百科。",
-    },
+    # {
+    #     "name": "中文维基百科",
+    #     "description": "在中文维基百科上可以查到几乎所有中国文化和中文相关内容。如果你不知道选择哪个百科，可以优先选择中文维基百科。当中文维基百科上没有相关内容时，可以尝试日文维基百科。",
+    # },
     # {
     #     "name": "日文维基百科",
     #     "description": "在日文维基百科上可以查到几乎所有日本文化和日文相关内容。当日文维基百科上没有相关内容时，可以尝试英文维基百科。",
     # },
-    {
-        "name": "英文维基百科",
-        "description": "在英文维基百科上可以查到几乎所有内容，是内容涵盖最全面的百科。当英文维基百科上没有相关内容时，可以尝试其他百科。",
-    },
+    # {
+    #     "name": "英文维基百科",
+    #     "description": "在英文维基百科上可以查到几乎所有内容，是内容涵盖最全面的百科。当英文维基百科上没有相关内容时，可以尝试其他百科。",
+    # },
     {
         "name": "萌娘百科",
         "description": "可以查到所有漫画、动漫、游戏等二次元相关的内容，是二次元内容涵盖最全面的百科。如果是动漫、漫画等二次元ACG相关内容，就优先选择萌娘百科。",
