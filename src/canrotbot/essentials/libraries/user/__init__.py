@@ -111,7 +111,7 @@ def get_uid(platform_id: str = "") -> int:
     """
     if not platform_id:
         platform_id = current_event.get().get_user_id()
-    elif not platform_id_user_exists(platform_id):
+    if not platform_id_user_exists(platform_id):
         return 0
     with database.get_session().begin() as session:
         query = select(data.Bind).where(
