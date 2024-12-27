@@ -1,4 +1,4 @@
-from nonebot_plugin_alconna import UniMessage, Image, Text
+from nonebot_plugin_alconna import Image, Text, UniMessage
 
 from canrotbot.essentials.libraries.network import fetch_json_data
 
