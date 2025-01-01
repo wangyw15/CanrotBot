@@ -46,7 +46,7 @@ def _generate_bilibili_message(data: dict, with_url: bool = True) -> str:
 
 bilibili_link_matcher = on_regex(bilibili.bilibili_vid_pattern, block=True)
 bilibili_short_link_matcher = on_regex(
-    r"https:\/\/b23.tv\/(?!BV)[0-9A-Za-z]{7}", block=True
+    r"https:\/\/(?:b23.tv|bili2233.cn)\/(?!BV)[0-9A-Za-z]{7}", block=True
 )
 bilibili_projects_matcher = on_fullmatch("我要看展", block=True)
 
