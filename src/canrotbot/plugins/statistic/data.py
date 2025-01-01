@@ -22,7 +22,11 @@ class MessageHistory(database.Base):
     channel_chat: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     self_id: Mapped[str] = mapped_column(Text, nullable=False)
     parent_id: Mapped[str] = mapped_column(Text, nullable=True)
-    platform_id: Mapped[str] = mapped_column(Text, nullable=False)
+    target_id: Mapped[str] = mapped_column(Text, nullable=False)
+    user_id: Mapped[str] = mapped_column(Text, nullable=False)
+    """
+    Event.get_user_id()
+    """
 
 
 class PluginHistory(database.Base):
@@ -43,4 +47,8 @@ class PluginHistory(database.Base):
     channel_chat: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     self_id: Mapped[str] = mapped_column(Text, nullable=False)
     parent_id: Mapped[str] = mapped_column(Text, nullable=True)
-    platform_id: Mapped[str] = mapped_column(Text, nullable=False)
+    target_id: Mapped[str] = mapped_column(Text, nullable=False)
+    user_id: Mapped[str] = mapped_column(Text, nullable=False)
+    """
+    Event.get_user_id()
+    """

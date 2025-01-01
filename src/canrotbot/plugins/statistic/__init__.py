@@ -23,7 +23,8 @@ async def _(bot: Bot, event: Event):
                     channel_chat=target.channel,
                     self_id=target.self_id,
                     parent_id=target.parent_id,
-                    platform_id=target.id,
+                    target_id=target.id,
+                    user_id=event.get_user_id(),
                 )
             )
     except NotImplementedError:
@@ -46,7 +47,8 @@ async def _(bot: Bot, event: Event, matcher: Matcher):
                     channel_chat=target.channel,
                     self_id=target.self_id,
                     parent_id=target.parent_id,
-                    platform_id=target.id,
+                    target_id=target.id,
+                    user_id=event.get_user_id(),
                 )
             )
     except NotImplementedError:
