@@ -29,6 +29,8 @@ async def _(bot: Bot, event: Event):
             )
     except NotImplementedError:
         pass
+    except ValueError:
+        pass
     except Exception as e:
         raise e
 
@@ -52,6 +54,8 @@ async def _(bot: Bot, event: Event, matcher: Matcher):
                 )
             )
     except NotImplementedError:
+        pass
+    except ValueError:
         pass
     except Exception as e:
         raise e
