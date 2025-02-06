@@ -55,7 +55,7 @@ async def chat_completion(
         )
 
         choice = completion.choices[0]
-        messages.append(choice.message.model_dump())
+        messages.append(choice.message.model_dump(exclude={"reasoning_content"}))
         finish_reason = choice.finish_reason
 
         if finish_reason == "tool_calls":

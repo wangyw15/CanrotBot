@@ -46,7 +46,7 @@ def run() -> None:
             logger.exception(e)
 
     # 内置插件
-    nonebot.load_builtin_plugins("echo", "single_session")
+    nonebot.load_builtin_plugins("echo")
 
     # 前置插件
     nonebot.load_plugin("nonebot_plugin_apscheduler")
