@@ -50,7 +50,7 @@ async def chat_completion(
             model=openai_config.model,
             messages=messages,
             stream=False,
-            tools=tool.tools_description if with_tool_call else None,
+            tools=tool.tools_description if openai_config.enable_tools and with_tool_call else None,
             **kwargs,
         )
 
