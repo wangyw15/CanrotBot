@@ -2,12 +2,13 @@ import inspect
 import json
 from typing import cast
 
-from nonebot import get_driver, logger
+from nonebot import get_driver, get_plugin_config, logger
 from nonebot_plugin_alconna import UniMessage
 from openai.types.chat.chat_completion_message_tool_call import (
     ChatCompletionMessageToolCall,
 )
 
+from ..config import OpenAIConfig
 from .model import (
     BaseTool,
     Parameters,
@@ -17,6 +18,8 @@ from .model import (
     ToolFunction,
     ToolType,
 )
+
+openai_config = get_plugin_config(OpenAIConfig)
 
 
 def resolve_tool(tool_provider: type[BaseTool]) -> Tool:
@@ -123,6 +126,12 @@ async def run_message_postprocess(
 @get_driver().on_startup
 async def register_tools():
     for tool_class in BaseTool.__subclasses__():
+        # 非Moonshot不支持builtin_function
+        if (
+            tool_class.__tool_type__ == "builtin_function"
+            and not openai_config.model.startswith("moonshot-")
+        ):
+            continue
         tool = resolve_tool(tool_class)
         tools_description.append(tool)
         tools_callable[tool.function.name] = tool_class
