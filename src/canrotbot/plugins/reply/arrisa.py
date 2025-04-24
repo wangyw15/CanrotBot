@@ -1,12 +1,10 @@
-# import logging
+import logging
 import random
 
 import jieba
 import jieba.posseg as pseg
-from nonebot import logger
 
-jieba.default_logger = logger
-# jieba.setLogLevel(logging.INFO)
+jieba.setLogLevel(logging.INFO)
 
 
 def generate_response(message: str) -> str:
