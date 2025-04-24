@@ -8,13 +8,13 @@ readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.12"
 dependencies = [
-    "nonebot2[fastapi]",
-    "nonebot-plugin-apscheduler",
-    "nonebot-adapter-onebot",
-    "nonebot-adapter-kaiheila",
-    "nonebot-adapter-mirai2",
-    "nonebot-adapter-qq",
-    "nonebot-adapter-console",
+    "nonebot2[fastapi]>=2.4.2",
+    "nonebot-plugin-apscheduler>=0.5.0",
+    "nonebot-adapter-onebot>=2.4.6",
+    "nonebot-adapter-kaiheila>=0.3.4",
+    "nonebot-adapter-mirai2>=0.0.22",
+    "nonebot-adapter-qq>=1.6.2",
+    "nonebot-adapter-console>=0.6.0",
     "pydantic>=2",
     "beautifulsoup4",
     "httpx",
@@ -22,7 +22,7 @@ dependencies = [
     "playwright",
     "tencentcloud-sdk-python",
     "sqlalchemy>=2",
-    "nonebot-plugin-alconna",
+    "nonebot-plugin-alconna>=0.57.3",
     "cryptography",
     "anyio",
     "nonechat",
@@ -32,6 +32,7 @@ dependencies = [
     "fastapi>=0.115.3",
     "jinja2>=3.1.4",
     "feedparser>=6.0.11",
+    "jieba>=0.42.1",
 ]
 
 [project.scripts]
