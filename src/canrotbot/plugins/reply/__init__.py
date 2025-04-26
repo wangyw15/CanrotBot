@@ -50,9 +50,13 @@ async def _(target: MsgTarget, msg: UniMsg):
     """
     处理自动回复
     """
-    await message_matcher.finish(
-        reply.get_response(msg.extract_plain_text(), reply.get_reply_mode(target))
+    response = reply.get_response(
+        msg.extract_plain_text(), reply.get_reply_mode(target)
     )
+    if response:
+        await message_matcher.finish(response)
+    else:
+        await message_matcher.finish()
 
 
 @reply_command_matcher.assign("rate")
