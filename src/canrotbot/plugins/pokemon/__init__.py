@@ -21,7 +21,7 @@ pokemon_command = Alconna(
         "type_challenge",
         Args["ptc_mode?", Literal["1", "2", "random"], "1"],
         alias=["属性挑战", "ptc"],
-        help_text="开始属性挑战小游戏",
+        help_text="宝可梦属性黑箱挑战小游戏",
     ),
     Subcommand(
         "help",
@@ -55,6 +55,7 @@ ATTACK = "attack"
 GUESS = "guess"
 ROUND = "round"
 TYPES = "types"
+GIVE_UP = ["逃跑", "放弃"]
 MAX_ROUNDS = 15
 
 
@@ -68,15 +69,25 @@ async def ptc_start(
 
     state[ROUND] = 0
     state[TYPES] = type_challenge.generate_pokemon(ptc_mode.result)
-    await ptc_matcher.send("宝可梦属性黑箱挑战，开始！")
+    await ptc_matcher.send(
+        "宝可梦属性黑箱挑战，开始！\n" +
+        f"当前是【{'单一' if len(state[TYPES]) == 1 else '双'}】属性模式\n" +
+        "输入【a属性】或【技能名称】进行攻击\n" +
+        "输入【属性】进行猜测\n" +
+        "输入【放弃】或【逃跑】放弃游戏"
+    )
 
 
 @ptc_matcher.got("action_msg")
 async def ptc_action(state: T_State, action_msg: Message = Arg()):
     if state[ROUND] == MAX_ROUNDS:
-        await ptc_matcher.finish(f"回合次数耗尽！正确属性：{'+'.join(state[TYPES])}")
+        await ptc_matcher.finish(f"回合数耗尽了……宝可梦黑箱逃跑了！\n正确答案是【{'+'.join(state[TYPES])}】")
 
     action_str = action_msg.extract_plain_text()
+
+    # 检查是否逃跑
+    if action_str in GIVE_UP:
+        await ptc_matcher.finish(f"玩家从宝可梦属性黑箱挑战中逃跑了！\n正确答案是【{'+'.join(state[TYPES])}】")
 
     # 检查并设置动作和动作内容
     action = ""
@@ -112,13 +123,16 @@ async def ptc_action(state: T_State, action_msg: Message = Arg()):
         prompt = type_challenge.get_effectiveness_prompt(multiplier)
         await ptc_matcher.reject_arg(
             "action_msg",
-            f"{prompt}\n\n剩余回合数：{MAX_ROUNDS - state[ROUND]}/{MAX_ROUNDS}",
+            f"【{attack_type}】属性攻击！\n" +
+            f"{prompt}\n" +
+            f"剩余回合数：{MAX_ROUNDS - state[ROUND]}/{MAX_ROUNDS}",
         )
     elif action == GUESS:
         if sorted(action_targets) == sorted(state[TYPES]):
-            await ptc_matcher.finish(f"正确！属性是 {'+'.join(state[TYPES])}")
+            await ptc_matcher.finish(f"恭喜你，正确答案是【{'+'.join(state[TYPES])}】！")
         else:
             await ptc_matcher.reject_arg(
                 "action_msg",
-                f"猜测错误\n\n剩余回合数：{MAX_ROUNDS - state[ROUND]}/{MAX_ROUNDS}",
+                "很遗憾，回答错误，再多尝试几次吧。\n" +
+                f"剩余回合数：{MAX_ROUNDS - state[ROUND]}/{MAX_ROUNDS}",
             )
