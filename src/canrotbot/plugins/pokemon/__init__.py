@@ -19,7 +19,7 @@ pokemon_command = Alconna(
     "pokemon",
     Subcommand(
         "type_challenge",
-        Args["ptc_mode", str, "1"],
+        Args["ptc_mode?", Literal["1", "2", "random"], "1"],
         alias=["属性挑战", "ptc"],
         help_text="开始属性挑战小游戏",
     ),
@@ -38,18 +38,19 @@ __plugin_meta__ = PluginMetadata(
     config=None,
 )
 
-pokemon_command_matcher = on_alconna(pokemon_command, aliases={"宝可梦"}, block=True)
-ptc_matcher = pokemon_command_matcher.dispatch("type_challenge")
-# ptc_matcher = pokemon_command_matcher
+pokemon_command_matcher = on_alconna(
+    pokemon_command, aliases={"宝可梦"}, auto_send_output=False
+)
 
 
-@pokemon_command_matcher.handle()
 @pokemon_command_matcher.assign("help")
 async def _():
     await pokemon_command_matcher.finish(pokemon_command.get_help())
 
 
-# Type challenge game
+# 黑箱属性游戏
+ptc_matcher = pokemon_command_matcher.dispatch("type_challenge")
+
 ATTACK = "attack"
 GUESS = "guess"
 ROUND = "round"
@@ -58,7 +59,6 @@ MAX_ROUNDS = 15
 
 
 @ptc_matcher.handle()
-# @ptc_matcher.assign("type_challenge")
 async def ptc_start(
     state: T_State,
     ptc_mode: Query[Literal["1", "2", "random"]] = Query("ptc_mode", "1"),
@@ -74,11 +74,11 @@ async def ptc_start(
 @ptc_matcher.got("action_msg")
 async def ptc_action(state: T_State, action_msg: Message = Arg()):
     if state[ROUND] == MAX_ROUNDS:
-        await ptc_matcher.send(f"回合次数耗尽！正确属性：{'+'.join(state[TYPES])}")
+        await ptc_matcher.finish(f"回合次数耗尽！正确属性：{'+'.join(state[TYPES])}")
 
     action_str = action_msg.extract_plain_text()
 
-    # 设置动作和动作内容
+    # 检查并设置动作和动作内容
     action = ""
     action_targets: list[str] = action_str.split()
     if action_str.startswith("a"):
@@ -98,18 +98,27 @@ async def ptc_action(state: T_State, action_msg: Message = Arg()):
             "action_msg", f"无效的攻击技能或属性：{action_str}"
         )
 
+    # 更新回合数
+    state[ROUND] += 1
+
     # 执行动作
     if action == ATTACK:
-        attack_type = type_challenge.get_move_type(action_targets[0])
+        if type_challenge.check_move(action_targets[0]):
+            attack_type = type_challenge.get_move_type(action_targets[0])
+        else:
+            attack_type = action_targets[0]
+
         multiplier = type_challenge.calculate_effectiveness(attack_type, state[TYPES])
         prompt = type_challenge.get_effectiveness_prompt(multiplier)
-        await ptc_matcher.send(prompt)
+        await ptc_matcher.reject_arg(
+            "action_msg",
+            f"{prompt}\n\n剩余回合数：{MAX_ROUNDS - state[ROUND]}/{MAX_ROUNDS}",
+        )
     elif action == GUESS:
-        if sorted(action_targets) in state[TYPES]:
-            await ptc_matcher.finish(
-                f"恭喜你猜对了！正确属性：{'+'.join(state[TYPES])}"
-            )
+        if sorted(action_targets) == sorted(state[TYPES]):
+            await ptc_matcher.finish(f"正确！属性是 {'+'.join(state[TYPES])}")
         else:
-            await ptc_matcher.reject_arg("action_msg", "猜测错误")
-
-    state[ROUND] += 1
+            await ptc_matcher.reject_arg(
+                "action_msg",
+                f"猜测错误\n\n剩余回合数：{MAX_ROUNDS - state[ROUND]}/{MAX_ROUNDS}",
+            )
