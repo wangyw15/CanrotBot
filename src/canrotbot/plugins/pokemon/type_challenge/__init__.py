@@ -6,6 +6,8 @@ from nonebot import get_driver
 
 from canrotbot.essentials.libraries import path
 
+from ..data import get_pokemon_types
+from ..poky import Effects, PokyMachine
 from .model import Move
 
 ASSET_PATH = path.get_asset_path("pokemon/type_challenge")
@@ -18,8 +20,7 @@ TYPE_EFFECTIVENESS: dict[str, dict[str, float]] = {}
 @get_driver().on_startup
 async def _load_ptc_asset():
     global TYPES, MOVES, TYPE_EFFECTIVENESS
-    with (ASSET_PATH / "types.json").open("r", encoding="utf-8") as f:
-        TYPES = json.load(f)
+    TYPES = get_pokemon_types()
     with (ASSET_PATH / "moves.json").open("r", encoding="utf-8") as f:
         MOVES = json.load(f)
     with (ASSET_PATH / "type_effectiveness.json").open("r", encoding="utf-8") as f:
@@ -107,8 +108,37 @@ def get_move_type(move: str) -> str:
     :return: 属性
     """
     if check_move(move):
-        return MOVES[move]["type"]
+        machine = PokyMachine()
+        return machine.eval(MOVES[move]["type"]).result
     return ""
+
+
+def get_move_prompt(move: str) -> str:
+    """
+    获取技能提示信息
+
+    :param move: 技能名称
+
+    :return: 提示信息
+    """
+    if check_move(move):
+        machine = PokyMachine()
+        return machine.eval(MOVES[move]["prompt"]).result
+    return ""
+
+
+def get_move_effects(move: str) -> Effects:
+    """
+    获取技能提示信息
+
+    :param move: 技能名称
+
+    :return: 提示信息
+    """
+    if check_move(move):
+        machine = PokyMachine()
+        return machine.eval(MOVES[move]["effect"]).effects
+    return {}
 
 
 def compare_types(types1: list[str], types2: list[str]) -> bool:

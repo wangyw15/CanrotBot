@@ -76,9 +76,6 @@ async def ptc_start(
         + "输入【属性】进行猜测\n"
         + "输入【放弃】或【逃跑】放弃游戏"
     )
-    from nonebot import logger
-
-    logger.error(state[TYPES])
 
 
 @ptc_matcher.got("action_msg")
@@ -146,12 +143,23 @@ async def ptc_action(state: T_State, action_msg: Message = Arg()):
         else:
             attack_type = action_targets[0]
 
+        # 计算属性克制效果
         multiplier = type_challenge.calculate_effectiveness(attack_type, state[TYPES])
+
+        # 计算技能效果
+        effects = type_challenge.get_move_effects(action_targets[0])
+        if "effectiveness" in effects:
+            multiplier = effects["effectiveness"]
+
+        # 获取攻击提示信息
         prompt = type_challenge.get_effectiveness_prompt(multiplier)
+
         await ptc_matcher.reject_arg(
             "action_msg",
-            f"【{attack_type}】属性攻击！\n"
-            + f"{prompt}\n"
+            type_challenge.get_move_prompt(action_targets[0]).format(
+                attack_type=attack_type
+            )
+            + f"\n{prompt}\n"
             + f"剩余回合数：{MAX_ROUNDS - state[ROUND]}/{MAX_ROUNDS}",
         )
     elif action == GUESS:
