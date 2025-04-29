@@ -1,12 +1,29 @@
 import random as pyrandom
-from typing import Any
+from typing import Any, Callable
 
-from .data import POKEMON_TYPES
+from .data import DEFAULT_POKEMON_TYPES, DEFAULT_TYPE_EFFECTIVENESS
 
 
-class PokyMethods:
-    @staticmethod
-    def random(args: list[Any]) -> Any:
+class PokyMethod:
+    """
+    Poky语言内建方法
+    """
+    def __init__(
+            self,
+            pokemon_types: list[str] | None = None,
+            type_effectiveness: dict[str, dict[str, float]] | None = None,
+    ):
+        if pokemon_types is None:
+            self.pokemon_types = DEFAULT_POKEMON_TYPES
+        else:
+            self.pokemon_types = pokemon_types
+
+        if type_effectiveness is None:
+            self.type_effectiveness = DEFAULT_TYPE_EFFECTIVENESS
+        else:
+            self.type_effectiveness = type_effectiveness
+
+    def random(self, args: list[Any]) -> Any:
         """
         random(): 随机函数
 
@@ -36,8 +53,7 @@ class PokyMethods:
         # 无效参数
         raise ValueError("Invalid arguments for random function")
 
-    @staticmethod
-    def pokemon_types(raw_list: list[str]) -> list[str]:
+    def pokemon_types(self, raw_list: list[str]) -> list[str]:
         """
         pokemon_types(): 用于展开宝可梦列表
 
@@ -56,13 +72,13 @@ class PokyMethods:
             if current_type == "all":
                 if exclude:
                     return []
-                for t in POKEMON_TYPES:
+                for t in self.pokemon_types:
                     if t not in excludes:
                         result_types.add(t)
                 continue
 
             # 检查属性
-            if current_type not in POKEMON_TYPES:
+            if current_type not in self.pokemon_types:
                 raise ValueError(f"Invalid Pokemon type: {current_type}")
 
             # 处理排除属性
@@ -77,3 +93,25 @@ class PokyMethods:
                 result_types.add(name)
 
         return list(result_types)
+
+    def calculate_effectiveness(self, attacker_type: str, defender_types: list[str]) -> float:
+        """
+        计算攻击方对防御方的属性克制效果
+
+        :param attacker_type: 攻击方属性
+        :param defender_types: 防御方属性列表
+
+        :return: 属性克制效果
+        """
+        effectiveness = 1.0
+        for defender_type in defender_types:
+            effectiveness *= self.type_effectiveness[attacker_type][defender_type]
+        return effectiveness
+
+    @staticmethod
+    def get_method(name: str) -> Callable | None:
+        if not name.startswith("_") and name in PokyMethod.__dict__:
+            member = PokyMethod.__dict__[name]
+            if isinstance(member, Callable):
+                return member
+        return None

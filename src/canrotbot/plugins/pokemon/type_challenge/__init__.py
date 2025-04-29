@@ -6,7 +6,7 @@ from nonebot import get_driver
 
 from canrotbot.essentials.libraries import path
 
-from ..data import get_pokemon_types
+from ..data import get_pokemon_types, get_type_effectiveness
 from ..poky import Effects, PokyMachine
 from .model import Move
 
@@ -15,16 +15,18 @@ ASSET_PATH = path.get_asset_path("pokemon/type_challenge")
 TYPES: list[str] = []
 MOVES: dict[str, Move] = {}
 TYPE_EFFECTIVENESS: dict[str, dict[str, float]] = {}
+PROMPTS: dict[str, dict[str, str]] = {}
 
 
 @get_driver().on_startup
 async def _load_ptc_asset():
-    global TYPES, MOVES, TYPE_EFFECTIVENESS
+    global TYPES, MOVES, TYPE_EFFECTIVENESS, PROMPTS
     TYPES = get_pokemon_types()
     with (ASSET_PATH / "moves.json").open("r", encoding="utf-8") as f:
         MOVES = json.load(f)
-    with (ASSET_PATH / "type_effectiveness.json").open("r", encoding="utf-8") as f:
-        TYPE_EFFECTIVENESS = json.load(f)
+    TYPE_EFFECTIVENESS = get_type_effectiveness()
+    with (ASSET_PATH / "prompts.json").open("r", encoding="utf-8") as f:
+        PROMPTS = json.load(f)
 
 
 def generate_pokemon(mode: Literal["1", "2", "random"] = "random") -> list[str]:
@@ -108,35 +110,39 @@ def get_move_type(move: str) -> str:
     :return: 属性
     """
     if check_move(move):
-        machine = PokyMachine()
+        machine = PokyMachine(TYPES)
         return machine.eval(MOVES[move]["type"]).result
     return ""
 
 
-def get_move_prompt(move: str) -> str:
+def get_attack_prompt(attack: str) -> str:
     """
     获取技能提示信息
 
-    :param move: 技能名称
+    :param attack: 属性或技能名称
 
     :return: 提示信息
     """
-    if check_move(move):
-        machine = PokyMachine()
-        return machine.eval(MOVES[move]["prompt"]).result
+    if check_move(attack):
+        machine = PokyMachine(TYPES)
+        return machine.eval(MOVES[attack]["prompt"], {
+            "prompts": PROMPTS
+        }).result
+    elif check_type(attack):
+        return PROMPTS["attack"]["default"]
     return ""
 
 
 def get_move_effects(move: str) -> Effects:
     """
-    获取技能提示信息
+    获取技能效果
 
     :param move: 技能名称
 
-    :return: 提示信息
+    :return: 技能效果
     """
     if check_move(move):
-        machine = PokyMachine()
+        machine = PokyMachine(TYPES)
         return machine.eval(MOVES[move]["effect"]).effects
     return {}
 

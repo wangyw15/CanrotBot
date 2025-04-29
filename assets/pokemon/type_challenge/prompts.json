@@ -1,0 +1,5 @@
+{
+    "attack": {
+        "default": "【{attack_type}】属性攻击！"
+    }
+}

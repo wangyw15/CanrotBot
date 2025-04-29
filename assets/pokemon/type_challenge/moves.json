@@ -1,417 +1,417 @@
 {
     "拍击": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "抓": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "黑夜魔影": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "夹住": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "忍耐": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极落钳": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "玉石俱碎": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "炸蛋": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "舌舔": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "浊雾": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "污泥攻击": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "骨棒": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "大字爆炎": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "攀瀑": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "贝壳夹击": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "高速星星": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "旋风刀": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火箭头锤": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "尖刺加农炮": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "缠绕": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "飞膝踢": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "食梦": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "投球": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "吸血": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "神鸟猛击": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "泡沫": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "迷昏拳": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "精神波": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "居合劈": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "蟹钳锤": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "大爆炸": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "乱抓": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "骨头回力镖": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "岩崩": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "终结门牙": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "起风": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "三重攻击": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "愤怒门牙": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "劈开": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "挣扎": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "三连踢": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "小偷": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "翅膀攻击": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火焰轮": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "打鼾": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "抓狂": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "气旋攻击": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "绝处逢生": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "细雪": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "音速拳": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "出奇一击": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "污泥炸弹": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "掷泥": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "飞翔": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "章鱼桶炮": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电磁炮": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰冻之风": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "骨棒乱打": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "空手劈": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "绑紧": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "逆鳞": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "终极吸取": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "滚动": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "点到为止": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电光": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "摔打": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "连斩": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "钢翼": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "报恩": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "礼物": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "迁怒": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "藤鞭": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "神圣之火": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "震级": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "爆裂拳": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超级角击": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "龙息": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "追打": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "高速旋转": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "踩踏": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "铁尾": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "金属爪": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "借力摔": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "觉醒力量": {
@@ -421,777 +421,777 @@
     },
     "十字劈": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "龙卷风": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "二连踢": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "咬碎": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "镜面反射": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "神速": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "原始之力": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗影球": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "预知未来": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "碎岩": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "百万吨重踢": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "潮旋": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "围攻": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "击掌奇袭": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "吵闹": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "喷出": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "热风": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "飞踢": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "硬撑": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "真气拳": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "清醒": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "回旋踢": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "蛮力": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "报复": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "劈瓦": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "拍落": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "蛮干": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "喷火": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "头锤": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "秘密之力": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "潜水": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "猛推": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "洁净光芒": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "薄雾球": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火焰踢": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "连环巴掌": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "角撞": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰球": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "尖刺臂": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "巨声": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "剧毒牙": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "撕裂爪": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "爆炸烈焰": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "加农水炮": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "彗星拳": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "乱击": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "惊吓": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "气象球": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "空气利刃": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "过热": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "岩石封锁": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "银色旋风": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "角钻": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "喷水": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "信号光束": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗影拳": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "神通力": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冲天拳": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "流沙深渊": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "绝对零度": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "撞击": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "浊流": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "种子机关枪": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "燕返": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰锥": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "龙爪": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "疯狂植物": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "泰山压顶": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "弹跳": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "泥巴射击": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "毒尾": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "渴望": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "伏特攻击": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "魔法叶": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "叶刃": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "紧束": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "岩石爆击": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电击波": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水之波动": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "破灭之愿": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "精神突进": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "唤醒巴掌": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "臂锤": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "猛撞": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "陀螺球": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "盐水": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "自然之恩": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "佯攻": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "啄食": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "金属爆炸": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "急速折返": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "大闹一番": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "近身战": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "以牙还牙": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "恶意追击": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "投掷": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "王牌": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "绞紧": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "舍身冲撞": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "惩罚": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "珍藏": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "突袭": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "闪焰冲锋": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "发劲": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "波导弹": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "毒击": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "恶之波动": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "连续拳": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "毒针": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗袭要害": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水流尾": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "种子炸弹": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "空气之刃": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "十字剪": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "虫鸣": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "龙之波动": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "龙之俯冲": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "力量宝石": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "吸取拳": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "双针": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "真空波": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "真气弹": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "能量球": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "勇鸟猛攻": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "大地之力": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "终极冲击": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "子弹拳": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "雪崩": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "飞弹针": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰砾": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗影爪": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "雷电牙": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰冻牙": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火焰牙": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "影子偷袭": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "泥巴炸弹": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "精神利刃": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "意念头锤": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "镜光射击": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "加农光炮": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "攀岩": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "流星群": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "放电": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "喷烟": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "飞叶风暴": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "强力鞭打": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "岩石炮": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "咬住": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "十字毒刃": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "垃圾射击": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "铁头": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "磁铁炸弹": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "尖石攻击": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "打草结": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "喋喋不休": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "制裁光砾": {
@@ -1201,842 +1201,842 @@
     },
     "虫咬": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "充电光束": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "木槌": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水流喷射": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "攻击指令": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "双刃头锤": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "二连击": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "时光咆哮": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "亚空裂斩": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "捏碎": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "熔岩风暴": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "种子闪光": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "奇异之风": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗影潜袭": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "精神冲击": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "毒液冲击": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "击落": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "山岚摔": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "烈焰溅射": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "污泥波": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "重磅冲撞": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "同步干扰": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电球": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "蓄能焰袭": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "音爆": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "下盘踢": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "酸液炸弹": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "欺诈": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "轮唱": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "回声": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "逐步击破": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "清除之烟": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "百万吨重拳": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "辅助力量": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "热水": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "祸不单行": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "自由落体": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "巴投": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "溶解液": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "烧净": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "杂技": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "报仇": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "搏命": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "烈火深渊": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水之誓约": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火之誓约": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火花": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "草之誓约": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "伏特替换": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "虫之抵抗": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "重踏": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰息": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "龙尾": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电网": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "疯狂伏特": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "直冲钻": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "喷射火焰": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "二连劈": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "爱心印章": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "木角": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "圣剑": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "贝壳刃": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "高温重压": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "青草搅拌器": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "疯狂滚压": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗黑爆破": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "精神击破": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "扫尾拍打": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暴风": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "爆炸头突击": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "齿轮飞盘": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火焰弹": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "高科技光炮": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "古老之歌": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "神秘之剑": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰封世界": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水枪": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "雷击": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "青焰": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火之舞": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰冻伏特": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极寒冷焰": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "大声咆哮": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰柱坠击": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "Ｖ热焰": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "交错火焰": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "交错闪电": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水炮": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "飞身重压": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "打嗝": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "致命针刺": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "潜灵奇袭": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冲浪": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "抛物面充电": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "落英缤纷": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冷冻干燥": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "魅惑之声": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "吸取之吻": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰冻光束": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "嬉闹": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "妖精之风": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "月亮之力": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "爆音波": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暴风雪": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "钻石风暴": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "蒸汽爆炸": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "异次元洞": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "飞水手里剑": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "魔法火焰": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "聚宝功": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "幻象光线": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "魔法闪耀": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "蹭蹭脸颊": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "泡沫光线": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "手下留情": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "纠缠不休": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "增强拳": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "归天之翼": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "千箭齐发": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "千波激荡": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "大地神力": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "破灭之光": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "根源波动": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "断崖之剑": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极光束": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "画龙点睛": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "异次元猛攻": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "究极无敌大冲撞": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "全力无双激烈拳": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极速俯冲轰烈撞": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "强酸剧毒灭绝雨": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "破坏光线": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "地隆啸天大终结": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "毁天灭地巨岩坠": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "绝对捕食回旋斩": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "无尽暗夜之诱惑": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超绝螺旋连击": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "啄": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超强极限爆焰弹": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超级水流大漩涡": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "绚烂缤纷花怒放": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "终极伏特狂雷闪": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "至高精神破坏波": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "啄钻": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "激狂大地万里冰": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "究极巨龙震天地": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "黑洞吞噬万物灭": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "可爱星星飞天撞": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "皮卡皮卡必杀击": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "深渊翻滚": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "迎头一击": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "缝影": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "ＤＤ金勾臂": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "泡影的咏叹调": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰锤": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "十万马力": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "日光刃": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "踢倒": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "树叶": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "深渊突刺": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "花粉团": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "掷锚": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "猛扑": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "双倍奉还": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火焰鞭": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "嚣张": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "燃尽": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "修长之角": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "觉醒之舞": {
@@ -2046,157 +2046,157 @@
     },
     "核心惩罚者": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "热带踢": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "地球上投": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "鸟嘴加农炮": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "鳞片噪音": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "龙锤": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "狂舞挥打": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "遮天蔽日暗影箭": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极恶飞跃粉碎击": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "海神庄严交响乐": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "巨人卫士・阿罗拉": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "七星夺魂腿": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火焰拳": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "怪力": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "驾雷驭电戏冲浪": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "认真起来大爆击": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "起源超新星大爆炸": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "陷阱甲壳": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "花朵加农炮": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "精神之牙": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "跺脚": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗影之骨": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冲岩": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "吸取": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水流裂破": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "棱镜镭射": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗影偷盗": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "流星闪冲": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗影之光": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "麻麻刺刺": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "自然之怒": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "多属性攻击": {
@@ -2206,607 +2206,607 @@
     },
     "千万伏特": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超级吸取": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "惊爆大头": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "等离子闪电拳": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "光子喷涌": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "炽魂热舞烈音爆": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "狼啸石牙飓风暴": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "亲密无间大乱揍": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "日光回旋下苍穹": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "月华飞溅落灵霄": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "焚天灭世炽光爆": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电电加速": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "滔滔冲浪": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "飘飘坠落": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "闪闪雷光": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "活活气泡": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "麻麻电击": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "熊熊火爆": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "哗哗气场": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "坏坏领域": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "茁茁炸弹": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰冰霜冻": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "亮亮风暴": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "砰砰击破": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "钢拳双击": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨炮": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "狙击": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "紧咬不放": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "飞叶快刀": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "龙箭": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电喙": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "鳃咬": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨火爆": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨虫蛊": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨闪电": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "日光束": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨攻击": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨拳斗": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨幽魂": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨寒冰": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨酸毒": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨水流": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨飞冲": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨妖精": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨龙骑": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨超能": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨岩石": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨大地": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨恶霸": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨草原": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "极巨钢铁": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "扑击": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "鼓击": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "捕兽夹": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火焰球": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "巨兽斩": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "巨兽弹": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "气场轮": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "广域破坏": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "木枝突刺": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "破音": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "苹果酸": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "万有引力": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "灵魂冲击": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "神奇蒸汽": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "假跪真撞": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "流星突击": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "无极光束": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "铁蹄光线": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "广域战力": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "铁滚轮": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "鳞射": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰冻拳": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "花瓣舞": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "流星光束": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "臂贝武器": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "薄雾炸裂": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "青草滑梯": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电力上升": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "大地波动": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "爬击": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "妒火": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "泄愤": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "灵骚": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "快速折返": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "三旋击": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "双翼": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "热沙大地": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "暗冥强击": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水流连打": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "雷电囚笼": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "龙之怒": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "巨龙威能": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰冷视线": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "怒火中烧": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "雷鸣蹴击": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "雪矛": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "星碎": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "诡异咒语": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "克命爪": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "屏障猛攻": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "火焰旋涡": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "岩斧": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "阳春风暴": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "神秘之力": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "大愤慨": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "波动冲": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "叶绿爆震": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰山风": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "突飞猛扑": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "毒千针": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电击": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "气场之翼": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冤冤相报": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "三连箭": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "群魔乱舞": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "秘剑・千重涛": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "枯叶风暴": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "鸣雷风暴": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "热沙风暴": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "十万伏特": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "太晶爆发": {
@@ -2816,502 +2816,502 @@
     },
     "下压踢": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "扫墓": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "琉光冲激": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "上菜": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "喷射拳": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "疾速转轮": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "鼠数儿": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "冰旋": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "巨剑突击": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "盐腌": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "三连钻": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "晶光转转": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "仆刀": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "打雷": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "千变万花": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "闪焰高歌": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "流水旋舞": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "怒牛": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "淘金潮": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "精神剑": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水蒸气": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "大灾难": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "全开猛撞": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "闪电猛冲": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "落石": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "虫扑": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "起草": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "泼冷水": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "强力钻": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "双光束": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "愤怒之拳": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "地震": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "铠农炮": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "悔念剑": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电光双击": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "巨力锤": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "复仇": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "水波刀": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "灼热暴冲": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "黑暗暴冲": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "剧毒暴冲": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "格斗暴冲": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "雷电拳": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "地裂": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "魔法暴冲": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "血月": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "刷刷茶炮": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "糖浆炸弹": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "棘藤棒": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电光束": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "晶光星群": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "随机光": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "迅雷": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "挖洞": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "强刃攻击": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "迅子利刃": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "硬压": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "魅诱之声": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "豁出去": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "闪电强袭": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "精神噪音": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "快手还击": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "邪毒锁链": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "念力": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "精神强念": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "电光一闪": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "愤怒": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨万雷轰顶": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨会心一击": {
         "type": "格斗",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨劣化衰变": {
         "type": "龙",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨天谴雷诛": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨天道七星": {
         "type": "超能",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨夺命一击": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨岩阵以待": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨幸福圆满": {
         "type": "妖精",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨幻影幽魂": {
         "type": "幽灵",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨异毒电场": {
         "type": "电",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨旋风袭卷": {
         "type": "飞行",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨极光旋律": {
         "type": "冰",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨水炮轰灭": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨沙尘漫天": {
         "type": "地面",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨流水连击": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨液金熔击": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨深渊灭焰": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨激漩泡涡": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨灰飞鞭灭": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨炎石喷发": {
         "type": "岩石",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨热情拥抱": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨特大金币": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨狂擂乱打": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨狙击神射": {
         "type": "水",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨琼浆玉液": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨百火焚野": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨睡魔降临": {
         "type": "恶",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨破阵火球": {
         "type": "火",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨臭气冲天": {
         "type": "毒",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨蝶影蛊惑": {
         "type": "虫",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨资源再生": {
         "type": "一般",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨酸不溜丢": {
         "type": "草",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     },
     "超极巨钢铁阵法": {
         "type": "钢",
-        "prompt": "default_prompt.attack",
+        "prompt": "prompts.attack.default",
         "effect": ""
     }
 }

@@ -156,7 +156,7 @@ async def ptc_action(state: T_State, action_msg: Message = Arg()):
 
         await ptc_matcher.reject_arg(
             "action_msg",
-            type_challenge.get_move_prompt(action_targets[0]).format(
+            type_challenge.get_attack_prompt(action_targets[0]).format(
                 attack_type=attack_type
             )
             + f"\n{prompt}\n"
