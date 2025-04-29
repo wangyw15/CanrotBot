@@ -14,6 +14,8 @@ from nonebot_plugin_alconna import (
 )
 
 from . import type_challenge
+from .data import get_pokemon_types, get_type_effectiveness
+from .poky import PokyMachine
 
 pokemon_command = Alconna(
     "pokemon",
@@ -55,6 +57,7 @@ ATTACK = "attack"
 GUESS = "guess"
 ROUND = "round"
 TYPES = "types"
+MACHINE = "machine"
 GIVE_UP = ["逃跑", "放弃"]
 MAX_ROUNDS = 15
 
@@ -69,6 +72,9 @@ async def ptc_start(
 
     state[ROUND] = 0
     state[TYPES] = type_challenge.generate_pokemon(ptc_mode.result)
+    state[MACHINE] = PokyMachine(get_pokemon_types(), get_type_effectiveness(), {
+        "prompts": type_challenge.get_all_prompts(),
+    })
     await ptc_matcher.send(
         "宝可梦属性黑箱挑战，开始！\n"
         + f"当前是【{'单一' if len(state[TYPES]) == 1 else '双'}】属性模式\n"
@@ -139,7 +145,7 @@ async def ptc_action(state: T_State, action_msg: Message = Arg()):
     # 执行动作
     if action == ATTACK:
         if type_challenge.check_move(action_targets[0]):
-            attack_type = type_challenge.get_move_type(action_targets[0])
+            attack_type = type_challenge.get_move_type(action_targets[0], state[MACHINE])
         else:
             attack_type = action_targets[0]
 
@@ -147,7 +153,7 @@ async def ptc_action(state: T_State, action_msg: Message = Arg()):
         multiplier = type_challenge.calculate_effectiveness(attack_type, state[TYPES])
 
         # 计算技能效果
-        effects = type_challenge.get_move_effects(action_targets[0])
+        effects = type_challenge.get_move_effects(action_targets[0], state[MACHINE])
         if "effectiveness" in effects:
             multiplier = effects["effectiveness"]
 
@@ -156,7 +162,7 @@ async def ptc_action(state: T_State, action_msg: Message = Arg()):
 
         await ptc_matcher.reject_arg(
             "action_msg",
-            type_challenge.get_attack_prompt(action_targets[0]).format(
+            type_challenge.get_attack_prompt(action_targets[0], state[MACHINE]).format(
                 attack_type=attack_type
             )
             + f"\n{prompt}\n"

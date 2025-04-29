@@ -101,30 +101,30 @@ def check_move(move: str) -> bool:
     return move in MOVES
 
 
-def get_move_type(move: str) -> str:
+def get_move_type(move: str, machine: PokyMachine) -> str:
     """
     获取技能属性
 
     :param move: 技能名称
+    :param machine: PokyMachine实例
 
     :return: 属性
     """
     if check_move(move):
-        machine = PokyMachine(TYPES, TYPE_EFFECTIVENESS)
         return machine.eval(MOVES[move]["type"]).result
     return ""
 
 
-def get_attack_prompt(attack: str) -> str:
+def get_attack_prompt(attack: str, machine: PokyMachine) -> str:
     """
     获取技能提示信息
 
     :param attack: 属性或技能名称
+    :param machine: PokyMachine实例
 
     :return: 提示信息
     """
     if check_move(attack):
-        machine = PokyMachine(TYPES, TYPE_EFFECTIVENESS)
         return machine.eval(MOVES[attack]["prompt"], {
             "prompts": PROMPTS
         }).result
@@ -133,16 +133,16 @@ def get_attack_prompt(attack: str) -> str:
     return ""
 
 
-def get_move_effects(move: str) -> Effects:
+def get_move_effects(move: str, machine: PokyMachine) -> Effects:
     """
     获取技能效果
 
     :param move: 技能名称
+    :param machine: PokyMachine实例
 
     :return: 技能效果
     """
     if check_move(move):
-        machine = PokyMachine(TYPES, TYPE_EFFECTIVENESS)
         return machine.eval(MOVES[move]["effect"]).effects
     return {}
 
@@ -157,3 +157,12 @@ def compare_types(types1: list[str], types2: list[str]) -> bool:
     :return: 是否相同
     """
     return sorted(types1) == sorted(types2)
+
+
+def get_all_prompts() -> dict[str, dict[str, str]]:
+    """
+    获取所有提示信息
+
+    :return: 提示信息字典
+    """
+    return PROMPTS

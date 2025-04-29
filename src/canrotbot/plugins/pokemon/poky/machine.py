@@ -281,7 +281,7 @@ class PokyMachine(ast.NodeVisitor):
         storage = self.stack.pop()
 
         storage[name] = value
-
+        self.stack.append(value)
 
     def visit_IfExp(self, node):
         if isinstance(node.test, ast.Constant) and isinstance(node.test.value, bool):

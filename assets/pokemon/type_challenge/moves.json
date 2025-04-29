@@ -415,7 +415,7 @@
         "effect": ""
     },
     "觉醒力量": {
-        "type": "random(pokemon_types('all', '!妖精'))",
+        "type": "if persistent.觉醒力量 is None:\n    persistent.觉醒力量 = random(pokemon_types('all', '!妖精'))\npersistent.觉醒力量",
         "prompt": "'觉醒【{attack_type}】属性攻击！'",
         "effect": ""
     },
@@ -1195,7 +1195,7 @@
         "effect": ""
     },
     "制裁光砾": {
-        "type": "random(pokemon_types('all'))",
+        "type": "if persistent.制裁光砾 is None:\n    persistent.制裁光砾 = random(pokemon_types('all'))\npersistent.制裁光砾",
         "prompt": "'你吸收了【{attack_type}】石板的力量！【{attack_type}】属性攻击！'",
         "effect": ""
     },
@@ -2040,7 +2040,7 @@
         "effect": ""
     },
     "觉醒之舞": {
-        "type": "random(pokemon_types('火', '电', '超能', '幽灵'))",
+        "type": "if persistent.觉醒之舞 is None:\n    persistent.觉醒之舞 = random(pokemon_types('火', '电', '超能', '幽灵'))\npersistent.觉醒之舞",
         "prompt": "'觉醒【{attack_type}】属性攻击！'",
         "effect": ""
     },
@@ -2200,7 +2200,7 @@
         "effect": ""
     },
     "多属性攻击": {
-        "type": "random(pokemon_types('all'))",
+        "type": "if persistent.多属性攻击 is None:\n    persistent.多属性攻击 = random(pokemon_types('all'))\npersistent.多属性攻击",
         "prompt": "'你读取了【{attack_type}】储碟的数据！【{attack_type}】属性攻击！'",
         "effect": ""
     },
@@ -2810,7 +2810,7 @@
         "effect": ""
     },
     "太晶爆发": {
-        "type": "random(pokemon_types('all'))",
+        "type": "if persistent.太晶爆发 is None:\n    persistent.太晶爆发 = random(pokemon_types('all'))\npersistent.太晶爆发",
         "prompt": "'你变成了太晶【{attack_type}】属性！【{attack_type}】属性攻击！'",
         "effect": "change_effectiveness(1)"
     },
