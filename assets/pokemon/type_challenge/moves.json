@@ -1195,8 +1195,8 @@
         "effect": ""
     },
     "制裁光砾": {
-        "type": "if persistent.制裁光砾 is None:\n    persistent.制裁光砾 = random(pokemon_types('all'))\npersistent.制裁光砾",
-        "prompt": "'你吸收了【{attack_type}】石板的力量！【{attack_type}】属性攻击！'",
+        "type": "if persistent.制裁光砾 is None:\n\tif persistent.使用了储碟:\n\t\tpersistent.制裁光砾 = 一般\n\telse:\n\t\tpersistent.使用了石板 = True\n\t\tpersistent.制裁光砾 = random(pokemon_types('all'))\npersistent.制裁光砾",
+        "prompt": "'你吸收了【{attack_type}】石板的力量！【{attack_type}】属性攻击！' if persistent.使用了石板 else '没有石板了！' + prompts.attack.default",
         "effect": ""
     },
     "虫咬": {
@@ -2200,8 +2200,8 @@
         "effect": ""
     },
     "多属性攻击": {
-        "type": "if persistent.多属性攻击 is None:\n    persistent.多属性攻击 = random(pokemon_types('all'))\npersistent.多属性攻击",
-        "prompt": "'你读取了【{attack_type}】储碟的数据！【{attack_type}】属性攻击！'",
+        "type": "if persistent.多属性攻击 is None:\n\tif persistent.使用了石板:\n\t\tpersistent.多属性攻击 = 一般\n\telse:\n\t\tpersistent.使用了储碟 = True\n\t\tpersistent.多属性攻击 = random(pokemon_types('all'))\npersistent.多属性攻击",
+        "prompt": "'你读取了【{attack_type}】储碟的数据！【{attack_type}】属性攻击！' if persistent.使用了储碟 else '没有储碟了！' + prompts.attack.default",
         "effect": ""
     },
     "千万伏特": {

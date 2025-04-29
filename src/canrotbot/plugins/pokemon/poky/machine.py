@@ -243,11 +243,6 @@ class PokyMachine(ast.NodeVisitor):
             self.stack.append(node.id)
 
     def visit_If(self, node):
-        if isinstance(node.test, ast.Constant) and isinstance(node.test.value, bool):
-            self.stack.append(node.test.value)
-        elif not isinstance(node.test, ast.Compare):
-            raise SyntaxError("Invalid if statement")
-
         self.visit(node.test)
         if self.stack.pop():
             for expr in node.body:
@@ -281,14 +276,9 @@ class PokyMachine(ast.NodeVisitor):
         storage = self.stack.pop()
 
         storage[name] = value
-        self.stack.append(value)
+        # self.stack.append(value)
 
     def visit_IfExp(self, node):
-        if isinstance(node.test, ast.Constant) and isinstance(node.test.value, bool):
-            self.stack.append(node.test.value)
-        elif not isinstance(node.test, ast.Compare):
-            raise SyntaxError("Invalid ifexp statement")
-
         self.visit(node.test)
         if self.stack.pop():
             self.visit(node.body)
