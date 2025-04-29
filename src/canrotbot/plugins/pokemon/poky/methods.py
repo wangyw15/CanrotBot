@@ -108,6 +108,14 @@ class PokyMethod:
             effectiveness *= self.type_effectiveness[attacker_type][defender_type]
         return effectiveness
 
+    def print(self, args: list[Any]) -> None:
+        """
+        print(): 打印函数
+
+        :param args: 参数列表
+        """
+        print(*args)
+
     @staticmethod
     def get_method(name: str) -> Callable | None:
         if not name.startswith("_") and name in PokyMethod.__dict__:

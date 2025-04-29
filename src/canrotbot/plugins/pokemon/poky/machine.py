@@ -11,15 +11,31 @@ class PokyMachine(ast.NodeVisitor):
     运行Poky语言
     """
 
+    PERSISTENT = "persistent"
+    RUNTIME = "runtime"
+    STORAGE = "storage"
+    ENVIRONMENT = "environment"
+
     stack: list = []
-    environment: dict = {}
+    persistent_storage: dict = {}
+    runtime_storage: dict = {}
+    persistent_environment: dict = {}
+    runtime_environment: dict = {}
     effects: Effects = {}
 
     def __init__(
         self,
         pokemon_types: list[str] | None = None,
         type_effectiveness: dict[str, dict[str, float]] | None = None,
+        persistent_environment: dict | None = None,
     ):
+        """
+        初始化Poky语言运行环境
+
+        :param pokemon_types: 宝可梦属性列表
+        :param type_effectiveness: 宝可梦属性克制效果
+        :param persistent_environment: 持久化环境
+        """
         if pokemon_types is None:
             self.pokemon_types = DEFAULT_POKEMON_TYPES
         else:
@@ -30,14 +46,34 @@ class PokyMachine(ast.NodeVisitor):
         else:
             self.type_effectiveness = type_effectiveness
 
+        if persistent_environment is None:
+            self.persistent_environment = {}
+        else:
+            self.persistent_environment = persistent_environment
+
         self.builtin_methods = PokyMethod(self.pokemon_types, self.type_effectiveness)
 
-    def eval(self, node: ast.AST | str, environment: dict | None = None) -> EvalResult:
+    def reset(self, reset_persistent: bool = False):
+        """
+        重置Poky语言运行环境
+
+        :param reset_persistent: 是否重置持久化内容
+        """
+        self.stack = []
+        self.runtime_storage = {}
+        self.runtime_environment = {}
+        self.effects = {}
+
+        if reset_persistent:
+            self.persistent_environment = {}
+            self.persistent_storage = {}
+
+    def eval(self, node: ast.AST | str, runtime_environment: dict | None = None) -> EvalResult:
         """
         运行Poky语言
 
         :param node: AST节点或字符串
-        :param environment: 环境变量，不传入则为空
+        :param runtime_environment: 运行时环境变量，不传入则为空
 
         :return: 运行结果
         """
@@ -47,12 +83,11 @@ class PokyMachine(ast.NodeVisitor):
             raise TypeError("node must be an AST or a string")
 
         # 重置环境
-        self.stack = []
-        self.effects = {}
-        if environment is None:
-            self.environment = {}
+        self.reset()
+        if runtime_environment is None:
+            self.runtime_environment = {}
         else:
-            self.environment = environment
+            self.runtime_environment = runtime_environment
 
         self.visit(node)
 
@@ -143,13 +178,22 @@ class PokyMachine(ast.NodeVisitor):
     def visit_Attribute(self, node):
         self.generic_visit(node)
 
-        arg = self.stack.pop()
-        if isinstance(arg, dict) and node.attr in arg:
-            self.stack.append(arg[node.attr])
-        elif node.attr in arg.__dict__:
-            self.stack.append(arg.__dict__[node.attr])
-        else:
-            raise SyntaxError("Invalid attribute")
+        if isinstance(node.ctx, ast.Load):
+            arg = self.stack.pop()
+            if isinstance(arg, dict):
+                if node.attr in arg:
+                    self.stack.append(arg[node.attr])
+                else:
+                    if arg is self.persistent_storage or arg is self.runtime_storage:
+                        self.stack.append(None)
+                    else:
+                        raise SyntaxError(f"Invalid attribute: {node.attr}")
+            elif hasattr(arg, "__dict__") and node.attr in arg.__dict__:
+                self.stack.append(arg.__dict__[node.attr])
+            else:
+                raise SyntaxError(f"Invalid attribute: {node.attr}")
+        elif isinstance(node.ctx, ast.Store):
+            self.stack.append(node.attr)
 
     def visit_Constant(self, node):
         self.generic_visit(node)
@@ -177,17 +221,26 @@ class PokyMachine(ast.NodeVisitor):
     def visit_Name(self, node):
         self.generic_visit(node)
 
-        if ("effect_" + node.id in PokyMachine.__dict__
-                and isinstance(PokyMachine.__dict__["effect_" + node.id], Callable)):
-            self.stack.append(PokyMachine.__dict__["effect_" + node.id])
-        elif builtin_method := PokyMethod.get_method(node.id):
-            self.stack.append(builtin_method)
-        elif node.id in self.environment:
-            self.stack.append(self.environment[node.id])
-        elif node.id in self.pokemon_types:
+        if isinstance(node.ctx, ast.Load):
+            if ("effect_" + node.id in PokyMachine.__dict__
+                    and isinstance(PokyMachine.__dict__["effect_" + node.id], Callable)):
+                self.stack.append(PokyMachine.__dict__["effect_" + node.id])
+            elif builtin_method := PokyMethod.get_method(node.id):
+                self.stack.append(builtin_method)
+            elif node.id in self.runtime_environment:
+                self.stack.append(self.runtime_environment[node.id])
+            elif node.id in self.persistent_environment:
+                self.stack.append(self.persistent_environment[node.id])
+            elif node.id in self.pokemon_types:
+                self.stack.append(node.id)
+            elif node.id == self.PERSISTENT:
+                self.stack.append(self.persistent_storage)
+            elif node.id == self.RUNTIME:
+                self.stack.append(self.runtime_storage)
+            else:
+                raise NameError(f"Invalid name: {node.id}")
+        elif isinstance(node.ctx, ast.Store):
             self.stack.append(node.id)
-        else:
-            raise NameError(f"Invalid name: {node.id}")
 
     def visit_If(self, node):
         if isinstance(node.test, ast.Constant) and isinstance(node.test.value, bool):
@@ -195,14 +248,49 @@ class PokyMachine(ast.NodeVisitor):
         elif not isinstance(node.test, ast.Compare):
             raise SyntaxError("Invalid if statement")
 
-        self.generic_visit(node.test)
+        self.visit(node.test)
         if self.stack.pop():
             for expr in node.body:
-                self.generic_visit(expr)
+                self.visit(expr)
         else:
             for expr in node.orelse:
-                self.generic_visit(expr)
+                self.visit(expr)
 
     def visit_Compare(self, node):
         self.generic_visit(node)
-        self.stack.append(self.stack.pop() == self.stack.pop())
+
+        operator = node.ops[0]
+        right = self.stack.pop()
+        left = self.stack.pop()
+        if isinstance(operator, ast.Eq):
+            self.stack.append(left == right)
+        if isinstance(operator, ast.NotEq):
+            self.stack.append(left != right)
+        elif isinstance(operator, ast.Is):
+            self.stack.append(left is right)
+        elif isinstance(operator, ast.IsNot):
+            self.stack.append(left is not right)
+        else:
+            raise SyntaxError(f"Invalid comparison operator: {node.ops}")
+
+    def visit_Assign(self, node):
+        self.generic_visit(node)
+
+        value = self.stack.pop()
+        name = self.stack.pop()
+        storage = self.stack.pop()
+
+        storage[name] = value
+
+
+    def visit_IfExp(self, node):
+        if isinstance(node.test, ast.Constant) and isinstance(node.test.value, bool):
+            self.stack.append(node.test.value)
+        elif not isinstance(node.test, ast.Compare):
+            raise SyntaxError("Invalid ifexp statement")
+
+        self.visit(node.test)
+        if self.stack.pop():
+            self.visit(node.body)
+        else:
+            self.visit(node.orelse)
