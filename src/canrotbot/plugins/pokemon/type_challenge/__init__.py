@@ -110,7 +110,7 @@ def get_move_type(move: str) -> str:
     :return: 属性
     """
     if check_move(move):
-        machine = PokyMachine(TYPES)
+        machine = PokyMachine(TYPES, TYPE_EFFECTIVENESS)
         return machine.eval(MOVES[move]["type"]).result
     return ""
 
@@ -124,7 +124,7 @@ def get_attack_prompt(attack: str) -> str:
     :return: 提示信息
     """
     if check_move(attack):
-        machine = PokyMachine(TYPES)
+        machine = PokyMachine(TYPES, TYPE_EFFECTIVENESS)
         return machine.eval(MOVES[attack]["prompt"], {
             "prompts": PROMPTS
         }).result
@@ -142,7 +142,7 @@ def get_move_effects(move: str) -> Effects:
     :return: 技能效果
     """
     if check_move(move):
-        machine = PokyMachine(TYPES)
+        machine = PokyMachine(TYPES, TYPE_EFFECTIVENESS)
         return machine.eval(MOVES[move]["effect"]).effects
     return {}
 
