@@ -1,3 +1,6 @@
+import base64
+import warnings
+
 import nonebot.adapters.console as console
 import nonebot.adapters.kaiheila as kook
 
@@ -5,10 +8,9 @@ import nonebot.adapters.kaiheila as kook
 import nonebot.adapters.onebot.v11 as ob11
 import nonebot.adapters.onebot.v12 as ob12
 import nonebot.adapters.qq as qq
-from nonebot.adapters import Bot, Event
+from nonebot.adapters import Bot, Event, MessageSegment
 from nonebot.matcher import current_bot
-from nonebot_plugin_alconna import UniMessage, SerializeFailed
-import warnings
+from nonebot_plugin_alconna import SerializeFailed, UniMessage
 
 MESSAGE_SPLIT_LINE = "--------------------"
 """
@@ -119,8 +121,7 @@ def is_qq(bot: Bot) -> bool:
         "util.is_qq 已弃用，且不支持 QQ 官方适配器，请使用重载处理", DeprecationWarning
     )
     return (
-        isinstance(bot, ob11.Bot)
-        or isinstance(bot, ob12.Bot)
+        isinstance(bot, (ob11.Bot, ob12.Bot))
         # or isinstance(bot, mirai2.Bot)
     )
 
@@ -141,6 +142,30 @@ def can_send_url() -> bool:
     return True
 
 
+async def get_file_message(name: str, raw: bytes) -> MessageSegment:
+    """
+    发送文件
+
+    :params name: 文件名
+    :params raw: 文件内容
+
+    :return: 是否发送成功
+    """
+    bot = current_bot.get()
+    if isinstance(bot, ob11.Bot):
+        version: dict[str, str] = await bot.get_version_info()
+        if version["app_name"] == "NapCat.Onebot":
+            return ob11.MessageSegment(
+                "file",
+                {
+                    "name": name,
+                    "file": "base64://" + base64.b64encode(raw).decode("utf-8"),
+                },
+            )
+
+    return await UniMessage.file(name=name, raw=raw).export()
+
+
 __all__ = [
     "get_group_id",
     "get_bot_name",
@@ -148,4 +173,5 @@ __all__ = [
     "is_qq",
     "MESSAGE_SPLIT_LINE",
     "can_send_url",
+    "get_file_message",
 ]

@@ -3,10 +3,8 @@ import typing
 from nonebot import on_regex
 from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_alconna import (
-    File,
-    UniMessage,
-)
+
+from canrotbot.essentials.libraries.util import get_file_message
 
 from . import line_sticker
 
@@ -28,5 +26,5 @@ async def _(reg: typing.Annotated[tuple[typing.Any, ...], RegexGroup()]):
     sticker_id = reg[0].strip()
     name, content = await line_sticker.get_line_sticker(sticker_id)
     await line_sticker_link_matcher.finish(
-        await UniMessage(File(raw=content, name=name + ".zip")).export()
+        await get_file_message(name + ".zip", content)
     )

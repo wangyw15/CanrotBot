@@ -1,20 +1,17 @@
 import ast
-import base64
 from datetime import datetime
 
-from nonebot.adapters import Bot
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
     Alconna,
     Args,
     CommandMeta,
-    MsgTarget,
     Query,
     Subcommand,
-    SupportAdapter,
-    UniMessage,
     on_alconna,
 )
+
+from canrotbot.essentials.libraries.util import get_file_message
 
 from . import calendar, util
 
@@ -47,8 +44,6 @@ shift_work_matcher = on_alconna(
 
 @shift_work_matcher.assign("calendar")
 async def _(
-    bot: Bot,
-    target: MsgTarget,
     calendar_cycle: Query[str] = Query("calendar_cycle"),
     calendar_start: Query[str] = Query("calendar_start"),
     calendar_end: Query[str] = Query("calendar_end"),
@@ -73,22 +68,4 @@ async def _(
     filename = datetime.now().strftime("%Y%m%dT%H%M%S") + ".ics"
     content = calendar.generate_calendar(parsed_cycles, start_date, end_date).to_ical()
 
-    if target.adapter == SupportAdapter.onebot11:
-        from nonebot.adapters.onebot.v11.bot import Bot as OB11Bot
-        from nonebot.adapters.onebot.v11.message import MessageSegment
-
-        if isinstance(bot, OB11Bot):
-            version: dict[str, str] = await bot.get_version_info()
-            if version["app_name"] == "NapCat.Onebot":
-                await shift_work_matcher.finish(
-                    MessageSegment(
-                        "file",
-                        {
-                            "name": filename,
-                            "file": "base64://"
-                            + base64.b64encode(content).decode("utf-8"),
-                        },
-                    )
-                )
-
-    await shift_work_matcher.finish(UniMessage.file(name=filename, raw=content))
+    await shift_work_matcher.finish(await get_file_message(filename, content))
