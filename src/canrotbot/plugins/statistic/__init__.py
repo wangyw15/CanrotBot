@@ -1,8 +1,8 @@
-from nonebot.adapters import Bot, Event
+from nonebot.adapters import Event
 from nonebot.matcher import Matcher
 from nonebot.message import event_preprocessor, run_postprocessor
 from nonebot_plugin_alconna import (
-    UniMessage,
+    MsgTarget,
 )
 from sqlalchemy import insert
 
@@ -12,9 +12,8 @@ from .data import MessageHistory, PluginHistory
 
 
 @event_preprocessor
-async def _(bot: Bot, event: Event):
+async def _(target: MsgTarget, event: Event):
     try:
-        target = UniMessage.get_target(event, bot)
         with database.get_session().begin() as session:
             session.execute(
                 insert(MessageHistory).values(
@@ -36,9 +35,8 @@ async def _(bot: Bot, event: Event):
 
 
 @run_postprocessor
-async def _(bot: Bot, event: Event, matcher: Matcher):
+async def _(target: MsgTarget, event: Event, matcher: Matcher):
     try:
-        target = UniMessage.get_target(event, bot)
         with database.get_session().begin() as session:
             session.execute(
                 insert(PluginHistory).values(
