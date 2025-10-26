@@ -4,7 +4,7 @@ from nonebot import get_plugin_config
 
 from .config import FileConfig
 
-config = get_plugin_config(FileConfig)
+_config = get_plugin_config(FileConfig)
 
 
 def get_asset_path(name: str = "") -> Path:
@@ -15,7 +15,7 @@ def get_asset_path(name: str = "") -> Path:
 
     :return: 文件夹路径
     """
-    path = Path(config.asset_path) / name
+    path = Path(_config.asset_path) / name
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -28,7 +28,7 @@ def get_cache_path(name: str = "") -> Path:
 
     :return: 文件夹路径
     """
-    path = Path(config.user_data_path) / "cache" / name
+    path = Path(_config.user_data_path) / "cache" / name
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -41,6 +41,6 @@ def get_data_path(name: str) -> Path:
 
     :return: 文件夹路径
     """
-    path = Path(config.user_data_path) / "data" / name
+    path = Path(_config.user_data_path) / "data" / name
     path.mkdir(parents=True, exist_ok=True)
     return path
