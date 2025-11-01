@@ -1,6 +1,5 @@
 <html>
 <head>
-    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <style>
         body {
             margin: 0;
@@ -90,25 +89,27 @@
 <body>
 <div class="main">
     <div class="result-container">
-        <div v-for="card in cards" class="result" :class="{ n: card.rarity == 2, r: card.rarity == 3, sr: card.rarity == 4, ssr: card.rarity == 5 }">
+    {%- for card in cards -%}
+        {%- if card.rarity == 2 -%}
+        <div class="result n">
+        {%- elif card.rarity == 3 -%}
+        <div class="result r">
+        {%- elif card.rarity == 4 -%}
+        <div class="result sr">
+        {%- elif card.rarity == 5 -%}
+        <div class="result ssr">
+        {%- endif -%}
+
             <div class="rarity">
-                <span v-for="_ in Array(card.rarity + 1)">★</span>
+                {%- for _ in range(card.rarity + 1) -%}
+                <span>★</span>
+                {%- endfor -%}
             </div>
-            <img class="portrait" :src="`https://raw.githubusercontent.com/yuanyan3060/ArknightsGameResource/main/portrait/${encodeURIComponent(card.id)}_1.png`"/>
-            <img class="type" :src="'operator_type_images/' + card.profession + '.png'"/>
+            <img class="portrait" src="https://raw.githubusercontent.com/yuanyan3060/ArknightsGameResource/main/portrait/{{card.id}}_1.png"/>
+            <img class="type" src="operator_type_images/{{card.profession}}.png"/>
         </div>
+    {%- endfor -%}
     </div>
 </div>
-<script>
-    const app = {
-        data() {
-            return {
-                'cards': '{{DATA_HERE}}'
-            };
-        }
-    }
-
-    Vue.createApp(app).mount('.result-container');
-</script>
 </body>
 </html>

@@ -2,6 +2,7 @@ import json
 import random
 from typing import cast
 
+from jinja2 import Template
 from sqlalchemy import insert, select, ColumnElement
 
 from canrotbot.essentials.libraries import path, render_by_browser, database
@@ -114,10 +115,9 @@ async def generate_gacha_image(selected_operators: list[GachaOperatorData]) -> b
     :return: 图片
     """
     # 生成 html
-    with (LOCAL_ASSETS_PATH / "gacha.html").open("r", encoding="utf-8") as f:
-        generated_html = f.read().replace(
-            "'{{DATA_HERE}}'", json.dumps(selected_operators, ensure_ascii=False)
-        )
+    with (LOCAL_ASSETS_PATH / "gacha.jinja").open("r", encoding="utf-8") as f:
+        template: Template = Template(f.read())
+    generated_html = template.render(cards=selected_operators)
 
     # 生成图片
     return await render_by_browser.render_html(
