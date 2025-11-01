@@ -1,6 +1,6 @@
-import json
 import random
 
+from jinja2 import Template
 from sqlalchemy import insert
 
 from canrotbot.essentials.libraries import database, path, render_by_browser
@@ -110,11 +110,8 @@ async def generate_image(gacha_data: dict[str, dict]) -> bytes:
     :return: 图片
     """
     data = await generate_data_for_image(gacha_data)
-    generated_html = (
-        (ASSET_PATH / "gacha.html")
-        .read_text(encoding="utf-8")
-        .replace("'{{DATA_HERE}}'", json.dumps(data, ensure_ascii=False))
-    )
+    template: Template = Template((ASSET_PATH / "gacha.jinja").read_text(encoding="utf-8"))
+    generated_html = template.render(cards=data)
 
     return await render_by_browser.render_html(
         generated_html, ASSET_PATH, viewport={"width": 1920, "height": 1080}

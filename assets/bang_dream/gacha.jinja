@@ -2,7 +2,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <style>
         body {
             position: relative;
@@ -131,38 +130,25 @@
         <div class="label-big">招募结果</div>
     </div>
     <div id="gacha-app">
-        <div v-for="card in cards" class="card-container">
+    {%- for card in cards -%}
+        <div class="card-container">
             <div class="card-inner-container">
-                <img :src="getThumb(card)" />
-                <img :src="`https://bestdori.com/res/image/card-${card.rarity}.png`" class="overlay rarity-border" />
-                <img :src="`https://bestdori.com/res/icon/${card.attribute}.svg`" class="overlay attribute" />
-                <img :src="`https://bestdori.com/res/icon/band_${card.band}.svg`" class="overlay band" />
+                <img src="https://bestdori.com/assets/jp/thumb/chara/card{{'{:0>5d}'.format((card.id|int) // 50)}}_rip/{{card.resource}}_normal.png" />
+                <img src="`https://bestdori.com/res/image/card-{{card.rarity}}.png`" class="overlay rarity-border" />
+                <img src="`https://bestdori.com/res/icon/{{card.attribute}}.svg`" class="overlay attribute" />
+                <img src="`https://bestdori.com/res/icon/band_{{card.band}}.svg`" class="overlay band" />
                 <div class="rarity-star-container overlay">
-                    <img v-for="index of card.rarity" src="https://bestdori.com/res/icon/star.png" class="star"/>
+                {%- for _ in range(card.rarity) -%}
+                    <img src="https://bestdori.com/res/icon/star.png" class="star"/>
+                {%- endfor -%}
                 </div>
             </div>
         </div>
+    {%- endfor -%}
     </div>
     <div class="button">
         确定
     </div>
-    <script>
-        const app = {
-            data() {
-                return {
-                    "cards": '{{DATA_HERE}}'
-                };
-            },
-            methods: {
-                getThumb(card) {
-                    let ripnum = Math.floor(parseInt(card.id) / 50).toString().padStart(5, '0')
-                    return `https://bestdori.com/assets/jp/thumb/chara/card${ripnum}_rip/${card.resource}_normal.png`
-                }
-            }
-        };
-
-        Vue.createApp(app).mount('#gacha-app');
-    </script>
 </body>
 
 </html>
