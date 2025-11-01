@@ -1,7 +1,6 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <link href="main.css" rel="stylesheet">
     <style>
         #main {
@@ -37,7 +36,7 @@
 </head>
 <body>
 <div id="main">
-    <img class="background-image" :src="`https://storage.matsurihi.me/mltd/card/${key}_0_b.png`"/>
+    <img class="background-image" src="https://storage.matsurihi.me/mltd/card/{{ resource_key }}_0_b.png"/>
     <div class="main-border"></div>
     <img class="logo" src="../../mltd/logo.png"/>
     <div class="fortune-container">
@@ -51,19 +50,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    const app = {
-        data() {
-            return {
-                'key': '{{resource_key}}',
-                'title': '{{title}}',
-                'content': '{{content}}'
-            }
-        }
-    };
-
-    Vue.createApp(app).mount('#main');
-</script>
 </body>
 </html>
