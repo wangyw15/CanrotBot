@@ -81,6 +81,10 @@ async def render_html(
 
     :return: 渲染后的图片
     """
+    if isinstance(base_path, str):
+        base_path = Path(base_path)
+    base_path = base_path.resolve()
+
     page = await new_page(viewport=viewport, **kwargs)
     await page.goto(f"file://{base_path}", wait_until="networkidle")
     await page.set_content(html)
