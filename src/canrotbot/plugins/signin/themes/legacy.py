@@ -3,6 +3,7 @@ import random
 from pathlib import Path
 from typing import Callable
 
+from jinja2 import Template
 from nonebot import logger
 
 from .. import fortune
@@ -35,16 +36,19 @@ def _get_legacy_theme_key_from_name(name: str) -> str:
 
 
 def _html_generator(theme: str) -> Callable:
-    async def _generate_html() -> str:
+    async def _generate_html(title: str, content: str) -> str:
         # 选择背景图
         image_full_path = _get_random_base_image(theme)
         base_image_path = image_full_path.parent.name + "/" + image_full_path.name
 
         # 生成 html
-        with open(fortune.ASSET_PATH / "template" / "legacy.html", "r") as f:
-            return f.read().replace(
-                "{{image_path}}", str(base_image_path).replace("\\", "/")
-            )
+        with open(fortune.ASSET_PATH / "template" / "legacy.jinja", "r") as f:
+            template: Template = Template(f.read())
+        return template.render(
+            title=title,
+            content=content,
+            image=str(base_image_path).replace("\\", "/"),
+        )
 
     return _generate_html
 

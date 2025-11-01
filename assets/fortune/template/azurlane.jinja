@@ -1,7 +1,6 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <link href="main.css" rel="stylesheet">
     <style>
         #main {
@@ -37,7 +36,7 @@
 </head>
 <body>
 <div id="main">
-    <img class="background-image" :src="image"/>
+    <img class="background-image" src="{{ image }}"/>
     <div class="main-border"></div>
     <img class="logo" src="https://i0.hdslb.com/bfs/game-static/78121985618402c4137b041e294d5055ea897a42.png"/>
     <div class="fortune-container">
@@ -51,19 +50,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    const app = {
-        data() {
-            return {
-                'image': '{{image}}',
-                'title': '{{title}}',
-                'content': '{{content}}'
-            };
-        }
-    };
-
-    Vue.createApp(app).mount('#main');
-</script>
 </body>
 </html>

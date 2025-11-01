@@ -1,6 +1,5 @@
 <html>
 <head>
-    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <link href="main.css" rel="stylesheet">
     <style>
         body {
@@ -41,22 +40,9 @@
 </head>
 <body>
 <div id="main" :style="main">
-    <img class="background-image" :src="'../image/' + image"/>
+    <img class="background-image" src="../image/{{ image }}"/>
     <div class="title">{{ title }}</div>
     <div class="content">{{ content }}</div>
 </div>
-<script>
-    const app = {
-        data() {
-            return {
-                'image': '{{image_path}}',
-                'title': '{{title}}',
-                'content': '{{content}}'
-            };
-        }
-    };
-
-    Vue.createApp(app).mount('#main');
-</script>
 </body>
 </html>

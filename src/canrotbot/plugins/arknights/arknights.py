@@ -1,4 +1,3 @@
-import json
 import random
 from typing import cast
 
@@ -7,8 +6,8 @@ from sqlalchemy import insert, select, ColumnElement
 
 from canrotbot.essentials.libraries import path, render_by_browser, database
 from canrotbot.libraries.arknights import gacha_operators
+from canrotbot.libraries.arknights.model import GachaOperatorData, GachaStatistics
 from .data import GachaHistory, GachaHistoryOperators
-from .model import GachaOperatorData, GachaStatistics
 
 LOCAL_ASSETS_PATH = path.get_asset_path("arknights")
 

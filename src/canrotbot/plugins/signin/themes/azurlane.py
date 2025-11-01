@@ -3,6 +3,7 @@ from datetime import datetime
 
 import httpx
 from bs4 import BeautifulSoup
+from jinja2 import Template
 
 from .. import fortune
 
@@ -42,11 +43,12 @@ async def get_random_ship_image_url() -> str | None:
     return None
 
 
-async def generate_fortune_html() -> str:
-    with (fortune.ASSET_PATH / "template" / "azurlane.html").open(
+async def generate_fortune_html(title: str, content: str) -> str:
+    with (fortune.ASSET_PATH / "template" / "azurlane.jinja").open(
         "r", encoding="utf-8"
     ) as f:
-        return f.read().replace("{{image}}", await get_random_ship_image_url())
+        template: Template = Template(f.read())
+    return template.render(title=title, content=content, image=await get_random_ship_image_url())
 
 
 # 注册主题

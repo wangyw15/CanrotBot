@@ -1,7 +1,6 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <link href="main.css" rel="stylesheet">
 </head>
 <body>
@@ -21,21 +20,7 @@
             </div>
         </div>
     </div>
-    <img class="character" :src="`https://raw.githubusercontent.com/yuanyan3060/ArknightsGameResource/main/skin/${key}_1b.png`" />
+    <img class="character" src="https://raw.githubusercontent.com/yuanyan3060/ArknightsGameResource/main/skin/{{ resource_key }}_1b.png" />
 </div>
-
-<script>
-    const app = {
-        data() {
-            return {
-                'key': '{{resource_key}}',
-                'title': '{{title}}',
-                'content': '{{content}}'
-            }
-        }
-    };
-
-    Vue.createApp(app).mount('#main');
-</script>
 </body>
 </html>

@@ -82,14 +82,13 @@ async def generate_fortune(
 
     # 新版主题
     if t := get_theme_by_name(theme):
-        raw_content: str = await _themes[t]["generator"]()
+        generated_html: str = await _themes[t]["generator"](title, text)
     else:
-        raw_content: str = await random.choice(list(_themes.values()))["generator"]()
+        generated_html: str = await random.choice(list(_themes.values()))["generator"](title, text)
 
     # 生成图片
-    raw_content = raw_content.replace("{{title}}", title).replace("{{content}}", text)
     bytes_data = await render_by_browser.render_html(
-        raw_content,
+        generated_html,
         str(ASSET_PATH / "template"),
         viewport={"width": 480, "height": 480},
         image_type=image_type,

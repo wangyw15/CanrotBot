@@ -1,7 +1,8 @@
 from nonebot import get_driver, logger
 
 from canrotbot.essentials.libraries import network
-from canrotbot.plugins.arknights.model import GachaOperatorData, OperatorProfessions
+
+from .model import GachaOperatorData, OperatorProfessions
 
 RESOURCE_URL = (
     "https://raw.githubusercontent.com/yuanyan3060/ArknightsGameResource/main/{}"
