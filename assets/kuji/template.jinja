@@ -1,7 +1,6 @@
 <html>
 <head>
     <link rel="stylesheet" href="https://cdn.staticfile.org/lxgw-wenkai-screen-webfont/1.6.0/style.css" />
-    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <style>
         body {
             font-family: "LXGW WenKai Screen", sans-serif;
@@ -62,30 +61,25 @@
 <body>
 <div class="container" id="container">
     <div class="title center">
-        <div>日本东京浅草寺观音灵签{{ count }}</div>
-        <div>{{ type }}</div>
+        <div>日本东京浅草寺观音灵签{{ kuji.count }}</div>
+        <div>{{ kuji.type }}</div>
     </div>
 
-    <div v-for="(line, index) in content" class="content center" :style="'grid-column: ' + (5 - index) + ';'">
+    {%- for line in kuji.content -%}
+    <div class="content center" style="grid-column: {{ 5 - loop.index0 }};">
         {{ line }}
     </div>
+    {%- endfor -%}
 
     <div class="straight">
-        {{ straight }}
+        {{ kuji.straight }}
     </div>
 
     <div class="mean">
-        <p v-for="m in mean">{{ m.split('：')[0] }}：<br /><span>{{ m.split('：')[1] }}</span></p>
+    {%- for m in kuji.mean-%}
+        <p>{{ m.split('：')[0] }}：<br /><span>{{ m.split('：')[1] }}</span></p>
+    {%- endfor -%}
     </div>
 </div>
-<script>
-    const app = {
-        data() {
-            return '{DATA_HERE}';
-        }
-    };
-
-    Vue.createApp(app).mount('#container');
-</script>
 </body>
 </html>

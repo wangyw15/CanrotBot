@@ -1,7 +1,7 @@
-import json
 import random
 from typing import Tuple, Literal
 
+from jinja2 import Template
 from nonebot import logger, get_driver
 
 from canrotbot.essentials.libraries import file, path, render_by_browser
@@ -29,13 +29,9 @@ async def generate_kuji(
         return None, selected_kuji
 
     # generate html
-    generated_html = (
-        (ASSET_PATH / "template.html")
-        .read_text(encoding="utf-8")
-        .replace("'{DATA_HERE}'", json.dumps(selected_kuji, ensure_ascii=False))
-    )
+    template: Template = Template((ASSET_PATH / "template.jinja").read_text(encoding="utf-8"))
     img = await render_by_browser.render_html(
-        generated_html,
+        template.render(kuji=selected_kuji),
         ASSET_PATH,
         image_type=image_type,
         viewport={"width": 520, "height": 820},
