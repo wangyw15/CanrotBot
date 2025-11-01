@@ -1,5 +1,4 @@
-import json
-
+from jinja2 import Template
 from nonebot import get_loaded_plugins
 from nonebot.plugin import PluginMetadata
 
@@ -51,9 +50,9 @@ async def generate_help_image() -> bytes:
         for _, metadata in get_plugins_metadata().items()
     ]
 
-    html = (ASSET_PATH / "template.html").read_text(encoding="utf-8")
+    template: Template = Template((ASSET_PATH / "template.jinja").read_text(encoding="utf-8"))
     return await render_by_browser.render_html(
-        html.replace("'{{DATA_HERE}}'", json.dumps(metadata_obj, ensure_ascii=False)),
+        template.render(plugins=metadata_obj),
         ASSET_PATH,
         viewport={"width": 1000, "height": 1000},
     )
