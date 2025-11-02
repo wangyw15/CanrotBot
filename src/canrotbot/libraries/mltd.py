@@ -47,7 +47,6 @@ async def load_cards(force_reload: bool = False) -> None:
             use_cache=True,
             use_proxy=True,
         )
-        _cards_last_fetch = datetime.now()
 
         # 生成卡池
         cards_for_gasha = {}
@@ -57,6 +56,10 @@ async def load_cards(force_reload: bool = False) -> None:
             if card["rarity"] not in cards_for_gasha:
                 cards_for_gasha[card["rarity"]] = []
             cards_for_gasha[card["rarity"]].append(card)
+
+        logger.info("Cards load complete")
+        for rarity, current_cards in cards_for_gasha.items():
+            logger.info(f"Rarity {rarity} count: {len(current_cards)}")
 
 
 def get_cards() -> list[dict] | None:
@@ -92,3 +95,7 @@ async def get_events(time: Literal["now"] | datetime = "now") -> list[dict] | No
             f"https://api.matsurihi.me/api/mltd/v2/events?at={t}", use_proxy=True
         )
     return None
+
+
+def get_cards_for_gasha() -> dict[int, list[dict]]:
+    return cards_for_gasha

@@ -1,7 +1,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <style>
         body {
             position: relative;
@@ -111,35 +110,34 @@
 
 <!--cards-->
 <div id="gasha_app">
-    <div v-for="card in cards" class="icon">
-        <img :src="'https://storage.matsurihi.me/mltd/icon_l/' + card.resourceId + '_0.png'" />
+{%- for card in cards -%}
+    <div class="icon">
+        <img src="https://storage.matsurihi.me/mltd/icon_l/{{ card.resourceId }}_0.png" />
         <!--rarity border-->
-        <img v-if="card.rarity == 2" class="icon-overlay rarity-border" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_frm_R.png" />
-        <img v-if="card.rarity == 3" class="icon-overlay rarity-border" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_frm_SR.png" />
-        <img v-if="card.rarity == 4" class="icon-overlay rarity-border" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_frm_SSR.png" />
+        {%- if card.rarity == 2 -%}
+        <img class="icon-overlay rarity-border" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_frm_R.png" />
+        {%- elif card.rarity == 3 -%}
+        <img class="icon-overlay rarity-border" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_frm_SR.png" />
+        {%- elif card.rarity == 4 -%}
+        <img class="icon-overlay rarity-border" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_frm_SSR.png" />
+        {%- endif -%}
         <!--group icon-->
-        <img v-if="card.idolType == 1" class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_000.png" />
-        <img v-if="card.idolType == 2" class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_001.png" />
-        <img v-if="card.idolType == 3" class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_002.png" />
-        <img v-if="card.idolType == 5" class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_004.png" />
+        {%- if card.idolType == 1 -%}
+        <img class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_000.png" />
+        {%- elif card.idolType == 2 -%}
+        <img class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_001.png" />
+        {%- elif card.idolType == 3 -%}
+        <img class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_002.png" />
+        {%- elif card.idolType == 5 -%}
+        <img class="icon-overlay group-icon" src="https://mltd.matsurihi.me/image/card_icon/icon_mark_L_grp_004.png" />
+        {%- endif -%}
     </div>
+{%- endfor -%}
 </div>
 
 <!--next button-->
 <div class="next-button">
     OK
 </div>
-
-<script>
-    const app = {
-        data() {
-            return {
-                "cards": '{DATA_HERE}'
-            };
-        }
-    };
-
-    Vue.createApp(app).mount('#gasha_app');
-</script>
 </body>
 </html>

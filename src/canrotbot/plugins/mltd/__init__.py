@@ -1,25 +1,57 @@
 from datetime import datetime
 
-from arclet.alconna import Alconna, Option, Args
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
-    on_alconna,
-    Query,
-    AlconnaQuery,
-    UniMessage,
+    Alconna,
+    Args,
+    CommandMeta,
     Image,
+    Query,
+    Subcommand,
     Text,
+    UniMessage,
+    on_alconna,
 )
 
 import canrotbot.libraries.mltd as libmltd
-from canrotbot.essentials.libraries import user, economy, util
+from canrotbot.essentials.libraries import economy, user, util
+
 from . import mltd
+
+mltd_command = Alconna(
+    "mltd",
+    Subcommand(
+        "events",
+        alias=["活动", "event"],
+    ),
+    Subcommand(
+        "card",
+        Args["query", str],
+        alias=["查卡"],
+    ),
+    Subcommand(
+        "gasha",
+        alias=["抽卡", "十连", "gacha"],
+    ),
+    Subcommand(
+        "update",
+        alias=["更新"],
+    ),
+    meta=CommandMeta(description="偶像大师-百万现场剧场时光有关的功能"),
+)
 
 __plugin_meta__ = PluginMetadata(
     name="MLTD",
-    description="偶像大师-百万现场剧场时光有关的功能",
-    usage="/<mltd> <功能还不知道有什么>",
+    description=mltd_command.meta.description,
+    usage=mltd_command.get_help(),
     config=None,
+)
+
+
+mltd_matcher = on_alconna(
+    mltd_command,
+    aliases={"麻辣土豆"},
+    block=True,
 )
 
 
@@ -29,32 +61,7 @@ def iso8601_to_local(iso8601: str) -> str:
     )
 
 
-_command = on_alconna(
-    Alconna(
-        "mltd",
-        Option(
-            "event",
-            alias=["活动", "events"],
-        ),
-        Option(
-            "card",
-            Args["query", str],
-            alias=["查卡"],
-        ),
-        Option(
-            "gasha",
-            alias=["抽卡", "十连", "gacha"],
-        ),
-        Option(
-            "update",
-            alias=["更新"],
-        ),
-    ),
-    block=True,
-)
-
-
-@_command.assign("event")
+@mltd_matcher.assign("events")
 async def _():
     data = await libmltd.get_events()
     if data:
@@ -94,43 +101,43 @@ async def _():
                 img_url = f"https://storage.matsurihi.me/mltd/event_bg/{str(mltd_event['id']).zfill(4)}.png"
                 msg.append(Image(url=img_url))
             msg.append(Text(text_msg))
-        await _command.finish(msg)
+        await mltd_matcher.finish(msg)
     else:
-        await _command.finish("现在还没有活动喵~")
+        await mltd_matcher.finish("现在还没有活动喵~")
 
 
-@_command.assign("card")
-async def _(query: Query[str] = AlconnaQuery("card", "query")):
+@mltd_matcher.assign("card")
+async def _(query: Query[str] = Query("query")):
     if await util.can_send_segment(Image):
-        await _command.send("正在搜索喵~")
+        await mltd_matcher.send("正在搜索喵~")
         card = libmltd.search_card(query.result.strip())
-        await _command.finish(Image(raw=await mltd.generate_card_info_image(card)))
-    await _command.finish("这里不支持发送图片所以没法查卡喵~")
+        await mltd_matcher.finish(Image(raw=await mltd.generate_card_info_image(card)))
+    await mltd_matcher.finish("这里不支持发送图片所以没法查卡喵~")
 
 
-@_command.assign("gasha")
+@mltd_matcher.assign("gasha")
 async def _():
     uid = user.get_uid()
     if not economy.pay(uid, 25, "mltd 十连"):
-        await _command.finish("你没有足够的胡萝卜片喵~")
-    await _command.send("谢谢你的25个胡萝卜片喵~")
+        await mltd_matcher.finish("你没有足够的胡萝卜片喵~")
+    await mltd_matcher.send("谢谢你的25个胡萝卜片喵~")
     img, data = await mltd.gasha()
     if await util.can_send_segment(Image):
-        await _command.finish(Image(raw=img))
+        await mltd_matcher.finish(Image(raw=img))
     else:
         txt_msg = ""
         for card in data:
             txt_msg += f"{card['rarity']}星 {card['name']}\n"
-        await _command.finish(txt_msg.strip())
+        await mltd_matcher.finish(txt_msg.strip())
 
 
-@_command.assign("update")
+@mltd_matcher.assign("update")
 async def _():
-    await _command.send("正在更新卡片数据喵~")
+    await mltd_matcher.send("正在更新卡片数据喵~")
     await libmltd.load_cards(True)
-    await _command.finish("更新完毕喵~")
+    await mltd_matcher.finish("更新完毕喵~")
 
 
-@_command.handle()
+@mltd_matcher.handle()
 async def _():
-    await _command.finish(__plugin_meta__.usage)
+    await mltd_matcher.finish(__plugin_meta__.usage)

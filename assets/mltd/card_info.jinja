@@ -2,7 +2,6 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.staticfile.org/lxgw-wenkai-screen-webfont/1.6.0/style.css" />
-    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.js"></script>
     <style>
         body {
             font-family: "LXGW WenKai Screen", sans-serif;
@@ -132,218 +131,253 @@
 </head>
 <body>
 <div id="main">
-    <h1>{{ name }}</h1>
-    <p v-if="rarity == 4">
-        <img class="full-width" :src="'https://storage.matsurihi.me/mltd/card_bg/' + resourceId + '_0.png'"/>
-    </p>
-    <p v-if="rarity == 4">
-        <img class="full-width" :src="'https://storage.matsurihi.me/mltd/card_bg/' + resourceId + '_1.png'"/>
-    </p>
+    <h1>{{ card.name }}</h1>
+    {%- if card.rarity == 4 -%}
+    <p><img class="full-width" src="https://storage.matsurihi.me/mltd/card_bg/{{ card.resourceId }}_0.png"/></p>
+    <p><img class="full-width" src="https://storage.matsurihi.me/mltd/card_bg/{{ card.resourceId }}_1.png"/></p>
+    {%- endif -%}
 
-    <p>
-        实装时间: {{ (new Date(addedAt)).toLocaleString('zh-cn', { timeZone: 'CST' }) }}
-    </p>
+    <p>实装时间: {{ card.addedAt }}</p>
     <p>
         抽取类别:
-        <span v-if="exType == 0">常驻</span>
-        <span v-if="exType == 2">PST 活动高排名奖励</span>
-        <span v-if="exType == 3">PST 活动积分奖励</span>
-        <span v-if="exType == 4">Fes 限定</span>
-        <span v-if="exType == 5">一周年活动奖励</span>
-        <span v-if="exType == 6">额外</span>
-        <span v-if="exType == 7">二周年活动奖励</span>
-        <span v-if="exType == 8">PST 活动高排名奖励（额外）</span>
-        <span v-if="exType == 9">PST 活动积分奖励（额外）</span>
-        <span v-if="exType == 10">三周年活动奖励</span>
-        <span v-if="exType == 11">PST 活动高排名奖励（额外）</span>
-        <span v-if="exType == 12">PST 活动积分奖励（额外）</span>
-        <span v-if="exType == 13">四周年活动奖励</span>
-        <span v-if="exType == 14">“额外发型”抽取活动</span>
-        <span v-if="exType == 15">在特别活动中售卖</span>
-        <span v-if="exType == 16">五周年活动奖励</span>
+        {%- if card.exType == 0 -%}
+        常驻
+        {%- elif card.exType == 2 -%}
+        PST 活动高排名奖励
+        {%- elif card.exType == 3 -%}
+        PST 活动积分奖励
+        {%- elif card.exType == 4 -%}
+        Fes 限定
+        {%- elif card.exType == 5 -%}
+        一周年活动奖励
+        {%- elif card.exType == 6 -%}
+        额外
+        {%- elif card.exType == 7 -%}
+        二周年活动奖励
+        {%- elif card.exType == 8 -%}
+        PST 活动高排名奖励（额外）
+        {%- elif card.exType == 9 -%}
+        PST 活动积分奖励（额外）
+        {%- elif card.exType == 10 -%}
+        三周年活动奖励
+        {%- elif card.exType == 11 -%}
+        PST 活动高排名奖励（额外）
+        {%- elif card.exType == 12 -%}
+        PST 活动积分奖励（额外）
+        {%- elif card.exType == 13 -%}
+        四周年活动奖励
+        {%- elif card.exType == 14 -%}
+        “额外发型”抽取活动
+        {%- elif card.exType == 15 -%}
+        在特别活动中售卖
+        {%- elif card.exType == 16 -%}
+        五周年活动奖励
+        {%- endif -%}
     </p>
     <h1>觉醒前</h1>
     <div class="awaken-container">
-        <img :src="'https://storage.matsurihi.me/mltd/card/' + resourceId + '_0_a.png'" />
+        <img src="https://storage.matsurihi.me/mltd/card/{{ card.resourceId }}_0_a.png" />
         <div class="param-container">
             <p class="full-width">
                 <span class="badge badge-general">稀有度</span>
-                <span v-if="rarity == 4"> SSR</span>
-                <span v-if="rarity == 3"> SR</span>
-                <span v-if="rarity == 2"> R</span>
-                <span v-if="rarity == 1"> N</span>
+                {%- if card.rarity == 4 -%}
+                SSR
+                {%- elif card.rarity == 3 -%}
+                SR
+                {%- elif card.rarity == 2 -%}
+                R
+                {%- elif card.rarity == 1 -%}
+                N
+                {%- endif -%}
             </p>
             <p class="half-width">
                 <span class="badge badge-general">最大等级</span>
-                {{ parameters.lvMax.beforeAwakened }}
+                {{ card.parameters.lvMax.beforeAwakened }}
             </p>
             <p class="half-width">
                 <span class="badge badge-general">最大 Master Rank</span>
-                {{ masterRankMax }}
+                {{ card.masterRankMax }}
             </p>
             <p class="half-width">
                 <span class="badge badge-life">最大生命值</span>
-                {{ parameters.life.beforeAwakened }}
+                {{ card.parameters.life.beforeAwakened }}
             </p>
             <p class="half-width">
                 <span class="badge badge-vocal">Vocal</span>
-                {{ parameters.vocal.beforeAwakened.max }}
-                ({{ parameters.vocal.beforeAwakened.max + parameters.vocal.masterBonus * masterRankMax }})
+                {{ card.parameters.vocal.beforeAwakened.max }}
+                ({{ card.parameters.vocal.beforeAwakened.max + card.parameters.vocal.masterBonus * card.masterRankMax }})
             </p>
             <p class="half-width">
                 <span class="badge badge-dance">Dance</span>
-                {{ parameters.dance.beforeAwakened.max }}
-                ({{ parameters.dance.beforeAwakened.max + parameters.dance.masterBonus * masterRankMax }})
+                {{ card.parameters.dance.beforeAwakened.max }}
+                ({{ card.parameters.dance.beforeAwakened.max + card.parameters.dance.masterBonus * card.masterRankMax }})
             </p>
             <p class="half-width">
                 <span class="badge badge-visual">Visual</span>
-                {{ parameters.visual.beforeAwakened.max }}
-                ({{ parameters.visual.beforeAwakened.max + parameters.visual.masterBonus * masterRankMax }})
+                {{ card.parameters.visual.beforeAwakened.max }}
+                ({{ card.parameters.visual.beforeAwakened.max + card.parameters.visual.masterBonus * card.masterRankMax }})
             </p>
             <p class="full-width">
                 <span class="badge badge-appeal">总 Appeal</span>
-                {{ parameters.vocal.beforeAwakened.max + parameters.dance.beforeAwakened.max + parameters.visual.beforeAwakened.max }}
-                ({{ parameters.vocal.beforeAwakened.max + parameters.vocal.masterBonus * masterRankMax + parameters.dance.beforeAwakened.max + parameters.dance.masterBonus * masterRankMax + parameters.visual.beforeAwakened.max + parameters.visual.masterBonus * masterRankMax }})
+                {{ card.parameters.vocal.beforeAwakened.max + card.parameters.dance.beforeAwakened.max + card.parameters.visual.beforeAwakened.max }}
+                ({{ card.parameters.vocal.beforeAwakened.max + card.parameters.vocal.masterBonus * card.masterRankMax + card.parameters.dance.beforeAwakened.max + card.parameters.dance.masterBonus * card.masterRankMax + card.parameters.visual.beforeAwakened.max + card.parameters.visual.masterBonus * card.masterRankMax }})
             </p>
-            <div v-if="centerEffect.id != 0">
+
+            {%- if card.centerEffect.id != 0 -%}
+            <div>
                 <p class="full-width">
                     <span class="badge badge-center">中心效果</span>
-                    {{ centerEffect.name }}
+                    {{ card.centerEffect.name }}
                 </p>
                 <p class="full-width">
                     <span class="badge badge-center">中心效果说明</span>
-                    {{ centerEffect.description }}
+                    {{ card.centerEffect.description }}
                 </p>
             </div>
-            <div v-if="skills.length != 0">
+            {%- endif -%}
+
+            {%- if card.skills.length != 0 -%}
+            <div>
                 <p class="half-width">
                     <span class="badge badge-skill">技能</span>
-                    {{ skillName }}
+                    {{ card.skillName }}
                 </p>
                 <p class="half-width">
                     <span class="badge badge-skill">最大技能等级</span>
-                    {{ skillLvMax }}
+                    {{ card.skillLvMax }}
                 </p>
                 <p class="full-width">
                     <span class="badge badge-skill">技能说明</span>
-                    {{ skills[0].description.replace('{0}', skills[0].probability) }}
+                    {{ card.skills[0].description.format(card.skills[0].probability) }}
                 </p>
             </div>
+            {%- endif -%}
+
             <p class="full-width">
                 <span class="badge badge-skill">卡片语音</span>
-                {{ lines.flavor.beforeAwakened.replace('{$P$}', 'Producer') }}
+                {{ card.lines.flavor.beforeAwakened.replace('{$P$}', 'Producer') }}
             </p>
         </div>
     </div>
 
     <h1>觉醒后</h1>
     <div class="awaken-container">
-        <img :src="'https://storage.matsurihi.me/mltd/card/' + resourceId + '_1_a.png'" />
+        <img src="https://storage.matsurihi.me/mltd/card/{{ card.resourceId }}_1_a.png" />
         <div class="param-container">
             <p class="full-width">
                 <span class="badge badge-general">稀有度</span>
-                <span v-if="rarity == 4"> SSR+</span>
-                <span v-if="rarity == 3"> SR+</span>
-                <span v-if="rarity == 2"> R+</span>
-                <span v-if="rarity == 1"> N+</span>
+                {%- if card.rarity == 4 -%}
+                SSR+
+                {%- elif card.rarity == 3 -%}
+                SR+
+                {%- elif card.rarity == 2 -%}
+                R+
+                {%- elif card.rarity == 1 -%}
+                N+
+                {%- endif -%}
             </p>
             <p class="half-width">
                 <span class="badge badge-general">最大等级</span>
-                {{ parameters.lvMax.afterAwakened }}
+                {{ card.parameters.lvMax.afterAwakened }}
             </p>
             <p class="half-width">
                 <span class="badge badge-general">最大 Master Rank</span>
-                {{ masterRankMax }}
+                {{ card.masterRankMax }}
             </p>
             <p class="half-width">
                 <span class="badge badge-life">最大生命值</span>
-                {{ parameters.life.afterAwakened }}
+                {{ card.parameters.life.afterAwakened }}
             </p>
             <p class="half-width">
                 <span class="badge badge-vocal">Vocal</span>
-                {{ parameters.vocal.afterAwakened.max }}
-                ({{ parameters.vocal.afterAwakened.max + parameters.vocal.masterBonus * masterRankMax }})
+                {{ card.parameters.vocal.afterAwakened.max }}
+                ({{ card.parameters.vocal.afterAwakened.max + card.parameters.vocal.masterBonus * card.masterRankMax }})
             </p>
             <p class="half-width">
                 <span class="badge badge-dance">Dance</span>
-                {{ parameters.dance.afterAwakened.max }}
-                ({{ parameters.dance.afterAwakened.max + parameters.dance.masterBonus * masterRankMax }})
+                {{ card.parameters.dance.afterAwakened.max }}
+                ({{ card.parameters.dance.afterAwakened.max + card.parameters.dance.masterBonus * card.masterRankMax }})
             </p>
             <p class="half-width">
                 <span class="badge badge-visual">Visual</span>
-                {{ parameters.visual.afterAwakened.max }}
-                ({{ parameters.visual.afterAwakened.max + parameters.visual.masterBonus * masterRankMax }})
+                {{ card.parameters.visual.afterAwakened.max }}
+                ({{ card.parameters.visual.afterAwakened.max + card.parameters.visual.masterBonus * card.masterRankMax }})
             </p>
             <p class="full-width">
                 <span class="badge badge-appeal">总 Appeal</span>
-                {{ parameters.vocal.afterAwakened.max + parameters.dance.afterAwakened.max + parameters.visual.afterAwakened.max }}
-                ({{ parameters.vocal.afterAwakened.max + parameters.vocal.masterBonus * masterRankMax + parameters.dance.afterAwakened.max + parameters.dance.masterBonus * masterRankMax + parameters.visual.afterAwakened.max + parameters.visual.masterBonus * masterRankMax }})
+                {{ card.parameters.vocal.afterAwakened.max + card.parameters.dance.afterAwakened.max + card.parameters.visual.afterAwakened.max }}
+                ({{ card.parameters.vocal.afterAwakened.max + card.parameters.vocal.masterBonus * card.masterRankMax + card.parameters.dance.afterAwakened.max + card.parameters.dance.masterBonus * card.masterRankMax + card.parameters.visual.afterAwakened.max + card.parameters.visual.masterBonus * card.masterRankMax }})
             </p>
-            <div v-if="centerEffect.id != 0">
+
+            {%- if card.centerEffect.id != 0 -%}
+            <div>
                 <p class="full-width">
                     <span class="badge badge-center">中心效果</span>
-                    {{ centerEffect.name }}
+                    {{ card.centerEffect.name }}
                 </p>
                 <p class="full-width">
                     <span class="badge badge-center">中心效果说明</span>
-                    {{ centerEffect.description }}
+                    {{ card.centerEffect.description }}
                 </p>
             </div>
-            <div v-if="skills.length != 0">
+            {%- endif -%}
+
+            {%- if card.skills.length != 0 -%}
+            <div>
                 <p class="half-width">
                     <span class="badge badge-skill">技能</span>
-                    {{ skillName }}
+                    {{ card.skillName }}
                 </p>
                 <p class="half-width">
                     <span class="badge badge-skill">最大技能等级</span>
-                    {{ skillLvMax }}
+                    {{ card.skillLvMax }}
                 </p>
                 <p class="full-width">
                     <span class="badge badge-skill">技能说明</span>
-                    {{ skills[0].description.replace('{0}', skills[0].probability) }}
+                    {{ card.skills[0].description.format(card.skills[0].probability) }}
                 </p>
             </div>
+            {%- endif -%}
+
             <p class="full-width">
                 <span class="badge badge-skill">卡片语音</span>
-                {{ lines.flavor.afterAwakened.replace('{$P$}', 'Producer') }}
+                {{ card.lines.flavor.afterAwakened.replace('{$P$}', 'Producer') }}
             </p>
         </div>
     </div>
 
-    <div v-if="costumes.default">
+    {%- if card.costumes.default -%}
+    <div>
         <h1>服装</h1>
         <div class="costume-container">
             <div class="costume">
-                <h2>{{ costumes.default.name }}</h2>
+                <h2>{{ card.costumes.default.name }}</h2>
                 <div class="costume-info">
-                    <img :src="'https://storage.matsurihi.me/mltd/costume_icon_ll/' + costumes.default.resourceId + '.png'" />
-                    <span>{{ costumes.default.description }}</span>
+                    <img src="https://storage.matsurihi.me/mltd/costume_icon_ll/{{ card.costumes.default.resourceId }}.png" />
+                    <span>{{ card.costumes.default.description }}</span>
                 </div>
             </div>
-            <div class="costume" v-if="costumes.bonus">
-                <h2>{{ costumes.bonus.name }}</h2>
+            {%- if card.costumes.bonus -%}
+            <div class="costume">
+                <h2>{{ card.costumes.bonus.name }}</h2>
                 <div class="costume-info">
-                    <img :src="'https://storage.matsurihi.me/mltd/costume_icon_ll/' + costumes.bonus.resourceId + '.png'" />
-                    <span>{{ costumes.bonus.description }}</span>
+                    <img src="https://storage.matsurihi.me/mltd/costume_icon_ll/{{ card.costumes.bonus.resourceId }}.png" />
+                    <span>{{ card.costumes.bonus.description }}</span>
                 </div>
             </div>
-            <div class="costume" v-if="costumes.rank5">
-                <h2>{{ costumes.rank5.name }}</h2>
+            {%- endif -%}
+            {%- if card.costumes.rank5 -%}
+            <div class="costume">
+                <h2>{{ card.costumes.rank5.name }}</h2>
                 <div class="costume-info">
-                    <img :src="'https://storage.matsurihi.me/mltd/costume_icon_ll/' + costumes.rank5.resourceId + '.png'" />
-                    <span>{{ costumes.rank5.description }}</span>
+                    <img src="https://storage.matsurihi.me/mltd/costume_icon_ll/{{ card.costumes.rank5.resourceId }}.png" />
+                    <span>{{ card.costumes.rank5.description }}</span>
                 </div>
             </div>
+            {%- endif -%}
         </div>
     </div>
+    {%- endif -%}
 </div>
-<script>
-    const app = {
-        data() {
-            return '{DATA_HERE}';
-        },
-    };
-    Vue.createApp(app).mount('#main');
-</script>
 </body>
 </html>
