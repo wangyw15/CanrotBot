@@ -1,5 +1,7 @@
 import random
 
+from jinja2 import Template
+
 from canrotbot.essentials.libraries import path
 
 SEED_LENGTH = 8
@@ -20,13 +22,22 @@ def generate_seed(length: int = SEED_LENGTH, chars: str = SEED_CHARS) -> str:
     return "".join([random.choice(chars) for _ in range(length)])
 
 
+def generate_empty_board() -> Board:
+    """
+    生成空的数独棋盘
+
+    :return: 空的数独棋盘
+    """
+    return [[0 for _ in range(9)] for _ in range(9)]
+
+
 def generate_basic_board() -> Board:
     """
     生成基础数独棋盘
 
     :return: 基础数独棋盘
     """
-    """
+    _ = """
     -------------
     |123|456|789|
     |456|789|123|
@@ -41,21 +52,12 @@ def generate_basic_board() -> Board:
     |912|345|678|
     -------------
     """
-    board: Board = [[0 for _ in range(9)] for _ in range(9)]
+    board: Board = generate_empty_board()
     for i in range(3):
         for j in range(3):
             for k in range(9):
                 board[i * 3 + j][k] = (i + j * 3 + k) % 9 + 1
     return board
-
-
-def generate_empty_board() -> Board:
-    """
-    生成空的数独棋盘
-
-    :return: 空的数独棋盘
-    """
-    return [[0 for _ in range(9)] for _ in range(9)]
 
 
 def generate_board(
@@ -116,15 +118,16 @@ async def generate_board_image(
     """
     from canrotbot.essentials.libraries import render_by_browser
 
-    template = (
-        (ASSET_PATH / "template.html")
-        .read_text(encoding="utf-8")
-        .replace("{SEED}", seed)
-        .replace('"{BOARD}"', str(board))
+    template: Template = Template(
+        (ASSET_PATH / "template.jinja").read_text(encoding="utf-8")
+    )
+    html = template.render(
+        seed=seed,
+        board=board,
     )
 
     return await render_by_browser.render_html(
-        template, ASSET_PATH, viewport={"width": 500, "height": 500}
+        html, ASSET_PATH, viewport={"width": 500, "height": 500}
     )
 
 
