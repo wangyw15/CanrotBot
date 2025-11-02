@@ -42,6 +42,16 @@ docker run --name canrotbot -v .env:/app/.env.prod -v data:/data -p 8080:8080 ca
 
 需要使用其他数据库，可以修改`canrot_database`配置，具体内容请参考[SQLAlchemy文档](canrot_database)
 
+### Alembic
+
+Canrotbot支持`Alembic`作为数据库迁移工具
+
+需要根据配置在`alembic.ini`中修改数据库连接
+
+```bash
+uv run alembic ...
+```
+
 ## 测试
 
 ```bash

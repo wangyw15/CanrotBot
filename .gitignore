@@ -254,3 +254,6 @@ canrot_data/
 
 # uv
 # uv.lock
+
+# alembic
+src/alembic/versions/*
