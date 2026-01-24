@@ -3,6 +3,7 @@ import sys
 
 from nonebot import get_plugin_config
 
+from canrotbot.llm.tools import register_tool
 from .config import CalculatorConfig
 
 _calculate_config = get_plugin_config(CalculatorConfig)
@@ -30,5 +31,17 @@ def check_qalculate() -> bool:
         return False
 
 
+@register_tool()
 def calculate(expression: str) -> str:
+    """
+    Calcualte the given expression with qalculate
+    All common operators — arithmetic, logical, bitwise, element-wise, (in)equalities
+    Expressions may contain any combination of numbers, constants, functions, units, variables, matrices, vectors, and time/dates
+
+    Args:
+        expression: Expression
+    
+    Returns:
+        Calculation result
+    """
     return qalc(expression).strip()
