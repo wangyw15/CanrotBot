@@ -1,3 +1,5 @@
+from typing import Any
+
 from nonebot import get_plugin_config
 from pydantic import BaseModel, Field
 
@@ -12,6 +14,8 @@ class LLMConfig(BaseModel):
         alias="canrot_llm_system_prompt",
     )
     enable_tools: bool = Field(default=True, alias="canrot_llm_enable_tools")
+    enable_mcp: bool = Field(default=True, alias="canrot_llm_enable_mcp")
+    mcp_config: dict[str, Any] = Field(default={}, alias="canrot_llm_mcp")  # type: ignore
 
 
 llm_config = get_plugin_config(LLMConfig)

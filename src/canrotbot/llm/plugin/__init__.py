@@ -8,6 +8,7 @@ from nonebot_plugin_alconna import (
     Alconna,
     Args,
     CommandMeta,
+    MsgTarget,
     Query,
     Subcommand,
     on_alconna,
@@ -16,6 +17,7 @@ from nonebot_plugin_alconna import (
 from canrotbot.essentials.libraries import user
 
 from ..chat import get_agent, summarize_context
+from ..chat.model import ChatContext
 from ..config import LLMConfig, llm_config
 from . import context as context_manager
 
@@ -44,19 +46,19 @@ llm_matcher = on_message(
 
 
 @llm_matcher.handle()
-async def _(event: Event):
+async def _(event: Event, target: MsgTarget):
     # 获取会话上下文
-    agent = get_agent()
+    agent = await get_agent()
     user_id = user.get_uid()
 
-    name: str = ""
+    context_name: str = ""
     messages: list[AnyMessage] = []
     if not user_id:
         await llm_matcher.send("当前为游客状态，对话无上下文")
     else:
         selected_context = context_manager.get_selected_context(user_id)
         if selected_context:
-            name = selected_context.name
+            context_name = selected_context.name
             messages = loads(selected_context.context)
             await llm_matcher.send(
                 f"自动选择会话 {selected_context.id}"
@@ -66,14 +68,26 @@ async def _(event: Event):
             context_id = context_manager.create_context(user_id)
             await llm_matcher.send(f"没有已选的会话，自动创建新会话 {context_id}")
     messages.append(HumanMessage(event.get_plaintext()))
+
     new_conversation = len(messages) == 1
+
+    # context engineering
+    context = ChatContext(
+        private_chat=target.private,
+        channel_chat=target.channel,
+        self_id=target.self_id,
+        platform_id=target.id,
+        user_id=user_id,
+        name="",  # TODO: 获取用户昵称
+    )
 
     answer: str = "后端无回复"
     try:
         response = await agent.ainvoke(
             {
                 "messages": messages,
-            }  # type: ignore
+            },  # type: ignore
+            context=context,
         )
         messages = response["messages"]
         answer = messages[-1].content
@@ -92,9 +106,11 @@ async def _(event: Event):
         if user_id:
             # 为新对话创建名称
             if new_conversation:
-                name = await summarize_context(messages)
+                context_name = await summarize_context(messages)
 
-            context_manager.update_selected_context(user_id, messages, name=name)
+            context_manager.update_selected_context(
+                user_id, messages, name=context_name
+            )
     except Exception as e:
         logger.error("Error in llm plugin")
         logger.exception(e)

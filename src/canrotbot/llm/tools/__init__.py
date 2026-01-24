@@ -9,6 +9,7 @@ def register_tool(*args, **kwargs) -> Callable:
     def _append_tool(func: Callable) -> Callable:
         _tools.append(tool(*args, **kwargs)(func))
         return func
+
     return _append_tool
 
 

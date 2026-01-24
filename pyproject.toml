@@ -38,6 +38,7 @@ dependencies = [
     "langchain>=1.2.6",
     "langchain-ollama>=1.0.1",
     "langchain-openai>=1.1.7",
+    "langchain-mcp-adapters>=0.2.1",
 ]
 
 [project.scripts]

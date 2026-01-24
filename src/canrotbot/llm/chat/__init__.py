@@ -1,32 +1,54 @@
 from langchain.agents import create_agent
 from langchain.messages import AnyMessage, HumanMessage
+from langchain_core.tools.base import BaseTool
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
 from nonebot import get_plugin_config
 
 from ..config import LLMConfig
 from ..tools import get_tools
 from .config import OpenAIConfig
+from .model import ChatContext, context_aware_system_prompt
 
 global_config = get_plugin_config(LLMConfig)
 openai_config = get_plugin_config(OpenAIConfig)
-openai_model = ChatOpenAI(
+
+_openai_model = ChatOpenAI(
     model=openai_config.model,
     base_url=openai_config.base_url,
     api_key=openai_config.api_key,
 )
-openai_agent = create_agent(
-    model=openai_model,
-    tools=get_tools() if global_config.enable_tools else [],
-    system_prompt=global_config.system_prompt,
-)
+_mcp_client = MultiServerMCPClient(global_config.mcp_config)
+_openai_agent = None
 
 
-def get_agent():
-    return openai_agent
+def get_model():
+    return _openai_model
+
+
+async def get_agent():
+    global _openai_agent
+
+    available_tools: list[BaseTool] = []
+
+    if global_config.enable_tools:
+        available_tools += get_tools()
+    if global_config.enable_mcp:
+        available_tools += await _mcp_client.get_tools()
+
+    if _openai_agent is None:
+        _openai_agent = create_agent(
+            model=_openai_model,
+            tools=available_tools,
+            middleware=[context_aware_system_prompt],  # type: ignore
+            context_schema=ChatContext,
+        )
+    return _openai_agent
 
 
 async def summarize_context(messages: list[AnyMessage]) -> str:
-    response = await get_agent().ainvoke(
+    agent = await get_agent()
+    response = agent.ainvoke(
         {
             "messages": [
                 *messages,
