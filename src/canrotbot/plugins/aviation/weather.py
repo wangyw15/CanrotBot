@@ -1,15 +1,19 @@
 from canrotbot.essentials.libraries.network import fetch_json_data
+from canrotbot.llm.tools import register_tool
 
 WEATHER_API = "https://aviationweather.gov/api/data/"
 
 
+@register_tool
 async def metar(icao_codes: str | list[str]) -> None | list:
     """
     Retrive METAR data from Aviation Weather Center
 
-    :params icao_code: one ICAO code or a list of codes
+    Args:
+      icao_code: one ICAO code or a list of codes of the Airport(s)
 
-    :return: METAR data, None if failed
+    Returns:
+      METAR report, None if failed
     """
     if isinstance(icao_codes, list):
         icao_codes = ",".join(icao_codes)
@@ -22,10 +26,12 @@ async def taf(icao_codes: str | list[str], include_metar: bool = False) -> None 
     """
     Retrive TAF data from Aviation Weather Center
 
-    :params icao_code: one ICAO code or a list of codes
-    :params include_metar: include METAR data
+    Args:
+      icao_code: one ICAO code or a list of codes of the Airport(s)
+      include_metar: include METAR data
 
-    :return: TAF data, None if failed
+    Returns:
+      TAF report, None if failed
     """
     if isinstance(icao_codes, list):
         icao_codes = ",".join(icao_codes)

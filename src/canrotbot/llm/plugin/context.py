@@ -1,7 +1,7 @@
-import json
 from typing import Sequence
 
-from openai.types.chat import ChatCompletionMessageParam
+from langchain.messages import AnyMessage
+from langchain_core.load import dumps
 from sqlalchemy import delete, select, update
 
 from canrotbot.essentials.libraries import database
@@ -32,7 +32,7 @@ def get_all_context(user_id: int = 0) -> Sequence[LLMContext]:
 
 def create_context(
     owner_user_id: int,
-    context: str | Sequence[ChatCompletionMessageParam] = "[]",
+    context: str | Sequence[AnyMessage] = "[]",
     name: str = "",
     selected: bool = True,
 ) -> int:
@@ -50,7 +50,7 @@ def create_context(
         if isinstance(context, str):
             value = context
         else:
-            value = json.dumps(context, ensure_ascii=False)
+            value = dumps(context, ensure_ascii=False)
 
         context_item = LLMContext(
             user_id=owner_user_id, selected=False, context=value, name=name
@@ -107,7 +107,7 @@ def get_selected_context(user_id: int) -> LLMContext | None:
 
 def update_context(
     context_id: int,
-    new_context: str | Sequence[ChatCompletionMessageParam],
+    new_context: str | Sequence[AnyMessage],
     name: str = "",
     user_id: int = 0,
 ) -> bool:
@@ -128,7 +128,7 @@ def update_context(
         if isinstance(new_context, str):
             value = new_context
         else:
-            value = json.dumps(new_context, ensure_ascii=False)
+            value = dumps(new_context, ensure_ascii=False)
 
         if name:
             session.execute(
@@ -147,7 +147,7 @@ def update_context(
 
 def update_selected_context(
     user_id: int,
-    new_context: str | Sequence[ChatCompletionMessageParam],
+    new_context: str | Sequence[AnyMessage],
     name: str = "",
 ) -> bool:
     """

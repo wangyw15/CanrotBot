@@ -60,6 +60,9 @@ def load_plugins(
         # 加载插件
         nonebot.load_plugin(f"canrotbot.plugins.{plugin_name}")
 
+    # LLM 插件
+    nonebot.load_plugin("canrotbot.llm.plugin")
+
     if create_tables:
         database.create_all_tables()
 

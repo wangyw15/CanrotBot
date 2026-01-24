@@ -35,6 +35,9 @@ dependencies = [
     "jieba>=0.42.1",
     "icalendar>=6.3.1",
     "alembic>=1.17.1",
+    "langchain>=1.2.6",
+    "langchain-ollama>=1.0.1",
+    "langchain-openai>=1.1.7",
 ]
 
 [project.scripts]
@@ -53,6 +56,10 @@ dev = [
 lint = [
     "ruff",
 ]
+
+[[tool.uv.index]]
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
+default = true
 
 [build-system]
 requires = ["hatchling"]

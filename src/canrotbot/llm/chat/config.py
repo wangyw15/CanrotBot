@@ -1,8 +1,7 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr
 
 
 class OpenAIConfig(BaseModel):
     base_url: str = Field(default="https://api.openai.com/v1", alias="openai_base_url")
-    api_key: str = Field(default="", alias="openai_api_key")
+    api_key: SecretStr = Field(default="", alias="openai_api_key")
     model: str = Field(default="gpt-3.5-turbo", alias="canrot_openai_model")
-    enable_tools: bool = Field(default=True, alias="canrot_openai_enable_tools")

@@ -5,6 +5,7 @@ from jinja2 import Template
 from nonebot import logger, get_driver
 
 from canrotbot.essentials.libraries import file, path, render_by_browser
+from canrotbot.llm.tools import register_tool
 
 ASSET_PATH = path.get_asset_path("kuji")
 KUJI_DATA: list[dict[str, str]] = []
@@ -50,3 +51,15 @@ def generate_kuji_str(content: dict[str, str]) -> str:
     )
     result += "\n".join(f"    ❃ {x}" for x in content["mean"])
     return result
+
+
+@register_tool
+def get_random_kuji() -> str:
+    """
+    Get a random Omikuji from Senso-ji Temple in Asakusa, Japan, in order to try one's luck
+    
+    Returns:
+      Omikuji string in human readable format
+    """
+    kuji_data = random.choice(KUJI_DATA)
+    return generate_kuji_str(kuji_data)
