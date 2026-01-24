@@ -48,7 +48,7 @@ async def get_agent():
 
 async def summarize_context(messages: list[AnyMessage]) -> str:
     agent = await get_agent()
-    response = agent.ainvoke(
+    response = await agent.ainvoke(
         {
             "messages": [
                 *messages,
