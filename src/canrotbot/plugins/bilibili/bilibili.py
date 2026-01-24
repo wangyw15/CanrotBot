@@ -3,6 +3,8 @@ from typing import Literal
 
 from httpx import AsyncClient
 
+from canrotbot.llm.tools import register_tool
+
 _client = AsyncClient()
 _projects_url = (
     "https://show.bilibili.com/api/ticket/project/listV3"
@@ -29,13 +31,16 @@ async def fetch_json_data(url: str) -> dict | None:
         return resp.json()
 
 
+@register_tool("bilibili_fetch_video_data")
 async def fetch_video_data(vid: str) -> dict | None:
     """
-    获取av号或bv号对应的视频信息
+    获取Bilibili的视频av号或bv号对应的视频信息
 
-    :param vid: av号或bv号
+    Args:
+        vid: av号或bv号
 
-    :return: 视频信息，如果获取失败则返回None
+    Returns:
+        视频信息，如果获取失败则返回None
     """
     url = ""
     if vid.lower().startswith("bv"):
@@ -44,7 +49,7 @@ async def fetch_video_data(vid: str) -> dict | None:
         url = f"https://api.bilibili.com/x/web-interface/view?aid={vid[2:]}"
     if not url:
         return None
-    raw_data = await fetch_json_data(url)
+    raw_data = await fetch_json_data(url, headers=_header)
     if raw_data and raw_data["code"] == 0:
         return raw_data["data"]
     return None
@@ -64,17 +69,22 @@ async def get_bvid_from_short_link(url: str) -> str | None:
     return None
 
 
+@register_tool("bilibili_fetch_all_projects")
 async def fetch_all_projects(
     area: str = "310000",
     project_type: Literal["全部类型", "演出", "展览", "本地生活"] = "全部类型",
+    limit: int = 0,
 ) -> list[dict]:
     """
-    获取所有活动
+    从Bilibili会员购页面上，根据给定的地区，获取漫展、演出等活动
 
-    :param area: 地区代号（默认上海）
-    :param project_type: 活动类型
+    Args:
+        area: 地区代码（默认为上海，地区代码310000）
+        project_type: 活动类型，有全部类型、演出、展览、本地生活，默认为全部类型
+        limit: 返回条目数量限制；为0代表不限制数量，默认为10
 
-    :return: 活动列表
+    Returns:
+        活动列表
     """
     first_page = await fetch_json_data(
         _projects_url.format(page=1, area=area, project_type=project_type)
@@ -83,6 +93,9 @@ async def fetch_all_projects(
         total_pages = first_page["data"]["numPages"]
         result: list[dict] = first_page["data"]["result"]
         for page in range(2, total_pages + 1):
+            if len(result) >= limit:
+                break
+
             page_data = await fetch_json_data(
                 _projects_url.format(page=page, area=area, project_type=project_type)
             )
