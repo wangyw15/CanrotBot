@@ -53,7 +53,6 @@ async def load_hitokoto_assets() -> None:
             all_category_keys += category["key"]
             sentences[category["key"]] = await network.fetch_json_data(
                 RESOURCE_URL.format(category["path"][2:]),
-                use_cache=True,
                 use_proxy=True,
             )
             logger.info(
