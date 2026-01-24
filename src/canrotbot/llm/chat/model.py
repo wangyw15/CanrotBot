@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from langchain.agents.middleware import ModelRequest, dynamic_prompt
 from nonebot import get_plugin_config
@@ -16,6 +17,7 @@ class ChatContext:
     platform_id: str
     user_id: int
     name: str
+    time: datetime
 
 
 @dynamic_prompt
@@ -31,9 +33,10 @@ def context_aware_system_prompt(request: ModelRequest) -> str:
         else:
             prompt += "\nThe user is in a group chat"
 
-        prompt += f"\nThe platform specified id of the chat is {context.platform_id}, it may be the user's id or group id"
+        prompt += f"\nThe platform specified id of the chat is {context.platform_id}, it can be the user's id or the group id"
         prompt += f"\nThe user id of the user is {context.platform_id}"
         prompt += f"\nThe id of the assistant is {context.self_id}"
+        prompt += f"\nThe current time is {context.time.isoformat()}"
 
         if context.name:
             prompt += f"\nThe name of the user is {context.name}"
