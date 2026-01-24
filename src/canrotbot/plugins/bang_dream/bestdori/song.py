@@ -7,7 +7,7 @@ async def get_song_list() -> dict[str]:
 
     :return: 漫画列表
     """
-    return await util.bestdori_api_with_cache("songs/all.5.json")
+    return await util.bestdori_api("songs/all.5.json")
 
 
 async def get_song_info(song_id: str) -> dict[str]:
@@ -18,7 +18,7 @@ async def get_song_info(song_id: str) -> dict[str]:
 
     :return: 歌曲信息
     """
-    return await util.bestdori_api_with_cache(f"songs/{song_id}.json")
+    return await util.bestdori_api(f"songs/{song_id}.json")
 
 
 async def get_song_url(song_id: str) -> str | None:

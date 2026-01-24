@@ -14,7 +14,7 @@ async def get_comic_list() -> dict[str]:
 
     :return: 漫画列表
     """
-    return await util.bestdori_api_with_cache("comics/all.5.json")
+    return await util.bestdori_api("comics/all.5.json")
 
 
 async def get_comic_url(comic_id: str, language: str = "") -> Tuple[str, str] | None:
@@ -75,4 +75,4 @@ async def get_comic(comic_id: str, language: str = "") -> Tuple[bytes, str] | No
         return None
 
     url, language = get_comic_url(comic_id, language)
-    return await network.fetch_bytes_data(url, use_proxy=True, use_cache=True), language
+    return await network.fetch_bytes_data(url, use_proxy=True), language

@@ -32,7 +32,7 @@ def get_content_by_language(arr: list[T], language: str = "") -> Tuple[T, str]:
     return arr[available_languages.index(language)], language
 
 
-async def bestdori_api_with_cache(path: str) -> dict[str]:
+async def bestdori_api(path: str) -> dict[str]:
     """
     获取数据并缓存，默认缓存永久有效
 
@@ -41,5 +41,5 @@ async def bestdori_api_with_cache(path: str) -> dict[str]:
     :return: 数据
     """
     return await network.fetch_json_data(
-        "https://bestdori.com/api/" + path, use_cache=True, use_proxy=True
+        "https://bestdori.com/api/" + path, use_proxy=True
     )

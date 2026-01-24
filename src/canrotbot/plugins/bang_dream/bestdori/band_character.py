@@ -13,7 +13,7 @@ async def get_character_list() -> dict[str, Any]:
     Returns:
         Character list in JSON format
     """
-    return await util.bestdori_api_with_cache("characters/main.3.json")
+    return await util.bestdori_api("characters/main.3.json")
 
 
 @register_tool("bang_dream_get_character_info")
@@ -27,7 +27,7 @@ async def get_character_info(character_id: str) -> dict[str, Any]:
     Returns:
         Character information in JSON format
     """
-    return await util.bestdori_api_with_cache(f"characters/{character_id}.json")
+    return await util.bestdori_api(f"characters/{character_id}.json")
 
 
 @register_tool("bang_dream_get_band_list")
@@ -38,4 +38,4 @@ async def get_band_list() -> dict[str, Any]:
     Returns:
         Band list in JSON format
     """
-    return await util.bestdori_api_with_cache("bands/main.1.json")
+    return await util.bestdori_api("bands/main.1.json")

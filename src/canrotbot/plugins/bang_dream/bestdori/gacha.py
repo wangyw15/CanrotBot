@@ -7,7 +7,7 @@ async def get_gacha_list() -> dict[str]:
 
     :return: 抽卡列表
     """
-    return await util.bestdori_api_with_cache("gacha/all.5.json")
+    return await util.bestdori_api("gacha/all.5.json")
 
 
 async def get_gacha_info(gacha_id: int) -> dict[str]:
@@ -18,4 +18,4 @@ async def get_gacha_info(gacha_id: int) -> dict[str]:
 
     :return: 抽卡信息
     """
-    return await util.bestdori_api_with_cache(f"gacha/{gacha_id}.json")
+    return await util.bestdori_api(f"gacha/{gacha_id}.json")

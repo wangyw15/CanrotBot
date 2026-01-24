@@ -29,7 +29,7 @@ async def load_animes() -> None:
     global _animes, _name_anilist_id
     if not _animes:
         data = await network.fetch_json_data(
-            ANIME_DATABASE_URL, use_proxy=True, use_cache=True
+            ANIME_DATABASE_URL, use_proxy=True
         )
         _animes = data["data"]
         logger.info(f'Anime database last update time: {data["lastUpdate"]}')

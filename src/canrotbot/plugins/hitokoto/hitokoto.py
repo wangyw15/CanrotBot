@@ -36,14 +36,14 @@ async def load_hitokoto_assets() -> None:
     # 加载 version.json
     if not version:
         version = await network.fetch_json_data(
-            RESOURCE_URL.format("version.json"), use_cache=True, use_proxy=True
+            RESOURCE_URL.format("version.json"), use_proxy=True
         )
         logger.info(f'hitokoto sentences_bundle version: {version["bundle_version"]}')
 
     # 加载 categories.json
     if not categories:
         categories = await network.fetch_json_data(
-            RESOURCE_URL.format("categories.json"), use_cache=True, use_proxy=True
+            RESOURCE_URL.format("categories.json"), use_proxy=True
         )
         logger.info(f"hitokoto sentences_bundle categories count: {len(categories)}")
 

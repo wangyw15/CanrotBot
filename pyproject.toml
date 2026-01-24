@@ -26,7 +26,6 @@ dependencies = [
     "cryptography",
     "anyio",
     "nonechat",
-    "hishel",
     "ollama",
     "openai>=1.16.1",
     "fastapi>=0.115.3",

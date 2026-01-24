@@ -25,7 +25,7 @@ async def load_arknights_data() -> None:
     global operators, resource_version
 
     resource_version = await network.fetch_text_data(
-        RESOURCE_URL.format("version"), use_cache=True, use_proxy=True
+        RESOURCE_URL.format("version"), use_proxy=True
     )
 
     # 数据版本
@@ -34,7 +34,6 @@ async def load_arknights_data() -> None:
     # 加载角色数据
     operators = await network.fetch_json_data(
         RESOURCE_URL.format("gamedata/excel/character_table.json"),
-        use_cache=True,
         use_proxy=True,
     )
     logger.info(f"Arknights characters count: {len(operators)}")

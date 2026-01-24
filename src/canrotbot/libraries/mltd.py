@@ -45,7 +45,6 @@ async def load_cards(force_reload: bool = False) -> None:
         cards = await network.fetch_json_data(
             "https://api.matsurihi.me/api/mltd/v2/cards" +
             "?includeCostumes=true&includeParameters=true&includeLines=true&includeSkills=true&includeEvents=true",
-            use_cache=True,
             use_proxy=True,
         )
 
