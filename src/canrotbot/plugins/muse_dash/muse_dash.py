@@ -2,13 +2,23 @@ import re
 from typing import Literal
 
 from bs4 import BeautifulSoup
-from nonebot_plugin_alconna import UniMessage, Image, Text
+from nonebot_plugin_alconna import Image, Text, UniMessage
 
-from canrotbot.essentials.libraries import network
-from canrotbot.essentials.libraries import render_by_browser, util
+from canrotbot.essentials.libraries import network, render_by_browser, util
+from canrotbot.llm.tools import register_tool
 
 
+@register_tool()
 async def search_muse_dash_player_id(player_name: str) -> str | None:
+    """
+    Search for the player ID with player name of Muse Dash
+
+    Args:
+        player_name: Player name
+
+    Returns:
+        Player ID, None if not found
+    """
     data: list[list[str]] = await network.fetch_json_data(
         f"https://api.musedash.moe/search/{player_name}"
     )
@@ -17,15 +27,25 @@ async def search_muse_dash_player_id(player_name: str) -> str | None:
     return None
 
 
+@register_tool()
 async def fetch_muse_dash_player_data(player_id: str) -> dict | None:
+    """
+    Get player data with player id of Muse Dash
+
+    Args:
+        player_id: Player ID
+
+    Returns:
+        Player statistic data in JSON format, None if not found
+    """
     if txt := await network.fetch_text_data(
         f"https://musedash.moe/player/{player_id}?lang=ChineseS"
     ):
-        return _parse_muse_dash_page(txt)
+        return parse_muse_dash_page(txt)
     return None
 
 
-def _parse_muse_dash_page(content: str) -> dict:
+def parse_muse_dash_page(content: str) -> dict:
     soup = BeautifulSoup(content, "html.parser")
     result = {}
     # player name and diff
@@ -102,12 +122,12 @@ async def generate_muse_dash_message(player_id: str) -> UniMessage | None:
             ret_msg = UniMessage()
             ret_msg.append(
                 Text(
-                    f'玩家名：{data["name"]}\n'
-                    + f'偏差值: {data["diff"]}\n'
-                    + f'记录条数: {data["records"]}\n'
-                    + f'完美数: {data["perfects"]}\n'
-                    + f'平均准确率: {data["avg"]}%\n'
-                    + f'上次更新: {data["last_update"]} 前\n'
+                    f"玩家名：{data['name']}\n"
+                    + f"偏差值: {data['diff']}\n"
+                    + f"记录条数: {data['records']}\n"
+                    + f"完美数: {data['perfects']}\n"
+                    + f"平均准确率: {data['avg']}%\n"
+                    + f"上次更新: {data['last_update']} 前\n"
                 )
             )
             for song in data["songs"]:
@@ -116,13 +136,13 @@ async def generate_muse_dash_message(player_id: str) -> UniMessage | None:
                     ret_msg.append(Image(url=song["icon"]))
                 ret_msg.append(
                     Text(
-                        f'曲目: {song["name"]} (Lv.{song["level"]})\n'
-                        + f'作曲家: {song["musician"]}\n'
-                        + f'准确度: {song["accuracy"]}%\n'
-                        + f'得分: {song["score"]}\n'
-                        + f'角色: {song["character"]}\n'
-                        + f'精灵: {song["sprite"]}\n'
-                        + f'总排名: {song["total_rank"]}\n'
+                        f"曲目: {song['name']} (Lv.{song['level']})\n"
+                        + f"作曲家: {song['musician']}\n"
+                        + f"准确度: {song['accuracy']}%\n"
+                        + f"得分: {song['score']}\n"
+                        + f"角色: {song['character']}\n"
+                        + f"精灵: {song['sprite']}\n"
+                        + f"总排名: {song['total_rank']}\n"
                     )
                 )
             return ret_msg
