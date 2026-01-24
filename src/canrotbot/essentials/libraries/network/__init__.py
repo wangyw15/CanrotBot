@@ -3,23 +3,19 @@ from typing import Any
 from httpx import AsyncClient
 from nonebot import get_plugin_config, logger
 
-from canrotbot.essentials.libraries import path
-
 from .config import NetworkConfig
 
 network_config = get_plugin_config(NetworkConfig)
 
 client = AsyncClient(timeout=network_config.timeout)
-
+proxy_client: AsyncClient | None = None
 if network_config.proxy:
     proxy_client = AsyncClient(
         proxy=network_config.proxy, timeout=network_config.timeout
     )
 
 
-def get_client(
-    use_proxy: bool = network_config.proxy != ""
-) -> AsyncClient:
+def get_client(use_proxy: bool = network_config.proxy != "") -> AsyncClient:
     """
     获取 httpx.AsyncClient
 
@@ -28,7 +24,7 @@ def get_client(
     :return: httpx.AsyncClient
     """
     if use_proxy:
-        if network_config.proxy != "":
+        if network_config.proxy != "" and proxy_client is not None:
             return proxy_client
         else:
             # raise ValueError("use_proxy is true but proxy not configured")
@@ -38,8 +34,8 @@ def get_client(
 
 async def fetch_bytes_data(
     url: str,
-    use_proxy: bool = network_config.proxy != "",
     *args,
+    use_proxy: bool = network_config.proxy != "",
     **kwargs,
 ) -> bytes | None:
     """
@@ -61,8 +57,8 @@ async def fetch_bytes_data(
 
 async def fetch_json_data(
     url: str,
-    use_proxy: bool = network_config.proxy != "",
     *args,
+    use_proxy: bool = network_config.proxy != "",
     **kwargs,
 ) -> Any | None:
     """
@@ -84,8 +80,8 @@ async def fetch_json_data(
 
 async def fetch_text_data(
     url: str,
-    use_proxy: bool = network_config.proxy != "",
     *args,
+    use_proxy: bool = network_config.proxy != "",
     **kwargs,
 ) -> str | None:
     """
