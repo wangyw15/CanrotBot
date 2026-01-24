@@ -1,11 +1,24 @@
 from nonebot_plugin_alconna import Image, Text, UniMessage
 
 from canrotbot.essentials.libraries.network import fetch_json_data
+from canrotbot.llm.tools import register_tool
 
 
+@register_tool("steam_fetch_app_info")
 async def fetch_app_info(
     appid: str, steam_lang: str = "zh-cn", steam_region="cn"
 ) -> dict | None:
+    """
+    Get Application information of the given appid from Steam
+    
+    Args:
+        appid: The appid of the Application
+        steam_lang: The language of the data in format ISO 639-1 ISO 3166-1, like zh-cn
+        steam_region: The Steam region in format ISO 3166-1, like cn
+    
+    Returns:
+        Application information in JSON format
+    """
     return await fetch_json_data(
         f"https://store.steampowered.com/api/appdetails/?appids={appid}&l={steam_lang}&cc={steam_region}",
         headers={"Accept-Language": steam_lang},

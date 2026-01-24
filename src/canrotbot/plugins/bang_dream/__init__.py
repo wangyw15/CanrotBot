@@ -57,7 +57,7 @@ bang_dream_matcher = on_alconna(
     block=True,
 )
 
-config = get_plugin_config(BangDreamConfig)
+bangdream_config = get_plugin_config(BangDreamConfig)
 
 
 @bang_dream_matcher.assign("comic")
@@ -88,12 +88,12 @@ async def _(comic_query: Query[str] = Query("comic_query", "random")):
     if comic_id is None or comic_id not in comics:
         await bang_dream_matcher.finish("没有找到这个漫画喵")
     title, _ = bestdori.util.get_content_by_language(
-        comics[comic_id]["title"], config.default_language
+        comics[comic_id]["title"], bangdream_config.default_language
     )
     msg = UniMessage()
     msg.append(Text(title))
     if await util.can_send_segment(Image):
-        result = await bestdori.comic.get_comic(comic_id, config.default_language)
+        result = await bestdori.comic.get_comic(comic_id, bangdream_config.default_language)
         msg.append(Image(raw=result[0]))
     else:
         msg.append(Text(f"\nhttps://bestdori.com/info/comics/{comic_id}"))
@@ -124,10 +124,10 @@ async def _(song_query: Query[str] = Query("song_query", "random")):
     info = await bestdori.song.get_song_info(song_id)
     # TODO 封面（难做
     await bang_dream_matcher.send(
-        f'{bestdori.util.get_content_by_language(info["musicTitle"], config.default_language)[0]}\n'
-        f'作词：{bestdori.util.get_content_by_language(info["lyricist"], config.default_language)[0]}\n'
-        f'作曲：{bestdori.util.get_content_by_language(info["composer"], config.default_language)[0]}\n'
-        f'编曲：{bestdori.util.get_content_by_language(info["arranger"], config.default_language)[0]}\n'
+        f'{bestdori.util.get_content_by_language(info["musicTitle"], bangdream_config.default_language)[0]}\n'
+        f'作词：{bestdori.util.get_content_by_language(info["lyricist"], bangdream_config.default_language)[0]}\n'
+        f'作曲：{bestdori.util.get_content_by_language(info["composer"], bangdream_config.default_language)[0]}\n'
+        f'编曲：{bestdori.util.get_content_by_language(info["arranger"], bangdream_config.default_language)[0]}\n'
         f"链接：https://bestdori.com/info/songs/{song_id}"
     )
     # 发送信息
@@ -153,19 +153,19 @@ async def _(gacha_id: Query[int] = Query("gacha_id")):
     )
 
     # 抽卡
-    gacha_data = await gacha_helper.gacha10(gacha_id.result, config.default_language)
+    gacha_data = await gacha_helper.gacha10(gacha_id.result, bangdream_config.default_language)
 
     # 保存结果
     gacha_helper.save_gacha_history(
-        uid, gacha_id.result, gacha_data, config.default_language
+        uid, gacha_id.result, gacha_data, bangdream_config.default_language
     )
 
     # 发送信息
     # 卡池信息和抽卡结果
     await bang_dream_matcher.send(
-        await gacha_helper.get_gacha_name(gacha_id.result, config.default_language)
+        await gacha_helper.get_gacha_name(gacha_id.result, bangdream_config.default_language)
         + "\n"
-        + await gacha_helper.generate_text(gacha_data, config.default_language)
+        + await gacha_helper.generate_text(gacha_data, bangdream_config.default_language)
     )
     # 抽卡图片
     if await util.can_send_segment(Image):

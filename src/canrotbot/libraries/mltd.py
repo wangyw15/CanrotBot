@@ -5,6 +5,7 @@ from typing import Literal
 from nonebot import get_driver, logger
 
 from canrotbot.essentials.libraries import network
+from canrotbot.llm.tools import register_tool
 
 EVENT_TYPE = [
     "Showtime",
@@ -69,7 +70,17 @@ def get_cards() -> list[dict] | None:
     return cards
 
 
+@register_tool("mltd_search_cards")
 def search_card(keyword: str) -> dict | None:
+    """
+    Search cards from the game The Idolmaster: Million Live! Theater Days with difflib.SequenceMatcher
+    
+    Args:
+        keyword: Keyword for searching
+    
+    Returns:
+        Matched cards data in JSON format
+    """
     if not cards:
         return None
 
@@ -84,7 +95,17 @@ def search_card(keyword: str) -> dict | None:
     return ret
 
 
+@register_tool("mltd_get_events")
 async def get_events(time: Literal["now"] | datetime = "now") -> list[dict] | None:
+    """
+    Get the current events in the game The Idolmaster: Million Live! Theater Days with given time
+    
+    Args:
+        time: Get the events within the time
+    
+    Returns:
+        Event data in JSON format
+    """
     if time == "now":
         return await network.fetch_json_data(
             "https://api.matsurihi.me/api/mltd/v2/events?at=now", use_proxy=True

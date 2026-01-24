@@ -3,6 +3,7 @@ import json
 from canrotbot.libraries.mediawiki import MediaWikiClient
 
 from ...config import llm_config
+from ...tools import register_tool
 
 HOSTS_URL = {
     # "中文维基百科": "https://zh.wikipedia.org/w/api.php",
@@ -36,6 +37,7 @@ HOSTS_DESCRIPTION = [
 ]
 
 
+@register_tool()
 async def search_in_mediawiki(action: str, target: str, keyword: str):
     """
     提供从不同百科搜索词条，并获取最相关词条对应的页面内容的能力。
@@ -45,12 +47,12 @@ async def search_in_mediawiki(action: str, target: str, keyword: str):
     需要根据关键词所属的不同领域选择最合适的百科。
 
     Args:
-      action: hosts为获取所有可用的百科名称及其能搜索到的内容；search为在百科上进行搜索并获取最相关的一个页面标题；get为根据标题获取页面文本。hosts和search的结果不能直接作为回答，需要再通过get获取页面内容，根据页面内容进行回答。get接受的参数为search中返回的title字段。
-      target: action为hosts时，target被忽略，可以填入空字符串；search和get时为要进行搜索和获取页面内容的百科名称
-      keyword: 进行搜索的关键词或页面标题，根据action的不同，keyword的含义也不同：search时为搜索关键词；get时为页面标题，来自于search的title字段
+        action: hosts为获取所有可用的百科名称及其能搜索到的内容；search为在百科上进行搜索并获取最相关的一个页面标题；get为根据标题获取页面文本。hosts和search的结果不能直接作为回答，需要再通过get获取页面内容，根据页面内容进行回答。get接受的参数为search中返回的title字段。
+        target: action为hosts时，target被忽略，可以填入空字符串；search和get时为要进行搜索和获取页面内容的百科名称
+        keyword: 进行搜索的关键词或页面标题，根据action的不同，keyword的含义也不同：search时为搜索关键词；get时为页面标题，来自于search的title字段
 
     Returns:
-      根据输入的参数返回对应的内容
+        根据输入的参数返回对应的内容
     """
     if action == "hosts":
         return json.dumps(HOSTS_DESCRIPTION, ensure_ascii=False)

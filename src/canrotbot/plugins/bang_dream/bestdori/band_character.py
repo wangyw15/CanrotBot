@@ -1,30 +1,41 @@
+from typing import Any
+
+from canrotbot.llm.tools import register_tool
+
 from . import util
 
 
-async def get_character_list() -> dict[str]:
+@register_tool("bang_dream_get_character_list")
+async def get_character_list() -> dict[str, Any]:
     """
-    获取角色列表
+    Get character list from Bang Dream
 
-    :return: 角色列表
+    Returns:
+        Character list in JSON format
     """
     return await util.bestdori_api_with_cache("characters/main.3.json")
 
 
-async def get_character_info(character_id: str) -> dict[str]:
+@register_tool("bang_dream_get_character_info")
+async def get_character_info(character_id: str) -> dict[str, Any]:
     """
-    获取角色信息
+    Get character information from Bang Dream
 
-    :param character_id: 角色ID
+    Args:
+        character_id: Character ID for the character
 
-    :return: 角色信息
+    Returns:
+        Character information in JSON format
     """
     return await util.bestdori_api_with_cache(f"characters/{character_id}.json")
 
 
-async def get_band_list() -> dict[str]:
+@register_tool("bang_dream_get_band_list")
+async def get_band_list() -> dict[str, Any]:
     """
-    获取乐团列表
+    Get Band list from Bang Dream
 
-    :return: 乐团列表
+    Returns:
+        Band list in JSON format
     """
     return await util.bestdori_api_with_cache("bands/main.1.json")

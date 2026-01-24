@@ -4,6 +4,8 @@ from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
+from canrotbot.llm.tools import register_tool
+
 __plugin_meta__ = PluginMetadata(
     name="能不能好好说话", description="根据简写找原话", usage="/<nbnhhsh|能不能好好说话> <缩写>", config=None
 )
@@ -11,7 +13,17 @@ __plugin_meta__ = PluginMetadata(
 _client = httpx.AsyncClient()
 
 
+@register_tool()
 async def fetch_nbnhhsh(text: str) -> list[str] | None:
+    """
+    Get the original text of the abbreviation or slang from nbnhhsh api
+    
+    Args:
+        text: The abbreviation or the slang
+    
+    Returns:
+        Original text list in JSON format
+    """
     url = "https://lab.magiconch.com/api/nbnhhsh/guess"
     resp: list[dict] = (await _client.post(url, json={"text": text})).json()
     if resp:

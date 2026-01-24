@@ -53,7 +53,7 @@ def generate_kuji_str(content: dict[str, str]) -> str:
     return result
 
 
-@register_tool
+@register_tool()
 def get_random_kuji() -> str:
     """
     Get a random Omikuji from Senso-ji Temple in Asakusa, Japan, in order to try one's luck
