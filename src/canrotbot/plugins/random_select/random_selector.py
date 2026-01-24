@@ -3,7 +3,7 @@ import random
 from collections import namedtuple
 from typing import Annotated
 
-from canrotbot.libraries.llm.tool import BaseTool
+from canrotbot.llm.tools import register_tool
 
 Item = namedtuple("Item", ["name", "weight"])
 
@@ -89,19 +89,19 @@ def random_select_from_list(items_set: list[list[Item]]) -> list[str]:
     return selected_items
 
 
-class RandomSelectTool(BaseTool):
-    __tool_name__ = "random_select"
-    __description__ = "在多个列表中，对每一个列表随机选择一个项目；同一个列表中的项目以逗号分隔，不同列表以分号分割"
-    __command__ = False
+@register_tool()
+def random_select(raw_items: str) -> str:
+    """
+    Randomly select one item from each list.
+    Items within the same list are separated by commas; different lists are separated by semicolons.
 
-    async def __call__(
-        self,
-        raw_items: Annotated[
-            str, "项目列表，同一个列表中的项目以逗号分隔，不同列表以分号分割"
-        ],
-    ) -> str:
-        items = parse_items(raw_items)
-        self.items = items
-        return json.dumps(
-            {"selected": random_select_from_list(items)}, ensure_ascii=False
-        )
+    Args:
+        raw_items: A string containing multiple lists. Items in the same list are comma-separated, and lists are separated by semicolons.
+
+    Returns:
+        Selected item in JSON format
+    """
+    items = parse_items(raw_items)
+    return json.dumps(
+        {"selected": random_select_from_list(items)}, ensure_ascii=False
+    )
