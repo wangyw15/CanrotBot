@@ -1,6 +1,11 @@
 from datetime import datetime
 
-from langchain.messages import AIMessage, AnyMessage, HumanMessage
+from langchain.messages import (
+    AIMessage,
+    AnyMessage,
+    HumanMessage,
+    ToolCall,
+)
 from langchain_core.load import loads
 from nonebot import logger, on_message
 from nonebot.adapters import Event
@@ -96,14 +101,19 @@ async def _(event: Event, target: MsgTarget):
         answer = messages[-1].content
 
         # 输出调用的tools
+        called_tools: list[ToolCall] = []
         for i in range(len(messages) - 2, -1, -1):
             current_msg = messages[i]
 
             if current_msg.type == "ai" and isinstance(current_msg, AIMessage):
-                for j in current_msg.tool_calls:
-                    logger.debug(f"Called tool {j['name']} with {j['args']}")
+                for j in range(len(current_msg.tool_calls) - 1, -1, -1):
+                    called_tools.append(current_msg.tool_calls[j])
             if current_msg.type == "human":
                 break
+
+        called_tools.reverse()
+        for i in called_tools:
+            logger.debug(f"Called tool {i['name']} with {i['args']}")
 
         # 更新上下文
         if user_id:
