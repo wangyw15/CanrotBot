@@ -7,6 +7,8 @@ from nonebot.adapters import Message
 from nonebot.params import CommandArg, RegexGroup
 from nonebot.plugin import PluginMetadata
 
+from canrotbot.llm.tools import register_tool
+
 __plugin_meta__ = PluginMetadata(
     name="查汇率",
     description="可以查到工行的汇率，也可以转换汇率",
@@ -17,7 +19,14 @@ __plugin_meta__ = PluginMetadata(
 _client = httpx.AsyncClient()
 
 
+@register_tool()
 async def fetch_currency() -> list[dict[str, str]]:
+    """
+    Fetch current currency rate from ICBC
+    
+    Returns:
+        Currency rate in JSON format, all the unit of the price is 100 foreign currency
+    """
     resp = await _client.get("http://papi.icbc.com.cn/exchanges/ns/getLatest")
     if resp.status_code == 200:
         data = resp.json()
