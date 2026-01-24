@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from langchain.messages import AIMessage, AnyMessage, HumanMessage
 from langchain_core.load import loads
 from nonebot import logger, on_message
@@ -79,6 +81,7 @@ async def _(event: Event, target: MsgTarget):
         platform_id=target.id,
         user_id=user_id,
         name="",  # TODO: 获取用户昵称
+        time=datetime.now(),
     )
 
     answer: str = "后端无回复"
