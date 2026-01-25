@@ -18,6 +18,7 @@ class ChatContext:
     user_id: int
     name: str
     time: datetime
+    quote: str
 
 
 @dynamic_prompt
@@ -34,11 +35,14 @@ def context_aware_system_prompt(request: ModelRequest) -> str:
             prompt += "\nThe user is in a group chat"
 
         prompt += f"\nThe platform specified id of the chat is {context.platform_id}, it can be the user's id or the group id"
-        prompt += f"\nThe user id of the user is {context.platform_id}"
+        prompt += f"\nThe user id of the user is {context.user_id}"
         prompt += f"\nThe id of the assistant is {context.self_id}"
         prompt += f"\nThe current time is {context.time.isoformat()}"
 
         if context.name:
             prompt += f"\nThe name of the user is {context.name}"
+
+        if context.quote:
+            prompt += f"\nThe user has quote the message: {context.quote}"
 
     return prompt

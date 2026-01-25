@@ -9,15 +9,21 @@ from langchain.messages import (
 from langchain_core.load import loads
 from nonebot import logger, on_message
 from nonebot.adapters import Event
+from nonebot.adapters.onebot.v11 import (
+    MessageEvent as ob11MessageEvent,
+)
 from nonebot.plugin import PluginMetadata
 from nonebot.rule import Rule, to_me
+from nonebot.typing import T_State
 from nonebot_plugin_alconna import (
     Alconna,
     Args,
     CommandMeta,
     MsgTarget,
     Query,
+    Reply,
     Subcommand,
+    UniMsg,
     on_alconna,
 )
 
@@ -52,16 +58,30 @@ llm_matcher = on_message(
 )
 
 
+# 获取用户昵称
 @llm_matcher.handle()
-async def _(event: Event, target: MsgTarget):
-    # 获取会话上下文
+async def _(
+    event: ob11MessageEvent,
+    state: T_State,
+):
+    state["user_nickname"] = event.sender.nickname
+
+
+@llm_matcher.handle()
+async def _(
+    event: Event,
+    target: MsgTarget,
+    state: T_State,
+    msg: UniMsg,
+):
     agent = await get_agent()
     user_id = user.get_uid()
 
+    # 获取会话上下文
     context_name: str = ""
     messages: list[AnyMessage] = []
     if not user_id:
-        await llm_matcher.send("当前为游客状态，对话无上下文")
+        await llm_matcher.send("当前为游客状态，对话不保存历史记录")
     else:
         selected_context = context_manager.get_selected_context(user_id)
         if selected_context:
@@ -74,8 +94,8 @@ async def _(event: Event, target: MsgTarget):
         else:
             context_id = context_manager.create_context(user_id)
             await llm_matcher.send(f"没有已选的会话，自动创建新会话 {context_id}")
-    messages.append(HumanMessage(event.get_plaintext()))
 
+    messages.append(HumanMessage(msg.extract_plain_text()))
     new_conversation = len(messages) == 1
 
     # context engineering
@@ -85,8 +105,9 @@ async def _(event: Event, target: MsgTarget):
         self_id=target.self_id,
         platform_id=target.id,
         user_id=user_id,
-        name="",  # TODO: 获取用户昵称
+        name=state.get("user_nickname", ""),
         time=datetime.now(),
+        quote=msg.get(Reply).extract_plain_text() if Reply in msg else "",
     )
 
     answer: str = "后端无回复"
