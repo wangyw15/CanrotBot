@@ -1,3 +1,6 @@
+from typing import Any
+
+
 def generate_message_from_anilist_data(data: dict) -> str:
     # 放送状态
     anime_status = "未知"
@@ -27,4 +30,17 @@ def generate_message_from_anilist_data(data: dict) -> str:
         + f"时间: {anime_time}\n"
         + f"标签: {', '.join([i['name'] for i in data['tags']])}\n"
     )
+    return msg
+
+
+def generate_message_from_bangumi_calendar(data: list[dict[str, Any]]) -> str:
+    msg = ""
+    for i in data:
+        msg += "----- " + i["weekday"]["cn"] + " -----\n"
+        for j in i["items"]:
+            name = j["name_cn"] or j["name"]
+            if name:
+                msg += name + "\n"
+        msg += "\n"
+
     return msg
