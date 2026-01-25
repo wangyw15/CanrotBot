@@ -108,6 +108,7 @@ async def _(
         name=state.get("user_nickname", ""),
         time=datetime.now(),
         quote=msg.get(Reply).extract_plain_text() if Reply in msg else "",
+        markdown=False,
     )
 
     answer: str = "后端无回复"

@@ -19,6 +19,7 @@ class ChatContext:
     name: str
     time: datetime
     quote: str
+    markdown: bool
 
 
 @dynamic_prompt
@@ -44,5 +45,8 @@ def context_aware_system_prompt(request: ModelRequest) -> str:
 
         if context.quote:
             prompt += f"\nThe user has quote the message: {context.quote}"
+
+        if not context.markdown:
+            prompt += "\nThe user interface does not support markdown, do not use markdown format"
 
     return prompt
