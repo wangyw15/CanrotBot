@@ -11,6 +11,7 @@ _client = get_client()
 async def search_anime_by_title(keyword: str) -> dict[str, Any]:
     """
     Get detailed information of the anime by title with AniList API
+    The API is only capable of searching with English and Japanese, searching with Chinese is not guaranteed
 
     Args:
         keyword: The title keyword of the anime
