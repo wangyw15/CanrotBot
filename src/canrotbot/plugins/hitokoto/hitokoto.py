@@ -4,6 +4,7 @@ from datetime import datetime
 from nonebot import logger, get_driver
 
 from canrotbot.essentials.libraries import network
+from canrotbot.llm.tools import register_tool
 
 RESOURCE_URL = (
     "https://raw.githubusercontent.com/hitokoto-osc/sentences-bundle/master/{}"
@@ -82,13 +83,16 @@ def get_name_by_key(key: str) -> str | None:
     return list(filter(lambda x: x["key"] == key, categories))[0]["name"]
 
 
+@register_tool()
 def random_hitokoto(selected_categories: str = all_category_keys) -> dict | None:
     """
-    随机一言
+    随机生成一条一言内容
 
-    :param selected_categories: 选择的分类，不填则随机选择
+    Args:
+        selected_categories: a: 动画, b: 漫画, c: 游戏, d: 文学, e: 原创, f: 来自网络, g: 其他, h: 影视, i: 诗词, j: 网易云, k: 哲学, l: 抖机灵, 其他: 作为动画类型处理; 默认为所有种类
 
-    :return: 一言信息
+    Returns:
+        一言信息
     """
     if not sentences or not all_category_keys:
         return None
@@ -100,13 +104,16 @@ def random_hitokoto(selected_categories: str = all_category_keys) -> dict | None
     return random.choice(selected_sentences)
 
 
+@register_tool()
 def get_hitokoto_by_uuid(uuid: str) -> dict | None:
     """
-    根据uuid获取一言信息
+    根据给定uuid获取对应的一言信息
 
-    :param uuid: 一言的uuid
+    Args:
+        uuid: 一言的uuid
 
-    :return: 一言信息
+    Returns:
+        一言信息
     """
     if not categories or not sentences:
         return None
