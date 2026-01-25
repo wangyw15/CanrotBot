@@ -3,13 +3,24 @@ import datetime
 from nonebot import get_plugin_config
 
 from canrotbot.essentials.libraries import network
+from canrotbot.llm.tools import register_tool
 from .config import YoutubeConfig
 
 YOUTUBE_LINK_PATTERN = r"(?:https?:\/\/)?(?:youtu\.be\/|(?:\w{3}\.)?youtube\.com\/(?:watch\?.*v=|shorts\/))([a-zA-Z0-9-_]+)"
 config = get_plugin_config(YoutubeConfig)
 
 
+@register_tool("youtube_fetch_video_data")
 async def fetch_youtube_data(ytb_id: str) -> dict:
+    """
+    Get YouTube video information by video id
+
+    Args:
+        ytb_id: YouTube video id
+
+    Returns:
+        Video information in JSON format, empty if failed
+    """
     if config.api_key:
         data = await network.fetch_json_data(
             f"https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics&id={ytb_id}&key={config.api_key}"
