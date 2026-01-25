@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Text, Boolean
+from sqlalchemy import Boolean, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from canrotbot.essentials.libraries import database
@@ -38,4 +38,4 @@ class PerformanceActors(database.Base):
     name: Mapped[str] = mapped_column(Text, nullable=True)
     gender: Mapped[str] = mapped_column(Text, nullable=True)
     region: Mapped[str] = mapped_column(Text, nullable=True)
-    license_numer: Mapped[str] = mapped_column(Text, nullable=True)
+    license_number: Mapped[str] = mapped_column(Text, nullable=True)

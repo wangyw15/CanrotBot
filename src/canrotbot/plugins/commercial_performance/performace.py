@@ -1,6 +1,13 @@
 import re
+
 from bs4 import BeautifulSoup
 from httpx import AsyncClient
+from sqlalchemy import Integer, cast, select
+
+from canrotbot.essentials.libraries import database
+from canrotbot.llm.tools import register_tool
+
+from . import data
 
 _client = AsyncClient()
 
@@ -36,7 +43,7 @@ async def get_data_by_id(performance_id: str) -> dict:
         soup = BeautifulSoup(response.text, features="html.parser")
         if soup.select("table:nth-of-type(1)"):
             performance = {
-                "id": performance_id,
+                "performance_id": performance_id,
                 "acceptance_id": soup.select_one(
                     "#main-container span:nth-of-type(1)"
                 ).text.strip()[5:],
@@ -95,12 +102,36 @@ async def get_data_by_id(performance_id: str) -> dict:
                 "performance": performance,
                 "actors": actors,
             }
-        else:
-            return {
-                "performance_id": performance_id,
-                "approval_id": soup.select_one("h3").text.strip(),
-                "organizer": soup.select_one("p:nth-of-type(1)").text.strip(),
-                "name": soup.select_one("h2:nth-of-type(1)").text.strip(),
-                "content": soup.select_one("p:nth-of-type(2)").text.strip(),
-            }
+        # else:
+        #     return {
+        #         "performance_id": performance_id,
+        #         "approval_id": soup.select_one("h3").text.strip(),
+        #         "organizer": soup.select_one("p:nth-of-type(1)").text.strip(),
+        #         "name": soup.select_one("h2:nth-of-type(1)").text.strip(),
+        #         "content": soup.select_one("p:nth-of-type(2)").text.strip(),
+        #     }
     return {}
+
+
+@register_tool("list_commercial_performance")
+def list_performace(limit: int = 10):
+    """
+    列出已经从上海市文化和旅游局网站上获取的，本地缓存中的上海市商业演出信息
+
+    Args:
+        返回条目数量，默认为10条
+
+    Returns:
+        上海市商业演出信息
+    """
+    with database.get_session().begin() as session:
+        ret = (
+            session.execute(
+                select(data.CommercialPerformance)
+                .order_by(cast(data.CommercialPerformance.acceptance_id, Integer))
+                .limit(limit)
+            )
+            .scalars()
+            .all()
+        )
+        return ret
