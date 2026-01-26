@@ -49,19 +49,23 @@ async def fetch_video_data(vid: str) -> dict | None:
         url = f"https://api.bilibili.com/x/web-interface/view?aid={vid[2:]}"
     if not url:
         return None
-    raw_data = await fetch_json_data(url, headers=_header)
+    raw_data = await fetch_json_data(url)
     if raw_data and raw_data["code"] == 0:
         return raw_data["data"]
     return None
 
 
+@register_tool("bilibili_get_bvid_from_short_link")
 async def get_bvid_from_short_link(url: str) -> str | None:
     """
-    从短链接获取bv号
+    若链接为的域名b23.tv，并且路径不是av或bv开头，这个链接就是Bilibili的短链接。
+    这个工具能够从短链接获取bv号。
 
-    :param url: 短链接
+    Args:
+        url: 短链接
 
-    :return: bv号
+    Returns:
+        Bilibili视频bv号
     """
     resp = await _client.get(url, follow_redirects=False)
     if resp.status_code == 302:
