@@ -17,6 +17,7 @@ _openai_model = ChatOpenAI(
     model=openai_config.model,
     base_url=openai_config.base_url,
     api_key=openai_config.api_key,
+    extra_body=openai_config.extra_body,
 )
 _mcp_client = MultiServerMCPClient(global_config.mcp_config)
 _openai_agent = None
