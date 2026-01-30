@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Text, DateTime, Integer, BigInteger
+from sqlalchemy import BigInteger, DateTime, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from canrotbot.essentials.libraries import database

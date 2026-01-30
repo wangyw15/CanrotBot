@@ -3,6 +3,7 @@ import random
 from jinja2 import Template
 
 import canrotbot.libraries.mltd as libmltd
+
 from .. import fortune
 
 
@@ -12,7 +13,9 @@ async def _generate_mltd_html(title: str, content: str) -> str:
         "r", encoding="utf-8"
     ) as f:
         template: Template = Template(f.read())
-    return template.render(title=title, content=content, resource_key=card["resourceId"])
+    return template.render(
+        title=title, content=content, resource_key=card["resourceId"]
+    )
 
 
 fortune.register_theme(

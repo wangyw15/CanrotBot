@@ -48,7 +48,9 @@ async def generate_fortune_html(title: str, content: str) -> str:
         "r", encoding="utf-8"
     ) as f:
         template: Template = Template(f.read())
-    return template.render(title=title, content=content, image=await get_random_ship_image_url())
+    return template.render(
+        title=title, content=content, image=await get_random_ship_image_url()
+    )
 
 
 # 注册主题

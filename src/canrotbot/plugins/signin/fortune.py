@@ -1,9 +1,10 @@
 import random
-from typing import Tuple, Literal, Callable
+from typing import Callable, Literal
 
-from nonebot import logger, get_driver
+from nonebot import get_driver, logger
 
 from canrotbot.essentials.libraries import file, path, render_by_browser
+
 from . import themes
 
 ASSET_PATH = path.get_asset_path("fortune")
@@ -55,45 +56,51 @@ def get_theme_by_name(name: str) -> str:
     return ""
 
 
-async def generate_fortune(
+def get_random_copywrite() -> tuple[str, str]:
+    """
+    随机生成一条运势
+
+    Returns:
+        运势内容，格式为(标题, 内容)
+    """
+    selected = random.choice(copywriting)
+    content = random.choice(selected["content"])
+    return (selected["good-luck"], content)
+
+
+async def generate_image(
+    title: str,
+    content: str,
     theme: str = "random",
     image_type: Literal["png", "jpeg"] = "png",
-    title: str = "",
-    content: str = "",
-    rank: int = 0,
-) -> Tuple[bytes, str, str, int]:
+) -> bytes:
     """
-    生成给定主题的运势图片，如果不给定运势内容则随机选择
+    生成运势图片
 
-    :param theme: 运势主题
-    :param image_type: 返回图片格式
-    :param title: 运势标题
-    :param content: 运势内容
-    :param rank: 运势等级
+    Args:
+        title: 运势类型
+        content: 运势内容
+        theme: 运势图片主题
+        image_type: 图片格式，支持png和jpeg
 
-    :return: 图片，标题，内容，运势等级
+    Returns:
+        bytes格式的图片
     """
-
-    # 选择运势内容
-    selected_copywriting = random.choice(copywriting)
-    title = title if title else selected_copywriting["good-luck"]
-    rank = rank if rank else selected_copywriting["rank"]
-    text = content if content else random.choice(selected_copywriting["content"])
-
-    # 新版主题
     if t := get_theme_by_name(theme):
-        generated_html: str = await _themes[t]["generator"](title, text)
+        # html template
+        generated_html: str = await _themes[t]["generator"](title, content)
     else:
-        generated_html: str = await random.choice(list(_themes.values()))["generator"](title, text)
+        generated_html: str = await random.choice(list(_themes.values()))["generator"](
+            title, content
+        )
 
     # 生成图片
-    bytes_data = await render_by_browser.render_html(
+    return await render_by_browser.render_html(
         generated_html,
         str(ASSET_PATH / "template"),
         viewport={"width": 480, "height": 480},
         image_type=image_type,
     )
-    return bytes_data, title, text, rank
 
 
 def get_themes() -> list[str]:

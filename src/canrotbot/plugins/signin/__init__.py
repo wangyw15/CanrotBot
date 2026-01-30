@@ -1,126 +1,92 @@
-from datetime import datetime
-from typing import cast
-
-from arclet.alconna import Option, Args
 from nonebot.adapters import Event
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import (
-    on_alconna,
     Alconna,
-    AlconnaQuery,
-    Query,
-    UniMessage,
-    Text,
+    Args,
+    CommandMeta,
     Image,
+    Query,
+    Subcommand,
+    on_alconna,
 )
-from sqlalchemy import select, insert, ColumnElement
 
-from canrotbot.essentials.libraries import user, economy, util, path, database
-from . import data, fortune
+from canrotbot.essentials.libraries import path, user, util
+
+from . import fortune, signin
+
+singin_command = Alconna(
+    "signin",
+    Subcommand(
+        "themes",
+        alias=[
+            "查看主题",
+            "listtheme",
+            "listthemes",
+            "list_theme",
+            "list_themes",
+            "themes",
+        ],
+    ),
+    Args["theme", str, "random"],
+    meta=CommandMeta(description="每日签到，能够抽签和获得积分"),
+)
 
 __plugin_meta__ = PluginMetadata(
     name="签到",
-    description="每日签到，能够抽签和获得积分",
-    usage="/<signin|签到|每日签到|抽签>",
+    description=singin_command.meta.description,
+    usage=singin_command.get_help(),
     config=None,
 )
 
 DATA_PATH = path.get_data_path("signin")
 
-_command = on_alconna(
-    Alconna(
-        "signin",
-        Option(
-            "themes",
-            alias=[
-                "查看主题",
-                "listtheme",
-                "listthemes",
-                "list_theme",
-                "list_themes",
-                "themes",
-            ],
-        ),
-        Args["theme", str, "random"],
-    ),
+signin_matcher = on_alconna(
+    singin_command,
     aliases={"签到"},
     block=True,
 )
 
 
-@_command.assign("themes")
+@signin_matcher.assign("themes")
 async def _():
-    await _command.finish("所有主题：\n\n" + "\n".join(fortune.get_themes()))
+    await signin_matcher.finish("所有主题：\n\n" + "\n".join(fortune.get_themes()))
 
 
-@_command.handle()
-async def _(event: Event, theme: Query[str] = AlconnaQuery("theme", "random")):
-    theme = theme.result.strip().lower()
+@signin_matcher.handle()
+async def _(event: Event, theme: Query[str] = Query("theme", "random")):
+    theme_name = theme.result.strip().lower()
 
     # 获取 uid
     platform_id = event.get_user_id()
     if not user.platform_id_user_exists(platform_id):
-        await _command.finish("你还没有注册")
-    uid = user.get_uid(platform_id)
+        await signin_matcher.finish("你还没有注册")
+    user_id = user.get_uid(platform_id)
 
-    # 数据库 session
-    session = database.get_session()()
+    today_record = signin.get_today_record(user_id)
 
-    # 判断是否签到过
-    all_record = (
-        session.execute(
-            select(data.SigninRecord).where(
-                cast(ColumnElement[bool], data.SigninRecord.user_id == uid)
-            )
-        )
-        .scalars()
-        .all()
-    )
-    today_record: data.SigninRecord | None = None
-    for i in all_record:
-        if i.time.date() == datetime.now().date():
-            today_record = i
-            break
-
-    # 构造消息
-    final_msg = UniMessage()
-
-    # 签到
     if today_record is None:
-        # 生成运势内容和对应图片
-        img, title, content, rank = await fortune.generate_fortune(theme)
-        session.execute(
-            insert(data.SigninRecord).values(
-                user_id=uid, time=datetime.now(), title=title, content=content
-            )
-        )
-        session.commit()
-        with (DATA_PATH / f"{uid}.png").open(mode="wb") as f:
-            f.write(img)
-        # 签到获得积分
-        point_amount = 20 + rank
-        economy.earn(uid, point_amount, "每日签到")
-
-        final_msg += Text(
-            "签到成功！\n" f"获得 {point_amount} 胡萝卜片\n" "✨今日运势✨\n"
-        )
+        title, content = fortune.get_random_copywrite()
+        signin.set_today_record(user_id, title, content)
     else:
-        final_msg += Text("你今天签过到了，再给你看一次哦🤗\n")
-
         title = today_record.title
         content = today_record.content
 
-        if theme == "random" and (DATA_PATH / f"{uid}.png").exists():
-            img: bytes = (DATA_PATH / f"{uid}.png").read_bytes()
-        else:
-            # 重新按内容生成图片
-            img, _, _, _ = await fortune.generate_fortune(
-                theme, title=today_record.title, content=today_record.content
-            )
-            with (DATA_PATH / f"{uid}.png").open(mode="wb") as f:
-                f.write(img)
+    image: bytes | None = None
     if await util.can_send_segment(Image):
-        final_msg.append(Image(raw=img))
-    else:
-        final_msg += Text(f"运势: {title}\n详情: {content}")
-    await _command.finish(final_msg)
+        if (
+            today_record is not None
+            and theme_name == "random"
+            and (DATA_PATH / f"{user_id}.png").exists()
+        ):
+            image = (DATA_PATH / f"{user_id}.png").read_bytes()
+        else:
+            image = await fortune.generate_image(title, content, theme_name)
+
+    await signin_matcher.finish(
+        await signin.generate_message(
+            title,
+            content,
+            today_record is not None,
+            image,
+        )
+    )

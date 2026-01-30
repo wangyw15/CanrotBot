@@ -3,6 +3,7 @@ import random
 from jinja2 import Template
 
 from canrotbot.libraries import arknights as libarknights
+
 from .. import fortune
 
 
