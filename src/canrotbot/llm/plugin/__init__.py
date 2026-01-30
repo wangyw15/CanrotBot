@@ -32,12 +32,47 @@ from ..chat import get_agent, summarize_context
 from ..chat.model import ChatContext
 from ..config import LLMConfig, llm_config
 from . import context as context_manager
+from . import mode as session_mode_manager
 from . import utils as utils
+from .model import SessionMode
+
+context_command = Alconna(
+    "chat",
+    Subcommand(
+        "new",
+        alias={"新建会话"},
+    ),
+    Subcommand(
+        "list",
+        alias={"会话列表"},
+    ),
+    Subcommand(
+        "mode",
+        Args["mode_name", str, ""],
+        alias={"会话模式"},
+    ),
+    Subcommand(
+        "select",
+        Args["select_context_id", int],
+        alias={"选择会话"},
+    ),
+    Subcommand(
+        "delete",
+        Args["delete_context_id", int],
+        alias={"删除会话"},
+    ),
+    # Subcommand(
+    #     "copy",
+    #     Args["copy_context_id", int],
+    #     alias={"复制会话"},
+    # ),
+    meta=CommandMeta(description="管理LLM聊天上下文"),
+)
 
 __plugin_meta__ = PluginMetadata(
     name="LLM",
     description="提供大语言模型交互",
-    usage="at机器人即可",
+    usage="at机器人或私聊机器人即可触发LLM对话\n" + context_command.get_help(),
     config=LLMConfig,
 )
 
@@ -81,11 +116,15 @@ async def _(
     agent = await get_agent()
     user_id = user.get_uid()
 
+    mode = SessionMode.temporary
+    if user_id:
+        mode = session_mode_manager.get_session_mode(target)
+
     # 获取会话上下文
     context_name: str = ""
     messages: list[AnyMessage] = []
-    if not user_id:
-        await llm_matcher.send("当前为游客状态，对话不保存历史记录")
+    if mode == SessionMode.temporary:
+        await llm_matcher.send("当前为临时对话，对话不保存历史记录")
     else:
         selected_context = context_manager.get_selected_context(user_id)
         if selected_context:
@@ -142,7 +181,7 @@ async def _(
             logger.debug(f"Called tool {i['name']} with {i['args']}")
 
         # 更新上下文
-        if user_id:
+        if user_id and mode == SessionMode.context:
             # 为新对话创建名称
             if new_conversation:
                 context_name = await summarize_context(messages)
@@ -157,34 +196,6 @@ async def _(
 
     await llm_matcher.finish(answer)
 
-
-context_command = Alconna(
-    "chat",
-    Subcommand(
-        "new",
-        alias={"新建会话"},
-    ),
-    Subcommand(
-        "list",
-        alias={"会话列表"},
-    ),
-    Subcommand(
-        "select",
-        Args["select_context_id", int],
-        alias={"选择会话"},
-    ),
-    Subcommand(
-        "delete",
-        Args["delete_context_id", int],
-        alias={"删除会话"},
-    ),
-    # Subcommand(
-    #     "copy",
-    #     Args["copy_context_id", int],
-    #     alias={"复制会话"},
-    # ),
-    meta=CommandMeta(description="管理LLM聊天上下文"),
-)
 
 context_matcher = on_alconna(
     context_command,
@@ -221,6 +232,28 @@ async def _():
             + "\n"
         )
     await llm_matcher.finish(message.strip())
+
+
+@context_matcher.assign("mode")
+async def _(target: MsgTarget, mode_name: Query[str] = Query("mode_name", "")):
+    mode_key_name = mode_name.result.strip()
+
+    if not mode_name.available or not mode_key_name:
+        mode = session_mode_manager.get_session_mode(target)
+        mode_display_name = mode.name
+
+        if mode == SessionMode.temporary:
+            mode_display_name = "临时对话（不保留上下文）"
+        elif mode == SessionMode.context:
+            mode_display_name = "保留上下文对话"
+
+        await context_matcher.finish("当前对话模式：" + mode_display_name)
+    else:
+        if not hasattr(SessionMode, mode_key_name):
+            await context_matcher.finish("所选对话模式不存在：" + mode_key_name)
+
+        session_mode_manager.set_session_mode(target, SessionMode(mode_key_name))
+        await context_matcher.finish("对话模式已设置为：" + mode_key_name)
 
 
 @context_matcher.assign("select")

@@ -8,7 +8,7 @@ from ...tools import register_tool
 async def run_command(command: str):
     """
     通过给定的命令来调用机器人所提供的插件功能，注意：插件功能不是tool calling，插件功能只能通过命令调用
-    
+
     Args:
         command: 字符串类型的命令
     """
