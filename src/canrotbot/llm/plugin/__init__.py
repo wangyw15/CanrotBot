@@ -58,13 +58,17 @@ llm_matcher = on_message(
 )
 
 
-# 获取用户昵称
 @llm_matcher.handle()
 async def _(
     event: ob11MessageEvent,
     state: T_State,
 ):
-    state["user_nickname"] = event.sender.nickname
+    # 获取用户昵称
+    state["nickname"] = event.sender.nickname
+
+    # 获取回复内容
+    if event.reply is not None:
+        state["quote"] = event.reply.message.extract_plain_text()
 
 
 @llm_matcher.handle()
@@ -105,9 +109,9 @@ async def _(
         self_id=target.self_id,
         platform_id=target.id,
         user_id=user_id,
-        name=state.get("user_nickname", ""),
+        name=state.get("nickname", ""),
         time=datetime.now(),
-        quote=msg.get(Reply).extract_plain_text() if Reply in msg else "",
+        quote=state.get("quote", ""),
         markdown=False,
     )
 
