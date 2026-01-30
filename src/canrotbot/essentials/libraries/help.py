@@ -2,6 +2,8 @@ from jinja2 import Template
 from nonebot import get_loaded_plugins
 from nonebot.plugin import PluginMetadata
 
+from canrotbot.llm.tools import register_tool
+
 from . import path, render_by_browser, util
 
 ASSET_PATH = path.get_asset_path("help")
@@ -18,6 +20,25 @@ def get_plugins_metadata() -> dict[str, PluginMetadata]:
         for plugin in get_loaded_plugins()
         if plugin.metadata
     }
+
+
+@register_tool()
+def get_plugins_help_dict() -> list[dict[str, str]]:
+    """
+    获取当前机器人所有可用的插件信息
+
+    Returns:
+        包含名称，描述和用法的机器人插件信息列表
+    """
+    return [
+        {
+            "name": plugin.name,
+            "description": plugin.metadata.description,
+            "usage": plugin.metadata.usage,
+        }
+        for plugin in get_loaded_plugins()
+        if plugin.metadata
+    ]
 
 
 def generate_help_text() -> str:
@@ -50,7 +71,9 @@ async def generate_help_image() -> bytes:
         for _, metadata in get_plugins_metadata().items()
     ]
 
-    template: Template = Template((ASSET_PATH / "template.jinja").read_text(encoding="utf-8"))
+    template: Template = Template(
+        (ASSET_PATH / "template.jinja").read_text(encoding="utf-8")
+    )
     return await render_by_browser.render_html(
         template.render(plugins=metadata_obj),
         ASSET_PATH,

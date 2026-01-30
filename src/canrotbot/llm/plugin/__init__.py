@@ -21,7 +21,6 @@ from nonebot_plugin_alconna import (
     CommandMeta,
     MsgTarget,
     Query,
-    Reply,
     Subcommand,
     UniMsg,
     on_alconna,
@@ -33,6 +32,7 @@ from ..chat import get_agent, summarize_context
 from ..chat.model import ChatContext
 from ..config import LLMConfig, llm_config
 from . import context as context_manager
+from . import utils as utils
 
 __plugin_meta__ = PluginMetadata(
     name="LLM",
