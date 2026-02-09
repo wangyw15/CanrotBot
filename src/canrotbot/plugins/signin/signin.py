@@ -118,6 +118,8 @@ async def signin(theme: str = "random") -> dict[str, str | bool]:
             image = (DATA_PATH / f"{user_id}.png").read_bytes()
         else:
             image = await fortune.generate_image(title, content, theme)
+            with (DATA_PATH / f"{user_id}.png").open("wb") as f:
+                f.write(image)
         await UniMessage.image(raw=image).send()
 
     return {

@@ -81,6 +81,8 @@ async def _(event: Event, theme: Query[str] = Query("theme", "random")):
             image = (DATA_PATH / f"{user_id}.png").read_bytes()
         else:
             image = await fortune.generate_image(title, content, theme_name)
+            with (DATA_PATH / f"{user_id}.png").open("wb") as f:
+                f.write(image)
 
     await signin_matcher.finish(
         await signin.generate_message(
